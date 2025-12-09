@@ -2,7 +2,7 @@
     <application
         android:label="sarqyt"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/flutter_icons">
         <activity
             android:name=".MainActivity"
             android:exported="true"
