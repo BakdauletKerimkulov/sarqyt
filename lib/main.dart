@@ -1,25 +1,22 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sarqyt/src/app.dart';
-import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
-import 'package:sarqyt/src/features/auth/data/fake_auth_repository.dart';
-import 'package:sarqyt/src/features/offers/data/fake_offer_repository.dart';
-import 'package:sarqyt/src/features/offers/data/offers_repository.dart';
+import 'package:sarqyt/firebase_options.dart';
+import 'package:sarqyt/src/app_bootstrap.dart';
+import 'package:sarqyt/src/app_bootstrap_firebase.dart';
+import 'package:sarqyt/src/app_business.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  final authRepo = FakeAuthRepository();
-  final offerRepo = FakeOfferRepository();
-
-  runApp(
-    ProviderScope(
-      overrides: [
-        authRepositoryProvider.overrideWithValue(authRepo),
-        offerRepositoryProvider.overrideWithValue(offerRepo),
-      ],
-      child: const MyApp(),
-    ),
+  final appBootStrap = AppBootstrap();
+  //! Uncomment this to connect to the Firebase emulators
+  await appBootStrap.setupEmulators();
+  final container = await appBootStrap.createFirebaseProviderContainer();
+  final root = appBootStrap.createRootWidget(
+    container: container,
+    app: const MyAppBusiness(),
   );
-  // runApp(ProviderScope(child: const MyApp()));
+
+  runApp(root);
 }

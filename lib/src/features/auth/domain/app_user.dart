@@ -1,14 +1,28 @@
 typedef UserID = String;
 
+enum UserRole { owner, employee, user, guest }
+
 /// Simple class representing the user UID and email.
 class AppUser {
-  const AppUser({required this.uid, this.email, this.emailVerified = false});
+  const AppUser({
+    required this.uid,
+    this.email,
+    this.avatarUrl,
+    this.emailVerified = false,
+    this.userInitial = '',
+  });
   final UserID uid;
   final String? email;
+  final String? avatarUrl;
   final bool emailVerified;
+  final String userInitial;
 
   Future<void> sendEmailVerification() async {
     // no-op - implemented by subclasses
+  }
+
+  Future<UserRole> getRole() async {
+    return UserRole.user;
   }
 
   Future<bool> isAdmin() {
@@ -17,6 +31,10 @@ class AppUser {
 
   Future<void> forceRefreshIdToken() async {
     // no-op - implemented by subclasses
+  }
+
+  Future<void> reload() async {
+    // no-op
   }
 
   // * Here we override methods from [Object] directly rather than using

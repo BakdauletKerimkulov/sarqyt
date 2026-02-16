@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 
@@ -22,13 +23,49 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         child: isLoading
-            ? const CircularProgressIndicator()
+            ? const CircularProgressIndicator(color: Colors.white)
             : Text(
                 text,
                 textAlign: TextAlign.center,
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge!.copyWith(color: Colors.white),
+              ),
+      ),
+    );
+  }
+}
+
+class PrimaryWebButton extends StatelessWidget {
+  const PrimaryWebButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.width,
+    this.isLoading = false,
+  });
+
+  final String text;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+  final double? width;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      height: Sizes.p40,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        child: isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Text(
+                text,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: Sizes.p16,
+                ),
               ),
       ),
     );

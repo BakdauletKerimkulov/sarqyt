@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sarqyt/src/common_widgets/error_message_widget.dart';
+import 'package:sarqyt/src/constants/app_sizes.dart';
 
 /// A reusable widget to provide default loading and error widgets when working
 /// with AsyncValue.
@@ -15,8 +17,19 @@ class AsyncValueWidget<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return value.when(
       data: data,
-      error: (e, st) => Center(child: ErrorMessageWidget(e.toString())),
-      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, st) {
+        debugPrint(st.toString());
+        return Center(child: ErrorMessageWidget(e.toString()));
+      },
+
+      loading: () => Center(
+        child: LottieBuilder.asset(
+          'assets/animations/food-animation.json',
+          width: Sizes.p48,
+          height: Sizes.p48,
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }
@@ -35,8 +48,14 @@ class AsyncValueSliverWidget<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return value.when(
       data: data,
-      loading: () => const SliverToBoxAdapter(
-        child: Center(child: CircularProgressIndicator()),
+      loading: () => SliverToBoxAdapter(
+        child: Center(
+          child: LottieBuilder.asset(
+            'assets/animations/food-animation.json',
+            width: Sizes.p48,
+            height: Sizes.p48,
+          ),
+        ),
       ),
       error: (e, st) => SliverToBoxAdapter(
         child: Center(child: ErrorMessageWidget(e.toString())),

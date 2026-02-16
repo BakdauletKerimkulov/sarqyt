@@ -13,47 +13,87 @@ Future<bool?> showAlertDialog({
   String? cancelActionText,
   String defaultActionText = 'OK',
 }) async {
-  return showDialog(
+  return showDialog<bool>(
     context: context,
-    // * Only make the dialog dismissible if there is a cancel button
     barrierDismissible: cancelActionText != null,
-    // * AlertDialog.adaptive was added in Flutter 3.13
-    builder: (context) => AlertDialog.adaptive(
-      title: Text(title),
-      content: content != null ? Text(content) : null,
-      // * Use [TextButton] or [CupertinoDialogAction] depending on the platform
-      // https://codewithandrea.com/tips/default-target-platform/
-      actions:
-          kIsWeb ||
-              !(defaultTargetPlatform == TargetPlatform.iOS ||
-                  defaultTargetPlatform == TargetPlatform.macOS)
-          ? [
-              if (cancelActionText != null)
-                TextButton(
-                  child: Text(cancelActionText),
-                  onPressed: () => Navigator.of(context).pop(false),
-                ),
+    builder: (context) {
+      // WEB → всегда Material
+      if (kIsWeb) {
+        return AlertDialog(
+          constraints: BoxConstraints(maxWidth: 400.0),
+          title: Text(title),
+          content: content != null
+              ? SingleChildScrollView(child: Text(content))
+              : null,
+          actions: [
+            if (cancelActionText != null)
               TextButton(
-                key: kDialogDefaultKey,
-                child: Text(defaultActionText),
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(cancelActionText),
               ),
-            ]
-          : [
-              if (cancelActionText != null)
-                CupertinoDialogAction(
-                  child: Text(cancelActionText),
-                  onPressed: () => Navigator.of(context).pop(false),
-                ),
+            TextButton(
+              key: kDialogDefaultKey,
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(defaultActionText),
+            ),
+          ],
+        );
+      }
+
+      // iOS / macOS → Cupertino
+      if (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS) {
+        return CupertinoAlertDialog(
+          title: Text(title),
+          content: content != null ? Text(content) : null,
+          actions: [
+            if (cancelActionText != null)
               CupertinoDialogAction(
-                key: kDialogDefaultKey,
-                child: Text(defaultActionText),
-                onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(cancelActionText),
               ),
-            ],
-    ),
+            CupertinoDialogAction(
+              key: kDialogDefaultKey,
+              isDefaultAction: true,
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(defaultActionText),
+            ),
+          ],
+        );
+      }
+
+      // Android / Windows / Linux → Material
+      return AlertDialog(
+        title: Text(title),
+        content: content != null ? Text(content) : null,
+        actions: [
+          if (cancelActionText != null)
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(cancelActionText),
+            ),
+          TextButton(
+            key: kDialogDefaultKey,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(defaultActionText),
+          ),
+        ],
+      );
+    },
   );
 }
+
+/// Generic function to show a platform-aware Material or Cupertino error dialog
+Future<void> showExceptionAlertDialog({
+  required BuildContext context,
+  required String title,
+  required dynamic exception,
+}) => showAlertDialog(
+  context: context,
+  title: title,
+  content: exception.toString(),
+  defaultActionText: 'OK'.hardcoded,
+);
 
 Future<void> showNotImplementedAlertDialog({required BuildContext context}) =>
     showAlertDialog(context: context, title: 'Not implemented'.hardcoded);
