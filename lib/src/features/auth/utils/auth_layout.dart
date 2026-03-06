@@ -8,8 +8,8 @@ import 'package:sarqyt/src/constants/breakpoints.dart';
 class AuthLayout extends StatelessWidget {
   const AuthLayout({
     super.key,
-    required this.endBuilder,
-    this.startBuilder,
+    required this.child,
+    this.startChild,
     this.breakpoint = Breakpoint.desktop,
     this.startFlex = 1,
     this.endFlex = 1,
@@ -18,8 +18,8 @@ class AuthLayout extends StatelessWidget {
     this.startBackground,
   });
 
-  final Widget Function(BuildContext)? startBuilder;
-  final Widget Function(BuildContext) endBuilder;
+  final Widget? startChild;
+  final Widget child;
   final double breakpoint;
   final int startFlex;
   final int endFlex;
@@ -39,7 +39,7 @@ class AuthLayout extends StatelessWidget {
               if (isDesktop)
                 Expanded(
                   flex: startFlex,
-                  child: Container(
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: startBackColor,
                       image: startBackground != null
@@ -49,21 +49,30 @@ class AuthLayout extends StatelessWidget {
                             )
                           : null,
                     ),
-                    child: startBuilder != null
-                        ? ResponsiveCenter(child: startBuilder!(context))
-                        : null,
+                    child: startChild != null
+                        ? ResponsiveCenter(child: startChild!)
+                        : const SizedBox.expand(),
                   ),
                 ),
               Expanded(
                 flex: endFlex,
-                child: Container(
-                  decoration: BoxDecoration(color: endBackColor),
-                  child: SingleChildScrollView(
-                    child: ResponsiveCenter(
-                      maxContentWidth: isDesktop ? 400.0 : double.infinity,
-                      padding: EdgeInsets.all(Sizes.p16),
-                      child: endBuilder(context),
-                    ),
+                child: ColoredBox(
+                  color: endBackColor ?? Colors.transparent,
+                  child: LayoutBuilder(
+                    builder: (context, endConstraints) {
+                      return SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: endConstraints.maxHeight,
+                          ),
+                          child: ResponsiveCenter(
+                            maxContentWidth: 400.0,
+                            padding: const EdgeInsets.all(Sizes.p16),
+                            child: child,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
