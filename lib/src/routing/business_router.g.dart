@@ -9,6 +9,47 @@ part of 'business_router.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(currentStoreShip)
+const currentStoreShipProvider = CurrentStoreShipProvider._();
+
+final class CurrentStoreShipProvider
+    extends $FunctionalProvider<StoreShip, StoreShip, StoreShip>
+    with $Provider<StoreShip> {
+  const CurrentStoreShipProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'currentStoreShipProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentStoreShipHash();
+
+  @$internal
+  @override
+  $ProviderElement<StoreShip> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  StoreShip create(Ref ref) {
+    return currentStoreShip(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(StoreShip value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<StoreShip>(value),
+    );
+  }
+}
+
+String _$currentStoreShipHash() => r'd427ce1af8703ee638961bfd12f3cce2ac6530a9';
+
 @ProviderFor(businessRouter)
 const businessRouterProvider = BusinessRouterProvider._();
 
@@ -21,7 +62,7 @@ final class BusinessRouterProvider
         argument: null,
         retry: null,
         name: r'businessRouterProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -48,4 +89,4 @@ final class BusinessRouterProvider
   }
 }
 
-String _$businessRouterHash() => r'ab0adf6baf9d3589cdfb1963486a4daeb25e8824';
+String _$businessRouterHash() => r'422c62ddf1c58cff08c5b148a378f35e77105437';
