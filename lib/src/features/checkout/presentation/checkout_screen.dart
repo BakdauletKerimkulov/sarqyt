@@ -4,14 +4,12 @@ import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_form_type.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_screen.dart';
 import 'package:sarqyt/src/features/checkout/presentation/payment_page.dart';
-import 'package:sarqyt/src/features/products/domain/product.dart';
-
 enum CheckoutSubRoute { register, payment }
 
 class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key, required this.productID});
 
-  final ProductID productID;
+  final String productID;
 
   @override
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();

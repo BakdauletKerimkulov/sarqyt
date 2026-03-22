@@ -10,6 +10,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final appBootStrap = AppBootstrap();
+  await appBootStrap.setupEmulators();
 
   final container = await appBootStrap.createFirebaseProviderContainer();
 

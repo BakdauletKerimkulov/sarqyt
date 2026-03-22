@@ -8,7 +8,7 @@ import 'package:sarqyt/src/features/items/application/item_upload_service.dart';
 import 'package:sarqyt/src/features/items/domain/item_draft.dart';
 import 'package:sarqyt/src/features/items/presentation/item_create/item_draft_controller.dart';
 import 'package:sarqyt/src/features/items/presentation/item_create/item_image_picker_controller.dart';
-import 'package:sarqyt/src/features/onboarding/domain/store_ship.dart';
+import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/features/store/data/store_ship_repository.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
 

@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part "rating.freezed.dart";
+part "rating.g.dart";
 
 /// The [Rating] contains the `averageOverallRating`,
 /// the `ratingCount` and the `monthCount` of a [Item].
@@ -10,6 +11,8 @@ abstract class Rating with _$Rating {
       _Rating;
 
   const Rating._();
+
+  factory Rating.fromJson(Map<String, dynamic> json) => _$RatingFromJson(json);
 
   void validate() {
     assert(average >= 0 && average <= 5, 'Average must be between 0 and 5');

@@ -3,7 +3,7 @@ import 'package:sarqyt/src/features/offers/data/test_offer.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
 import 'package:sarqyt/src/utils/in_memory_store.dart';
 
-class FakeClientOfferRepository implements OfferRepository {
+class FakeClientOfferRepository implements CLientOfferRepository {
   FakeClientOfferRepository({this.addDelay = false});
   final bool addDelay;
 
@@ -29,7 +29,7 @@ class FakeClientOfferRepository implements OfferRepository {
   }
 
   Offer? _getOffer(List<Offer> offers, String id) {
-    return offers.firstWhere((o) => o.product.id == id);
+    return offers.firstWhere((o) => o.productId == id);
   }
 
   @override
@@ -38,7 +38,7 @@ class FakeClientOfferRepository implements OfferRepository {
     required int quantity,
   }) async {
     final offers = List<Offer>.from(_offers.value);
-    final index = offers.indexWhere((o) => o.product.id == id);
+    final index = offers.indexWhere((o) => o.productId == id);
     if (index == -1) {
       throw StateError('Offer not found');
     }
@@ -52,9 +52,7 @@ class FakeClientOfferRepository implements OfferRepository {
       throw StateError('Not enough items available');
     }
 
-    final updatedOffer = offer.copyWith(
-      itemsAvailable: offer.itemsAvailable - quantity,
-    );
+    final updatedOffer = offer.copyWith(quantity: offer.quantity - quantity);
 
     offers[index] = updatedOffer;
     _offers.value = offers;

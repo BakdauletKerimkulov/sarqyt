@@ -4,9 +4,9 @@ import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/auth/utils/auth_layout.dart';
 import 'package:sarqyt/src/features/onboarding/data/onboarding_repository.dart';
-import 'package:sarqyt/src/features/onboarding/domain/store_ship.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/onboarding_panel.dart';
 import 'package:sarqyt/src/features/store/data/store_ship_repository.dart';
+import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 class CreateBusinessScreen extends ConsumerWidget {
@@ -29,7 +29,7 @@ Future<void> _skipOnboarding(BuildContext context, WidgetRef ref) async {
   final storeId = ships.pendingOnboarding?.storeId;
   if (storeId == null) return;
 
-  await ref.read(onboardingRepositoryProvider).skipOptionalOnboarding(storeId);
+  ref.read(onboardingRepositoryProvider).skipOptionalOnboarding(storeId);
   ref.invalidate(currentPartnerStoreShipsProvider);
 }
 

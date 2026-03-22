@@ -14,8 +14,12 @@ const offerRepositoryProvider = OfferRepositoryProvider._();
 
 final class OfferRepositoryProvider
     extends
-        $FunctionalProvider<OfferRepository, OfferRepository, OfferRepository>
-    with $Provider<OfferRepository> {
+        $FunctionalProvider<
+          CLientOfferRepository,
+          CLientOfferRepository,
+          CLientOfferRepository
+        >
+    with $Provider<CLientOfferRepository> {
   const OfferRepositoryProvider._()
     : super(
         from: null,
@@ -32,19 +36,20 @@ final class OfferRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<OfferRepository> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<CLientOfferRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
-  OfferRepository create(Ref ref) {
+  CLientOfferRepository create(Ref ref) {
     return offerRepository(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(OfferRepository value) {
+  Override overrideWithValue(CLientOfferRepository value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<OfferRepository>(value),
+      providerOverride: $SyncValueProvider<CLientOfferRepository>(value),
     );
   }
 }
@@ -98,7 +103,7 @@ final class OfferFutureProvider
     with $FutureModifier<Offer?>, $FutureProvider<Offer?> {
   const OfferFutureProvider._({
     required OfferFutureFamily super.from,
-    required ProductID super.argument,
+    required String super.argument,
   }) : super(
          retry: null,
          name: r'offerFutureProvider',
@@ -124,7 +129,7 @@ final class OfferFutureProvider
 
   @override
   FutureOr<Offer?> create(Ref ref) {
-    final argument = this.argument as ProductID;
+    final argument = this.argument as String;
     return offerFuture(ref, argument);
   }
 
@@ -139,10 +144,10 @@ final class OfferFutureProvider
   }
 }
 
-String _$offerFutureHash() => r'199919edd8e7eab383c38ca4b217c590c68232e9';
+String _$offerFutureHash() => r'349355af147ca7dd9131ad0a5a1ff8fc7f2b19ae';
 
 final class OfferFutureFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<Offer?>, ProductID> {
+    with $FunctionalFamilyOverride<FutureOr<Offer?>, String> {
   const OfferFutureFamily._()
     : super(
         retry: null,
@@ -152,7 +157,7 @@ final class OfferFutureFamily extends $Family
         isAutoDispose: true,
       );
 
-  OfferFutureProvider call(ProductID id) =>
+  OfferFutureProvider call(String id) =>
       OfferFutureProvider._(argument: id, from: this);
 
   @override

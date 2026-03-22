@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.role == 'admin';
+    }
+
+    function storeExists(storeId) {
+      return firestore.exists(/databases/(default)/documents/stores/$(storeId));
+    }
+
+    function storeDoc(storeId) {
+      return firestore.get(/databases/(default)/documents/stores/$(storeId));
+    }
+
+    function isStoreOwner(storeId) {
+      return isSignedIn() &&
+        storeExists(storeId) &&
+        request.auth.uid == storeDoc(storeId).data.ownerId;
+    }
+
+    function isStoreStaff(storeId) {
+      return isSignedIn() &&
+        storeExists(storeId) &&
+        storeDoc(storeId).data.staffIds is list &&
+        request.auth.uid in storeDoc(storeId).data.staffIds;
+    }
+
+    match /stores/{storeId}/items/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || isStoreOwner(storeId) || isStoreStaff(storeId);
+    }
+  }
+}

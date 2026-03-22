@@ -4,12 +4,12 @@ import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 part 'checkout_service.g.dart';
 
 @riverpod
-double offerTotal(Ref ref, String id) {
-  final offer = ref.watch(offerFutureProvider(id)).value;
+FutureOr<double> offerTotal(Ref ref, String id) async {
+  final offer = await ref.watch(offerFutureProvider(id).future);
   final quantity = ref.watch(offerItemsQuantityProvider);
 
   if (offer != null) {
-    return offer.product.price.amount * quantity;
+    return offer.price * quantity;
   }
   return 0.0;
 }

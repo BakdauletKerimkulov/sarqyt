@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
-import 'package:sarqyt/src/features/auth/presentation/sign_in_business/registration/register_business_controller.dart';
-import 'package:sarqyt/src/features/auth/presentation/sign_in_business/registration/registration_validators.dart';
 import 'package:sarqyt/src/features/store/domain/country.dart';
 import 'package:sarqyt/src/features/store/domain/store_draft.dart';
 import 'package:sarqyt/src/features/store/domain/store_type.dart';
@@ -25,8 +23,7 @@ class StoreFormContent extends StatefulWidget {
   State<StatefulWidget> createState() => _StoreFormContentState();
 }
 
-class _StoreFormContentState extends State<StoreFormContent>
-    with RegistrationValidators {
+class _StoreFormContentState extends State<StoreFormContent> {
   final _node = FocusScopeNode();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -65,9 +62,28 @@ class _StoreFormContentState extends State<StoreFormContent>
   StoreType? _selectedStoreType;
   CountryD? _selectedCountry;
 
+  String? _requiredFieldError(String value) {
+    return value.isEmpty ? 'Please, fill in the required field' : null;
+  }
+
+  String? _storeTypeError(StoreType? type) {
+    return type == null ? 'Please select a store type' : null;
+  }
+
+  String? _countryError(CountryD? country) {
+    return country == null ? 'Please select a country' : null;
+  }
+
+  String? _phoneError(String value) {
+    final normalized = value.replaceAll(RegExp(r'\s+'), '');
+    if (normalized.isEmpty) return 'Phone number can\'t be empty';
+    final validPattern = RegExp(r'^(\+7|7)\d{10}$');
+    if (!validPattern.hasMatch(normalized)) return 'Enter a valid phone number';
+    return null;
+  }
+
   bool submit() {
     setState(() => _submitted = true);
-    // only submit the form if validation passes
     if (_formKey.currentState!.validate()) {
       final draft = StoreDraft(
         name: _nameController.text,
@@ -79,10 +95,8 @@ class _StoreFormContentState extends State<StoreFormContent>
         phoneNumber: _phoneNumberController.text,
       );
       widget.onSubmit!(draft);
-
       return true;
     }
-
     return false;
   }
 
@@ -102,8 +116,6 @@ class _StoreFormContentState extends State<StoreFormContent>
             gapH8,
             const Text('Business name'),
             gapH8,
-
-            // * Поле названия бизнеса
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
@@ -111,15 +123,14 @@ class _StoreFormContentState extends State<StoreFormContent>
                 border: OutlineInputBorder(),
               ),
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) => !_submitted ? null : errorText(value ?? ''),
+              validator: (value) =>
+                  !_submitted ? null : _requiredFieldError(value ?? ''),
             ),
             gapH8,
             const Text('Store type'),
             gapH8,
-
-            // * Выбор типа магазина
             DropdownButtonFormField<StoreType>(
-              initialValue: _selectedStoreType,
+              value: _selectedStoreType,
               decoration: const InputDecoration(
                 helperText: ' ',
                 border: OutlineInputBorder(),
@@ -138,7 +149,8 @@ class _StoreFormContentState extends State<StoreFormContent>
                 );
               }).toList(),
               onChanged: (type) => _selectedStoreType = type,
-              validator: (value) => !_submitted ? null : storeTypeError(value),
+              validator: (value) =>
+                  !_submitted ? null : _storeTypeError(value),
             ),
             gapH16,
             const Text(
@@ -148,8 +160,6 @@ class _StoreFormContentState extends State<StoreFormContent>
             gapH8,
             const Text('Street name and number'),
             gapH8,
-
-            // * Поле выбора улицы
             TextFormField(
               controller: _addressController,
               decoration: const InputDecoration(
@@ -157,7 +167,8 @@ class _StoreFormContentState extends State<StoreFormContent>
                 border: OutlineInputBorder(),
               ),
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) => !_submitted ? null : errorText(value ?? ''),
+              validator: (value) =>
+                  !_submitted ? null : _requiredFieldError(value ?? ''),
             ),
             gapH8,
             Row(
@@ -176,7 +187,7 @@ class _StoreFormContentState extends State<StoreFormContent>
                         ),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) =>
-                            !_submitted ? null : errorText(value ?? ''),
+                            !_submitted ? null : _requiredFieldError(value ?? ''),
                       ),
                     ],
                   ),
@@ -199,7 +210,7 @@ class _StoreFormContentState extends State<StoreFormContent>
                         ),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) =>
-                            !_submitted ? null : errorText(value ?? ''),
+                            !_submitted ? null : _requiredFieldError(value ?? ''),
                       ),
                     ],
                   ),
@@ -209,8 +220,6 @@ class _StoreFormContentState extends State<StoreFormContent>
             gapH8,
             const Text('Country'),
             gapH8,
-
-            // * Выбор страны
             DropdownButtonFormField<CountryD>(
               items: countryList
                   .map(
@@ -224,9 +233,9 @@ class _StoreFormContentState extends State<StoreFormContent>
                 helperText: ' ',
                 border: OutlineInputBorder(),
               ),
-              initialValue: _selectedCountry,
+              value: _selectedCountry,
               validator: (value) =>
-                  !_submitted ? null : countryErrorText(value),
+                  !_submitted ? null : _countryError(value),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               onChanged: (country) => _selectedCountry = country,
             ),
@@ -238,8 +247,6 @@ class _StoreFormContentState extends State<StoreFormContent>
             gapH8,
             const Text('Phone number'),
             gapH8,
-
-            // * Поле номера телефона
             TextFormField(
               controller: _phoneNumberController,
               decoration: const InputDecoration(
@@ -250,11 +257,10 @@ class _StoreFormContentState extends State<StoreFormContent>
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9+()\-\s]')),
               ],
               validator: (value) =>
-                  !_submitted ? null : kzPhoneValidator(value ?? ''),
+                  !_submitted ? null : _phoneError(value ?? ''),
               autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
             gapH24,
-
             PrimaryWebButton(
               text: widget.submitText,
               onPressed: () => submit(),

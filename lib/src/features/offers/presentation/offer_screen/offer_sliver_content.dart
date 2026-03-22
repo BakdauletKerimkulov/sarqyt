@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
-import 'package:sarqyt/src/common_widgets/rating_icon.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
-import 'package:sarqyt/src/features/offers/domain/rating.dart';
-import 'package:sarqyt/src/features/offers/presentation/offer_screen/ingredients_allergens.dart';
-import 'package:sarqyt/src/features/offers/presentation/offer_screen/rating_information.dart';
-import 'package:sarqyt/src/features/products/domain/product.dart';
-import 'package:sarqyt/src/features/store/domain/store.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 class OfferSliverContent extends StatelessWidget {
   const OfferSliverContent({super.key, required this.offer});
 
   final Offer offer;
-
-  Product get product => offer.product;
-  Store get store => offer.store;
 
   @override
   Widget build(BuildContext context) {
@@ -29,26 +20,25 @@ class OfferSliverContent extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _TitleRow(offer.displayName),
-                      gapH4,
-
-                      if (product.rating != null) _RatingRow(product.rating!),
-                      gapH4,
-                      _CollectRow('Collect: 12:30 - 14:00'.hardcoded),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _TitleRow(offer.name),
+                        gapH8,
+                        _CollectRow(
+                          'Collect: ${_pickupWindowText(context)}'.hardcoded,
+                        ),
+                      ],
+                    ),
                   ),
-
-                  Spacer(),
-
                   Text(
-                    product.priceWithCurrency,
-                    style: TextStyle(
+                    '${offer.price.round()} ${offer.currencySymbol}',
+                    style: const TextStyle(
                       fontSize: Sizes.p20,
                       fontWeight: FontWeight.w600,
                       color: AppColors.primary,
@@ -56,98 +46,70 @@ class OfferSliverContent extends StatelessWidget {
                   ),
                 ],
               ),
-
               gapH12,
-
-              Divider(),
-
-              // * Адрес и информация о магазине
+              const Divider(),
               ListTile(
                 onTap: () => showNotImplementedAlertDialog(context: context),
                 contentPadding: EdgeInsets.zero,
-                leading: Icon(Icons.location_on),
+                leading: const Icon(Icons.location_on),
                 title: Text(
-                  store.addressInfo,
-                  style: TextStyle(color: AppColors.primary),
+                  offer.storeAddress ?? 'Address is not specified'.hardcoded,
+                  style: const TextStyle(color: AppColors.primary),
                 ),
                 subtitle: Text('More information about store'.hardcoded),
-                trailing: Icon(Icons.chevron_right, color: AppColors.primary),
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  color: AppColors.primary,
+                ),
               ),
-
-              Divider(),
-
-              if (product.description != null)
-                _ProductDescription(
-                  description: product.description!,
-                  category: product.category,
-                ),
-
-              IngredientsAllergens(),
-
-              Divider(),
-              gapH12,
-              if (product.rating != null)
-                RatingInformation(rating: product.rating!),
+              const Divider(),
+              gapH8,
+              Text(
+                'Status: ${offer.status}'.hardcoded,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              gapH8,
+              Text('Available items: ${offer.quantity}'.hardcoded),
               gapH16,
-
-              if (product.packagingOption != null)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Divider(),
-                    gapH12,
-                    Text(
-                      'What you need to know'.hardcoded,
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    gapH12,
-                    Text(product.packagingOption!),
-                    gapH16,
-                    Divider(),
-                  ],
-                ),
-
-              const SizedBox(height: 40.0),
+              const Divider(),
+              gapH12,
+              Text(
+                'Offer details are loaded from store and product snapshot at creation time.'
+                    .hardcoded,
+              ),
+              const SizedBox(height: 40),
             ],
           ),
         ]),
       ),
     );
   }
-}
 
-class _TitleRow extends StatelessWidget {
-  const _TitleRow(this.displayName);
-
-  final String displayName;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(Icons.shopping_bag_outlined),
-        gapW12,
-        Text(
-          displayName,
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: Sizes.p16),
-        ),
-      ],
-    );
+  String _pickupWindowText(BuildContext context) {
+    final start = TimeOfDay.fromDateTime(offer.pickupStartTime).format(context);
+    final end = TimeOfDay.fromDateTime(offer.pickupEndTime).format(context);
+    return '$start - $end';
   }
 }
 
-class _RatingRow extends StatelessWidget {
-  const _RatingRow(this.rating);
+class _TitleRow extends StatelessWidget {
+  const _TitleRow(this.title);
 
-  final Rating rating;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        RatingIcon(),
+        const Icon(Icons.shopping_bag_outlined),
         gapW12,
-        Text('${rating.average} (${rating.ratingCount})'),
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: Sizes.p16,
+          ),
+        ),
       ],
     );
   }
@@ -161,47 +123,10 @@ class _CollectRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [Icon(Icons.watch_later_outlined), gapW12, Text(collectWindow)],
-    );
-  }
-}
-
-class _ProductDescription extends StatelessWidget {
-  const _ProductDescription({required this.description, this.category});
-
-  final String description;
-  final String? category;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'What would you get',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        gapH12,
-        Text(description),
-        gapH12,
-        if (category != null)
-          Column(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Sizes.p12,
-                  vertical: Sizes.p4,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withAlpha(50),
-                  borderRadius: BorderRadius.circular(Sizes.p16),
-                ),
-                child: Text(category!),
-              ),
-              gapH12,
-            ],
-          ),
-        Divider(),
+        const Icon(Icons.watch_later_outlined),
+        gapW12,
+        Text(collectWindow),
       ],
     );
   }

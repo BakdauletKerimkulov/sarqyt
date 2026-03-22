@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:sarqyt/src/features/items/domain/money.dart';
 import 'package:sarqyt/src/features/store/domain/location.dart';
 
 part 'store.freezed.dart';
@@ -16,6 +17,7 @@ abstract class Store with _$Store {
     String? logoUrl,
     String? coverUrl,
     @Default(0) double avgRating,
+    @Default(Currency.kzt) Currency currency,
   }) = _Store;
 
   const Store._();
@@ -45,6 +47,10 @@ abstract class Store with _$Store {
       logoUrl: map['logoUrl'] as String?,
       coverUrl: map['coverUrl'] as String?,
       avgRating: (map['avgRating'] as num?)?.toDouble() ?? 0.0,
+      currency: Currency.values.firstWhere(
+        (c) => c.code == (map['currency'] as String?),
+        orElse: () => Currency.kzt,
+      ),
     );
   }
 
@@ -57,5 +63,6 @@ abstract class Store with _$Store {
     'logoUrl': logoUrl,
     'coverUrl': coverUrl,
     'avgRating': avgRating,
+    'currency': currency.code,
   };
 }

@@ -8,14 +8,13 @@ import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/offer_app_bar.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/offer_sliver_content.dart';
-import 'package:sarqyt/src/features/products/domain/product.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 
 class OfferScreen extends ConsumerWidget {
   const OfferScreen({required this.productId, super.key});
 
-  final ProductID productId;
+  final String productId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

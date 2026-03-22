@@ -10,7 +10,16 @@ class ScheduleScreenController extends _$ScheduleScreenController {
   @override
   WeeklySchedule build() {
     final draft = ref.read(itemDraftControllerProvider);
-    return draft.schedule ?? WeeklySchedule.defaultSchedule();
+    if (draft.schedule != null) return draft.schedule!;
+
+    final stock = draft.defaultDailyStock ?? 1;
+    final defaults = WeeklySchedule.defaultSchedule();
+    return WeeklySchedule({
+      for (final entry in defaults.days.entries)
+        entry.key: entry.value.copyWith(
+          quantity: entry.value.enabled ? stock : 0,
+        ),
+    });
   }
 
   void toggleDay(int day, {required bool enabled}) {

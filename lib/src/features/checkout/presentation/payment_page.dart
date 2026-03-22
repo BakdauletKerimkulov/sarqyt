@@ -8,14 +8,14 @@ import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/checkout/application/checkout_service.dart';
 import 'package:sarqyt/src/features/checkout/presentation/item_quantity_selector.dart';
+import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
-import 'package:sarqyt/src/features/products/domain/product.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 class PaymentPage extends ConsumerWidget {
   const PaymentPage({super.key, required this.productID});
 
-  final ProductID productID;
+  final ItemID productID;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final offerAsync = ref.watch(offerFutureProvider(productID));
@@ -23,6 +23,7 @@ class PaymentPage extends ConsumerWidget {
       value: offerAsync,
       data: (offer) {
         final quantity = ref.watch(offerItemsQuantityProvider);
+        final total = offer != null ? offer.price * quantity : null;
         return offer != null
             ? Padding(
                 padding: const EdgeInsets.all(Sizes.p16),
@@ -35,13 +36,13 @@ class PaymentPage extends ConsumerWidget {
                         children: [
                           CircleAvatar(
                             backgroundImage: customImageProvider(
-                              offer.store.logoUrl,
+                              offer.storeLogo,
                             ),
                             radius: 32,
                           ),
                           gapH16,
                           Text(
-                            offer.store.name,
+                            offer.storeName,
                             style: Theme.of(context).textTheme.titleLarge,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -58,10 +59,7 @@ class PaymentPage extends ConsumerWidget {
                     Text('Payment method'.toUpperCase().hardcoded),
                     // TODO: подключить платежную систему
                     gapH64,
-                    TotalWidget(
-                      productID: productID,
-                      currency: offer.product.price.code,
-                    ),
+                    TotalWidget(total: total!, currency: offer.currencySymbol),
                     gapH12,
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -78,7 +76,7 @@ class PaymentPage extends ConsumerWidget {
                       children: [
                         ItemQuantitySelector(
                           quantity: quantity,
-                          maxQuantity: offer.itemsAvailable,
+                          maxQuantity: offer.quantity,
                           onChanged: (value) => ref
                               .read(offerItemsQuantityProvider.notifier)
                               .setQuantity(value),
@@ -103,19 +101,14 @@ class PaymentPage extends ConsumerWidget {
   }
 }
 
-class TotalWidget extends ConsumerWidget {
-  const TotalWidget({
-    super.key,
-    required this.productID,
-    required this.currency,
-  });
+class TotalWidget extends StatelessWidget {
+  const TotalWidget({super.key, required this.total, required this.currency});
 
-  final ProductID productID;
+  final double total;
   final String currency;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final total = ref.watch(offerTotalProvider(productID));
+  Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme.titleMedium;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: Sizes.p16, vertical: Sizes.p8),

@@ -11,6 +11,7 @@ part of 'rating.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+
 /// @nodoc
 mixin _$Rating {
 
@@ -21,6 +22,8 @@ mixin _$Rating {
 @pragma('vm:prefer-inline')
 $RatingCopyWith<Rating> get copyWith => _$RatingCopyWithImpl<Rating>(this as Rating, _$identity);
 
+  /// Serializes this Rating to a JSON map.
+  Map<String, dynamic> toJson();
 
 
 @override
@@ -28,7 +31,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is Rating&&(identical(other.average, average) || other.average == average)&&(identical(other.ratingCount, ratingCount) || other.ratingCount == ratingCount));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,average,ratingCount);
 
@@ -204,11 +207,11 @@ return $default(_that.average,_that.ratingCount);case _:
 }
 
 /// @nodoc
-
+@JsonSerializable()
 
 class _Rating extends Rating {
   const _Rating({required this.average, required this.ratingCount}): super._();
-  
+  factory _Rating.fromJson(Map<String, dynamic> json) => _$RatingFromJson(json);
 
 @override final  double average;
 @override final  int ratingCount;
@@ -219,14 +222,17 @@ class _Rating extends Rating {
 @pragma('vm:prefer-inline')
 _$RatingCopyWith<_Rating> get copyWith => __$RatingCopyWithImpl<_Rating>(this, _$identity);
 
-
+@override
+Map<String, dynamic> toJson() {
+  return _$RatingToJson(this, );
+}
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _Rating&&(identical(other.average, average) || other.average == average)&&(identical(other.ratingCount, ratingCount) || other.ratingCount == ratingCount));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,average,ratingCount);
 

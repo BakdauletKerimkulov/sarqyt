@@ -6,7 +6,6 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_list/discover_app_bar.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_list/offer_card.dart';
-import 'package:sarqyt/src/features/products/domain/product.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 
 class DiscoverScreen extends StatefulWidget {
@@ -43,7 +42,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 class DiscoverContent extends ConsumerWidget {
   const DiscoverContent({super.key, this.onPressed});
 
-  final void Function(BuildContext, ProductID)? onPressed;
+  final void Function(BuildContext, String)? onPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,7 +56,7 @@ class DiscoverContent extends ConsumerWidget {
             final offer = offers[index];
             return OfferCard(
               offer: offer,
-              onPressed: () => onPressed?.call(context, offer.product.id),
+              onPressed: () => onPressed?.call(context, offer.productId),
             );
           },
         );

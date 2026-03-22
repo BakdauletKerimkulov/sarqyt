@@ -11,6 +11,7 @@ part of 'badge.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+
 /// @nodoc
 mixin _$Badge {
 
@@ -21,6 +22,8 @@ mixin _$Badge {
 @pragma('vm:prefer-inline')
 $BadgeCopyWith<Badge> get copyWith => _$BadgeCopyWithImpl<Badge>(this as Badge, _$identity);
 
+  /// Serializes this Badge to a JSON map.
+  Map<String, dynamic> toJson();
 
 
 @override
@@ -28,7 +31,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is Badge&&(identical(other.type, type) || other.type == type)&&(identical(other.percentage, percentage) || other.percentage == percentage)&&(identical(other.userCount, userCount) || other.userCount == userCount));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,type,percentage,userCount);
 
@@ -205,11 +208,11 @@ return $default(_that.type,_that.percentage,_that.userCount);case _:
 }
 
 /// @nodoc
-
+@JsonSerializable()
 
 class _Badge extends Badge {
   const _Badge({required this.type, this.percentage, this.userCount}): super._();
-  
+  factory _Badge.fromJson(Map<String, dynamic> json) => _$BadgeFromJson(json);
 
 @override final  BadgeType type;
 @override final  int? percentage;
@@ -221,14 +224,17 @@ class _Badge extends Badge {
 @pragma('vm:prefer-inline')
 _$BadgeCopyWith<_Badge> get copyWith => __$BadgeCopyWithImpl<_Badge>(this, _$identity);
 
-
+@override
+Map<String, dynamic> toJson() {
+  return _$BadgeToJson(this, );
+}
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _Badge&&(identical(other.type, type) || other.type == type)&&(identical(other.percentage, percentage) || other.percentage == percentage)&&(identical(other.userCount, userCount) || other.userCount == userCount));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,type,percentage,userCount);
 

@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/common_widgets/info_badge.dart';
 import 'package:sarqyt/src/common_widgets/rating_icon.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
-import 'package:sarqyt/src/features/products/domain/product.dart';
-import 'package:sarqyt/src/features/store/domain/store.dart';
-import 'package:sarqyt/src/utils/currency_formatter.dart';
 
 class OfferCard extends StatelessWidget {
-  OfferCard({super.key, this.onPressed, required this.offer})
-    : product = offer.product,
-      store = offer.store;
+  const OfferCard({super.key, this.onPressed, required this.offer});
 
   final Offer offer;
   final VoidCallback? onPressed;
-
-  final Product product;
-  final Store store;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +27,10 @@ class OfferCard extends StatelessWidget {
                     topRight: Radius.circular(Sizes.p16),
                     topLeft: Radius.circular(Sizes.p16),
                   ),
-                  child: CustomImage(imageUrl: store.coverUrl, aspectRatio: 3),
+                  child: CustomImage(
+                    imageUrl: offer.productImage,
+                    aspectRatio: 3,
+                  ),
                 ),
 
                 Positioned(
@@ -48,7 +42,10 @@ class OfferCard extends StatelessWidget {
                 Positioned(
                   left: Sizes.p12,
                   bottom: Sizes.p12,
-                  child: StoreTitle(logoUrl: store.logoUrl, name: store.name),
+                  child: StoreTitle(
+                    logoUrl: offer.storeLogo,
+                    name: offer.storeName,
+                  ),
                 ),
               ],
             ),
@@ -63,45 +60,31 @@ class OfferCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    offer.displayName,
+                    offer.name,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  // TODO: указать время забора
-                  Text('', style: TextStyle(color: Colors.grey)),
+                  Text(
+                    _pickupWindowText(context, offer),
+                    style: const TextStyle(color: Colors.grey),
+                  ),
                   gapH12,
                   Row(
                     children: [
                       RatingIcon(),
                       gapW8,
-                      if (product.rating != null)
-                        Text(
-                          product.rating!.average.toString(),
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      gapW12,
-                      SizedBox(
-                        height: Sizes.p24,
-                        child: VerticalDivider(
-                          thickness: 1.5,
-                          color: Colors.grey,
-                        ),
+                      Text(
+                        offer.status.toUpperCase(),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      gapW12,
-                      if (offer.distanceFormatter != null)
-                        Text(
-                          offer.distanceFormatter!,
-                          style: TextStyle(fontWeight: FontWeight.w500),
-                        ),
                       Spacer(),
                       Text(
-                        product.priceWithCurrency,
+                        '${offer.price.round()} ${offer.currencySymbol}',
                         style: TextStyle(
                           color: AppColors.primary,
                           fontSize: Sizes.p20,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      // OfferPrice(price: product.price.amount),
                     ],
                   ),
                 ],
@@ -114,19 +97,10 @@ class OfferCard extends StatelessWidget {
   }
 }
 
-class OfferPrice extends ConsumerWidget {
-  const OfferPrice({super.key, required this.price});
-
-  final double price;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final formatter = ref.watch(currencyFormatterProvider);
-    return Text(
-      formatter.format(price),
-      style: Theme.of(context).textTheme.bodyLarge,
-    );
-  }
+String _pickupWindowText(BuildContext context, Offer offer) {
+  final start = TimeOfDay.fromDateTime(offer.pickupStartTime).format(context);
+  final end = TimeOfDay.fromDateTime(offer.pickupEndTime).format(context);
+  return '$start - $end';
 }
 
 class StoreTitle extends StatelessWidget {

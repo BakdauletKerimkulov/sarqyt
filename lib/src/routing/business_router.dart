@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sarqyt/src/common_widgets/forbidden_page.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_business/sigin_in_business_screen.dart';
@@ -23,6 +22,7 @@ import 'package:sarqyt/src/features/onboarding/presentation/item/title_and_descr
 import 'package:sarqyt/src/features/store/data/store_ship_repository.dart';
 import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
+import 'package:sarqyt/src/routing/forbidden_page.dart';
 import 'package:sarqyt/src/routing/store_startup.dart';
 
 part 'business_router.g.dart';
