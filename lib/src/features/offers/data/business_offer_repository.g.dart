@@ -55,4 +55,90 @@ final class BusinessOfferRepositoryProvider
 }
 
 String _$businessOfferRepositoryHash() =>
-    r'8f9bd6420a24d6e3a4403212d50f9f791f93541f';
+    r'3c0305d3028b6c7e5f88a6c3a8a6ce817568946e';
+
+/// Stream of active item IDs (productId) for a given store.
+
+@ProviderFor(storeActiveOfferItemIds)
+const storeActiveOfferItemIdsProvider = StoreActiveOfferItemIdsFamily._();
+
+/// Stream of active item IDs (productId) for a given store.
+
+final class StoreActiveOfferItemIdsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Set<ItemID>>,
+          Set<ItemID>,
+          Stream<Set<ItemID>>
+        >
+    with $FutureModifier<Set<ItemID>>, $StreamProvider<Set<ItemID>> {
+  /// Stream of active item IDs (productId) for a given store.
+  const StoreActiveOfferItemIdsProvider._({
+    required StoreActiveOfferItemIdsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'storeActiveOfferItemIdsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$storeActiveOfferItemIdsHash();
+
+  @override
+  String toString() {
+    return r'storeActiveOfferItemIdsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<Set<ItemID>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<Set<ItemID>> create(Ref ref) {
+    final argument = this.argument as String;
+    return storeActiveOfferItemIds(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is StoreActiveOfferItemIdsProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$storeActiveOfferItemIdsHash() =>
+    r'cff1814d76272e84377888b33fa100066cf4e1d6';
+
+/// Stream of active item IDs (productId) for a given store.
+
+final class StoreActiveOfferItemIdsFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<Set<ItemID>>, String> {
+  const StoreActiveOfferItemIdsFamily._()
+    : super(
+        retry: null,
+        name: r'storeActiveOfferItemIdsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Stream of active item IDs (productId) for a given store.
+
+  StoreActiveOfferItemIdsProvider call(String storeId) =>
+      StoreActiveOfferItemIdsProvider._(argument: storeId, from: this);
+
+  @override
+  String toString() => r'storeActiveOfferItemIdsProvider';
+}
