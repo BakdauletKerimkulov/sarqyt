@@ -4,9 +4,16 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 class DiscoverAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const DiscoverAppBar({super.key, this.bottom});
+  const DiscoverAppBar({
+    super.key,
+    this.bottom,
+    this.onFilterPressed,
+    this.hasActiveFilters = false,
+  });
 
   final PreferredSizeWidget? bottom;
+  final VoidCallback? onFilterPressed;
+  final bool hasActiveFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +23,15 @@ class DiscoverAppBar extends StatelessWidget implements PreferredSizeWidget {
       foregroundColor: AppColors.primary,
       title: Text('Discover'.hardcoded),
       centerTitle: true,
+      actions: [
+        if (onFilterPressed != null)
+          IconButton(
+            icon: Icon(
+              hasActiveFilters ? Icons.filter_alt : Icons.filter_alt_outlined,
+            ),
+            onPressed: onFilterPressed,
+          ),
+      ],
       bottom: bottom,
     );
   }

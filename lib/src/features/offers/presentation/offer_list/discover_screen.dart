@@ -14,6 +14,7 @@ import 'package:sarqyt/src/features/offers/application/discover_filter.dart';
 import 'package:sarqyt/src/features/offers/application/offers_with_distance.dart';
 import 'package:sarqyt/src/features/offers/data/favorites_repository.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_list/discover_app_bar.dart';
+import 'package:sarqyt/src/features/offers/presentation/offer_list/filter_bottom_sheet.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_list/offer_card.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
@@ -32,6 +33,15 @@ class DiscoverScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: DiscoverAppBar(
           bottom: offersAsync.value != null ? ListMapToggleWidget() : null,
+          hasActiveFilters: hasActiveFilters(filter),
+          onFilterPressed: () => showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.white,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            builder: (_) => const FilterBottomSheet(),
+          ),
         ),
         body: AsyncValueWidget(
           value: offersAsync,
@@ -44,84 +54,16 @@ class DiscoverScreen extends ConsumerWidget {
               return Center(child: Text('No offers found'.hardcoded));
             }
 
-            return Column(
+            return TabBarView(
               children: [
-                // Filter chips
-                _FilterBar(filter: filter, ref: ref),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      _OfferList(offers: filtered, favIds: favIds, ref: ref),
-                      DiscoverMapContent(
-                        offers: filtered.map((o) => o.offer).toList(),
-                      ),
-                    ],
-                  ),
+                _OfferList(offers: filtered, favIds: favIds, ref: ref),
+                DiscoverMapContent(
+                  offers: filtered.map((o) => o.offer).toList(),
                 ),
               ],
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class _FilterBar extends StatelessWidget {
-  const _FilterBar({required this.filter, required this.ref});
-
-  final DiscoverFilter filter;
-  final WidgetRef ref;
-
-  @override
-  Widget build(BuildContext context) {
-    final ctrl = ref.read(discoverFilterControllerProvider.notifier);
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(
-        horizontal: Sizes.p12,
-        vertical: Sizes.p8,
-      ),
-      child: Row(
-        children: [
-          // Favorites
-          FilterChip(
-            label: const Icon(Icons.favorite, size: 16),
-            selected: filter.favoritesOnly,
-            onSelected: (_) => ctrl.toggleFavoritesOnly(),
-            showCheckmark: false,
-          ),
-          const SizedBox(width: 8),
-
-          // Pickup time
-          ...PickupTimeFilter.values.map((t) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: ChoiceChip(
-                  label: Text(switch (t) {
-                    PickupTimeFilter.all => 'All'.hardcoded,
-                    PickupTimeFilter.today => 'Today'.hardcoded,
-                    PickupTimeFilter.tomorrow => 'Tomorrow'.hardcoded,
-                  }),
-                  selected: filter.pickupTime == t,
-                  onSelected: (_) => ctrl.setPickupTime(t),
-                ),
-              )),
-
-          // Sort
-          ...SortBy.values.map((s) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: ChoiceChip(
-                  label: Text(switch (s) {
-                    SortBy.distance => 'Nearest'.hardcoded,
-                    SortBy.price => 'Cheapest'.hardcoded,
-                    SortBy.time => 'Soonest'.hardcoded,
-                  }),
-                  selected: filter.sortBy == s,
-                  onSelected: (_) => ctrl.setSortBy(s),
-                ),
-              )),
-        ],
       ),
     );
   }
