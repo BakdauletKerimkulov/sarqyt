@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/app_bootstrap.dart';
 import 'package:sarqyt/src/exceptions/async_error_logger.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
+import 'package:sarqyt/src/features/onboarding/data/client_onboarding_repository.dart';
 
 extension AppBootstrapFirebase on AppBootstrap {
   /// Creates the top-level [ProviderContainer] by overriding providers with fake
@@ -30,10 +31,13 @@ extension AppBootstrapFirebase on AppBootstrap {
     bool addDelay = true,
   }) async {
     final offeRepo = ClientOfferRepository(FirebaseFirestore.instance);
-    return ProviderContainer(
+    final container = ProviderContainer(
       overrides: [offerRepositoryProvider.overrideWithValue(offeRepo)],
       observers: [AsyncErrorLogger()],
     );
+    // Pre-load onboarding repository so redirect can read it synchronously
+    await container.read(clientOnboardingRepositoryProvider.future);
+    return container;
   }
 
   Future<void> setupEmulators() async {

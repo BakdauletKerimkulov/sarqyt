@@ -8,6 +8,7 @@ import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_passw
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_screen.dart';
 import 'package:sarqyt/src/features/checkout/presentation/checkout_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_list/discover_screen.dart';
+import 'package:sarqyt/src/features/onboarding/data/client_onboarding_repository.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/client/welcome_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/offer_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/store_info.dart';
@@ -82,12 +83,15 @@ GoRouter clientRouter(Ref ref) {
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/',
     debugLogDiagnostics: true,
-    redirect: (context, state) async {
+    redirect: (context, state) {
       final path = state.uri.path;
 
-      // Show welcome screen for first-time users
-      if (path == '/' && !await hasSeenWelcome()) {
-        return '/welcome';
+      // Show welcome screen for first-time users (sync via .requireValue)
+      final onboardingRepo =
+          ref.read(clientOnboardingRepositoryProvider).requireValue;
+      if (!onboardingRepo.isOnboardingComplete()) {
+        if (path != '/welcome') return '/welcome';
+        return null;
       }
 
       final user = authRepository.currentUser;
@@ -103,11 +107,8 @@ GoRouter clientRouter(Ref ref) {
         path: '/welcome',
         name: ClientRoute.welcome.name,
         parentNavigatorKey: _rootNavigatorKey,
-        pageBuilder: (context, state) => MaterialPage(
-          fullscreenDialog: true,
-          child: WelcomeScreen(
-            onComplete: () => GoRouter.of(context).go('/'),
-          ),
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: WelcomeScreen(),
         ),
       ),
       GoRoute(

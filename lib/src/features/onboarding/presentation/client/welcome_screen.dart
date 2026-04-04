@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/client/welcome_controller.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sarqyt/src/routing/client_router.dart';
+import 'package:sarqyt/src/utils/async_value_ui.dart';
 
-class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key, required this.onComplete});
-
-  final VoidCallback onComplete;
+class WelcomeScreen extends ConsumerStatefulWidget {
+  const WelcomeScreen({super.key});
 
   @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
+  ConsumerState<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
   final _controller = PageController();
   int _currentPage = 0;
 
@@ -45,13 +47,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<void> _complete() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasSeenWelcome', true);
-    widget.onComplete();
+    await ref.read(welcomeControllerProvider.notifier).completeOnboarding();
+    if (mounted) {
+      context.goNamed(ClientRoute.home.name);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(welcomeControllerProvider);
+
+    ref.listen(welcomeControllerProvider, (_, state) {
+      state.showAlertDialogOnError(context);
+    });
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -63,8 +72,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 children: _pages,
               ),
             ),
-
-            // Dots
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
@@ -83,8 +90,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ),
             gapH32,
-
-            // Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Sizes.p24),
               child: SizedBox(
@@ -98,31 +103,39 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       borderRadius: BorderRadius.circular(Sizes.p16),
                     ),
                   ),
-                  onPressed: _currentPage == _pages.length - 1
-                      ? _complete
-                      : () => _controller.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
+                  onPressed: state.isLoading
+                      ? null
+                      : _currentPage == _pages.length - 1
+                          ? _complete
+                          : () => _controller.nextPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              ),
+                  child: state.isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
                           ),
-                  child: Text(
-                    _currentPage == _pages.length - 1
-                        ? 'Get started'.hardcoded
-                        : 'Next'.hardcoded,
-                    style: const TextStyle(fontSize: 16),
-                  ),
+                        )
+                      : Text(
+                          _currentPage == _pages.length - 1
+                              ? 'Get started'.hardcoded
+                              : 'Next'.hardcoded,
+                          style: const TextStyle(fontSize: 16),
+                        ),
                 ),
               ),
             ),
-
-            // Skip
             if (_currentPage < _pages.length - 1)
               TextButton(
-                onPressed: _complete,
+                onPressed: state.isLoading ? null : _complete,
                 child: Text('Skip'.hardcoded),
               )
             else
               gapH48,
-
             gapH16,
           ],
         ),
@@ -171,10 +184,4 @@ class _WelcomePage extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Check if user has seen welcome screen
-Future<bool> hasSeenWelcome() async {
-  final prefs = await SharedPreferences.getInstance();
-  return prefs.getBool('hasSeenWelcome') ?? false;
 }
