@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,14 +24,16 @@ class AppBootstrap {
   }
 
   void registerErrorHandler(ErrorLogger errorLogger) {
-    // * Show some error UI if any uncaught exception happens
+    // * Send Flutter errors to Crashlytics
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.presentError(details);
       errorLogger.logError(details.exception, details.stack);
+      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
     };
     // * Handle errors from the underlying platform/OS
     PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
       errorLogger.logError(error, stack);
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
 

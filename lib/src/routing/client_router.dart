@@ -8,6 +8,7 @@ import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_passw
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_screen.dart';
 import 'package:sarqyt/src/features/checkout/presentation/checkout_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_list/discover_screen.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/client/welcome_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/offer_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/store_info.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_detail_screen.dart';
@@ -25,6 +26,7 @@ final _ordersNavigatorKey = GlobalKey<NavigatorState>();
 final _profileNavigatorKey = GlobalKey<NavigatorState>();
 
 enum ClientRoute {
+  welcome,
   home,
   signIn,
   offer,
@@ -80,11 +82,16 @@ GoRouter clientRouter(Ref ref) {
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/',
     debugLogDiagnostics: true,
-    redirect: (context, state) {
-      final user = authRepository.currentUser;
-      final isLoggedIn = user != null;
+    redirect: (context, state) async {
       final path = state.uri.path;
-      if (isLoggedIn && path == '/signIn') {
+
+      // Show welcome screen for first-time users
+      if (path == '/' && !await hasSeenWelcome()) {
+        return '/welcome';
+      }
+
+      final user = authRepository.currentUser;
+      if (user != null && path == '/signIn') {
         return '/';
       }
       return null;
@@ -92,6 +99,17 @@ GoRouter clientRouter(Ref ref) {
     refreshListenable: GoRouterRefreshStream(authRepository.authStateChanges()),
     routes: [
       // Full-screen routes outside shell
+      GoRoute(
+        path: '/welcome',
+        name: ClientRoute.welcome.name,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) => MaterialPage(
+          fullscreenDialog: true,
+          child: WelcomeScreen(
+            onComplete: () => GoRouter.of(context).go('/'),
+          ),
+        ),
+      ),
       GoRoute(
         path: '/signIn',
         name: ClientRoute.signIn.name,

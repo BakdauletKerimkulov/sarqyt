@@ -4,6 +4,7 @@ import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/common_widgets/info_badge.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
+import 'package:share_plus/share_plus.dart';
 
 class OfferSliverAppBar extends ConsumerWidget {
   const OfferSliverAppBar(this.offer, {super.key});
@@ -18,6 +19,18 @@ class OfferSliverAppBar extends ConsumerWidget {
       pinned: true,
       expandedHeight: _expandedHeight,
       stretch: true,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.share),
+          onPressed: () => SharePlus.instance.share(
+            ShareParams(
+              text: '${offer.storeName} — ${offer.name}\n'
+                  '${offer.price.round()} ${offer.currencySymbol}\n'
+                  'https://sarqyt.com/offer/${offer.id}',
+            ),
+          ),
+        ),
+      ],
       flexibleSpace: LayoutBuilder(
         builder: (context, c) {
           final settings = context
