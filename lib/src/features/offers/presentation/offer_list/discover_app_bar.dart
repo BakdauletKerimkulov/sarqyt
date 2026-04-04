@@ -1,64 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
+import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 class DiscoverAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const DiscoverAppBar({super.key});
+  const DiscoverAppBar({super.key, this.bottom});
+
+  final PreferredSizeWidget? bottom;
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Сделать аппбар с указанием геолокации
+    // Сделать кнопку с фильтром
     return AppBar(
+      backgroundColor: Colors.white,
+      foregroundColor: AppColors.primary,
       title: Text('Discover'.hardcoded),
       centerTitle: true,
-      actions: [
-        IconButton(
-          onPressed: () => showNotImplementedAlertDialog(context: context),
-          icon: Icon(Icons.location_on),
-        ),
-      ],
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(kTextTabBarHeight),
-        child: MyTabBar(),
-      ),
+      bottom: bottom,
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 44);
+  Size get preferredSize {
+    final bottomHeight = bottom?.preferredSize.height ?? 0.0;
+    return Size.fromHeight(kToolbarHeight + bottomHeight);
+  }
 }
 
-class MyTabBar extends StatelessWidget {
-  const MyTabBar({super.key});
+enum ListMapToggle { list, map }
+
+class ListMapToggleWidget extends StatelessWidget
+    implements PreferredSizeWidget {
+  const ListMapToggleWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: Sizes.p40,
-      margin: const EdgeInsets.symmetric(
-        horizontal: Sizes.p16,
-        vertical: Sizes.p4,
+    final radius = BorderRadius.circular(Sizes.p12);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: Sizes.p16,
+        horizontal: Sizes.p32,
       ),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(Sizes.p16),
-      ),
-      child: TabBar(
-        indicatorSize: TabBarIndicatorSize.tab,
-        dividerColor: Colors.transparent,
-        indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(Sizes.p16),
-          color: Colors.blueAccent,
+      child: Material(
+        color: Colors.grey.shade300,
+        borderRadius: radius,
+        clipBehavior: Clip.antiAlias,
+        child: SizedBox(
+          height: Sizes.p40,
+          child: TabBar(
+            splashBorderRadius: radius,
+            overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+            indicatorSize: TabBarIndicatorSize.tab,
+            dividerColor: Colors.transparent,
+            indicator: BoxDecoration(
+              borderRadius: radius,
+              color: AppColors.primary,
+            ),
+            tabs: ListMapToggle.values.map((c) => Tab(text: c.name)).toList(),
+          ),
         ),
-        tabs: [
-          Tab(text: 'List'),
-          Tab(text: 'Map'),
-        ],
       ),
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(30.0);
+  Size get preferredSize => Size.fromHeight(Sizes.p40 + Sizes.p16 * 2);
 }

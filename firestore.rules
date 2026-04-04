@@ -1,0 +1,122 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.role == 'admin';
+    }
+
+    function isPartner() {
+      return isSignedIn() && request.auth.token.role == 'partner';
+    }
+
+    function canCreateStore() {
+      return isAdmin() || (
+        isPartner() &&
+        request.auth.token.canCreateStore == true
+      );
+    }
+
+    function storeExists(storeId) {
+      return exists(/databases/$(database)/documents/stores/$(storeId));
+    }
+
+    function storeDoc(storeId) {
+      return get(/databases/$(database)/documents/stores/$(storeId));
+    }
+
+    function isStoreOwner(storeId) {
+      return isSignedIn() &&
+        storeExists(storeId) &&
+        request.auth.uid == storeDoc(storeId).data.ownerId;
+    }
+
+    function isStoreStaff(storeId) {
+      return isSignedIn() &&
+        storeExists(storeId) &&
+        storeDoc(storeId).data.staffIds is list &&
+        request.auth.uid in storeDoc(storeId).data.staffIds;
+    }
+
+    match /storeDrafts/{draftId} {
+      allow read: if isSignedIn() && request.auth.uid == resource.data.userId || isAdmin();
+
+      allow create: if isSignedIn();
+    }
+
+    match /stores/{storeId} {
+      allow read: if isSignedIn();
+
+      allow create: if canCreateStore();
+
+      allow update, delete: if isAdmin() || isStoreOwner(storeId);
+
+      match /items/{itemsId} {
+        allow read: if isSignedIn();
+
+        allow create, update, delete: if
+          isAdmin() || isStoreOwner(storeId) 
+          // || isStoreStaff(storeId);
+      }
+    }
+
+    match /storeShips/{shipId} {
+      allow read: if
+        isAdmin() ||
+        (isSignedIn() && request.auth.uid == resource.data.userId) ||
+        (isSignedIn() && resource.data.storeId is string && isStoreOwner(resource.data.storeId));
+
+      allow create: if false;
+      allow delete: if false;
+
+      // Allow the storeShip owner to update only onboardingStatus.
+      allow update: if
+        isSignedIn() &&
+        request.auth.uid == resource.data.userId &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['onboardingStatus']);
+    }
+
+    match /businesses/{businessId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.ownerId || isAdmin()
+    }
+
+    match /offers/{offerId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /users/{uid} {
+      allow read, write: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
+
+      match /favorites/{storeId} {
+        allow read, write: if isSignedIn() && request.auth.uid == uid;
+      }
+    }
+
+    match /reviews/{id} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+    }
+
+    match /reservations/{id} {
+      allow read: if isSignedIn() && request.auth.uid == resource.data.customerId;
+      allow create, update, delete: if false; // Server-only via Cloud Functions
+    }
+
+    match /orders/{id} {
+      allow read: if isAdmin() ||
+        (isSignedIn() && request.auth.uid == resource.data.customerId) ||
+        (isSignedIn() && resource.data.storeId is string && isStoreOwner(resource.data.storeId)) ||
+        (isSignedIn() && resource.data.storeId is string && isStoreStaff(resource.data.storeId));
+      allow write: if isAdmin() ||
+        (isSignedIn() && resource.data.storeId is string && isStoreOwner(resource.data.storeId)) ||
+        (isSignedIn() && resource.data.storeId is string && isStoreStaff(resource.data.storeId));
+    }
+
+  }
+}

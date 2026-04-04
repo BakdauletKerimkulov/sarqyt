@@ -9,8 +9,16 @@ class UserMetadataRepository {
   final FirebaseFirestore _firestore;
 
   Stream<DateTime?> watchUserMetadata(UserID uid) {
-    // TODO: реализовать логику
-    return Stream.value(null);
+    final ref = _firestore.doc('users/$uid');
+    return ref.snapshots().map((snapshot) {
+      final data = snapshot.data();
+      final refreshTime = data?['refreshTime'];
+      if (refreshTime is Timestamp) {
+        return refreshTime.toDate();
+      } else {
+        return null;
+      }
+    });
   }
 }
 

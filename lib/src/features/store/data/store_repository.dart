@@ -3,7 +3,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
-import 'package:sarqyt/src/features/store/domain/store_draft.dart';
 
 part 'store_repository.g.dart';
 
@@ -13,18 +12,6 @@ class StoreRepository {
 
   static String storesPath() => 'stores';
   static String storePath(String id) => 'stores/$id';
-
-  Future<void> createStore({
-    required UserID ownerId,
-    required StoreDraft store,
-  }) {
-    final docRef = _firestore.collection(storesPath()).doc();
-
-    return docRef.set(
-      store.toFirestore(ownerId: ownerId, storeId: docRef.id),
-      SetOptions(merge: true),
-    );
-  }
 
   Future<void> deleteStore(StoreID id) {
     return _firestore.doc(storePath(id)).delete();

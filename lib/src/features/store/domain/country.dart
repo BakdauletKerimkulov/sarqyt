@@ -18,3 +18,10 @@ abstract class CountryD with _$CountryD {
 
   Map<String, dynamic> toMap() => {'isoCode': isoCode, 'name': name};
 }
+
+const countryList = [
+  CountryD(isoCode: 'KZ', name: 'Kazakhstan'),
+  CountryD(isoCode: 'RU', name: 'Russia'),
+  CountryD(isoCode: 'UZ', name: 'Uzbekistan'),
+  CountryD(isoCode: 'KG', name: 'Kyrgyzstan'),
+];

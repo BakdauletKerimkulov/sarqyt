@@ -1,6 +1,6 @@
 typedef UserID = String;
 
-enum UserRole { owner, employee, user, guest }
+enum UserRole { admin, partner, customer, guest }
 
 /// Simple class representing the user UID and email.
 class AppUser {
@@ -22,7 +22,7 @@ class AppUser {
   }
 
   Future<UserRole> getRole() async {
-    return UserRole.user;
+    return UserRole.partner;
   }
 
   Future<bool> isAdmin() {

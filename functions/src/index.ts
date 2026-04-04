@@ -1,9 +1,30 @@
-// Импорты
 import * as admin from "firebase-admin";
 
-// Инициализация админ-панели (чтобы сервер мог писать в базу)
 admin.initializeApp();
 
-export { registerBusiness } from "./register_business";
+// Merchant onboarding
+export { completeMerchantOnboarding } from "./features/merchant-onboarding/functions/complete-merchant-onboarding";
+export { fakeVerifyBusiness } from "./features/merchant-onboarding/functions/fake-verify-business";
+export { skipOptionalOnboarding } from "./features/merchant-onboarding/functions/skip-optional-onboarding";
+export { startMerchantOnboardingData } from "./features/merchant-onboarding/functions/start-merchant-onboarding";
 
-export { createOffer } from "./create_offer";
+// Offers
+export { sincItemOffers } from "./features/offers/functions/sinc_item_offers";
+export { dailySyncOffers } from "./features/offers/functions/daily-sync-offers";
+export { createOneTimeOffer } from "./features/offers/functions/create-one-time-offer";
+export { onItemStatusChanged } from "./features/offers/functions/on-item-status-changed";
+export { cleanupOldData } from "./features/offers/functions/cleanup-old-offers";
+
+// Reservations & Payments
+export { createReservation } from "./features/reservations/functions/create-reservation";
+export { stripeWebhook } from "./features/reservations/functions/stripe-webhook";
+export { expireReservations } from "./features/reservations/functions/expire-reservations";
+
+// Orders
+export { expireOrders } from "./features/orders/functions/expire-orders";
+export { cancelOrder } from "./features/orders/functions/cancel-order";
+export { updateOrderStatus } from "./features/orders/functions/update-order-status";
+export { onOrderStatusChanged } from "./features/orders/functions/on-order-status-changed";
+
+// Triggers
+export { onOrderCreated } from "./features/triggers/orders";

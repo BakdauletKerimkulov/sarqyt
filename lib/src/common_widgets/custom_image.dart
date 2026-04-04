@@ -11,11 +11,11 @@ class CustomImage extends StatelessWidget {
     super.key,
     required this.imageUrl,
     this.aspectRatio = 1,
-    this.fit,
+    this.fit = BoxFit.cover,
   });
   final String? imageUrl;
   final double aspectRatio;
-  final BoxFit? fit;
+  final BoxFit fit;
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +26,14 @@ class CustomImage extends StatelessWidget {
     return AspectRatio(
       aspectRatio: aspectRatio,
       child: imageUrl == null
-          ? const Placeholder()
+          ? Image.asset('assets/icons/food-placeholder.png', fit: fit)
           : imageUrl.startsWith('http')
-          ? CachedNetworkImage(imageUrl: localhostFriendlyImageUrl(imageUrl))
-          : Image.asset(imageUrl, fit: fit ?? BoxFit.cover),
+          ? CachedNetworkImage(
+              imageUrl: localhostFriendlyImageUrl(imageUrl),
+              width: double.infinity,
+              fit: fit,
+            )
+          : Image.asset(imageUrl, fit: fit, width: double.infinity),
     );
   }
 

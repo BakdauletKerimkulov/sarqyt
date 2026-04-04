@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'badge.freezed.dart';
+part 'badge.g.dart';
 
 enum BadgeType { popular, topRated, newItem, trending, eco, special }
 
@@ -13,6 +14,8 @@ abstract class Badge with _$Badge {
   }) = _Badge;
 
   const Badge._();
+
+  factory Badge.fromJson(Map<String, dynamic> json) => _$BadgeFromJson(json);
 
   factory Badge.fromMap(Map<String, dynamic> map) {
     return Badge(

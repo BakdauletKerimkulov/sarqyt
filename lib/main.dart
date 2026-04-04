@@ -11,7 +11,7 @@ void main() async {
 
   final appBootStrap = AppBootstrap();
   //! Uncomment this to connect to the Firebase emulators
-  await appBootStrap.setupEmulators();
+  //await appBootStrap.setupEmulators();
   final container = await appBootStrap.createFirebaseProviderContainer();
   final root = appBootStrap.createRootWidget(
     container: container,

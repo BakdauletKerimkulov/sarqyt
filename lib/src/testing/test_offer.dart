@@ -1,0 +1,88 @@
+// Список Offers
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sarqyt/src/features/offers/domain/offer.dart';
+import 'package:sarqyt/src/testing/test_items.dart';
+import 'package:sarqyt/src/testing/test_store.dart';
+
+final _now = DateTime.now();
+
+final kTestOffers = [
+  Offer(
+    id: '1',
+    storeId: kTestStores[0].id,
+    productId: kTestItems[0].id,
+    quantity: 10,
+    name: kTestItems[0].name,
+    price: kTestItems[0].price,
+    currencyCode: 'KZT',
+    currencySymbol: '₸',
+    estimatedValue: kTestItems[0].estimatedValue,
+    storeName: kTestStores[0].name,
+    geohash: kTestStores[0].location.geohash,
+    geopoint: GeoPoint(
+      kTestStores[0].location.location.latitude,
+      kTestStores[0].location.location.longitude,
+    ),
+    visibleFrom: _now.subtract(const Duration(days: 1)),
+    storeLogo: kTestStores[0].logoUrl,
+    storeAddress: kTestStores[0].addressInfo,
+    productImage: kTestItems[0].imageUrl,
+    pickupStartTime: _now.add(const Duration(hours: 2)),
+    pickupEndTime: _now.add(const Duration(hours: 4)),
+    createdAt: _now,
+    createdBy: 'test-user-1',
+    status: OfferStatus.active,
+  ),
+  Offer(
+    id: '2',
+    storeId: kTestStores[1].id,
+    productId: kTestItems[1].id,
+    quantity: 0,
+    name: kTestItems[1].name,
+    price: kTestItems[1].price,
+    currencyCode: 'KZT',
+    currencySymbol: '₸',
+    estimatedValue: kTestItems[1].estimatedValue,
+    storeName: kTestStores[1].name,
+    geohash: kTestStores[1].location.geohash,
+    geopoint: GeoPoint(
+      kTestStores[1].location.location.latitude,
+      kTestStores[1].location.location.longitude,
+    ),
+    visibleFrom: _now.subtract(const Duration(hours: 1)),
+    storeLogo: kTestStores[1].logoUrl,
+    storeAddress: kTestStores[1].addressInfo,
+    productImage: kTestItems[1].imageUrl,
+    pickupStartTime: _now.add(const Duration(hours: 3)),
+    pickupEndTime: _now.add(const Duration(hours: 5)),
+    createdAt: _now,
+    createdBy: 'test-user-1',
+    status: OfferStatus.paused,
+  ),
+  Offer(
+    id: '3',
+    storeId: kTestStores[2].id,
+    productId: kTestItems[2].id,
+    quantity: 5,
+    name: kTestItems[2].name,
+    price: kTestItems[2].price,
+    currencyCode: 'KZT',
+    currencySymbol: '₸',
+    estimatedValue: kTestItems[2].estimatedValue,
+    storeName: kTestStores[2].name,
+    geohash: kTestStores[2].location.geohash,
+    geopoint: GeoPoint(
+      kTestStores[2].location.location.latitude,
+      kTestStores[2].location.location.longitude,
+    ),
+    visibleFrom: _now.subtract(const Duration(days: 2)),
+    storeLogo: kTestStores[2].logoUrl,
+    storeAddress: kTestStores[2].addressInfo,
+    productImage: kTestItems[2].imageUrl,
+    pickupStartTime: _now.add(const Duration(hours: 1)),
+    pickupEndTime: _now.add(const Duration(hours: 2)),
+    createdAt: _now,
+    createdBy: 'test-user-2',
+    status: OfferStatus.active,
+  ),
+];

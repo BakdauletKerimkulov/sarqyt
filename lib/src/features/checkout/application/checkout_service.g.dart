@@ -13,8 +13,8 @@ part of 'checkout_service.dart';
 const offerTotalProvider = OfferTotalFamily._();
 
 final class OfferTotalProvider
-    extends $FunctionalProvider<double, double, double>
-    with $Provider<double> {
+    extends $FunctionalProvider<AsyncValue<double>, double, FutureOr<double>>
+    with $FutureModifier<double>, $FutureProvider<double> {
   const OfferTotalProvider._({
     required OfferTotalFamily super.from,
     required String super.argument,
@@ -38,21 +38,13 @@ final class OfferTotalProvider
 
   @$internal
   @override
-  $ProviderElement<double> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $FutureProviderElement<double> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  double create(Ref ref) {
+  FutureOr<double> create(Ref ref) {
     final argument = this.argument as String;
     return offerTotal(ref, argument);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(double value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<double>(value),
-    );
   }
 
   @override
@@ -66,10 +58,10 @@ final class OfferTotalProvider
   }
 }
 
-String _$offerTotalHash() => r'908214e2d67a8da3464ff5562e190201169b52b8';
+String _$offerTotalHash() => r'd17892dbdaa88fe5702027ff830fcbfa58a875c0';
 
 final class OfferTotalFamily extends $Family
-    with $FunctionalFamilyOverride<double, String> {
+    with $FunctionalFamilyOverride<FutureOr<double>, String> {
   const OfferTotalFamily._()
     : super(
         retry: null,
@@ -133,6 +125,52 @@ abstract class _$OfferItemsQuantity extends $Notifier<int> {
             as $ClassProviderElement<
               AnyNotifier<int, int>,
               int,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(CheckoutController)
+const checkoutControllerProvider = CheckoutControllerProvider._();
+
+final class CheckoutControllerProvider
+    extends $AsyncNotifierProvider<CheckoutController, CheckoutResult?> {
+  const CheckoutControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'checkoutControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$checkoutControllerHash();
+
+  @$internal
+  @override
+  CheckoutController create() => CheckoutController();
+}
+
+String _$checkoutControllerHash() =>
+    r'3c62a0943dde49548312b3a39cfe1ecc9a106c9f';
+
+abstract class _$CheckoutController extends $AsyncNotifier<CheckoutResult?> {
+  FutureOr<CheckoutResult?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<CheckoutResult?>, CheckoutResult?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<CheckoutResult?>, CheckoutResult?>,
+              AsyncValue<CheckoutResult?>,
               Object?,
               Object?
             >;

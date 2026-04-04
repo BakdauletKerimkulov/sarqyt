@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/common_widgets/info_badge.dart';
 import 'package:sarqyt/src/common_widgets/rating_icon.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
-import 'package:sarqyt/src/features/products/domain/product.dart';
-import 'package:sarqyt/src/features/store/domain/store.dart';
-import 'package:sarqyt/src/utils/currency_formatter.dart';
 
 class OfferCard extends StatelessWidget {
-  OfferCard({super.key, this.onPressed, required this.offer})
-    : product = offer.product,
-      store = offer.store;
+  const OfferCard({
+    super.key,
+    this.onPressed,
+    required this.offer,
+    this.distanceLabel,
+    this.onFavoriteToggle,
+    this.isFavorite = false,
+  });
 
   final Offer offer;
   final VoidCallback? onPressed;
-
-  final Product product;
-  final Store store;
+  final String? distanceLabel;
+  final VoidCallback? onFavoriteToggle;
+  final bool isFavorite;
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      clipBehavior: Clip.antiAlias,
+      elevation: 4.0,
       child: InkWell(
         onTap: onPressed,
         child: Column(
@@ -31,24 +34,44 @@ class OfferCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadiusGeometry.only(
-                    topRight: Radius.circular(Sizes.p16),
-                    topLeft: Radius.circular(Sizes.p16),
-                  ),
-                  child: CustomImage(imageUrl: store.coverUrl, aspectRatio: 3),
-                ),
+                CustomImage(imageUrl: offer.productImage, aspectRatio: 3),
 
                 Positioned(
                   left: Sizes.p12,
                   top: Sizes.p12,
-                  child: InfoBadge(text: offer.availableText),
+                  child: Row(
+                    children: [
+                      InfoBadge(text: offer.availableText),
+                      if (distanceLabel != null && distanceLabel!.isNotEmpty) ...[
+                        const SizedBox(width: 6),
+                        InfoBadge(text: distanceLabel!),
+                      ],
+                    ],
+                  ),
+                ),
+                Positioned(
+                  right: Sizes.p12,
+                  top: Sizes.p12,
+                  child: GestureDetector(
+                    onTap: onFavoriteToggle,
+                    child: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: isFavorite ? Colors.red : Colors.white,
+                      size: 28,
+                      shadows: const [
+                        Shadow(blurRadius: 4, color: Colors.black45),
+                      ],
+                    ),
+                  ),
                 ),
 
                 Positioned(
                   left: Sizes.p12,
                   bottom: Sizes.p12,
-                  child: StoreTitle(logoUrl: store.logoUrl, name: store.name),
+                  child: StoreTitle(
+                    logoUrl: offer.storeLogo,
+                    name: offer.storeName,
+                  ),
                 ),
               ],
             ),
@@ -63,45 +86,31 @@ class OfferCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    offer.displayName,
+                    offer.name,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  // TODO: указать время забора
-                  Text('', style: TextStyle(color: Colors.grey)),
+                  Text(
+                    offer.pickupLabel,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
                   gapH12,
                   Row(
                     children: [
                       RatingIcon(),
                       gapW8,
-                      if (product.rating != null)
-                        Text(
-                          product.rating!.average.toString(),
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      gapW12,
-                      SizedBox(
-                        height: Sizes.p24,
-                        child: VerticalDivider(
-                          thickness: 1.5,
-                          color: Colors.grey,
-                        ),
+                      Text(
+                        offer.status.label(),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      gapW12,
-                      if (offer.distanceFormatter != null)
-                        Text(
-                          offer.distanceFormatter!,
-                          style: TextStyle(fontWeight: FontWeight.w500),
-                        ),
                       Spacer(),
                       Text(
-                        product.priceWithCurrency,
+                        '${offer.price.round()} ${offer.currencySymbol}',
                         style: TextStyle(
                           color: AppColors.primary,
                           fontSize: Sizes.p20,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      // OfferPrice(price: product.price.amount),
                     ],
                   ),
                 ],
@@ -110,21 +119,6 @@ class OfferCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class OfferPrice extends ConsumerWidget {
-  const OfferPrice({super.key, required this.price});
-
-  final double price;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final formatter = ref.watch(currencyFormatterProvider);
-    return Text(
-      formatter.format(price),
-      style: Theme.of(context).textTheme.bodyLarge,
     );
   }
 }

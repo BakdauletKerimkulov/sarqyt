@@ -2,8 +2,6 @@ import 'package:sarqyt/src/exceptions/app_exception.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
 import 'package:sarqyt/src/features/auth/domain/fake_app_user.dart';
-import 'package:sarqyt/src/features/store/domain/country.dart';
-import 'package:sarqyt/src/features/store/domain/store_type.dart';
 import 'package:sarqyt/src/utils/delay.dart';
 import 'package:sarqyt/src/utils/in_memory_store.dart';
 
@@ -86,37 +84,8 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Stream<AppUser?> userChanges() {
-    // TODO: implement userChanges
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> registerBusiness({
-    required String email,
-    required String password,
-    required String name,
-    required String address,
-    required String locality,
-    required List<double> location,
-    required CountryD country,
-    required StoreType storeType,
-    required String phoneNumber,
-    required String postalCode,
-  }) {
-    // TODO: implement registerBusiness
-    throw UnimplementedError();
-  }
-
-  @override
   Stream<AppUser?> idTokenChanges() {
     // TODO: implement idTokenChanges
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String?> abc() {
-    // TODO: implement abc
     throw UnimplementedError();
   }
 }

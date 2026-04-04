@@ -59,9 +59,9 @@ class FirebaseAppUser implements AppUser {
     final role = token.claims?['role'];
 
     return switch (role) {
-      'owner' => UserRole.owner,
-      'employee' => UserRole.employee,
-      'user' => UserRole.user,
+      'admin' => UserRole.admin,
+      'partner' => UserRole.partner,
+      'customer' => UserRole.customer,
       _ => UserRole.guest,
     };
   }

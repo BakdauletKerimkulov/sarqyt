@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' show GeoPoint;
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:sarqyt/src/features/auth/domain/app_user.dart';
-import 'package:sarqyt/src/features/store/domain/address.dart';
 import 'package:sarqyt/src/features/store/domain/country.dart';
-import 'package:sarqyt/src/features/store/domain/location.dart';
 import 'package:sarqyt/src/features/store/domain/store_type.dart';
 
 part 'store_draft.freezed.dart';
@@ -35,30 +33,21 @@ extension StoreDraftX on StoreDraft {
         : 'No info';
   }
 
-  Map<String, dynamic> toFirestore({
-    required UserID ownerId,
-    required String storeId,
-  }) {
-    final storeMap = {
-      'ownerId': ownerId,
-      'storeId': storeId,
-      'rating': 0,
+  /// Serialises the draft to a plain JSON map matching [StoreDraftRequestDto]
+  /// on the server. Must contain only primitives, lists and string-keyed maps
+  /// — no [FieldValue] or [GeoPoint].
+  Map<String, dynamic> toCallableMap() {
+    return {
+      'storeName': name,
       'storeType': storeType!.name,
       'phoneNumber': phoneNumber,
-      'name': name,
-      'location': Location(
-        address: Address(
-          country: CountryD(isoCode: country!.isoCode, name: country!.name),
-          address: address!,
-          locality: locality!,
-          postalCode: postalCode!,
-        ),
-        location: location!,
-      ).toMap(),
-      'createdAt': FieldValue.serverTimestamp(),
-      'isVisible': true,
+      'address': address!,
+      'locality': locality!,
+      'postalCode': postalCode!,
+      'country': {'isoCode': country!.isoCode, 'name': country!.name},
+      'location': [location!.latitude, location!.longitude],
+      'geohash': GeoFirePoint(GeoPoint(location!.latitude, location!.longitude))
+          .geohash,
     };
-
-    return storeMap;
   }
 }

@@ -1,225 +1,368 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sarqyt/src/common_widgets/primary_button.dart';
-import 'package:sarqyt/src/constants/app_sizes.dart';
-import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
-import 'package:sarqyt/src/features/auth/presentation/sign_in_business/registration/create_account_screen.dart';
-import 'package:sarqyt/src/features/auth/presentation/sign_in_business/sign_in/sigin_in_business_screen.dart';
-import 'package:sarqyt/src/features/auth/presentation/sign_in_business/verify_email/verify_email_screen.dart';
-import 'package:sarqyt/src/features/dashboard/presentation/dashboard_screen.dart';
-import 'package:sarqyt/src/features/dashboard/presentation/pages/create_offer_screen.dart';
-import 'package:sarqyt/src/features/dashboard/presentation/pages/dashboard_page.dart';
-import 'package:sarqyt/src/features/dashboard/presentation/pages/employers_page.dart';
-import 'package:sarqyt/src/features/dashboard/presentation/pages/offers_page.dart';
-import 'package:sarqyt/src/features/dashboard/presentation/pages/store_products_page.dart';
-import 'package:sarqyt/src/features/dashboard/presentation/pages/stores_page.dart';
-import 'package:sarqyt/src/features/products/presentation/create_product_screen.dart';
-import 'package:sarqyt/src/features/store/presentation/create_store_page.dart';
+import 'package:sarqyt/src/features/auth/domain/app_user.dart';
+import 'package:sarqyt/src/features/auth/presentation/sign_in_business/sigin_in_business_screen.dart';
+import 'package:sarqyt/src/features/business_console/presentation/dashboard_screen.dart';
+import 'package:sarqyt/src/features/business_console/presentation/financials_screen.dart';
+import 'package:sarqyt/src/features/business_console/presentation/performance_screen.dart';
+import 'package:sarqyt/src/features/business_console/presentation/settings_screen.dart';
+import 'package:sarqyt/src/features/business_console/presentation/store_list_screen.dart';
+import 'package:sarqyt/src/features/items/presentation/item_screen/item_screen.dart';
+import 'package:sarqyt/src/features/items/presentation/item_tab.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/inbound/create_account_screen.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/inbound/email_screen.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/inbound/review_details_screen.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/inbound/verify_email_screen.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/item/create_item_screen.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/item/price_and_stock_screen.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/item/schedule_screen.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/item/title_and_description_screen.dart';
+import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
-import 'package:sarqyt/src/routing/app_router_refresh_stream.dart';
+import 'package:sarqyt/src/routing/business_redirect_state.dart';
+import 'package:sarqyt/src/routing/forbidden_page.dart';
+import 'package:sarqyt/src/routing/store_startup.dart';
 
 part 'business_router.g.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final _dashboardNavigatorKey = GlobalKey<NavigatorState>();
+final _performanceNavigatorKey = GlobalKey<NavigatorState>();
+final _financialsNavigatorKey = GlobalKey<NavigatorState>();
+final _settingsNavigatorKey = GlobalKey<NavigatorState>();
+
+@Riverpod(keepAlive: true)
+StoreShip currentStoreShip(Ref ref) => throw UnimplementedError(
+  'Error: current store ship accessed outside of Store Shell'.hardcoded,
+);
 
 enum BusinessRoute {
-  signIn,
-  onBoarding,
+  login,
+  onboarding,
+  inbound,
   createAccount,
+  reviewDetails,
+  email,
   verifyEmail,
-  dashboard,
+  createItem,
+  titleAndDescription,
+  priceAndStock,
+  schedule,
   stores,
-  store,
-  employers,
-  createStore,
-  createProduct,
-  offers,
-  createOffer,
+  dashboard,
+  item,
+  forbidden,
+  performance,
+  financials,
+  settings,
 }
 
-@riverpod
+/// Pure, sync, testable global redirect for the business app.
+///
+/// Layers (evaluated top-to-bottom, first match wins):
+///  1. Unauthenticated → allow /login & /onboarding/inbound, else → /login
+///  2. Email not verified → /onboarding/inbound/verify-email
+///  3. Still loading role/storeShips → stay put (don't redirect)
+///  4. Role == guest (claims not set yet) → /onboarding/inbound/verify-email
+///  5. Admin → redirect login/onboarding/forbidden to /stores, else stay
+///  6. Non-partner → /forbidden
+///  7. Partner + pending onboarding → /onboarding/create-item
+///  8. Partner done → redirect login/onboarding/forbidden to /stores, else stay
+String? businessRedirect({
+  required BusinessRedirectState redirectState,
+  required String path,
+}) {
+  final user = redirectState.user;
+  final role = redirectState.role;
+  final storeShips = redirectState.storeShips;
+
+  final onLogin = path.startsWith('/login');
+  final onOnboarding = path.startsWith('/onboarding');
+  final onInbound = path.startsWith('/onboarding/inbound');
+  final onForbidden = path.startsWith('/forbidden');
+
+  // Layer 1: Unauthenticated — no need to wait for role/storeShips
+  if (user == null) {
+    if (onLogin || onInbound) return null;
+    return '/login';
+  }
+
+  // Layer 2: Email not verified — no need to wait
+  if (!user.emailVerified) {
+    const verifyPath = '/onboarding/inbound/verify-email';
+    if (path == verifyPath) return null;
+    return verifyPath;
+  }
+
+  // Layer 3: Still loading role or storeShips — wait
+  if (redirectState.isLoading) return null;
+
+  // Layer 4: Role == guest (claims not yet set)
+  if (role == UserRole.guest) {
+    const verifyPath = '/onboarding/inbound/verify-email';
+    if (path == verifyPath) return null;
+    return verifyPath;
+  }
+
+  // Layer 5: Admin
+  if (role == UserRole.admin) {
+    if (onLogin || onOnboarding || onForbidden) return '/stores';
+    return null;
+  }
+
+  // Layer 6: Non-partner
+  if (role != UserRole.partner) {
+    if (onForbidden) return null;
+    return '/forbidden';
+  }
+
+  // Layer 7: Partner with pending onboarding
+  final pending = storeShips.pendingOnboarding;
+  if (pending != null) {
+    const target = '/onboarding/create-item';
+    if (path.startsWith(target)) return null;
+    return target;
+  }
+
+  // Layer 7: Partner done
+  if (onLogin || onOnboarding || onForbidden) return '/stores';
+  return null;
+}
+
+/// Debounced notifier — prevents rapid-fire redirect cascades.
+class _RouterRefreshNotifier extends ChangeNotifier {
+  Timer? _timer;
+
+  void refresh() {
+    _timer?.cancel();
+    _timer = Timer(const Duration(milliseconds: 100), notifyListeners);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+}
+
+@Riverpod(keepAlive: true)
 GoRouter businessRouter(Ref ref) {
-  final authRepo = ref.watch(authRepositoryProvider);
+  final refresh = _RouterRefreshNotifier();
+
+  // Single reactive source — triggers refresh when any input changes.
+  ref.listen(businessRedirectStateProvider, (_, __) => refresh.refresh());
+  ref.onDispose(() => refresh.dispose());
+
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/dashboard',
+    initialLocation: '/login',
     debugLogDiagnostics: true,
     errorBuilder: (context, state) {
-      final message = state.error == null
-          ? 'Неизвестная ошибка'.hardcoded
-          : state.error is PathNotFoundException
-          ? 'Такой страницы не существует'
-          : state.error!.message;
-
       return Scaffold(
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(message, style: Theme.of(context).textTheme.headlineLarge),
-              gapH16,
-              PrimaryWebButton(text: 'Return to MyStore', onPressed: () {}),
+              Text(state.error?.message ?? 'Page not found'.hardcoded),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => GoRouter.of(context).go('/login'),
+                child: Text('Go to login'.hardcoded),
+              ),
             ],
           ),
         ),
       );
     },
-    redirect: (context, state) async {
-      final user = authRepo.currentUser;
-
-      // Определяем статус пользователя
-      final isLoggedIn = user != null;
-      final isVerified = isLoggedIn && user.emailVerified;
-
-      // Определяем, куда пользователь пытается попасть
-      final path = state.uri.path;
-      final isSignIn = path == '/signIn';
-      final isCreatingAccount = path.startsWith('/create-account');
-      final isVerifyingEmail = path.startsWith('/verify-email');
-
-      // Объединяем их для удобства проверки
-      final isAuthFlow = isSignIn || isCreatingAccount || isVerifyingEmail;
-
-      // 1. Сценарий: Все отлично (Залогинен + Подтвержден)
-      if (isVerified) {
-        // Если пытается зайти на регистрацию или вход -> кидаем домой
-        if (isAuthFlow) {
-          return '/dashboard';
-        }
-        // В остальных случаях пускаем куда хочет
-        return null;
-      }
-
-      // 2. Сценарий: Залогинен, НО НЕ подтвержден
-      if (isLoggedIn && !isVerified) {
-        if (isVerifyingEmail) {
-          return null;
-        }
-
-        // Если user пытается попасть на Главную (например, перезапустил приложение)
-        // Мы принудительно возвращаем его на процесс регистрации
-        return '/verify-email';
-      }
-
-      // 3. Сценарий: Гость (Вообще не залогинен)
-      if (!isLoggedIn) {
-        // Если он не на экранах входа/регистрации -> кидаем на вход
-        if (isSignIn || isCreatingAccount) {
-          return null;
-        }
-        return '/signIn';
-      }
-
-      return null;
+    redirect: (context, state) {
+      // Fully synchronous — all data comes from the reactive provider.
+      final redirectState = ref.read(businessRedirectStateProvider);
+      return businessRedirect(
+        redirectState: redirectState,
+        path: state.uri.path,
+      );
     },
-    refreshListenable: GoRouterRefreshStream(authRepo.userChanges()),
+    refreshListenable: refresh,
     routes: [
       GoRoute(
-        path: '/signIn',
-        name: BusinessRoute.signIn.name,
-        pageBuilder: (context, state) => MaterialPage(
-          fullscreenDialog: true,
-          child: const SignInBusinessScreen(),
-        ),
-      ),
-      GoRoute(
-        path: '/create-account',
-        name: BusinessRoute.createAccount.name,
-        pageBuilder: (context, state) => const MaterialPage(
-          fullscreenDialog: true,
-          child: CreateAccountScreen(),
-        ),
+        path: '/forbidden',
+        name: BusinessRoute.forbidden.name,
+        builder: (context, state) => const ForbiddenPage(),
       ),
 
       GoRoute(
-        path: '/verify-email',
-        name: BusinessRoute.verifyEmail.name,
-        pageBuilder: (context, state) => const MaterialPage(
-          fullscreenDialog: true,
-          child: VerifyEmailScreen(),
-        ),
+        path: '/login',
+        name: BusinessRoute.login.name,
+        builder: (context, state) => const SignInBusinessScreen(),
       ),
 
-      ShellRoute(
-        navigatorKey: _shellNavigatorKey,
-        pageBuilder: (context, state, child) {
-          return MaterialPage(child: DashboardScreen(child: child));
+      GoRoute(
+        path: '/onboarding',
+        name: BusinessRoute.onboarding.name,
+        redirect: (context, state) {
+          if (state.uri.path == '/onboarding') {
+            return '/onboarding/inbound';
+          }
+          return null;
         },
         routes: [
           GoRoute(
-            path: '/dashboard',
-            name: BusinessRoute.dashboard.name,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: DashboardPage()),
-          ),
-          GoRoute(
-            path: '/stores',
-            name: BusinessRoute.stores.name,
-            pageBuilder: (context, state) =>
-                const MaterialPage(fullscreenDialog: true, child: StoresPage()),
+            path: 'inbound',
+            name: BusinessRoute.inbound.name,
+            redirect: (_, state) {
+              if (state.uri.path == '/onboarding/inbound') {
+                return '/onboarding/inbound/create-account';
+              }
+              return null;
+            },
             routes: [
               GoRoute(
-                path: 'createStore',
-                name: BusinessRoute.createStore.name,
-                pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: CreateStorePage()),
+                path: 'create-account',
+                name: BusinessRoute.createAccount.name,
+                builder: (context, state) => const CreateAccountScreen(),
               ),
-
               GoRoute(
-                path: ':storeId',
-                name: BusinessRoute.store.name,
-                pageBuilder: (context, state) {
-                  final storeId = state.pathParameters['storeId']!;
-                  return MaterialPage(
-                    fullscreenDialog: true,
-                    child: StoreProductsPage(storeId: storeId),
-                  );
-                },
-                routes: [
-                  GoRoute(
-                    path: 'new-product',
-                    name: BusinessRoute.createProduct.name,
-                    pageBuilder: (context, state) {
-                      final storeId = state.pathParameters['storeId']!;
-                      return MaterialPage(
-                        child: CreateProductScreen(storeId: storeId),
-                      );
-                    },
-                  ),
-
-                  GoRoute(
-                    path: 'create-offer',
-                    name: BusinessRoute.createOffer.name,
-                    pageBuilder: (context, state) {
-                      final productId = state.uri.queryParameters['productId']!;
-                      final storeId = state.pathParameters['storeId']!;
-                      return MaterialPage(
-                        child: CreateOfferScreen(
-                          productId: productId,
-                          storeId: storeId,
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                path: 'review-details',
+                name: BusinessRoute.reviewDetails.name,
+                builder: (context, state) => const ReviewDetailsScreen(),
+              ),
+              GoRoute(
+                path: 'email',
+                name: BusinessRoute.email.name,
+                builder: (context, state) => const EmailScreen(),
+              ),
+              GoRoute(
+                path: 'verify-email',
+                name: BusinessRoute.verifyEmail.name,
+                builder: (context, state) => const VerifyEmailScreen(),
               ),
             ],
           ),
           GoRoute(
-            path: '/offers',
-            name: BusinessRoute.offers.name,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: OffersPage()),
+            path: 'create-item',
+            name: BusinessRoute.createItem.name,
+            builder: (context, state) => const CreateItemScreen(),
+            routes: [
+              GoRoute(
+                path: 'title-and-description',
+                name: BusinessRoute.titleAndDescription.name,
+                builder: (context, state) => const TitleAndDescriptionScreen(),
+              ),
+              GoRoute(
+                path: 'price-and-stock',
+                name: BusinessRoute.priceAndStock.name,
+                builder: (context, state) => const PriceAndStockScreen(),
+              ),
+              GoRoute(
+                path: 'schedule',
+                name: BusinessRoute.schedule.name,
+                builder: (context, state) => const ScheduleScreen(),
+              ),
+            ],
           ),
+        ],
+      ),
+
+      // Store selection screen (if > 1)
+      GoRoute(
+        path: '/stores',
+        name: BusinessRoute.stores.name,
+        redirect: (context, state) {
+          if (state.uri.path != '/stores') return null;
+          final redirectData = ref.read(businessRedirectStateProvider);
+          final completed = redirectData.storeShips
+              .where((s) => s.onboardingStatus == OnboardingStatus.completed)
+              .toList();
+          if (completed.length == 1) {
+            return '/stores/${completed.first.storeId}/dashboard';
+          }
+          return null;
+        },
+        builder: (context, state) => const StoreListScreen(),
+        routes: [
           GoRoute(
-            path: '/employers',
-            name: BusinessRoute.employers.name,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: EmployersPage()),
+            path: ':storeId',
+            redirect: (context, state) {
+              final storeId = state.pathParameters['storeId']!;
+              if (state.uri.path == '/stores/$storeId') {
+                return '/stores/$storeId/dashboard';
+              }
+              return null;
+            },
+            routes: [
+              StatefulShellRoute.indexedStack(
+                pageBuilder: (context, state, navigationShell) {
+                  final storeId = state.pathParameters['storeId']!;
+                  return NoTransitionPage(
+                    child: StoreStartupWidget(
+                      storeId: storeId,
+                      navigationShell: navigationShell,
+                    ),
+                  );
+                },
+                branches: [
+                  StatefulShellBranch(
+                    navigatorKey: _dashboardNavigatorKey,
+                    routes: [
+                      GoRoute(
+                        path: 'dashboard',
+                        name: BusinessRoute.dashboard.name,
+                        builder: (context, state) => const DashboardScreen(),
+                      ),
+                      GoRoute(
+                        path: 'item/:itemId',
+                        name: BusinessRoute.item.name,
+                        builder: (context, state) {
+                          final itemId = state.pathParameters['itemId']!;
+                          final storeId = state.pathParameters['storeId']!;
+                          final tab = ItemTabX.fromParam(
+                            state.uri.queryParameters['tab'],
+                          );
+                          return ItemScreen(
+                            itemId: itemId,
+                            storeId: storeId,
+                            initialTab: tab,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    navigatorKey: _performanceNavigatorKey,
+                    routes: [
+                      GoRoute(
+                        path: 'performance',
+                        name: BusinessRoute.performance.name,
+                        builder: (context, state) => const PerformanceScreen(),
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    navigatorKey: _financialsNavigatorKey,
+                    routes: [
+                      GoRoute(
+                        path: 'financials',
+                        name: BusinessRoute.financials.name,
+                        builder: (context, state) => const FinancialsScreen(),
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    navigatorKey: _settingsNavigatorKey,
+                    routes: [
+                      GoRoute(
+                        path: 'settings',
+                        name: BusinessRoute.settings.name,
+                        builder: (context, state) => const SettingsScreen(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),

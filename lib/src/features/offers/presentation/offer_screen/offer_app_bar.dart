@@ -4,16 +4,11 @@ import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/common_widgets/info_badge.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
-import 'package:sarqyt/src/features/products/domain/product.dart';
-import 'package:sarqyt/src/features/store/domain/store.dart';
 
 class OfferSliverAppBar extends ConsumerWidget {
   const OfferSliverAppBar(this.offer, {super.key});
 
   final Offer offer;
-
-  Product get product => offer.product;
-  Store get store => offer.store;
 
   static const _expandedHeight = 250.0;
 
@@ -43,7 +38,7 @@ class OfferSliverAppBar extends ConsumerWidget {
             title: Opacity(
               opacity: opacity,
               child: Text(
-                store.firstTwoWords,
+                offer.storeName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.white),
@@ -52,48 +47,42 @@ class OfferSliverAppBar extends ConsumerWidget {
             background: Stack(
               fit: StackFit.expand,
               children: [
-                CustomImage(imageUrl: store.coverUrl),
+                CustomImage(imageUrl: offer.productImage),
 
                 Positioned(
                   left: Sizes.p16,
                   bottom: Sizes.p24,
                   child: Opacity(
                     opacity: 1 - opacity,
-                    child: Stack(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        InfoBadge(text: offer.availableText),
+                        gapH8,
+                        Row(
                           children: [
-                            InfoBadge(text: product.badges.first.type.name),
-                            gapH8,
-                            InfoBadge(text: offer.availableText),
-                            gapH8,
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: customImageProvider(
-                                    store.logoUrl,
+                            CircleAvatar(
+                              backgroundImage: customImageProvider(
+                                offer.storeLogo,
+                              ),
+                              radius: Sizes.p32,
+                            ),
+                            gapW8,
+                            Text(
+                              offer.storeName,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Sizes.p20,
+                                fontWeight: FontWeight.w600,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(0, 2),
+                                    blurRadius: 2,
                                   ),
-                                  radius: Sizes.p32,
-                                ),
-                                gapW8,
-                                Text(
-                                  store.name,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: Sizes.p20,
-                                    fontWeight: FontWeight.w600,
-                                    shadows: [
-                                      Shadow(
-                                        offset: Offset(0, 2),
-                                        blurRadius: 2,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),

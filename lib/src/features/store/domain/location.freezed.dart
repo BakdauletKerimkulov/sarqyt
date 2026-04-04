@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Location {
 
- Address get address; LatLng get location;
+ Address get address; LatLng get location; String get geohash; String? get timezone;
 /// Create a copy of Location
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $LocationCopyWith<Location> get copyWith => _$LocationCopyWithImpl<Location>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Location&&(identical(other.address, address) || other.address == address)&&(identical(other.location, location) || other.location == location));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Location&&(identical(other.address, address) || other.address == address)&&(identical(other.location, location) || other.location == location)&&(identical(other.geohash, geohash) || other.geohash == geohash)&&(identical(other.timezone, timezone) || other.timezone == timezone));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,address,location);
+int get hashCode => Object.hash(runtimeType,address,location,geohash,timezone);
 
 @override
 String toString() {
-  return 'Location(address: $address, location: $location)';
+  return 'Location(address: $address, location: $location, geohash: $geohash, timezone: $timezone)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $LocationCopyWith<$Res>  {
   factory $LocationCopyWith(Location value, $Res Function(Location) _then) = _$LocationCopyWithImpl;
 @useResult
 $Res call({
- Address address, LatLng location
+ Address address, LatLng location, String geohash, String? timezone
 });
 
 
@@ -62,11 +62,13 @@ class _$LocationCopyWithImpl<$Res>
 
 /// Create a copy of Location
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? address = null,Object? location = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? address = null,Object? location = null,Object? geohash = null,Object? timezone = freezed,}) {
   return _then(_self.copyWith(
 address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
 as Address,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as LatLng,
+as LatLng,geohash: null == geohash ? _self.geohash : geohash // ignore: cast_nullable_to_non_nullable
+as String,timezone: freezed == timezone ? _self.timezone : timezone // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of Location
@@ -160,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Address address,  LatLng location)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Address address,  LatLng location,  String geohash,  String? timezone)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Location() when $default != null:
-return $default(_that.address,_that.location);case _:
+return $default(_that.address,_that.location,_that.geohash,_that.timezone);case _:
   return orElse();
 
 }
@@ -181,10 +183,10 @@ return $default(_that.address,_that.location);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Address address,  LatLng location)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Address address,  LatLng location,  String geohash,  String? timezone)  $default,) {final _that = this;
 switch (_that) {
 case _Location():
-return $default(_that.address,_that.location);case _:
+return $default(_that.address,_that.location,_that.geohash,_that.timezone);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +203,10 @@ return $default(_that.address,_that.location);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Address address,  LatLng location)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Address address,  LatLng location,  String geohash,  String? timezone)?  $default,) {final _that = this;
 switch (_that) {
 case _Location() when $default != null:
-return $default(_that.address,_that.location);case _:
+return $default(_that.address,_that.location,_that.geohash,_that.timezone);case _:
   return null;
 
 }
@@ -216,11 +218,13 @@ return $default(_that.address,_that.location);case _:
 
 
 class _Location extends Location {
-  const _Location({required this.address, required this.location}): super._();
+  const _Location({required this.address, required this.location, required this.geohash, this.timezone}): super._();
   
 
 @override final  Address address;
 @override final  LatLng location;
+@override final  String geohash;
+@override final  String? timezone;
 
 /// Create a copy of Location
 /// with the given fields replaced by the non-null parameter values.
@@ -232,16 +236,16 @@ _$LocationCopyWith<_Location> get copyWith => __$LocationCopyWithImpl<_Location>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Location&&(identical(other.address, address) || other.address == address)&&(identical(other.location, location) || other.location == location));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Location&&(identical(other.address, address) || other.address == address)&&(identical(other.location, location) || other.location == location)&&(identical(other.geohash, geohash) || other.geohash == geohash)&&(identical(other.timezone, timezone) || other.timezone == timezone));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,address,location);
+int get hashCode => Object.hash(runtimeType,address,location,geohash,timezone);
 
 @override
 String toString() {
-  return 'Location(address: $address, location: $location)';
+  return 'Location(address: $address, location: $location, geohash: $geohash, timezone: $timezone)';
 }
 
 
@@ -252,7 +256,7 @@ abstract mixin class _$LocationCopyWith<$Res> implements $LocationCopyWith<$Res>
   factory _$LocationCopyWith(_Location value, $Res Function(_Location) _then) = __$LocationCopyWithImpl;
 @override @useResult
 $Res call({
- Address address, LatLng location
+ Address address, LatLng location, String geohash, String? timezone
 });
 
 
@@ -269,11 +273,13 @@ class __$LocationCopyWithImpl<$Res>
 
 /// Create a copy of Location
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? address = null,Object? location = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? address = null,Object? location = null,Object? geohash = null,Object? timezone = freezed,}) {
   return _then(_Location(
 address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
 as Address,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as LatLng,
+as LatLng,geohash: null == geohash ? _self.geohash : geohash // ignore: cast_nullable_to_non_nullable
+as String,timezone: freezed == timezone ? _self.timezone : timezone // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
