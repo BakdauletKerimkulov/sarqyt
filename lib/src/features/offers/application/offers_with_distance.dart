@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/map/application/geolocator_service.dart';
