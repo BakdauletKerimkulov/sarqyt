@@ -20,6 +20,12 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   itemQuantity: (json['itemQuantity'] as num).toInt(),
   status: $enumDecode(_$OrderStatusEnumMap, json['status']),
   paymentStatus: $enumDecode(_$PaymentStatusEnumMap, json['paymentStatus']),
+  pickupStartTime: const NullableTimestampConverter().fromJson(
+    json['pickupStartTime'] as Timestamp?,
+  ),
+  pickupEndTime: const NullableTimestampConverter().fromJson(
+    json['pickupEndTime'] as Timestamp?,
+  ),
   createdAt: const TimestampConverter().fromJson(
     json['createdAt'] as Timestamp,
   ),
@@ -27,6 +33,8 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
     json['updatedAt'] as Timestamp?,
   ),
   orderNumber: (json['orderNumber'] as num?)?.toInt(),
+  reservationId: json['reservationId'] as String?,
+  paymentIntentId: json['paymentIntentId'] as String?,
 );
 
 Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
@@ -43,9 +51,17 @@ Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
   'itemQuantity': instance.itemQuantity,
   'status': _$OrderStatusEnumMap[instance.status]!,
   'paymentStatus': _$PaymentStatusEnumMap[instance.paymentStatus]!,
+  'pickupStartTime': const NullableTimestampConverter().toJson(
+    instance.pickupStartTime,
+  ),
+  'pickupEndTime': const NullableTimestampConverter().toJson(
+    instance.pickupEndTime,
+  ),
   'createdAt': const TimestampConverter().toJson(instance.createdAt),
   'updatedAt': const NullableTimestampConverter().toJson(instance.updatedAt),
   'orderNumber': instance.orderNumber,
+  'reservationId': instance.reservationId,
+  'paymentIntentId': instance.paymentIntentId,
 };
 
 const _$OrderStatusEnumMap = {

@@ -1,4 +1,5 @@
 import {GeoPoint, Timestamp} from "firebase-admin/firestore";
+import tzLookup from "tz-lookup";
 import {StoreDraftRequestDto} from "../types/store-draft-request-dto";
 import {StoreDraftDoc} from "../types/store-draft-doc";
 
@@ -7,6 +8,7 @@ export function toStoreDraftDoc(
   ownerId: string,
 ): StoreDraftDoc {
   const [latitude, longitude] = data.location;
+  const timezone = tzLookup(latitude, longitude);
   const expiresAt = Timestamp.fromDate(
     new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
   );
@@ -23,7 +25,11 @@ export function toStoreDraftDoc(
         locality: data.locality.trim(),
         postalCode: data.postalCode.trim(),
       },
-      location: new GeoPoint(latitude, longitude),
+      geo: {
+        geohash: data.geohash.trim(),
+        geopoint: new GeoPoint(latitude, longitude),
+        timezone: timezone,
+      },
     },
     phoneNumber: data.phoneNumber.trim(),
     storeType: data.storeType.trim(),

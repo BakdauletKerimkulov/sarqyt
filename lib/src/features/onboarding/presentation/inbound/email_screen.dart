@@ -67,8 +67,6 @@ class _EmailContent extends ConsumerState<EmailContent>
   @override
   void initState() {
     super.initState();
-    _emailController.text = 'test@test.com'.hardcoded;
-    _passwordController.text = '12345678'.hardcoded;
   }
 
   @override

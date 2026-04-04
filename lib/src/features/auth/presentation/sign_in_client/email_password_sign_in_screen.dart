@@ -18,7 +18,10 @@ class EmailPasswordSignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: EmailPasswordSignInContent(formType: formType));
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(body: EmailPasswordSignInContent(formType: formType)),
+    );
   }
 }
 
@@ -113,12 +116,13 @@ class _EmailPasswordSignInContentState
 
     final state = ref.watch(emailPasswordSignInControllerProvider);
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: Sizes.p24),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            gapH64,
             CircleAvatar(
               radius: Sizes.p96,
               backgroundImage: AssetImage('assets/app-icon.jpg'),
@@ -225,6 +229,7 @@ class _EmailPasswordSignInContentState
                 text: _formType.primaryButtonText,
               ),
             ),
+            gapH64,
           ],
         ),
       ),

@@ -35,7 +35,7 @@ final class StartSellingDialogControllerProvider
 }
 
 String _$startSellingDialogControllerHash() =>
-    r'f79f2eec7ef763c4e0c1328fc15cb405ad5fcfeb';
+    r'ef1c23d050c11b4e7dda6756f4f06356348a0c87';
 
 abstract class _$StartSellingDialogController extends $AsyncNotifier<void> {
   FutureOr<void> build();

@@ -40,3 +40,14 @@ Stream<AppUser?> authStateChanges(Ref ref) {
   final authRepo = ref.watch(authRepositoryProvider);
   return authRepo.authStateChanges();
 }
+
+/// Reactive user role derived from id-token changes.
+/// Emits [UserRole.guest] while loading or when signed out.
+@Riverpod(keepAlive: true)
+Stream<UserRole> userRole(Ref ref) {
+  final authRepo = ref.read(authRepositoryProvider);
+  return authRepo.idTokenChanges().asyncMap((user) async {
+    if (user == null) return UserRole.guest;
+    return user.getRole();
+  });
+}

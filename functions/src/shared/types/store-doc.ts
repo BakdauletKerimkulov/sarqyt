@@ -12,9 +12,16 @@ export interface Address {
   postalCode: string;
 }
 
+export interface GeoData {
+  geohash: string;
+  geopoint: GeoPoint;
+  /** IANA timezone, for example `Asia/Almaty`. */
+  timezone?: string;
+}
+
 export interface StoreLocation {
   address: Address;
-  point: GeoPoint;
+  geo: GeoData;
 }
 
 /** Shape of a document in `stores/{storeId}`. */

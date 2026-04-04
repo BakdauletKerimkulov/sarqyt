@@ -42,7 +42,7 @@ final class ScheduleScreenControllerProvider
 }
 
 String _$scheduleScreenControllerHash() =>
-    r'c526374b065080fe57273acb3b867d9efc54da65';
+    r'a0d4d638810ac37059945e9e0b7e21589f2fc86f';
 
 abstract class _$ScheduleScreenController extends $Notifier<WeeklySchedule> {
   WeeklySchedule build();

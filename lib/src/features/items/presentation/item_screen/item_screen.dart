@@ -47,6 +47,14 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
   }
 
   @override
+  void didUpdateWidget(covariant ItemScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialTab != oldWidget.initialTab) {
+      _tabController.animateTo(widget.initialTab.index);
+    }
+  }
+
+  @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
@@ -120,7 +128,17 @@ class OrdersAlignedGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.receipt_long, size: 48, color: Colors.grey),
+          SizedBox(height: 8),
+          Text('Orders', style: TextStyle(color: Colors.grey)),
+          Text('Coming soon', style: TextStyle(color: Colors.grey, fontSize: 12)),
+        ],
+      ),
+    );
   }
 }
 
@@ -129,7 +147,17 @@ class CalendarContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Calendar'));
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.calendar_month, size: 48, color: Colors.grey),
+          SizedBox(height: 8),
+          Text('Calendar', style: TextStyle(color: Colors.grey)),
+          Text('Coming soon', style: TextStyle(color: Colors.grey, fontSize: 12)),
+        ],
+      ),
+    );
   }
 }
 
@@ -138,6 +166,16 @@ class CustomerRatingsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Rating'));
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.star_outline, size: 48, color: Colors.grey),
+          SizedBox(height: 8),
+          Text('Customer ratings', style: TextStyle(color: Colors.grey)),
+          Text('Coming soon', style: TextStyle(color: Colors.grey, fontSize: 12)),
+        ],
+      ),
+    );
   }
 }

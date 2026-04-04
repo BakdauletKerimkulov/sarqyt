@@ -29,8 +29,10 @@ class ItemUploadService {
     final schedule = item.schedule;
 
     if (price == null || schedule == null) {
-      throw ArgumentError('Item draft is incomplete: '
-          'price=$price, schedule=$schedule');
+      throw ArgumentError(
+        'Item draft is incomplete: '
+        'price=$price, schedule=$schedule',
+      );
     }
 
     String? imageUrl = item.imageUrl;
@@ -46,10 +48,7 @@ class ItemUploadService {
       final fileName = '${const Uuid().v4()}.$extension';
       final path = 'stores/$storeId/items/$fileName';
 
-      imageUrl = await imageRepo.uploadProductImage(
-        data: image,
-        path: path,
-      );
+      imageUrl = await imageRepo.uploadProductImage(data: image, path: path);
     }
 
     await productRepo.createItem(

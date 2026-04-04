@@ -1,9 +1,9 @@
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
-import 'package:sarqyt/src/features/offers/data/test_offer.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
+import 'package:sarqyt/src/testing/test_offer.dart';
 import 'package:sarqyt/src/utils/in_memory_store.dart';
 
-class FakeClientOfferRepository implements CLientOfferRepository {
+class FakeClientOfferRepository implements ClientOfferRepository {
   FakeClientOfferRepository({this.addDelay = false});
   final bool addDelay;
 
@@ -20,11 +20,20 @@ class FakeClientOfferRepository implements CLientOfferRepository {
     bool hiddenOnly = false,
     bool weCareOnly = false,
   }) {
-    return Future.value(_offers.value);
+    final now = DateTime.now();
+    final visibleOffers = _offers.value.where((offer) {
+      final visibleFrom =
+          offer.visibleFrom ??
+          offer.pickupStartTime.subtract(const Duration(days: 1));
+      return offer.status == OfferStatus.active &&
+          !visibleFrom.isAfter(now) &&
+          offer.pickupEndTime.isAfter(now);
+    }).toList()..sort((a, b) => a.pickupStartTime.compareTo(b.pickupStartTime));
+    return Future.value(visibleOffers);
   }
 
   @override
-  Future<Offer?> getOfferById({required String id}) async {
+  Future<Offer?> getOfferById(String id) async {
     return Future.value(_getOffer(_offers.value, id));
   }
 
@@ -33,28 +42,17 @@ class FakeClientOfferRepository implements CLientOfferRepository {
   }
 
   @override
-  Future<void> updateOrderQuantity({
-    required String id,
-    required int quantity,
-  }) async {
-    final offers = List<Offer>.from(_offers.value);
-    final index = offers.indexWhere((o) => o.productId == id);
-    if (index == -1) {
-      throw StateError('Offer not found');
-    }
-
-    final offer = offers[index];
-    if (quantity <= 0) {
-      throw ArgumentError('Quantity to decrease must be positive');
-    }
-
-    if (offer.itemsAvailable < quantity) {
-      throw StateError('Not enough items available');
-    }
-
-    final updatedOffer = offer.copyWith(quantity: offer.quantity - quantity);
-
-    offers[index] = updatedOffer;
-    _offers.value = offers;
+  Stream<List<Offer>> watchAllOffer({
+    double latitude = 0.0,
+    double longitude = 0.0,
+    double radius = 10,
+    List<String> itemCategories = const [],
+    String? pickupEarliest,
+    String? pickupLatest,
+    bool hiddenOnly = false,
+    bool weCareOnly = false,
+  }) {
+    // TODO: implement watchAllOffer
+    throw UnimplementedError();
   }
 }

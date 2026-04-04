@@ -274,7 +274,33 @@ class _SidebarContent extends ConsumerWidget {
                         color: Colors.redAccent,
                       ),
                     ),
-                    onTap: () => ref.read(authRepositoryProvider).signOut(),
+                    onTap: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text('Log out'.hardcoded),
+                          content: Text(
+                            'Are you sure you want to log out?'.hardcoded,
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(false),
+                              child: Text('Cancel'.hardcoded),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(true),
+                              child: Text(
+                                'Log out'.hardcoded,
+                                style: const TextStyle(color: Colors.redAccent),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (confirm == true) {
+                        ref.read(authRepositoryProvider).signOut();
+                      }
+                    },
                   ),
                   gapH24,
                 ],

@@ -24,7 +24,14 @@ class ScheduleScreenController extends _$ScheduleScreenController {
 
   void toggleDay(int day, {required bool enabled}) {
     final current = state.days[day]!;
-    state = state.copyWithDay(day, current.copyWith(enabled: enabled));
+    final stock = ref.read(itemDraftControllerProvider).defaultDailyStock ?? 1;
+    state = state.copyWithDay(
+      day,
+      current.copyWith(
+        enabled: enabled,
+        quantity: enabled && current.quantity == 0 ? stock : current.quantity,
+      ),
+    );
   }
 
   void updateStartTime(int day, TimeOfDay time) {

@@ -10,6 +10,21 @@ export { startMerchantOnboardingData } from "./features/merchant-onboarding/func
 
 // Offers
 export { sincItemOffers } from "./features/offers/functions/sinc_item_offers";
+export { dailySyncOffers } from "./features/offers/functions/daily-sync-offers";
+export { createOneTimeOffer } from "./features/offers/functions/create-one-time-offer";
+export { onItemStatusChanged } from "./features/offers/functions/on-item-status-changed";
+export { cleanupOldData } from "./features/offers/functions/cleanup-old-offers";
+
+// Reservations & Payments
+export { createReservation } from "./features/reservations/functions/create-reservation";
+export { stripeWebhook } from "./features/reservations/functions/stripe-webhook";
+export { expireReservations } from "./features/reservations/functions/expire-reservations";
+
+// Orders
+export { expireOrders } from "./features/orders/functions/expire-orders";
+export { cancelOrder } from "./features/orders/functions/cancel-order";
+export { updateOrderStatus } from "./features/orders/functions/update-order-status";
+export { onOrderStatusChanged } from "./features/orders/functions/on-order-status-changed";
 
 // Triggers
 export { onOrderCreated } from "./features/triggers/orders";

@@ -40,6 +40,7 @@ abstract class Item with _$Item {
     @Default(PackagingOption.withBagOrOwnBag)
     PackagingOption packagingType,
     String? collectionInstructions,
+    @Default(false) bool isActive,
     @Default(false) bool isBuffetFood,
     String? storingAndAllergens,
     @Default([]) List<Badge> badges,
@@ -60,7 +61,8 @@ abstract class Item with _$Item {
   Rating? get rating => averageOverallRating;
 }
 
-String _readRequiredId(Object? value) => _readRequiredString(value, field: 'id');
+String _readRequiredId(Object? value) =>
+    _readRequiredString(value, field: 'id');
 
 String _readRequiredName(Object? value) =>
     _readRequiredString(value, field: 'name');

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sarqyt/firebase_options.dart';
 import 'package:sarqyt/src/app_bootstrap.dart';
 import 'package:sarqyt/src/app_bootstrap_firebase.dart';
+import 'package:sarqyt/src/app_bootstrap_stripe.dart';
 import 'package:sarqyt/src/app_client.dart';
 
 void main() async {
@@ -10,7 +11,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final appBootStrap = AppBootstrap();
-  await appBootStrap.setupEmulators();
+  await appBootStrap.setupStripe();
+  //await appBootStrap.setupEmulators();
 
   final container = await appBootStrap.createFirebaseProviderContainer();
 

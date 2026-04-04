@@ -130,7 +130,7 @@ class _StoreFormContentState extends State<StoreFormContent> {
             const Text('Store type'),
             gapH8,
             DropdownButtonFormField<StoreType>(
-              value: _selectedStoreType,
+              initialValue: _selectedStoreType,
               decoration: const InputDecoration(
                 helperText: ' ',
                 border: OutlineInputBorder(),
@@ -149,8 +149,7 @@ class _StoreFormContentState extends State<StoreFormContent> {
                 );
               }).toList(),
               onChanged: (type) => _selectedStoreType = type,
-              validator: (value) =>
-                  !_submitted ? null : _storeTypeError(value),
+              validator: (value) => !_submitted ? null : _storeTypeError(value),
             ),
             gapH16,
             const Text(
@@ -186,8 +185,9 @@ class _StoreFormContentState extends State<StoreFormContent> {
                           helperText: '',
                         ),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) =>
-                            !_submitted ? null : _requiredFieldError(value ?? ''),
+                        validator: (value) => !_submitted
+                            ? null
+                            : _requiredFieldError(value ?? ''),
                       ),
                     ],
                   ),
@@ -209,8 +209,9 @@ class _StoreFormContentState extends State<StoreFormContent> {
                           helperText: '',
                         ),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) =>
-                            !_submitted ? null : _requiredFieldError(value ?? ''),
+                        validator: (value) => !_submitted
+                            ? null
+                            : _requiredFieldError(value ?? ''),
                       ),
                     ],
                   ),
@@ -233,9 +234,8 @@ class _StoreFormContentState extends State<StoreFormContent> {
                 helperText: ' ',
                 border: OutlineInputBorder(),
               ),
-              value: _selectedCountry,
-              validator: (value) =>
-                  !_submitted ? null : _countryError(value),
+              initialValue: _selectedCountry,
+              validator: (value) => !_submitted ? null : _countryError(value),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               onChanged: (country) => _selectedCountry = country,
             ),

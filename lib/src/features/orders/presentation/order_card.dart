@@ -24,7 +24,7 @@ class OrderCard extends StatelessWidget {
           gapH16,
           Text('Заказ создан: ${order.createdAt}'),
           gapH8,
-          Text(order.price),
+          Text(order.totalFormatted),
           gapH8,
           Text(order.itemQuantity.toString()),
         ],

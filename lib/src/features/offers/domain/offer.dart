@@ -1,12 +1,31 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:latlong2/latlong.dart';
 
 part 'offer.freezed.dart';
+part 'offer.g.dart';
+
+enum OfferStatus { active, paused, expired }
+
+extension OfferStatusX on OfferStatus {
+  String label() {
+    return switch (this) {
+      OfferStatus.active => 'Active',
+      OfferStatus.paused => 'Paused',
+      OfferStatus.expired => 'Expired',
+    };
+  }
+}
+
+typedef OfferID = String;
 
 @freezed
 abstract class Offer with _$Offer {
   const factory Offer({
     // IDs
+    required OfferID id,
     required String storeId,
     required String productId,
     // Offer content
@@ -14,25 +33,37 @@ abstract class Offer with _$Offer {
     required String name,
 
     /// Price the customer pays.
-    required double price,
+    @JsonKey(fromJson: Offer._readPrice) required double price,
     required String currencyCode,
     required String currencySymbol,
 
     /// Estimated retail value (optional).
-    double? estimatedValue,
+    @JsonKey(fromJson: Offer._readOptionalPrice) double? estimatedValue,
     // Store display
     required String storeName,
+    String? geohash,
+    @JsonKey(fromJson: Offer._readGeoPoint, toJson: Offer._writeGeoPoint)
+    required GeoPoint geopoint,
+    @JsonKey(
+      fromJson: Offer._readNullableDate,
+      toJson: Offer._writeNullableDate,
+    )
+    DateTime? visibleFrom,
     String? storeLogo,
-    String? storeAddress,
+    @JsonKey(fromJson: Offer._readStoreAddress) String? storeAddress,
     // Product display
     String? productImage,
     // Pickup window
+    @JsonKey(fromJson: Offer._readDate, toJson: Offer._writeDate)
     required DateTime pickupStartTime,
+    @JsonKey(fromJson: Offer._readDate, toJson: Offer._writeDate)
     required DateTime pickupEndTime,
     // Metadata
+    @JsonKey(fromJson: Offer._readDate, toJson: Offer._writeDate)
     required DateTime createdAt,
     required String createdBy,
-    @Default('active') String status,
+    @JsonKey(fromJson: Offer._readStatus, toJson: Offer._writeStatus)
+    required OfferStatus status,
   }) = _Offer;
 
   const Offer._();
@@ -53,21 +84,29 @@ abstract class Offer with _$Offer {
     throw ArgumentError('Unsupported date value: $v');
   }
 
+  static DateTime? _readNullableDate(dynamic v) {
+    if (v == null) return null;
+    return _readDate(v);
+  }
+
   String get statusLabel {
     switch (status) {
-      case 'active':
+      case OfferStatus.active:
         return 'Active';
-      case 'paused':
+      case OfferStatus.paused:
         return 'Paused';
-      case 'expired':
+      case OfferStatus.expired:
         return 'Expired';
-      default:
-        return status;
     }
   }
 
   /// Writes DateTime to Firestore Timestamp.
   static Timestamp _writeDate(DateTime v) => Timestamp.fromDate(v);
+
+  static Timestamp? _writeNullableDate(DateTime? v) {
+    if (v == null) return null;
+    return _writeDate(v);
+  }
 
   static String? _readStoreAddress(dynamic v) {
     if (v == null) return null;
@@ -114,53 +153,73 @@ abstract class Offer with _$Offer {
     return null;
   }
 
-  factory Offer.fromJson(Map<String, dynamic> json) {
-    return Offer(
-      storeId: json['storeId'] as String,
-      productId: json['productId'] as String,
-      quantity: (json['quantity'] as num).toInt(),
-      name: json['name'] as String,
-      price: _readPrice(json['price']),
-      currencyCode: (json['currencyCode'] as String?) ?? 'KZT',
-      currencySymbol: (json['currencySymbol'] as String?) ?? '₸',
-      estimatedValue: _readOptionalPrice(json['estimatedValue'] ?? json['originalPrice']),
-      storeName: json['storeName'] as String,
-      storeLogo: json['storeLogo'] as String?,
-      storeAddress: _readStoreAddress(json['storeAddress']),
-      productImage: json['productImage'] as String?,
-      pickupStartTime: _readDate(json['pickupStartTime']),
-      pickupEndTime: _readDate(json['pickupEndTime']),
-      createdAt: _readDate(json['createdAt']),
-      createdBy: json['createdBy'] as String,
-      status: (json['status'] as String?) ?? 'active',
-    );
+  static OfferStatus _readStatus(dynamic v) {
+    if (v is OfferStatus) return v;
+
+    switch (v?.toString()) {
+      case 'active':
+        return OfferStatus.active;
+      case 'inactive':
+      case 'paused':
+        return OfferStatus.paused;
+      case 'expired':
+        return OfferStatus.expired;
+      case null:
+        return OfferStatus.active;
+      default:
+        throw ArgumentError('Unsupported offer status: $v');
+    }
   }
 
-  /// JSON map that matches what you store in Firestore.
-  Map<String, dynamic> toJson() => {
-    'storeId': storeId,
-    'productId': productId,
-    'quantity': quantity,
-    'name': name,
-    'price': price,
-    'currencyCode': currencyCode,
-    'currencySymbol': currencySymbol,
-    if (estimatedValue != null) 'estimatedValue': estimatedValue,
-    'storeName': storeName,
-    'storeLogo': storeLogo,
-    'storeAddress': storeAddress,
-    'productImage': productImage,
-    'pickupStartTime': _writeDate(pickupStartTime),
-    'pickupEndTime': _writeDate(pickupEndTime),
-    'createdAt': _writeDate(createdAt),
-    'createdBy': createdBy,
-    'status': status,
-  };
+  static GeoPoint _readGeoPoint(dynamic v) {
+    if (v is GeoPoint) return v;
+    if (v is Map) {
+      final lat = (v['latitude'] ?? v['_latitude']) as num?;
+      final lng = (v['longitude'] ?? v['_longitude']) as num?;
+      if (lat != null && lng != null) {
+        return GeoPoint(lat.toDouble(), lng.toDouble());
+      }
+    }
+    throw ArgumentError('Unsupported geopoint value: $v');
+  }
 
-  bool get isActive => status == 'active';
+  static GeoPoint _writeGeoPoint(GeoPoint v) => v;
+
+  static String _writeStatus(OfferStatus status) => status.name;
+
+  factory Offer.fromJson(Map<String, dynamic> json) => _$OfferFromJson(json);
+
+  bool get isActive => status == OfferStatus.active;
   bool get isAvailable => quantity > 0;
   int get itemsAvailable => quantity;
   String get displayName => name;
   String get availableText => isAvailable ? 'Left $quantity' : 'Sold out';
+  LatLng get latLng => LatLng(geopoint.latitude, geopoint.longitude);
   String? get distanceFormatter => null;
+
+  /// "Сегодня", "Завтра", or formatted date.
+  String get pickupDayLabel {
+    final now = DateTime.now();
+    final pickupDate = pickupStartTime;
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final pickupDay = DateTime(
+      pickupDate.year,
+      pickupDate.month,
+      pickupDate.day,
+    );
+
+    if (pickupDay == today) return 'Today';
+    if (pickupDay == tomorrow) return 'Tomorrow';
+    return '${pickupDay.day}.${pickupDay.month.toString().padLeft(2, '0')}';
+  }
+
+  /// "Сегодня, 18:00 – 20:00"
+  String get pickupLabel {
+    final start =
+        '${pickupStartTime.hour}:${pickupStartTime.minute.toString().padLeft(2, '0')}';
+    final end =
+        '${pickupEndTime.hour}:${pickupEndTime.minute.toString().padLeft(2, '0')}';
+    return '$pickupDayLabel, $start – $end';
+  }
 }

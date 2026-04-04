@@ -101,7 +101,7 @@ export const completeMerchantOnboarding = onCall(async (req) => {
       name: draftDoc.storeName,
       location: {
         address: draftDoc.location.address,
-        point: draftDoc.location.location,
+        geo: draftDoc.location.geo,
       },
       storeType: draftDoc.storeType,
       phoneNumber: draftDoc.phoneNumber,

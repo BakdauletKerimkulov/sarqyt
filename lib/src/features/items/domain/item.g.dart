@@ -32,6 +32,7 @@ _Item _$ItemFromJson(Map<String, dynamic> json) => _Item(
       ) ??
       PackagingOption.withBagOrOwnBag,
   collectionInstructions: json['collectionInstructions'] as String?,
+  isActive: json['isActive'] as bool? ?? false,
   isBuffetFood: json['isBuffetFood'] as bool? ?? false,
   storingAndAllergens: json['storingAndAllergens'] as String?,
   badges:
@@ -56,6 +57,7 @@ Map<String, dynamic> _$ItemToJson(_Item instance) => <String, dynamic>{
   'dietaryType': _$DietaryTypeEnumMap[instance.dietaryType]!,
   'packagingType': _$PackagingOptionEnumMap[instance.packagingType]!,
   'collectionInstructions': instance.collectionInstructions,
+  'isActive': instance.isActive,
   'isBuffetFood': instance.isBuffetFood,
   'storingAndAllergens': instance.storingAndAllergens,
   'badges': instance.badges.map((e) => e.toJson()).toList(),

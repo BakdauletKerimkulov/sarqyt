@@ -66,6 +66,14 @@ class ItemsRepository {
     return _itemRef(storeId, item.id).set(item, SetOptions(merge: true));
   }
 
+  Future<void> setItemActive(
+    StoreID storeId, {
+    required ItemID id,
+    required bool isActive,
+  }) {
+    return _firestore.doc(itemPath(storeId, id)).update({'isActive': isActive});
+  }
+
   Future<void> deleteItem(StoreID storeId, {required ItemID id}) {
     return _firestore.doc(itemPath(storeId, id)).delete();
   }

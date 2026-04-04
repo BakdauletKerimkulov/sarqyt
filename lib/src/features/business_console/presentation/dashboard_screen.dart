@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/common_widgets/outlined_section_widget.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
+import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/business_console/domain/business.dart';
 import 'package:sarqyt/src/features/business_console/presentation/business_verify/verify_dialog.dart';
 import 'package:sarqyt/src/features/items/presentation/items_list/sliver_items_grid.dart';
+import 'package:sarqyt/src/features/offers/presentation/business/create_one_time_offer_dialog.dart';
+import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 import 'package:sarqyt/src/routing/store_startup.dart';
 
@@ -22,8 +25,10 @@ class DashboardScreen extends ConsumerWidget {
 
     final lineColor = Theme.of(context).colorScheme.surfaceContainerHighest;
 
-    return CustomScrollView(
-      slivers: [
+    return Stack(
+      children: [
+        CustomScrollView(
+          slivers: [
         SliverPadding(
           padding: const EdgeInsets.symmetric(
             horizontal: Sizes.p32,
@@ -58,6 +63,22 @@ class DashboardScreen extends ConsumerWidget {
           sliver: OutlinedSectionSliverWidgetWithHeader(
             header: 'Your surprice bags',
             sliver: SliverItemsGrid(storeId: storeId),
+          ),
+        ),
+          ],
+        ),
+        Positioned(
+          right: Sizes.p32,
+          bottom: Sizes.p24,
+          child: FloatingActionButton.extended(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            icon: const Icon(Icons.flash_on),
+            label: Text('Flash offer'.hardcoded),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (_) => CreateOneTimeOfferDialog(storeId: storeId),
+            ),
           ),
         ),
       ],

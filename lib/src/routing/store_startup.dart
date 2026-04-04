@@ -72,7 +72,21 @@ class StoreStartupWidget extends ConsumerWidget {
     return startup.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, st) => Scaffold(body: Center(child: Text(e.toString()))),
+      error: (e, st) => Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(e.toString()),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => GoRouter.of(context).go('/login'),
+                child: const Text('Go to login'),
+              ),
+            ],
+          ),
+        ),
+      ),
       data: (data) => ProviderScope(
         overrides: [
           currentStoreShipProvider.overrideWithValue(data.storeShip),

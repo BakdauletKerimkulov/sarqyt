@@ -34,7 +34,7 @@ final class CreateItemControllerProvider
 }
 
 String _$createItemControllerHash() =>
-    r'1e262583f0c91d05236955e762406c9db82d452a';
+    r'470204e92c47f4264668848379f1e5caa44ed783';
 
 abstract class _$CreateItemController extends $AsyncNotifier<void> {
   FutureOr<void> build();

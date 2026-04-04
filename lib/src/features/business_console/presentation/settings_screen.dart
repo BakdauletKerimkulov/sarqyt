@@ -163,7 +163,19 @@ class AccountSettingsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.person_outline, size: 48, color: Colors.grey),
+          SizedBox(height: 12),
+          Text('Account settings',
+              style: TextStyle(fontWeight: FontWeight.w600)),
+          SizedBox(height: 4),
+          Text('Coming soon', style: TextStyle(color: Colors.grey)),
+        ],
+      ),
+    );
   }
 }
 
@@ -172,6 +184,18 @@ class TeamSettingsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.group_outlined, size: 48, color: Colors.grey),
+          SizedBox(height: 12),
+          Text('Team management',
+              style: TextStyle(fontWeight: FontWeight.w600)),
+          SizedBox(height: 4),
+          Text('Coming soon', style: TextStyle(color: Colors.grey)),
+        ],
+      ),
+    );
   }
 }

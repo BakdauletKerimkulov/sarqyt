@@ -34,7 +34,7 @@ final class VerifyEmailControllerProvider
 }
 
 String _$verifyEmailControllerHash() =>
-    r'1ea1edf7da261ccee1b4a5c403a0acce561bb984';
+    r'4310a19550570472ca472e2e550c20e90853d5bf';
 
 abstract class _$VerifyEmailController extends $AsyncNotifier<void> {
   FutureOr<void> build();

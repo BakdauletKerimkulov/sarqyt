@@ -12,4 +12,5 @@ export interface StoreDraftRequestDto {
     postalCode: string,
     phoneNumber: string,
     storeType: string,
+    geohash: string,
 }

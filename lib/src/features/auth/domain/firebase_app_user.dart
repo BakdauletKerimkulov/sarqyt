@@ -6,6 +6,7 @@ class FirebaseAppUser extends AppUser {
     : super(uid: _user.uid, email: _user.email, avatarUrl: _user.photoURL);
 
   final User _user;
+  UserRole? _cachedRole;
 
   /// Read live value from the underlying Firebase User (updated after reload).
   @override
@@ -26,8 +27,9 @@ class FirebaseAppUser extends AppUser {
   }
 
   @override
-  Future<void> forceRefreshIdToken() {
-    return _user.getIdToken(true);
+  Future<void> forceRefreshIdToken() async {
+    _cachedRole = null;
+    await _user.getIdToken(true);
   }
 
   @override
@@ -44,14 +46,16 @@ class FirebaseAppUser extends AppUser {
 
   @override
   Future<UserRole> getRole() async {
+    if (_cachedRole != null) return _cachedRole!;
     final token = await _user.getIdTokenResult();
     final role = token.claims?['role'];
 
-    return switch (role) {
+    _cachedRole = switch (role) {
       'admin' => UserRole.admin,
       'partner' => UserRole.partner,
       'customer' => UserRole.customer,
       _ => UserRole.guest,
     };
+    return _cachedRole!;
   }
 }

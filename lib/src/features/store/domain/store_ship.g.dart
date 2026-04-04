@@ -16,12 +16,9 @@ _StoreShip _$StoreShipFromJson(Map<String, dynamic> json) => _StoreShip(
   name: json['name'] as String,
   storeRole: $enumDecode(_$StoreRoleEnumMap, json['storeRole']),
   logoUrl: json['logoUrl'] as String?,
-  onboardingStatus:
-      $enumDecodeNullable(
-        _$OnboardingStatusEnumMap,
-        json['onboardingStatus'],
-      ) ??
-      OnboardingStatus.storeCreated,
+  onboardingStatus: json['onboardingStatus'] == null
+      ? OnboardingStatus.storeCreated
+      : _readOnboardingStatus(json['onboardingStatus']),
 );
 
 Map<String, dynamic> _$StoreShipToJson(_StoreShip instance) =>
@@ -44,6 +41,5 @@ const _$StoreRoleEnumMap = {
 
 const _$OnboardingStatusEnumMap = {
   OnboardingStatus.storeCreated: 'storeCreated',
-  OnboardingStatus.itemCreated: 'itemCreated',
   OnboardingStatus.completed: 'completed',
 };

@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart' show GeoPoint;
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sarqyt/src/features/store/domain/country.dart';
 import 'package:sarqyt/src/features/store/domain/store_type.dart';
@@ -44,6 +46,8 @@ extension StoreDraftX on StoreDraft {
       'postalCode': postalCode!,
       'country': {'isoCode': country!.isoCode, 'name': country!.name},
       'location': [location!.latitude, location!.longitude],
+      'geohash': GeoFirePoint(GeoPoint(location!.latitude, location!.longitude))
+          .geohash,
     };
   }
 }

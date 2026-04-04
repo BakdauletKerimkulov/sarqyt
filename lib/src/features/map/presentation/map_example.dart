@@ -8,7 +8,7 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/map/application/geolocator_service.dart';
 
 const styleUrl =
-    "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
+    "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png";
 
 class MapExample extends ConsumerStatefulWidget {
   const MapExample({super.key});

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/exceptions/error_logger.dart';
 import 'package:sarqyt/src/features/auth/application/user_token_refresh_service.dart';
+import 'package:sarqyt/src/features/notifications/data/push_notification_service.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 /// Helper class to initialize services and configure the error handlers
@@ -14,6 +15,7 @@ class AppBootstrap {
     // * Initialize user token refresh service (forces ID token refresh
     // * when server updates custom claims via refreshTime in users/{uid})
     container.read(userTokenRefreshServiceProvider);
+    container.read(initPushNotificationsProvider);
     final errorLogger = container.read(errorLoggerProvider);
     registerErrorHandler(errorLogger);
 

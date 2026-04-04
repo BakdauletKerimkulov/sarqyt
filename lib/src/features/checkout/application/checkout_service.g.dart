@@ -131,3 +131,49 @@ abstract class _$OfferItemsQuantity extends $Notifier<int> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(CheckoutController)
+const checkoutControllerProvider = CheckoutControllerProvider._();
+
+final class CheckoutControllerProvider
+    extends $AsyncNotifierProvider<CheckoutController, CheckoutResult?> {
+  const CheckoutControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'checkoutControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$checkoutControllerHash();
+
+  @$internal
+  @override
+  CheckoutController create() => CheckoutController();
+}
+
+String _$checkoutControllerHash() =>
+    r'3c62a0943dde49548312b3a39cfe1ecc9a106c9f';
+
+abstract class _$CheckoutController extends $AsyncNotifier<CheckoutResult?> {
+  FutureOr<CheckoutResult?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<CheckoutResult?>, CheckoutResult?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<CheckoutResult?>, CheckoutResult?>,
+              AsyncValue<CheckoutResult?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

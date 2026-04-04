@@ -85,18 +85,38 @@ service cloud.firestore {
     }
 
     match /offers/{offerId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow create, update, delete: if isAdmin();
     }
 
     match /users/{uid} {
       allow read, write: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
+
+      match /favorites/{storeId} {
+        allow read, write: if isSignedIn() && request.auth.uid == uid;
+      }
+    }
+
+    match /reviews/{id} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+    }
+
+    match /reservations/{id} {
+      allow read: if isSignedIn() && request.auth.uid == resource.data.customerId;
+      allow create, update, delete: if false; // Server-only via Cloud Functions
     }
 
     match /orders/{id} {
-      allow read: if isSignedIn() || isAdmin() || request.auth.uid == resource.data.customerId || 
-        isStoreOwner(request.auth.uid) || isStoreStaff(request.auth.uid);
-      allow write: if isAdmin() ||  isStoreOwner(request.auth.uid) || isStoreStaff(request.auth.uid);
+      allow read: if isAdmin() ||
+        (isSignedIn() && request.auth.uid == resource.data.customerId) ||
+        (isSignedIn() && resource.data.storeId is string && isStoreOwner(resource.data.storeId)) ||
+        (isSignedIn() && resource.data.storeId is string && isStoreStaff(resource.data.storeId));
+      allow write: if isAdmin() ||
+        (isSignedIn() && resource.data.storeId is string && isStoreOwner(resource.data.storeId)) ||
+        (isSignedIn() && resource.data.storeId is string && isStoreStaff(resource.data.storeId));
     }
+
   }
 }

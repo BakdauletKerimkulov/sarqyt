@@ -9,9 +9,15 @@ export const FirestoreCollections = {
   OFFERS: "offers",
   PRODUCTS: "products",
   PAYMENTS: "payments",
+  RESERVATIONS: "reservations",
 } as const;
 
-/** Store items are a subcollection: stores/{storeId}/items/{itemId} */
+/**
+ * Store items are a subcollection: stores/{storeId}/items/{itemId}
+ * @param {string} storeId Store document ID.
+ * @param {string} itemId Item document ID.
+ * @return {string} Full Firestore path.
+ */
 export function storeItemPath(storeId: string, itemId: string): string {
   return `${FirestoreCollections.STORES}/${storeId}/items/${itemId}`;
 }

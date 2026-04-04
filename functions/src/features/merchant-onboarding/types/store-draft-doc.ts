@@ -1,5 +1,10 @@
 import { FieldValue, GeoPoint, Timestamp } from "firebase-admin/firestore";
 
+export interface Country {
+  name: string;
+  isoCode: string;
+}
+
 export interface Address {
   country: Country;
   address: string;
@@ -7,19 +12,21 @@ export interface Address {
   postalCode: string;
 }
 
-export interface Location {
-  address: Address;
-  location: GeoPoint;
+export interface GeoData {
+  geohash: string;
+  geopoint: GeoPoint;
+  /** IANA timezone, for example `Asia/Almaty`. */
+  timezone?: string;
 }
 
-export interface Country {
-  name: string;
-  isoCode: string;
+export interface DraftLocation {
+  address: Address;
+  geo: GeoData;
 }
 
 export interface StoreDraftDoc {
   storeName: string;
-  location: Location;
+  location: DraftLocation;
   phoneNumber: string;
   storeType: string;
   ownerId: string;

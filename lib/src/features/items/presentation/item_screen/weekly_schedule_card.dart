@@ -93,8 +93,10 @@ class DayRow extends StatelessWidget {
           gapW16,
           CollectionToggle(
             enabled: schedule.enabled,
-            onChanged: (enabled) =>
-                onChanged(schedule.copyWith(enabled: enabled)),
+            onChanged: (enabled) => onChanged(schedule.copyWith(
+              enabled: enabled,
+              quantity: enabled && schedule.quantity == 0 ? 1 : schedule.quantity,
+            )),
           ),
           gapW16,
           QuantityBox(

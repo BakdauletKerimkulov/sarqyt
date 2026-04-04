@@ -42,6 +42,7 @@ class ScheduleContent extends ConsumerWidget {
     final state = ref.watch(createItemControllerProvider);
     final schedule = ref.watch(scheduleScreenControllerProvider);
     final controller = ref.read(scheduleScreenControllerProvider.notifier);
+    final isLoading = state.isLoading;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -50,21 +51,28 @@ class ScheduleContent extends ConsumerWidget {
           _DayRow(
             dayName: WeeklySchedule.dayNames[day - 1],
             schedule: schedule.days[day]!,
-            onToggle: (enabled) => controller.toggleDay(day, enabled: enabled),
-            onPickStart: () async {
-              final picked = await showTimePicker(
-                context: context,
-                initialTime: schedule.days[day]!.startTime,
-              );
-              if (picked != null) controller.updateStartTime(day, picked);
-            },
-            onPickEnd: () async {
-              final picked = await showTimePicker(
-                context: context,
-                initialTime: schedule.days[day]!.endTime,
-              );
-              if (picked != null) controller.updateEndTime(day, picked);
-            },
+            enabled: !isLoading,
+            onToggle: isLoading
+                ? null
+                : (enabled) => controller.toggleDay(day, enabled: enabled),
+            onPickStart: isLoading
+                ? null
+                : () async {
+                    final picked = await showTimePicker(
+                      context: context,
+                      initialTime: schedule.days[day]!.startTime,
+                    );
+                    if (picked != null) controller.updateStartTime(day, picked);
+                  },
+            onPickEnd: isLoading
+                ? null
+                : () async {
+                    final picked = await showTimePicker(
+                      context: context,
+                      initialTime: schedule.days[day]!.endTime,
+                    );
+                    if (picked != null) controller.updateEndTime(day, picked);
+                  },
           ),
           if (day < 7) const Divider(height: 1),
         ],
@@ -105,16 +113,18 @@ class _DayRow extends StatelessWidget {
   const _DayRow({
     required this.dayName,
     required this.schedule,
-    required this.onToggle,
-    required this.onPickStart,
-    required this.onPickEnd,
+    this.enabled = true,
+    this.onToggle,
+    this.onPickStart,
+    this.onPickEnd,
   });
 
   final String dayName;
   final DaySchedule schedule;
-  final ValueChanged<bool> onToggle;
-  final VoidCallback onPickStart;
-  final VoidCallback onPickEnd;
+  final bool enabled;
+  final ValueChanged<bool>? onToggle;
+  final VoidCallback? onPickStart;
+  final VoidCallback? onPickEnd;
 
   String _formatTime(TimeOfDay t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';

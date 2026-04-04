@@ -49,6 +49,10 @@ export function validateMerchantData(data: StoreDraftRequestDto): string | null 
     return "Location must contain valid [lat, lng] coordinates";
   }
 
+  if (!isValidGeohash(data.geohash)) {
+    return "Geohash is required and must be a non-empty alphanumeric string";
+  }
+
   return null;
 }
 
@@ -67,6 +71,12 @@ function isValidCoordinates(value: unknown): value is [number, number] {
   }
 
   return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+}
+
+function isValidGeohash(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  const trimmed = value.trim();
+  return trimmed.length > 0 && /^[0-9a-z]+$/.test(trimmed);
 }
 
 function isNonEmptyString(value: unknown): value is string {

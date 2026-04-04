@@ -1,4 +1,4 @@
-import { onCall } from "firebase-functions/https";
+import { onCall } from "firebase-functions/v2/https";
 import { AppError, toHttpsError } from "../../../app/error";
 import { logError, logInfo } from "../../../app/logger";
 import { UserRole } from "../../../shared/constants/constants";
@@ -36,7 +36,7 @@ export const sincItemOffers = onCall(async (req) => {
     const { itemData, storeData } = await loadAndValidate(storeId, itemId, uid);
 
     // --- Build expected offers from schedule ---
-    const { expectedByDate, now, rangeStart, rangeEnd } =
+    const { expectedByDate, storeTimeZone, utcNow, rangeStart, rangeEnd } =
       buildExpectedOffers(storeId, itemId, itemData, storeData);
 
     // --- Diff against existing and apply batch ---
@@ -45,7 +45,8 @@ export const sincItemOffers = onCall(async (req) => {
       itemId,
       uid,
       expectedByDate,
-      now,
+      storeTimeZone,
+      utcNow,
       rangeStart,
       rangeEnd,
     });

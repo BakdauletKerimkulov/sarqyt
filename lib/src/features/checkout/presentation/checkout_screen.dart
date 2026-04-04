@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_form_type.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_screen.dart';
 import 'package:sarqyt/src/features/checkout/presentation/payment_page.dart';
+import 'package:sarqyt/src/features/offers/domain/offer.dart';
+import 'package:sarqyt/src/routing/client_router.dart';
+
 enum CheckoutSubRoute { register, payment }
 
 class CheckoutScreen extends ConsumerStatefulWidget {
-  const CheckoutScreen({super.key, required this.productID});
+  const CheckoutScreen({super.key, required this.offerId});
 
-  final String productID;
+  final OfferID offerId;
 
   @override
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -56,10 +60,19 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         ? 'Payment'
         : 'Register';
 
-    final productId = widget.productID;
+    final offerId = widget.offerId;
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => context.goNamed(
+            ClientRoute.offer.name,
+            pathParameters: {'id': widget.offerId},
+          ),
+        ),
+        centerTitle: true,
+        title: Text(title),
+      ),
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),
         controller: _controller,
@@ -68,7 +81,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
             formType: EmailPasswordSignInFormType.register,
             onSignedIn: _onSignedIn,
           ),
-          PaymentPage(productID: productId),
+          PaymentPage(offerId: offerId),
         ],
       ),
     );

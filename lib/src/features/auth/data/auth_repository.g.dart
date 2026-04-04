@@ -83,3 +83,45 @@ final class AuthStateChangesProvider
 }
 
 String _$authStateChangesHash() => r'18f565d4162cf9112f7c66e46095fb53b485b484';
+
+/// Reactive user role derived from id-token changes.
+/// Emits [UserRole.guest] while loading or when signed out.
+
+@ProviderFor(userRole)
+const userRoleProvider = UserRoleProvider._();
+
+/// Reactive user role derived from id-token changes.
+/// Emits [UserRole.guest] while loading or when signed out.
+
+final class UserRoleProvider
+    extends
+        $FunctionalProvider<AsyncValue<UserRole>, UserRole, Stream<UserRole>>
+    with $FutureModifier<UserRole>, $StreamProvider<UserRole> {
+  /// Reactive user role derived from id-token changes.
+  /// Emits [UserRole.guest] while loading or when signed out.
+  const UserRoleProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userRoleProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$userRoleHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<UserRole> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<UserRole> create(Ref ref) {
+    return userRole(ref);
+  }
+}
+
+String _$userRoleHash() => r'71b294e6b0ea3684f981b43ccc469a32d0cd9d2f';

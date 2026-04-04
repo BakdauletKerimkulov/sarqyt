@@ -7,14 +7,26 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
 
 class OfferCard extends StatelessWidget {
-  const OfferCard({super.key, this.onPressed, required this.offer});
+  const OfferCard({
+    super.key,
+    this.onPressed,
+    required this.offer,
+    this.distanceLabel,
+    this.onFavoriteToggle,
+    this.isFavorite = false,
+  });
 
   final Offer offer;
   final VoidCallback? onPressed;
+  final String? distanceLabel;
+  final VoidCallback? onFavoriteToggle;
+  final bool isFavorite;
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      clipBehavior: Clip.antiAlias,
+      elevation: 4.0,
       child: InkWell(
         onTap: onPressed,
         child: Column(
@@ -22,21 +34,35 @@ class OfferCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadiusGeometry.only(
-                    topRight: Radius.circular(Sizes.p16),
-                    topLeft: Radius.circular(Sizes.p16),
-                  ),
-                  child: CustomImage(
-                    imageUrl: offer.productImage,
-                    aspectRatio: 3,
-                  ),
-                ),
+                CustomImage(imageUrl: offer.productImage, aspectRatio: 3),
 
                 Positioned(
                   left: Sizes.p12,
                   top: Sizes.p12,
-                  child: InfoBadge(text: offer.availableText),
+                  child: Row(
+                    children: [
+                      InfoBadge(text: offer.availableText),
+                      if (distanceLabel != null && distanceLabel!.isNotEmpty) ...[
+                        const SizedBox(width: 6),
+                        InfoBadge(text: distanceLabel!),
+                      ],
+                    ],
+                  ),
+                ),
+                Positioned(
+                  right: Sizes.p12,
+                  top: Sizes.p12,
+                  child: GestureDetector(
+                    onTap: onFavoriteToggle,
+                    child: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: isFavorite ? Colors.red : Colors.white,
+                      size: 28,
+                      shadows: const [
+                        Shadow(blurRadius: 4, color: Colors.black45),
+                      ],
+                    ),
+                  ),
                 ),
 
                 Positioned(
@@ -64,7 +90,7 @@ class OfferCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Text(
-                    _pickupWindowText(context, offer),
+                    offer.pickupLabel,
                     style: const TextStyle(color: Colors.grey),
                   ),
                   gapH12,
@@ -73,7 +99,7 @@ class OfferCard extends StatelessWidget {
                       RatingIcon(),
                       gapW8,
                       Text(
-                        offer.status.toUpperCase(),
+                        offer.status.label(),
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       Spacer(),
@@ -95,12 +121,6 @@ class OfferCard extends StatelessWidget {
       ),
     );
   }
-}
-
-String _pickupWindowText(BuildContext context, Offer offer) {
-  final start = TimeOfDay.fromDateTime(offer.pickupStartTime).format(context);
-  final end = TimeOfDay.fromDateTime(offer.pickupEndTime).format(context);
-  return '$start - $end';
 }
 
 class StoreTitle extends StatelessWidget {

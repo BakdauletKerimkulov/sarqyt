@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
@@ -27,13 +28,12 @@ class StartSellingDialog extends ConsumerWidget {
       startSellingDialogControllerProvider,
       (_, state) => state.showAlertDialogOnError(context),
     );
-    final nowDate = DateTime.now();
-    final formatted = DateFormat('d MMMM y').format(nowDate);
-
+    final formatted = DateFormat('d MMMM y').format(DateTime.now());
     final state = ref.watch(startSellingDialogControllerProvider);
     final isLoading = state.isLoading;
 
     return Dialog(
+      backgroundColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(Sizes.p16),
         child: SizedBox(
@@ -49,34 +49,82 @@ class StartSellingDialog extends ConsumerWidget {
               gapH16,
               const Divider(),
               gapH16,
-              // TODO: Реализовать показ данных айтема
-              Text(
-                'Start date'.hardcoded,
-                style: Theme.of(context).textTheme.titleLarge,
+
+              // Item info
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(Sizes.p8),
+                    child: SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: CustomImage(imageUrl: item.imageUrl),
+                    ),
+                  ),
+                  gapW12,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        gapH4,
+                        Text(
+                          '${item.price.round()} ₸'.hardcoded,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               gapH16,
+
+              // Schedule info
+              Text(
+                'Daily quantity'.hardcoded,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              gapH4,
+              Text('${item.schedule.maxDayQuantity} per day'),
+              gapH16,
+
+              // Start date
+              Text(
+                'Start date'.hardcoded,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              gapH8,
               Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(Sizes.p12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(Sizes.p12),
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(Sizes.p8),
                 ),
                 child: Text(formatted),
               ),
-              gapH16,
-              Text('Price in app'.hardcoded),
               gapH24,
 
               PrimaryWebButton(
                 text: 'Confirm and start selling'.hardcoded,
                 isLoading: isLoading,
-                onPressed: () async {
-                  final success = await ref
-                      .read(startSellingDialogControllerProvider.notifier)
-                      .startSelling(item, storeId: storeId);
-                  if (context.mounted && success) {
-                    Navigator.of(context).pop(true);
-                  }
-                },
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        final success = await ref
+                            .read(
+                                startSellingDialogControllerProvider.notifier)
+                            .startSelling(itemId: item.id, storeId: storeId);
+                        if (context.mounted && success) {
+                          Navigator.of(context).pop(true);
+                        }
+                      },
               ),
             ],
           ),

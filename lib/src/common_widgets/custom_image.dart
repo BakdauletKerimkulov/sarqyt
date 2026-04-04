@@ -26,7 +26,7 @@ class CustomImage extends StatelessWidget {
     return AspectRatio(
       aspectRatio: aspectRatio,
       child: imageUrl == null
-          ? Image.asset('assets/icons/food-placeholder.png')
+          ? Image.asset('assets/icons/food-placeholder.png', fit: fit)
           : imageUrl.startsWith('http')
           ? CachedNetworkImage(
               imageUrl: localhostFriendlyImageUrl(imageUrl),

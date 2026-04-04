@@ -26,6 +26,7 @@ export interface ItemDoc {
   dietaryType?: string;
   packagingType?: string;
   collectionInstructions?: string | null;
+  isActive?: boolean;
   isBuffetFood?: boolean;
   storingAndAllergens?: string | null;
 }

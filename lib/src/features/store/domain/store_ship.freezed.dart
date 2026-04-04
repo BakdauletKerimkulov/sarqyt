@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$StoreShip {
 
- String get storeId; String get businessId; String get userId; List<String> get permissions; String get name; StoreRole get storeRole; String? get logoUrl; OnboardingStatus get onboardingStatus;
+ String get storeId; String get businessId; String get userId; List<String> get permissions; String get name; StoreRole get storeRole; String? get logoUrl;@JsonKey(fromJson: _readOnboardingStatus) OnboardingStatus get onboardingStatus;
 /// Create a copy of StoreShip
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $StoreShipCopyWith<$Res>  {
   factory $StoreShipCopyWith(StoreShip value, $Res Function(StoreShip) _then) = _$StoreShipCopyWithImpl;
 @useResult
 $Res call({
- String storeId, String businessId, String userId, List<String> permissions, String name, StoreRole storeRole, String? logoUrl, OnboardingStatus onboardingStatus
+ String storeId, String businessId, String userId, List<String> permissions, String name, StoreRole storeRole, String? logoUrl,@JsonKey(fromJson: _readOnboardingStatus) OnboardingStatus onboardingStatus
 });
 
 
@@ -160,7 +160,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name,  StoreRole storeRole,  String? logoUrl,  OnboardingStatus onboardingStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name,  StoreRole storeRole,  String? logoUrl, @JsonKey(fromJson: _readOnboardingStatus)  OnboardingStatus onboardingStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _StoreShip() when $default != null:
 return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_that.name,_that.storeRole,_that.logoUrl,_that.onboardingStatus);case _:
@@ -181,7 +181,7 @@ return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name,  StoreRole storeRole,  String? logoUrl,  OnboardingStatus onboardingStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name,  StoreRole storeRole,  String? logoUrl, @JsonKey(fromJson: _readOnboardingStatus)  OnboardingStatus onboardingStatus)  $default,) {final _that = this;
 switch (_that) {
 case _StoreShip():
 return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_that.name,_that.storeRole,_that.logoUrl,_that.onboardingStatus);case _:
@@ -201,7 +201,7 @@ return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name,  StoreRole storeRole,  String? logoUrl,  OnboardingStatus onboardingStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name,  StoreRole storeRole,  String? logoUrl, @JsonKey(fromJson: _readOnboardingStatus)  OnboardingStatus onboardingStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _StoreShip() when $default != null:
 return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_that.name,_that.storeRole,_that.logoUrl,_that.onboardingStatus);case _:
@@ -216,7 +216,7 @@ return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_t
 @JsonSerializable()
 
 class _StoreShip implements StoreShip {
-  const _StoreShip({required this.storeId, required this.businessId, required this.userId, required final  List<String> permissions, required this.name, required this.storeRole, this.logoUrl, this.onboardingStatus = OnboardingStatus.storeCreated}): _permissions = permissions;
+  const _StoreShip({required this.storeId, required this.businessId, required this.userId, required final  List<String> permissions, required this.name, required this.storeRole, this.logoUrl, @JsonKey(fromJson: _readOnboardingStatus) this.onboardingStatus = OnboardingStatus.storeCreated}): _permissions = permissions;
   factory _StoreShip.fromJson(Map<String, dynamic> json) => _$StoreShipFromJson(json);
 
 @override final  String storeId;
@@ -232,7 +232,7 @@ class _StoreShip implements StoreShip {
 @override final  String name;
 @override final  StoreRole storeRole;
 @override final  String? logoUrl;
-@override@JsonKey() final  OnboardingStatus onboardingStatus;
+@override@JsonKey(fromJson: _readOnboardingStatus) final  OnboardingStatus onboardingStatus;
 
 /// Create a copy of StoreShip
 /// with the given fields replaced by the non-null parameter values.
@@ -267,7 +267,7 @@ abstract mixin class _$StoreShipCopyWith<$Res> implements $StoreShipCopyWith<$Re
   factory _$StoreShipCopyWith(_StoreShip value, $Res Function(_StoreShip) _then) = __$StoreShipCopyWithImpl;
 @override @useResult
 $Res call({
- String storeId, String businessId, String userId, List<String> permissions, String name, StoreRole storeRole, String? logoUrl, OnboardingStatus onboardingStatus
+ String storeId, String businessId, String userId, List<String> permissions, String name, StoreRole storeRole, String? logoUrl,@JsonKey(fromJson: _readOnboardingStatus) OnboardingStatus onboardingStatus
 });
 
 

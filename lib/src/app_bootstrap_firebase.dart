@@ -6,7 +6,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/app_bootstrap.dart';
 import 'package:sarqyt/src/exceptions/async_error_logger.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
-import 'package:sarqyt/src/features/offers/data/fake_client_offer_repository.dart';
 
 extension AppBootstrapFirebase on AppBootstrap {
   /// Creates the top-level [ProviderContainer] by overriding providers with fake
@@ -30,7 +29,7 @@ extension AppBootstrapFirebase on AppBootstrap {
   Future<ProviderContainer> createFirebaseProviderContainer({
     bool addDelay = true,
   }) async {
-    final offeRepo = FakeClientOfferRepository();
+    final offeRepo = ClientOfferRepository(FirebaseFirestore.instance);
     return ProviderContainer(
       overrides: [offerRepositoryProvider.overrideWithValue(offeRepo)],
       observers: [AsyncErrorLogger()],
