@@ -55,7 +55,7 @@ final class ClientOrdersRepositoryProvider
 }
 
 String _$clientOrdersRepositoryHash() =>
-    r'e4cb91d1d1355db101da8b42bf6f47b129bec60e';
+    r'187c9212d3bcd105e8fa57b93f5fabcd774c6615';
 
 @ProviderFor(customerOrdersStream)
 const customerOrdersStreamProvider = CustomerOrdersStreamProvider._();

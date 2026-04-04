@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
@@ -7,8 +8,14 @@ import 'package:sarqyt/src/features/orders/domain/order.dart';
 part 'client_orders_repository.g.dart';
 
 class ClientOrdersRepository {
-  const ClientOrdersRepository(this._firestore);
+  const ClientOrdersRepository(this._firestore, this._functions);
   final FirebaseFirestore _firestore;
+  final FirebaseFunctions _functions;
+
+  Future<void> cancelOrder(OrderID orderId) async {
+    final callable = _functions.httpsCallable('cancelOrder');
+    await callable.call({'orderId': orderId});
+  }
 
   Stream<List<Order>> watchOrdersForCustomer(UserID uid) {
     return _firestore
@@ -50,7 +57,10 @@ class ClientOrdersRepository {
 
 @Riverpod(keepAlive: true)
 ClientOrdersRepository clientOrdersRepository(Ref ref) {
-  return ClientOrdersRepository(FirebaseFirestore.instance);
+  return ClientOrdersRepository(
+    FirebaseFirestore.instance,
+    FirebaseFunctions.instance,
+  );
 }
 
 @riverpod

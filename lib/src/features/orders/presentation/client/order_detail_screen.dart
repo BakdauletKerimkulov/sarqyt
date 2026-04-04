@@ -12,6 +12,7 @@ import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_status_badge.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
+import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
 
 class OrderDetailScreen extends ConsumerWidget {
   const OrderDetailScreen({super.key, required this.orderId});
@@ -159,6 +160,13 @@ class _OrderDetailContent extends StatelessWidget {
             value: order.totalFormatted,
           ),
 
+          // Cancel button for active orders
+          if (order.status == OrderStatus.confirmed ||
+              order.status == OrderStatus.preparing) ...[
+            gapH24,
+            _CancelOrderButton(orderId: order.id),
+          ],
+
           // Review button for completed orders
           if (order.status == OrderStatus.completed) ...[
             gapH24,
@@ -254,6 +262,64 @@ class _PickupCountdownState extends State<_PickupCountdown> {
           ],
         ],
       ),
+    );
+  }
+}
+
+class _CancelOrderButton extends ConsumerStatefulWidget {
+  const _CancelOrderButton({required this.orderId});
+  final OrderID orderId;
+
+  @override
+  ConsumerState<_CancelOrderButton> createState() =>
+      _CancelOrderButtonState();
+}
+
+class _CancelOrderButtonState extends ConsumerState<_CancelOrderButton> {
+  bool _isLoading = false;
+
+  Future<void> _cancel() async {
+    final confirm = await showAlertDialog(
+      context: context,
+      title: 'Cancel order?'.hardcoded,
+      content: 'You will receive a full refund.'.hardcoded,
+      cancelActionText: 'No'.hardcoded,
+      defaultActionText: 'Yes, cancel'.hardcoded,
+    );
+    if (confirm != true) return;
+
+    setState(() => _isLoading = true);
+    try {
+      await ref
+          .read(clientOrdersRepositoryProvider)
+          .cancelOrder(widget.orderId);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: _isLoading ? null : _cancel,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.red,
+        side: const BorderSide(color: Colors.red),
+        minimumSize: const Size(double.infinity, 48),
+      ),
+      child: _isLoading
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Text('Cancel order'.hardcoded),
     );
   }
 }

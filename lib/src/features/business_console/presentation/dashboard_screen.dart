@@ -8,6 +8,7 @@ import 'package:sarqyt/src/features/business_console/domain/business.dart';
 import 'package:sarqyt/src/features/business_console/presentation/business_verify/verify_dialog.dart';
 import 'package:sarqyt/src/features/items/presentation/items_list/sliver_items_grid.dart';
 import 'package:sarqyt/src/features/offers/presentation/business/create_one_time_offer_dialog.dart';
+import 'package:sarqyt/src/features/orders/presentation/business/business_orders_screen.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 import 'package:sarqyt/src/routing/store_startup.dart';
@@ -58,10 +59,23 @@ class DashboardScreen extends ConsumerWidget {
         if (!business.isConfirmed)
           const SliverToBoxAdapter(child: gapH24),
 
+        // Orders section
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: Sizes.p32),
+          sliver: SliverToBoxAdapter(
+            child: SizedBox(
+              height: 400,
+              child: const BusinessOrdersScreen(),
+            ),
+          ),
+        ),
+
+        const SliverToBoxAdapter(child: gapH16),
+
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: Sizes.p32),
           sliver: OutlinedSectionSliverWidgetWithHeader(
-            header: 'Your surprice bags',
+            header: 'Your surprise bags',
             sliver: SliverItemsGrid(storeId: storeId),
           ),
         ),
