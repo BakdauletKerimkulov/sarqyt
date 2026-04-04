@@ -15,10 +15,9 @@ export { createOneTimeOffer } from "./features/offers/functions/create-one-time-
 export { onItemStatusChanged } from "./features/offers/functions/on-item-status-changed";
 export { cleanupOldData } from "./features/offers/functions/cleanup-old-offers";
 
-// Reservations & Payments
-export { createReservation } from "./features/reservations/functions/create-reservation";
-export { stripeWebhook } from "./features/reservations/functions/stripe-webhook";
-export { expireReservations } from "./features/reservations/functions/expire-reservations";
+// Payments
+export { createPayment } from "./features/payments/functions/create-payment";
+export { stripeWebhook } from "./features/payments/functions/stripe-webhook";
 
 // Orders
 export { expireOrders } from "./features/orders/functions/expire-orders";

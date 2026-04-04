@@ -70,23 +70,14 @@ export const cancelOrder = onCall(
       }
 
       // Restore offer quantity
-      const reservationId = order.reservationId as string | undefined;
-      if (reservationId) {
-        const resSnap = await db
-          .collection(FirestoreCollections.RESERVATIONS)
-          .doc(reservationId)
-          .get();
-        if (resSnap.exists) {
-          const resData = resSnap.data()!;
-          const offerId = resData.offerId as string;
-          const qty = resData.quantity as number;
-
-          const { FieldValue } = await import("firebase-admin/firestore");
-          await db
-            .collection(FirestoreCollections.OFFERS)
-            .doc(offerId)
-            .update({ quantity: FieldValue.increment(qty) });
-        }
+      const offerId = order.offerId as string | undefined;
+      const qty = order.itemQuantity as number | undefined;
+      if (offerId && qty) {
+        const { FieldValue } = await import("firebase-admin/firestore");
+        await db
+          .collection(FirestoreCollections.OFFERS)
+          .doc(offerId)
+          .update({ quantity: FieldValue.increment(qty) });
       }
 
       // Update order

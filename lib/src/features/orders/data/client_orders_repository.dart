@@ -30,12 +30,11 @@ class ClientOrdersRepository {
         .map((snap) => snap.docs.map((doc) => doc.data()).toList());
   }
 
-  /// Watch for an order created from a specific reservation.
-  /// Returns the first matching order, or stays open until one appears.
-  Stream<Order?> watchOrderByReservation(String reservationId) {
+  /// Watch for an order created from a specific payment intent.
+  Stream<Order?> watchOrderByPaymentIntent(String paymentIntentId) {
     return _firestore
         .collection('orders')
-        .where('reservationId', isEqualTo: reservationId)
+        .where('paymentIntentId', isEqualTo: paymentIntentId)
         .limit(1)
         .snapshots()
         .map((snap) => snap.docs.isEmpty

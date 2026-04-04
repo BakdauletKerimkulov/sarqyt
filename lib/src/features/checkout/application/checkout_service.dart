@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/features/checkout/data/payment_repository.dart';
 import 'package:sarqyt/src/features/checkout/data/payment_sheet_repository.dart';
-import 'package:sarqyt/src/features/checkout/data/reservation_repository.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/orders/data/client_orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
@@ -40,33 +40,24 @@ class CheckoutController extends _$CheckoutController {
   @override
   FutureOr<CheckoutResult> build() => null;
 
-  /// Pays for an offer and waits for the order to be created by the webhook.
-  /// Returns the new OrderID on success.
-  /// Returns null if user cancelled.
-  /// Throws (via AsyncError state) on real errors — UI listener shows dialog.
   Future<CheckoutResult> pay({
     required String offerId,
     required int quantity,
     required String storeName,
   }) async {
-    // Keep alive during payment flow — Payment Sheet is a native overlay
-    // that may cause Riverpod to dispose autoDispose providers.
     final link = ref.keepAlive();
 
     state = const AsyncLoading();
 
-    late final String reservationId;
-
     state = await AsyncValue.guard(() async {
-      final reservationRepo = ref.read(reservationRepositoryProvider);
+      final paymentRepo = ref.read(paymentRepositoryProvider);
       final paymentSheetRepo = ref.read(paymentSheetRepositoryProvider);
 
-      // 1. Create reservation + get Stripe secrets from server
-      final result = await reservationRepo.createReservation(
+      // 1. Create payment (decrements offer quantity + creates PaymentIntent)
+      final result = await paymentRepo.createPayment(
         offerId: offerId,
         quantity: quantity,
       );
-      reservationId = result.reservationId;
 
       // 2. Init payment sheet
       await paymentSheetRepo.initPaymentSheet(
@@ -80,10 +71,10 @@ class CheckoutController extends _$CheckoutController {
       final success = await paymentSheetRepo.presentPaymentSheet();
       if (!success) throw const _PaymentCancelledException();
 
-      // 4. Wait for webhook to create the order with this reservationId
+      // 4. Wait for webhook to create order (matched by paymentIntentId)
       final ordersRepo = ref.read(clientOrdersRepositoryProvider);
       final order = await ordersRepo
-          .watchOrderByReservation(reservationId)
+          .watchOrderByPaymentIntent(result.paymentIntentId)
           .where((o) => o != null)
           .first
           .timeout(
@@ -100,19 +91,15 @@ class CheckoutController extends _$CheckoutController {
       return order.id;
     });
 
-    // Allow dispose now that payment flow is complete.
     link.close();
 
-    // User cancelled — not an error, just return null
     if (state.hasError && state.error is _PaymentCancelledException) {
       state = const AsyncData(null);
       return null;
     }
 
-    // Real error — state remains AsyncError, UI listener shows dialog
     if (state.hasError) return null;
 
-    // Success — return the order ID
     return state.value;
   }
 }
