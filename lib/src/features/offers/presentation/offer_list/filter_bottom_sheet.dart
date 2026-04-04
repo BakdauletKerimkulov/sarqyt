@@ -14,7 +14,7 @@ class FilterBottomSheet extends ConsumerWidget {
     final ctrl = ref.read(discoverFilterControllerProvider.notifier);
 
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(Sizes.p24),
         child: Column(
           mainAxisSize: MainAxisSize.min,

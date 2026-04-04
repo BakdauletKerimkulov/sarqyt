@@ -24,7 +24,7 @@ class RatingInformation extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            RatingIcon(size: Sizes.p8),
+            RatingIcon(rating: rating.average, size: Sizes.p8),
             gapW16,
             Text(
               '${rating.average} / 5.0'.hardcoded,

@@ -76,14 +76,14 @@ class AccountScreen extends ConsumerWidget {
                       leading: const Icon(Icons.edit),
                       title: Text('Edit profile'.hardcoded),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () {}, // TODO
+                      onTap: () => context.pushNamed(ClientRoute.editProfile.name),
                     ),
                     const Divider(height: 1),
                     ListTile(
                       leading: const Icon(Icons.settings),
                       title: Text('Settings'.hardcoded),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () {}, // TODO
+                      onTap: () => context.pushNamed(ClientRoute.appSettings.name),
                     ),
                   ],
                 ),

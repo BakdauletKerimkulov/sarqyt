@@ -13,6 +13,8 @@ import 'package:sarqyt/src/features/onboarding/presentation/client/welcome_scree
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/offer_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/store_info.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_detail_screen.dart';
+import 'package:sarqyt/src/features/auth/presentation/edit_profile/edit_profile_screen.dart';
+import 'package:sarqyt/src/features/auth/presentation/settings/app_settings_screen.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/orders_screen.dart';
 import 'package:sarqyt/src/features/review/presentation/review_screen.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
@@ -37,6 +39,8 @@ enum ClientRoute {
   orderDetail,
   review,
   profile,
+  editProfile,
+  appSettings,
 }
 
 class ClientShellScaffold extends StatelessWidget {
@@ -215,6 +219,18 @@ GoRouter clientRouter(Ref ref) {
                 path: '/profile',
                 name: ClientRoute.profile.name,
                 builder: (context, state) => const AccountScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    name: ClientRoute.editProfile.name,
+                    builder: (context, state) => const EditProfileScreen(),
+                  ),
+                  GoRoute(
+                    path: 'settings',
+                    name: ClientRoute.appSettings.name,
+                    builder: (context, state) => const AppSettingsScreen(),
+                  ),
+                ],
               ),
             ],
           ),

@@ -39,15 +39,7 @@ class OfferCard extends StatelessWidget {
                 Positioned(
                   left: Sizes.p12,
                   top: Sizes.p12,
-                  child: Row(
-                    children: [
-                      InfoBadge(text: offer.availableText),
-                      if (distanceLabel != null && distanceLabel!.isNotEmpty) ...[
-                        const SizedBox(width: 6),
-                        InfoBadge(text: distanceLabel!),
-                      ],
-                    ],
-                  ),
+                  child: InfoBadge(text: offer.availableText),
                 ),
                 Positioned(
                   right: Sizes.p12,
@@ -98,11 +90,13 @@ class OfferCard extends StatelessWidget {
                     children: [
                       RatingIcon(),
                       gapW8,
-                      Text(
-                        offer.status.label(),
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      Spacer(),
+                      if (distanceLabel != null && distanceLabel!.isNotEmpty) ...[
+                        Text(
+                          distanceLabel!,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                      const Spacer(),
                       Text(
                         '${offer.price.round()} ${offer.currencySymbol}',
                         style: TextStyle(
