@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:sarqyt/src/common_widgets/async_value_widget.dart';
+import 'package:sarqyt/src/common_widgets/responsive_centered_grid.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/orders/data/orders_repository.dart';
@@ -61,7 +62,7 @@ class BusinessOrdersScreen extends ConsumerWidget {
                 ),
                 gapH12,
                 for (final order in past) ...[
-                  _PastOrderTile(order: order),
+                  _BusinessOrderCard(order: order),
                   gapH4,
                 ],
               ],
@@ -191,25 +192,40 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
   }
 }
 
-class _PastOrderTile extends StatelessWidget {
-  const _PastOrderTile({required this.order});
-  final Order order;
+/// Sliver version of business orders for use inside OutlinedSectionSliver.
+class SliverBusinessOrders extends ConsumerWidget {
+  const SliverBusinessOrders({super.key, required this.storeId});
+
+  final String storeId;
 
   @override
-  Widget build(BuildContext context) {
-    final dateStr = DateFormat('d MMM, HH:mm').format(order.createdAt);
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text('${order.itemName} x${order.itemQuantity}'),
-      subtitle: Text(dateStr),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(order.totalFormatted),
-          gapW8,
-          OrderStatusBadge(status: order.status),
-        ],
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ordersAsync = ref.watch(ordersListStreamProvider(storeId));
+
+    return AsyncValueSliverWidget(
+      value: ordersAsync,
+      data: (orders) {
+        if (orders.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(Sizes.p32),
+              child: Text(
+                'Once customers start ordering, their reservations will appear here.'
+                    .hardcoded,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+          );
+        }
+
+        return ResponsiveSliverAlignedGrid(
+          itemCount: orders.length,
+          itemBuilder: (context, index) {
+            return _BusinessOrderCard(order: orders[index]);
+          },
+        );
+      },
     );
   }
 }
