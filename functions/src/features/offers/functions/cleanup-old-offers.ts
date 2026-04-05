@@ -7,7 +7,7 @@ import { logInfo } from "../../../app/logger";
 /**
  * Runs daily at 03:00 UTC.
  * - Deletes expired/paused offers older than 7 days.
- * - Deletes expired/cancelled reservations older than 7 days.
+ * - Deletes consumed/expired store drafts older than 7 days.
  */
 export const cleanupOldData = onSchedule("every day 03:00", async () => {
   const cutoff = Timestamp.fromMillis(
@@ -15,7 +15,7 @@ export const cleanupOldData = onSchedule("every day 03:00", async () => {
   );
 
   let deletedOffers = 0;
-  let deletedReservations = 0;
+  let deletedDrafts = 0;
 
   // Cleanup old offers (expired or paused, older than 7 days)
   for (const status of ["expired", "paused"]) {
@@ -35,12 +35,11 @@ export const cleanupOldData = onSchedule("every day 03:00", async () => {
     }
   }
 
-  // Cleanup old reservations (expired or cancelled, older than 7 days)
-  for (const status of ["expired", "cancelled"]) {
+  // Cleanup consumed/expired store drafts older than 7 days
+  for (const status of ["consumed", "expired"]) {
     const snap = await db
-      .collection(FirestoreCollections.RESERVATIONS)
+      .collection(FirestoreCollections.STORE_DRAFTS)
       .where("status", "==", status)
-      .where("expiresAt", "<", cutoff)
       .get();
 
     if (!snap.empty) {
@@ -49,11 +48,11 @@ export const cleanupOldData = onSchedule("every day 03:00", async () => {
         batch.delete(doc.ref);
       }
       await batch.commit();
-      deletedReservations += snap.size;
+      deletedDrafts += snap.size;
     }
   }
 
-  if (deletedOffers > 0 || deletedReservations > 0) {
-    logInfo("cleanupOldData done", { deletedOffers, deletedReservations });
+  if (deletedOffers > 0 || deletedDrafts > 0) {
+    logInfo("cleanupOldData done", { deletedOffers, deletedDrafts });
   }
 });
