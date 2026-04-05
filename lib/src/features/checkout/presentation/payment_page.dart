@@ -101,7 +101,7 @@ class PaymentPage extends ConsumerWidget {
                   Expanded(
                     child: PrimaryButton(
                       isLoading: isLoading,
-                      text: 'Pay'.hardcoded,
+                      text: 'Reserve'.hardcoded,
                       onPressed: isLoading
                           ? null
                           : () => _onPay(context, ref, offer, quantity),

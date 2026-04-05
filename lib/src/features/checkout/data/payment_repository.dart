@@ -22,6 +22,19 @@ class PaymentRepository {
 
   PaymentRepository(this._functions);
 
+  /// Reserve without payment — creates order directly. For testing.
+  Future<String> reserveOffer({
+    required String offerId,
+    required int quantity,
+  }) async {
+    final callable = _functions.httpsCallable('reserveOffer');
+    final result = await callable.call<Map<String, dynamic>>({
+      'offerId': offerId,
+      'quantity': quantity,
+    });
+    return result.data['orderId'] as String;
+  }
+
   Future<CreatePaymentResult> createPayment({
     required String offerId,
     required int quantity,

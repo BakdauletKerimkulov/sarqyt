@@ -41,26 +41,47 @@ class CheckoutController extends _$CheckoutController {
   @override
   FutureOr<CheckoutResult> build() => null;
 
+  /// Reserve without payment — for testing with real restaurants.
+  /// TODO: Replace with pay() when Kaspi Pay is integrated.
   Future<CheckoutResult> pay({
     required String offerId,
     required int quantity,
     required String storeName,
   }) async {
-    final link = ref.keepAlive();
+    state = const AsyncLoading();
 
+    state = await AsyncValue.guard(() async {
+      final paymentRepo = ref.read(paymentRepositoryProvider);
+      final orderId = await paymentRepo.reserveOffer(
+        offerId: offerId,
+        quantity: quantity,
+      );
+      return orderId;
+    });
+
+    if (state.hasError) return null;
+
+    return state.value;
+  }
+
+  /* --- Stripe payment flow (for when payment system is ready) ---
+  Future<CheckoutResult> payWithStripe({
+    required String offerId,
+    required int quantity,
+    required String storeName,
+  }) async {
+    final link = ref.keepAlive();
     state = const AsyncLoading();
 
     state = await AsyncValue.guard(() async {
       final paymentRepo = ref.read(paymentRepositoryProvider);
       final paymentSheetRepo = ref.read(paymentSheetRepositoryProvider);
 
-      // 1. Create payment (decrements offer quantity + creates PaymentIntent)
       final result = await paymentRepo.createPayment(
         offerId: offerId,
         quantity: quantity,
       );
 
-      // 2. Init payment sheet
       await paymentSheetRepo.initPaymentSheet(
         paymentIntentClientSecret: result.paymentIntentClientSecret,
         ephemeralKey: result.ephemeralKey,
@@ -68,30 +89,19 @@ class CheckoutController extends _$CheckoutController {
         merchantDisplayName: storeName,
       );
 
-      // 3. Present payment sheet
       final success = await paymentSheetRepo.presentPaymentSheet();
       if (!success) throw const _PaymentCancelledException();
-
-      // 4. Wait for webhook to create order (matched by paymentIntentId)
-      final user = ref.read(authRepositoryProvider).currentUser;
-      if (user == null) throw StateError('User not signed in');
 
       final ordersRepo = ref.read(clientOrdersRepositoryProvider);
       final order = await ordersRepo
           .watchOrderByPaymentIntent(result.paymentIntentId, user.uid)
           .where((o) => o != null)
           .first
-          .timeout(
-            const Duration(seconds: 15),
-            onTimeout: () => null,
-          );
+          .timeout(const Duration(seconds: 15), onTimeout: () => null);
 
       if (order == null) {
-        throw TimeoutException(
-          'Order not received yet. Check your orders later.',
-        );
+        throw TimeoutException('Order not received yet.');
       }
-
       return order.id;
     });
 
@@ -101,11 +111,10 @@ class CheckoutController extends _$CheckoutController {
       state = const AsyncData(null);
       return null;
     }
-
     if (state.hasError) return null;
-
     return state.value;
   }
+  */
 }
 
 class _PaymentCancelledException implements Exception {
