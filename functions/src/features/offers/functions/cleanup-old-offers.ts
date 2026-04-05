@@ -15,7 +15,6 @@ export const cleanupOldData = onSchedule("every day 03:00", async () => {
   );
 
   let deletedOffers = 0;
-  let deletedDrafts = 0;
 
   // Cleanup old offers (expired or paused, older than 7 days)
   for (const status of ["expired", "paused"]) {
@@ -35,24 +34,9 @@ export const cleanupOldData = onSchedule("every day 03:00", async () => {
     }
   }
 
-  // Cleanup consumed/expired store drafts older than 7 days
-  for (const status of ["consumed", "expired"]) {
-    const snap = await db
-      .collection(FirestoreCollections.STORE_DRAFTS)
-      .where("status", "==", status)
-      .get();
+  // StoreDrafts: use Firestore TTL policy on expiresAt field instead.
 
-    if (!snap.empty) {
-      const batch = db.batch();
-      for (const doc of snap.docs) {
-        batch.delete(doc.ref);
-      }
-      await batch.commit();
-      deletedDrafts += snap.size;
-    }
-  }
-
-  if (deletedOffers > 0 || deletedDrafts > 0) {
-    logInfo("cleanupOldData done", { deletedOffers, deletedDrafts });
+  if (deletedOffers > 0) {
+    logInfo("cleanupOldData done", { deletedOffers });
   }
 });
