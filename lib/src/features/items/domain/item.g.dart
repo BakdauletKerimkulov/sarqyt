@@ -33,6 +33,19 @@ _Item _$ItemFromJson(Map<String, dynamic> json) => _Item(
       PackagingOption.withBagOrOwnBag,
   collectionInstructions: json['collectionInstructions'] as String?,
   isActive: json['isActive'] as bool? ?? false,
+  type:
+      $enumDecodeNullable(
+        _$ItemTypeEnumMap,
+        json['type'],
+        unknownValue: ItemType.scheduled,
+      ) ??
+      ItemType.scheduled,
+  oneTimeDate: json['oneTimeDate'] as String?,
+  oneTimeStartHour: (json['oneTimeStartHour'] as num?)?.toInt(),
+  oneTimeStartMinute: (json['oneTimeStartMinute'] as num?)?.toInt(),
+  oneTimeEndHour: (json['oneTimeEndHour'] as num?)?.toInt(),
+  oneTimeEndMinute: (json['oneTimeEndMinute'] as num?)?.toInt(),
+  oneTimeQuantity: (json['oneTimeQuantity'] as num?)?.toInt(),
   isBuffetFood: json['isBuffetFood'] as bool? ?? false,
   storingAndAllergens: json['storingAndAllergens'] as String?,
   badges:
@@ -58,6 +71,13 @@ Map<String, dynamic> _$ItemToJson(_Item instance) => <String, dynamic>{
   'packagingType': _$PackagingOptionEnumMap[instance.packagingType]!,
   'collectionInstructions': instance.collectionInstructions,
   'isActive': instance.isActive,
+  'type': _$ItemTypeEnumMap[instance.type]!,
+  'oneTimeDate': instance.oneTimeDate,
+  'oneTimeStartHour': instance.oneTimeStartHour,
+  'oneTimeStartMinute': instance.oneTimeStartMinute,
+  'oneTimeEndHour': instance.oneTimeEndHour,
+  'oneTimeEndMinute': instance.oneTimeEndMinute,
+  'oneTimeQuantity': instance.oneTimeQuantity,
   'isBuffetFood': instance.isBuffetFood,
   'storingAndAllergens': instance.storingAndAllergens,
   'badges': instance.badges.map((e) => e.toJson()).toList(),
@@ -73,4 +93,9 @@ const _$PackagingOptionEnumMap = {
   PackagingOption.withBag: 'withBag',
   PackagingOption.withBagOrOwnBag: 'withBagOrOwnBag',
   PackagingOption.noBag: 'noBag',
+};
+
+const _$ItemTypeEnumMap = {
+  ItemType.scheduled: 'scheduled',
+  ItemType.oneTime: 'oneTime',
 };

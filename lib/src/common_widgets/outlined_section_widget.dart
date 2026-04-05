@@ -71,10 +71,12 @@ class OutlinedSectionSliverWidgetWithHeader extends StatelessWidget {
     super.key,
     required this.header,
     required this.sliver,
+    this.trailing,
   });
 
   final String header;
   final Widget sliver;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -92,9 +94,16 @@ class OutlinedSectionSliverWidgetWithHeader extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(Sizes.p16),
-                  child: Text(
-                    header,
-                    style: Theme.of(context).textTheme.titleLarge,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          header,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                      if (trailing != null) trailing!,
+                    ],
                   ),
                 ),
                 Divider(thickness: 1, color: lineColor, height: 0),

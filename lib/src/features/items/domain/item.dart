@@ -14,6 +14,8 @@ enum DietaryType { notSpecified, vegetarian }
 
 enum PackagingOption { withBag, withBagOrOwnBag, noBag }
 
+enum ItemType { scheduled, oneTime }
+
 @freezed
 abstract class Item with _$Item {
   @JsonSerializable(explicitToJson: true)
@@ -41,6 +43,15 @@ abstract class Item with _$Item {
     PackagingOption packagingType,
     String? collectionInstructions,
     @Default(false) bool isActive,
+    @JsonKey(unknownEnumValue: ItemType.scheduled)
+    @Default(ItemType.scheduled)
+    ItemType type,
+    String? oneTimeDate,
+    int? oneTimeStartHour,
+    int? oneTimeStartMinute,
+    int? oneTimeEndHour,
+    int? oneTimeEndMinute,
+    int? oneTimeQuantity,
     @Default(false) bool isBuffetFood,
     String? storingAndAllergens,
     @Default([]) List<Badge> badges,

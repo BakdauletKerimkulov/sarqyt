@@ -6,8 +6,8 @@ import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/business_console/domain/business.dart';
 import 'package:sarqyt/src/features/business_console/presentation/business_verify/verify_dialog.dart';
+import 'package:sarqyt/src/features/items/presentation/items_list/create_item_dialog.dart';
 import 'package:sarqyt/src/features/items/presentation/items_list/sliver_items_grid.dart';
-import 'package:sarqyt/src/features/offers/presentation/business/create_one_time_offer_dialog.dart';
 import 'package:sarqyt/src/features/orders/presentation/business/business_orders_screen.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
@@ -26,10 +26,8 @@ class DashboardScreen extends ConsumerWidget {
 
     final lineColor = Theme.of(context).colorScheme.surfaceContainerHighest;
 
-    return Stack(
-      children: [
-        CustomScrollView(
-          slivers: [
+    return CustomScrollView(
+      slivers: [
         SliverPadding(
           padding: const EdgeInsets.symmetric(
             horizontal: Sizes.p32,
@@ -76,23 +74,18 @@ class DashboardScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: Sizes.p32),
           sliver: OutlinedSectionSliverWidgetWithHeader(
             header: 'Your surprise bags',
-            sliver: SliverItemsGrid(storeId: storeId),
-          ),
-        ),
-          ],
-        ),
-        Positioned(
-          right: Sizes.p32,
-          bottom: Sizes.p24,
-          child: FloatingActionButton.extended(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            icon: const Icon(Icons.flash_on),
-            label: Text('Flash offer'.hardcoded),
-            onPressed: () => showDialog(
-              context: context,
-              builder: (_) => CreateOneTimeOfferDialog(storeId: storeId),
+            trailing: TextButton.icon(
+              icon: const Icon(Icons.add, size: 18),
+              label: Text('Create new'.hardcoded),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+              ),
+              onPressed: () => showDialog(
+                context: context,
+                builder: (_) => CreateItemTypeDialog(storeId: storeId),
+              ),
             ),
+            sliver: SliverItemsGrid(storeId: storeId),
           ),
         ),
       ],
