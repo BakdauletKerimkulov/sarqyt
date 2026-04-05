@@ -31,9 +31,13 @@ class ClientOrdersRepository {
   }
 
   /// Watch for an order created from a specific payment intent.
-  Stream<Order?> watchOrderByPaymentIntent(String paymentIntentId) {
+  Stream<Order?> watchOrderByPaymentIntent(
+    String paymentIntentId,
+    UserID uid,
+  ) {
     return _firestore
         .collection('orders')
+        .where('customerId', isEqualTo: uid)
         .where('paymentIntentId', isEqualTo: paymentIntentId)
         .limit(1)
         .snapshots()

@@ -3,7 +3,7 @@ import { AppError, toHttpsError } from "../../../app/error";
 import { logError } from "../../../app/logger";
 import { db } from "../../../app/firebase";
 import { FirestoreCollections } from "../../../shared/constants/constants";
-import { getStripe, stripeSecretKey } from "../../reservations/helpers/stripe-client";
+import { getStripe, stripeSecretKey } from "../../../shared/helpers/stripe-client";
 
 interface CreatePaymentRequest {
   offerId: string;

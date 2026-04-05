@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/checkout/data/payment_repository.dart';
 import 'package:sarqyt/src/features/checkout/data/payment_sheet_repository.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
@@ -72,9 +73,12 @@ class CheckoutController extends _$CheckoutController {
       if (!success) throw const _PaymentCancelledException();
 
       // 4. Wait for webhook to create order (matched by paymentIntentId)
+      final user = ref.read(authRepositoryProvider).currentUser;
+      if (user == null) throw StateError('User not signed in');
+
       final ordersRepo = ref.read(clientOrdersRepositoryProvider);
       final order = await ordersRepo
-          .watchOrderByPaymentIntent(result.paymentIntentId)
+          .watchOrderByPaymentIntent(result.paymentIntentId, user.uid)
           .where((o) => o != null)
           .first
           .timeout(

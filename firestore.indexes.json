@@ -83,6 +83,20 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "customerId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "paymentIntentId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "storeId",
           "order": "ASCENDING"
         },

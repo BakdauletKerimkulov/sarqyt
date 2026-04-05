@@ -3,7 +3,7 @@ import { AppError, toHttpsError } from "../../../app/error";
 import { db, serverTimestamp } from "../../../app/firebase";
 import { logError, logInfo } from "../../../app/logger";
 import { FirestoreCollections } from "../../../shared/constants/constants";
-import { getStripe, stripeSecretKey } from "../../reservations/helpers/stripe-client";
+import { getStripe, stripeSecretKey } from "../../../shared/helpers/stripe-client";
 
 interface CancelOrderRequest {
   orderId: string;

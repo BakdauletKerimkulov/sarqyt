@@ -112,6 +112,5 @@ service cloud.firestore {
         (isSignedIn() && resource.data.storeId is string && isStoreOwner(resource.data.storeId)) ||
         (isSignedIn() && resource.data.storeId is string && isStoreStaff(resource.data.storeId));
     }
-
   }
 }

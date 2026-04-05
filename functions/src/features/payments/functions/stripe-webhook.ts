@@ -3,7 +3,7 @@ import { onRequest } from "firebase-functions/v2/https";
 import { defineSecret } from "firebase-functions/params";
 import { db, serverTimestamp } from "../../../app/firebase";
 import { FirestoreCollections } from "../../../shared/constants/constants";
-import { getStripe, stripeSecretKey } from "../../reservations/helpers/stripe-client";
+import { getStripe, stripeSecretKey } from "../../../shared/helpers/stripe-client";
 import { logError, logInfo } from "../../../app/logger";
 import Stripe from "stripe";
 
