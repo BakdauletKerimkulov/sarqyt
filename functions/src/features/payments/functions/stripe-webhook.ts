@@ -47,20 +47,28 @@ export const stripeWebhook = onRequest(
         return;
       }
 
+      // Idempotent: deterministic order ID from paymentIntentId
+      const orderDocId = `order_${paymentIntent.id}`;
+      const orderRef = db.collection(FirestoreCollections.ORDERS).doc(orderDocId);
+      const existing = await orderRef.get();
+
+      if (existing.exists) {
+        logInfo("Order already exists, skipping", { orderDocId });
+        res.status(200).send("OK (already processed)");
+        return;
+      }
+
       const uid = paymentIntent.metadata?.firebaseUID;
       const storeId = paymentIntent.metadata?.storeId;
 
-      // Read offer for order data
       const offerSnap = await db
         .collection(FirestoreCollections.OFFERS)
         .doc(offerId)
         .get();
       const offer = offerSnap.data();
 
-      // Create order
-      const orderRef = db.collection(FirestoreCollections.ORDERS).doc();
       await orderRef.set({
-        id: orderRef.id,
+        id: orderDocId,
         itemId: offer?.productId ?? null,
         storeId: storeId ?? offer?.storeId ?? null,
         customerId: uid ?? null,
@@ -80,18 +88,23 @@ export const stripeWebhook = onRequest(
         createdAt: serverTimestamp(),
       });
 
-      logInfo("Order created", { orderId: orderRef.id, offerId });
+      logInfo("Order created", { orderId: orderDocId, offerId });
     }
 
     if (event.type === "payment_intent.canceled") {
-      // Restore offer quantity
       if (offerId && quantity > 0) {
-        await db
-          .collection(FirestoreCollections.OFFERS)
-          .doc(offerId)
-          .update({ quantity: FieldValue.increment(quantity) });
+        // Idempotent: use event ID as dedup key
+        const flagRef = db.collection("_processedEvents").doc(event.id);
+        const flagSnap = await flagRef.get();
 
-        logInfo("Quantity restored (payment canceled)", { offerId, quantity });
+        if (!flagSnap.exists) {
+          await db
+            .collection(FirestoreCollections.OFFERS)
+            .doc(offerId)
+            .update({ quantity: FieldValue.increment(quantity) });
+          await flagRef.set({ processedAt: serverTimestamp() });
+          logInfo("Quantity restored (payment canceled)", { offerId, quantity });
+        }
       }
     }
 

@@ -47,7 +47,7 @@ class OrdersScreen extends ConsumerWidget {
                 ),
                 gapH12,
                 for (final order in active) ...[
-                  _ActiveOrderCard(
+                  _OrderCard(
                     order: order,
                     onTap: () => context.pushNamed(
                       ClientRoute.orderDetail.name,
@@ -65,7 +65,7 @@ class OrdersScreen extends ConsumerWidget {
                 ),
                 gapH12,
                 for (final order in past) ...[
-                  _PastOrderTile(
+                  _OrderCard(
                     order: order,
                     onTap: () => context.pushNamed(
                       ClientRoute.orderDetail.name,
@@ -83,8 +83,8 @@ class OrdersScreen extends ConsumerWidget {
   }
 }
 
-class _ActiveOrderCard extends StatelessWidget {
-  const _ActiveOrderCard({required this.order, this.onTap});
+class _OrderCard extends StatelessWidget {
+  const _OrderCard({required this.order, this.onTap});
 
   final Order order;
   final VoidCallback? onTap;
@@ -92,6 +92,7 @@ class _ActiveOrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final dateStr = DateFormat('d MMM, HH:mm').format(order.createdAt);
 
     return Card(
       child: InkWell(
@@ -122,52 +123,26 @@ class _ActiveOrderCard extends StatelessWidget {
                 style: theme.textTheme.bodyMedium,
               ),
               gapH4,
-              if (order.pickupLabel != null)
-                Row(
-                  children: [
-                    const Icon(Icons.schedule, size: 16, color: Colors.grey),
-                    gapW4,
-                    Text(
-                      order.pickupLabel!,
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                ),
+              Row(
+                children: [
+                  Icon(Icons.schedule, size: 16, color: Colors.grey),
+                  gapW4,
+                  Text(
+                    order.pickupLabel ?? dateStr,
+                    style: theme.textTheme.bodySmall
+                        ?.copyWith(color: Colors.grey),
+                  ),
+                  const Spacer(),
+                  Text(
+                    order.totalFormatted,
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _PastOrderTile extends StatelessWidget {
-  const _PastOrderTile({required this.order, this.onTap});
-
-  final Order order;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final dateStr = DateFormat('d MMM').format(order.createdAt);
-
-    return ListTile(
-      onTap: onTap,
-      contentPadding: EdgeInsets.zero,
-      title: Text(order.itemName),
-      subtitle: Text('x${order.itemQuantity} · $dateStr'),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            order.totalFormatted,
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w600),
-          ),
-          gapW8,
-          OrderStatusBadge(status: order.status),
-        ],
       ),
     );
   }

@@ -7,12 +7,12 @@ import { FirestoreCollections } from "../../../shared/constants/constants";
 interface ReserveOfferRequest {
   offerId: string;
   quantity: number;
+  idempotencyKey?: string;
 }
 
 /**
+ * Idempotent: uses idempotencyKey to prevent duplicate orders.
  * Creates an order directly without payment processing.
- * Used for testing with real restaurants before payment system is ready.
- * Decrements offer quantity atomically.
  */
 export const reserveOffer = onCall(async (request) => {
   const uid = request.auth?.uid;
@@ -20,7 +20,8 @@ export const reserveOffer = onCall(async (request) => {
     throw new AppError("unauthenticated", "Sign in required");
   }
 
-  const { offerId, quantity } = request.data as ReserveOfferRequest;
+  const { offerId, quantity, idempotencyKey } =
+    request.data as ReserveOfferRequest;
   if (!offerId || typeof offerId !== "string") {
     throw new AppError("invalid-argument", "offerId is required");
   }
@@ -28,12 +29,22 @@ export const reserveOffer = onCall(async (request) => {
     throw new AppError("invalid-argument", "quantity must be >= 1");
   }
 
+  // Deterministic order ID for idempotency
+  const orderDocId = idempotencyKey ?? `${uid}_${offerId}_${Date.now()}`;
+
   try {
     const offerRef = db.collection(FirestoreCollections.OFFERS).doc(offerId);
-    const orderRef = db.collection(FirestoreCollections.ORDERS).doc();
+    const orderRef = db.collection(FirestoreCollections.ORDERS).doc(orderDocId);
 
     await db.runTransaction(async (tx) => {
-      const offerSnap = await tx.get(offerRef);
+      const [offerSnap, orderSnap] = await Promise.all([
+        tx.get(offerRef),
+        tx.get(orderRef),
+      ]);
+
+      // Idempotency: order already exists — return success
+      if (orderSnap.exists) return;
+
       if (!offerSnap.exists) {
         throw new AppError("not-found", "Offer not found");
       }
@@ -51,14 +62,12 @@ export const reserveOffer = onCall(async (request) => {
         );
       }
 
-      // Decrement quantity
       tx.update(offerRef, { quantity: available - quantity });
 
       const unitPrice = typeof offer.price === "number" ?
         offer.price :
         (offer.price as { amount: number }).amount;
 
-      // Create order directly
       tx.set(orderRef, {
         id: orderRef.id,
         itemId: offer.productId ?? null,
@@ -80,8 +89,8 @@ export const reserveOffer = onCall(async (request) => {
       });
     });
 
-    logInfo("reserveOffer done", { orderId: orderRef.id, offerId });
-    return { success: true, orderId: orderRef.id };
+    logInfo("reserveOffer done", { orderId: orderDocId, offerId });
+    return { success: true, orderId: orderDocId };
   } catch (error) {
     logError("reserveOffer failed", { error, uid });
     throw toHttpsError(error);

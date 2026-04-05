@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -82,7 +80,7 @@ class _OrderDetailContent extends StatelessWidget {
           if (order.pickupEndTime != null &&
               order.status != OrderStatus.completed &&
               order.status != OrderStatus.cancelled)
-            _PickupCountdown(order: order),
+            _PickupWindow(order: order),
 
           gapH16,
           const Divider(),
@@ -188,50 +186,14 @@ class _OrderDetailContent extends StatelessWidget {
   }
 }
 
-class _PickupCountdown extends StatefulWidget {
-  const _PickupCountdown({required this.order});
+class _PickupWindow extends StatelessWidget {
+  const _PickupWindow({required this.order});
 
   final Order order;
 
   @override
-  State<_PickupCountdown> createState() => _PickupCountdownState();
-}
-
-class _PickupCountdownState extends State<_PickupCountdown> {
-  Timer? _timer;
-  Duration _remaining = Duration.zero;
-
-  @override
-  void initState() {
-    super.initState();
-    _updateRemaining();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      _updateRemaining();
-    });
-  }
-
-  void _updateRemaining() {
-    final remaining = widget.order.timeUntilPickupEnd ?? Duration.zero;
-    if (mounted) setState(() => _remaining = remaining);
-    if (remaining == Duration.zero) _timer?.cancel();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isExpired = _remaining == Duration.zero;
-    final hours = _remaining.inHours;
-    final minutes = _remaining.inMinutes.remainder(60);
-    final seconds = _remaining.inSeconds.remainder(60);
-
-    final timeText = hours > 0
-        ? '${hours}h ${minutes}m ${seconds}s'
-        : '${minutes}m ${seconds}s';
+    final isExpired = order.isPickupExpired;
 
     return Container(
       width: double.infinity,
@@ -244,22 +206,25 @@ class _PickupCountdownState extends State<_PickupCountdown> {
       ),
       child: Column(
         children: [
+          Icon(
+            isExpired ? Icons.timer_off : Icons.schedule,
+            size: 32,
+            color: isExpired ? Colors.red : Colors.green,
+          ),
+          gapH8,
           Text(
             isExpired
                 ? 'Pickup time expired'.hardcoded
-                : 'Pick up within'.hardcoded,
+                : 'Pickup window'.hardcoded,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          if (!isExpired) ...[
-            gapH8,
-            Text(
-              timeText,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: _remaining.inMinutes < 15 ? Colors.orange : null,
-                  ),
-            ),
-          ],
+          gapH4,
+          Text(
+            order.pickupLabel ?? '',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
         ],
       ),
     );

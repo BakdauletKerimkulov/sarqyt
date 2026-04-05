@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
-import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/data/user_profile_repository.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
@@ -75,7 +74,8 @@ class AppSettingsScreen extends ConsumerWidget {
                   secondary: const Icon(Icons.notifications_outlined),
                   title: Text('Push notifications'.hardcoded),
                   value: true,
-                  onChanged: (_) {},
+                  onChanged: (_) =>
+                      showNotImplementedAlertDialog(context: context),
                 ),
               ],
             ),
@@ -100,14 +100,16 @@ class AppSettingsScreen extends ConsumerWidget {
                   leading: const Icon(Icons.description_outlined),
                   title: Text('Terms of service'.hardcoded),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
+                  onTap: () =>
+                      showNotImplementedAlertDialog(context: context),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.privacy_tip_outlined),
                   title: Text('Privacy policy'.hardcoded),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
+                  onTap: () =>
+                      showNotImplementedAlertDialog(context: context),
                 ),
                 const Divider(height: 1),
                 ListTile(

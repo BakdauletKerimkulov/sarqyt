@@ -1,3 +1,4 @@
+import { FieldValue } from "firebase-admin/firestore";
 import { onCall } from "firebase-functions/v2/https";
 import { AppError, toHttpsError } from "../../../app/error";
 import { db, serverTimestamp } from "../../../app/firebase";
@@ -10,8 +11,8 @@ interface CancelOrderRequest {
 }
 
 /**
- * Cancels an order and refunds the payment via Stripe.
- * Can be called by the customer (own order) or store owner.
+ * Idempotent: if order is already cancelled, returns success.
+ * Cancels order, restores offer quantity in transaction, then refunds Stripe.
  */
 export const cancelOrder = onCall(
   { secrets: [stripeSecretKey] },
@@ -28,64 +29,70 @@ export const cancelOrder = onCall(
       }
 
       const orderRef = db.collection(FirestoreCollections.ORDERS).doc(orderId);
-      const orderSnap = await orderRef.get();
 
-      if (!orderSnap.exists) {
-        throw new AppError("not-found", "Order not found");
-      }
+      // Transaction: read + validate + update status + restore quantity
+      const result = await db.runTransaction(async (tx) => {
+        const orderSnap = await tx.get(orderRef);
+        if (!orderSnap.exists) {
+          throw new AppError("not-found", "Order not found");
+        }
 
-      const order = orderSnap.data()!;
-      const status = order.status as string;
+        const order = orderSnap.data()!;
+        const status = order.status as string;
 
-      // Only allow cancellation of active orders
-      if (!["confirmed", "preparing"].includes(status)) {
-        throw new AppError(
-          "failed-precondition",
-          `Cannot cancel order with status: ${status}`
-        );
-      }
+        // Idempotent: already cancelled
+        if (status === "cancelled") {
+          return { alreadyCancelled: true, paymentIntentId: null };
+        }
 
-      // Auth: customer or store owner
-      const isCustomer = order.customerId === uid;
-      const storeId = order.storeId as string;
-      let isOwner = false;
+        if (!["confirmed", "preparing"].includes(status)) {
+          throw new AppError(
+            "failed-precondition",
+            `Cannot cancel order with status: ${status}`
+          );
+        }
 
-      if (!isCustomer) {
-        const storeSnap = await db
-          .collection(FirestoreCollections.STORES)
-          .doc(storeId)
-          .get();
-        isOwner = storeSnap.data()?.ownerId === uid;
-      }
+        // Auth check
+        const isCustomer = order.customerId === uid;
+        if (!isCustomer) {
+          const storeId = order.storeId as string;
+          const storeSnap = await tx.get(
+            db.collection(FirestoreCollections.STORES).doc(storeId)
+          );
+          if (storeSnap.data()?.ownerId !== uid) {
+            throw new AppError("permission-denied", "No access to this order");
+          }
+        }
 
-      if (!isCustomer && !isOwner) {
-        throw new AppError("permission-denied", "No access to this order");
-      }
+        const paymentIntentId = order.paymentIntentId as string | undefined;
 
-      // Refund via Stripe if paymentIntentId exists
-      const paymentIntentId = order.paymentIntentId as string | undefined;
-      if (paymentIntentId) {
-        const stripe = getStripe();
-        await stripe.refunds.create({ payment_intent: paymentIntentId });
-      }
+        // Cancel order
+        tx.update(orderRef, {
+          status: "cancelled",
+          paymentStatus: paymentIntentId ? "refunded" : "paid",
+          updatedAt: serverTimestamp(),
+        });
 
-      // Restore offer quantity
-      const offerId = order.offerId as string | undefined;
-      const qty = order.itemQuantity as number | undefined;
-      if (offerId && qty) {
-        const { FieldValue } = await import("firebase-admin/firestore");
-        await db
-          .collection(FirestoreCollections.OFFERS)
-          .doc(offerId)
-          .update({ quantity: FieldValue.increment(qty) });
-      }
+        // Restore offer quantity
+        const offerId = order.offerId as string | undefined;
+        const qty = order.itemQuantity as number | undefined;
+        if (offerId && qty) {
+          tx.update(
+            db.collection(FirestoreCollections.OFFERS).doc(offerId),
+            { quantity: FieldValue.increment(qty) }
+          );
+        }
 
-      // Update order
-      await orderRef.update({
-        status: "cancelled",
-        paymentStatus: paymentIntentId ? "refunded" : "paid",
-        updatedAt: serverTimestamp(),
+        return { alreadyCancelled: false, paymentIntentId };
       });
+
+      // Stripe refund outside transaction (external API call)
+      if (!result.alreadyCancelled && result.paymentIntentId) {
+        const stripe = getStripe();
+        await stripe.refunds.create({
+          payment_intent: result.paymentIntentId,
+        });
+      }
 
       logInfo("cancelOrder done", { orderId, uid });
       return { success: true };
