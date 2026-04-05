@@ -20,6 +20,10 @@ class VerifyEmailScreen extends StatelessWidget {
       startBackground: 'assets/food-app-business-background.jpg',
       child: OnboardingPanel(
         title: 'Check your inbox'.hardcoded,
+        onBackPressed: () =>
+            ProviderScope.containerOf(context)
+                .read(authRepositoryProvider)
+                .signOut(),
         child: const _VerifyEmailContent(),
       ),
     );

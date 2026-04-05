@@ -57,6 +57,85 @@ final class BusinessOfferRepositoryProvider
 String _$businessOfferRepositoryHash() =>
     r'3c0305d3028b6c7e5f88a6c3a8a6ce817568946e';
 
+/// Stream of current offer for an item (today's active).
+
+@ProviderFor(currentOfferForItem)
+const currentOfferForItemProvider = CurrentOfferForItemFamily._();
+
+/// Stream of current offer for an item (today's active).
+
+final class CurrentOfferForItemProvider
+    extends $FunctionalProvider<AsyncValue<Offer?>, Offer?, Stream<Offer?>>
+    with $FutureModifier<Offer?>, $StreamProvider<Offer?> {
+  /// Stream of current offer for an item (today's active).
+  const CurrentOfferForItemProvider._({
+    required CurrentOfferForItemFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'currentOfferForItemProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentOfferForItemHash();
+
+  @override
+  String toString() {
+    return r'currentOfferForItemProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<Offer?> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<Offer?> create(Ref ref) {
+    final argument = this.argument as (String, String);
+    return currentOfferForItem(ref, argument.$1, argument.$2);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CurrentOfferForItemProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$currentOfferForItemHash() =>
+    r'4db0686ab8e0085fdb9e8456eca1e348eaa4de44';
+
+/// Stream of current offer for an item (today's active).
+
+final class CurrentOfferForItemFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<Offer?>, (String, String)> {
+  const CurrentOfferForItemFamily._()
+    : super(
+        retry: null,
+        name: r'currentOfferForItemProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Stream of current offer for an item (today's active).
+
+  CurrentOfferForItemProvider call(String storeId, String itemId) =>
+      CurrentOfferForItemProvider._(argument: (storeId, itemId), from: this);
+
+  @override
+  String toString() => r'currentOfferForItemProvider';
+}
+
 /// Stream of active item IDs (productId) for a given store.
 
 @ProviderFor(storeActiveOfferItemIds)

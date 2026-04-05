@@ -24,7 +24,7 @@ class DiscoverScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final offersAsync = ref.watch(offersWithDistanceProvider);
+    final offersAsync = ref.watch(offersWithDistanceStreamProvider);
     final filter = ref.watch(discoverFilterControllerProvider);
     final favIds = ref.watch(favoriteStoreIdsProvider).value ?? const {};
 
@@ -121,8 +121,7 @@ class DiscoverMapContent extends ConsumerStatefulWidget {
   final List<dynamic> offers;
 
   @override
-  ConsumerState<DiscoverMapContent> createState() =>
-      _DiscoverMapContentState();
+  ConsumerState<DiscoverMapContent> createState() => _DiscoverMapContentState();
 }
 
 class _DiscoverMapContentState extends ConsumerState<DiscoverMapContent> {
@@ -152,7 +151,11 @@ class _DiscoverMapContentState extends ConsumerState<DiscoverMapContent> {
     );
 
     final offerPoints = widget.offers
-        .map((o) => o is OfferWithDistance ? o.offer.latLng : (o as dynamic).latLng as LatLng)
+        .map(
+          (o) => o is OfferWithDistance
+              ? o.offer.latLng
+              : (o as dynamic).latLng as LatLng,
+        )
         .toList();
 
     return Stack(

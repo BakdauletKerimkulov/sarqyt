@@ -62,6 +62,18 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
     });
 
     return Scaffold(
+      appBar: _currentPage < _pages.length - 1
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              actions: [
+                TextButton(
+                  onPressed: state.isLoading ? null : _complete,
+                  child: Text('Skip'.hardcoded),
+                ),
+              ],
+            )
+          : null,
       body: SafeArea(
         child: Column(
           children: [
@@ -129,14 +141,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                 ),
               ),
             ),
-            if (_currentPage < _pages.length - 1)
-              TextButton(
-                onPressed: state.isLoading ? null : _complete,
-                child: Text('Skip'.hardcoded),
-              )
-            else
-              gapH48,
-            gapH16,
+            gapH48,
           ],
         ),
       ),

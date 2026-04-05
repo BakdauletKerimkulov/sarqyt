@@ -89,4 +89,4 @@ final class BusinessRouterProvider
   }
 }
 
-String _$businessRouterHash() => r'0e8b030c3d39c900feb21fa3255bb5301a0999f6';
+String _$businessRouterHash() => r'9bba35459a634547a6d9e51cb0b196c3e5875bd5';

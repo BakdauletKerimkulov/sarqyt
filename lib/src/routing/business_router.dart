@@ -7,6 +7,7 @@ import 'package:sarqyt/src/features/auth/domain/app_user.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_business/sigin_in_business_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/dashboard_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/financials_screen.dart';
+import 'package:sarqyt/src/features/business_console/presentation/help_centre_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/performance_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/settings_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/store_list_screen.dart';
@@ -33,6 +34,7 @@ final _dashboardNavigatorKey = GlobalKey<NavigatorState>();
 final _performanceNavigatorKey = GlobalKey<NavigatorState>();
 final _financialsNavigatorKey = GlobalKey<NavigatorState>();
 final _settingsNavigatorKey = GlobalKey<NavigatorState>();
+final _helpNavigatorKey = GlobalKey<NavigatorState>();
 
 @Riverpod(keepAlive: true)
 StoreShip currentStoreShip(Ref ref) => throw UnimplementedError(
@@ -58,6 +60,7 @@ enum BusinessRoute {
   performance,
   financials,
   settings,
+  helpCentre,
 }
 
 /// Pure, sync, testable global redirect for the business app.
@@ -357,6 +360,17 @@ GoRouter businessRouter(Ref ref) {
                         path: 'settings',
                         name: BusinessRoute.settings.name,
                         builder: (context, state) => const SettingsScreen(),
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    navigatorKey: _helpNavigatorKey,
+                    routes: [
+                      GoRoute(
+                        path: 'help',
+                        name: BusinessRoute.helpCentre.name,
+                        builder: (context, state) =>
+                            const HelpCentreScreen(),
                       ),
                     ],
                   ),

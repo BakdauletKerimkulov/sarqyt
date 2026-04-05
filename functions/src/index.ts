@@ -14,6 +14,7 @@ export { dailySyncOffers } from "./features/offers/functions/daily-sync-offers";
 export { createOneTimeOffer } from "./features/offers/functions/create-one-time-offer";
 export { onItemStatusChanged } from "./features/offers/functions/on-item-status-changed";
 export { cleanupOldData } from "./features/offers/functions/cleanup-old-offers";
+export { updateOfferQuantity } from "./features/offers/functions/update-offer-quantity";
 
 // Payments
 export { createPayment } from "./features/payments/functions/create-payment";

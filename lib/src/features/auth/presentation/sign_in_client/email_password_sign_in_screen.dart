@@ -125,7 +125,7 @@ class _EmailPasswordSignInContentState
             gapH64,
             CircleAvatar(
               radius: Sizes.p96,
-              backgroundImage: AssetImage('assets/app-icon.jpg'),
+              backgroundImage: AssetImage('assets/app-icon.png'),
             ),
             gapH24,
             Text(

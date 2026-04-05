@@ -70,7 +70,7 @@ const sideMenuSections = [
       SideMenuItem(
         icon: Icons.help_outline,
         title: 'Help Centre',
-        branchIndex: -1, // not a branch — handled separately
+        branchIndex: 4,
         allowedRoles: {StoreRole.owner, StoreRole.operator},
       ),
     ],
@@ -202,7 +202,6 @@ class _SidebarContent extends ConsumerWidget {
               if (item.branchIndex >= 0) {
                 onBranchTap(item.branchIndex);
               }
-              // TODO: handle Help Centre navigation
             },
           ),
       ],

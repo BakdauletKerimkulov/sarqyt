@@ -23,6 +23,34 @@ class BusinessOfferRepository {
     log(result.data.toString());
   }
 
+  /// Update offer quantity in real-time.
+  Future<void> updateOfferQuantity({
+    required String offerId,
+    required int quantity,
+  }) async {
+    final callable = _functions.httpsCallable("updateOfferQuantity");
+    await callable.call({'offerId': offerId, 'quantity': quantity});
+  }
+
+  /// Current offer for an item (today's active offer).
+  Stream<Offer?> watchCurrentOfferForItem(String storeId, String itemId) {
+    final now = Timestamp.now();
+    return _firestore
+        .collection('offers')
+        .where('storeId', isEqualTo: storeId)
+        .where('productId', isEqualTo: itemId)
+        .where('status', isEqualTo: 'active')
+        .where('pickupEndTime', isGreaterThan: now)
+        .limit(1)
+        .snapshots()
+        .map((snap) {
+      if (snap.docs.isEmpty) return null;
+      final data = Map<String, dynamic>.from(snap.docs.first.data());
+      data['id'] = snap.docs.first.id;
+      return Offer.fromJson(data);
+    });
+  }
+
   /// Create a one-time offer for a specific date and time window.
   Future<void> createOneTimeOffer({
     required String storeId,
@@ -72,6 +100,17 @@ BusinessOfferRepository businessOfferRepository(Ref ref) {
     FirebaseFunctions.instance,
     FirebaseFirestore.instance,
   );
+}
+
+/// Stream of current offer for an item (today's active).
+@riverpod
+Stream<Offer?> currentOfferForItem(
+  Ref ref,
+  String storeId,
+  String itemId,
+) {
+  final repo = ref.watch(businessOfferRepositoryProvider);
+  return repo.watchCurrentOfferForItem(storeId, itemId);
 }
 
 /// Stream of active item IDs (productId) for a given store.
