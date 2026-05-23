@@ -45,6 +45,7 @@ class _ItemCardState extends State<ItemCard> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
     return Card(
       child: InkWell(
         onTap: widget.onPressed,
@@ -68,7 +69,7 @@ class _ItemCardState extends State<ItemCard> {
                       top: Sizes.p8,
                       left: Sizes.p8,
                       child: _Badge(
-                        text: 'Selling now'.hardcoded,
+                        text: loc.sellingNow,
                         color: Colors.green,
                       ),
                     )
@@ -77,7 +78,7 @@ class _ItemCardState extends State<ItemCard> {
                       top: Sizes.p8,
                       left: Sizes.p8,
                       child: _Badge(
-                        text: 'Scheduled'.hardcoded,
+                        text: loc.scheduled,
                         color: Colors.grey,
                       ),
                     ),
@@ -108,7 +109,7 @@ class _ItemCardState extends State<ItemCard> {
                     if (_isSellingNow && offer != null) ...[
                       gapH4,
                       Text(
-                        '${offer!.quantity} available'.hardcoded,
+                        loc.quantityAvailable(offer!.quantity),
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                         ),
@@ -122,7 +123,7 @@ class _ItemCardState extends State<ItemCard> {
                       ),
                     ] else ...[
                       Text(
-                        '${item.schedule.maxDayQuantity} per day'.hardcoded,
+                        loc.quantityPerDay(item.schedule.maxDayQuantity),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: Colors.grey),
@@ -132,14 +133,14 @@ class _ItemCardState extends State<ItemCard> {
                     gapH12,
 
                     // Actions
-                    if (item.isActive)
+                    if (item.isActive && !_isSellingNow)
                       TextButton(
                         onPressed: widget.onStopSelling,
-                        child: Text('Not ready yet?'.hardcoded),
+                        child: Text(loc.notReadyYet),
                       )
-                    else
+                    else if (!item.isActive)
                       PrimaryWebButton(
-                        text: 'Start selling'.hardcoded,
+                        text: loc.startSelling,
                         onPressed: widget.onStartSelling,
                       ),
                   ],

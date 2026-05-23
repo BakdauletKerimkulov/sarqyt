@@ -48,6 +48,7 @@ class _CreateOneTimeOfferDialogState
     final startMinutes = _startTime.hour * 60 + _startTime.minute;
     final endMinutes = _endTime.hour * 60 + _endTime.minute;
     if (endMinutes <= startMinutes) return 'End time must be after start time';
+    if (endMinutes - startMinutes > 120) return 'Window cannot exceed 2 hours';
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -90,6 +91,7 @@ class _CreateOneTimeOfferDialogState
   Widget build(BuildContext context) {
     final state = ref.watch(createOneTimeOfferControllerProvider);
     final isLoading = state.isLoading;
+    final loc = context.loc;
 
     ref.listen(createOneTimeOfferControllerProvider, (_, state) {
       state.showAlertDialogOnError(context);
@@ -106,12 +108,12 @@ class _CreateOneTimeOfferDialogState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Flash offer'.hardcoded,
+                loc.flashOffer,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               gapH4,
               Text(
-                'Create a one-time offer'.hardcoded,
+                loc.createOneTimeOffer,
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
@@ -122,7 +124,7 @@ class _CreateOneTimeOfferDialogState
               gapH16,
 
               // Name
-              Text('Offer name'.hardcoded,
+              Text(loc.offerName,
                   style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               TextField(
@@ -132,7 +134,7 @@ class _CreateOneTimeOfferDialogState
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey.shade100,
-                  hintText: 'e.g. Surprise Bag'.hardcoded,
+                  hintText: loc.egSurpriseBag,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(Sizes.p8),
@@ -142,7 +144,7 @@ class _CreateOneTimeOfferDialogState
               gapH16,
 
               // Price
-              Text('Price'.hardcoded,
+              Text(loc.price,
                   style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               TextField(
@@ -152,7 +154,7 @@ class _CreateOneTimeOfferDialogState
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey.shade100,
-                  hintText: '1500'.hardcoded,
+                  hintText: '1500',
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(Sizes.p8),
@@ -163,7 +165,7 @@ class _CreateOneTimeOfferDialogState
               gapH16,
 
               // Date
-              Text('Date'.hardcoded,
+              Text(loc.date,
                   style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               InkWell(
@@ -181,7 +183,7 @@ class _CreateOneTimeOfferDialogState
               gapH16,
 
               // Time
-              Text('Pickup window'.hardcoded,
+              Text(loc.pickupWindow,
                   style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               Row(
@@ -223,7 +225,7 @@ class _CreateOneTimeOfferDialogState
               gapH16,
 
               // Quantity
-              Text('Quantity'.hardcoded,
+              Text(loc.quantity,
                   style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               Row(
@@ -253,7 +255,7 @@ class _CreateOneTimeOfferDialogState
               gapH24,
 
               PrimaryWebButton(
-                text: 'Create flash offer'.hardcoded,
+                text: loc.createFlashOffer,
                 isLoading: isLoading,
                 onPressed: isLoading ? null : _submit,
               ),

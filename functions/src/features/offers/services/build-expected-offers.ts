@@ -109,12 +109,6 @@ function materializeOfferForDate(
     template.storeTimeZone,
   );
 
-  if (pickupEnd <= pickupStart) {
-    throw new AppError(
-      "failed-precondition",
-      `Schedule for ${dateKey} has invalid pickup window`,
-    );
-  }
   if (pickupEnd <= utcNow) return null;
 
   const visibleFrom = startOfDay(

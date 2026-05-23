@@ -101,4 +101,20 @@ export function validateDaySchedule(
       `Schedule for ${dateKey} must have positive quantity`,
     );
   }
+
+  const startInMinutes = schedule.startHour * 60 + schedule.startMinute;
+  const endInMinutes = schedule.endHour * 60 + schedule.endMinute;
+
+  if (startInMinutes >= endInMinutes) {
+    throw new AppError(
+      "failed-precondition",
+      `Schedule for ${dateKey} has invalid pickup window: start must be before end`,
+    );
+  }
+  if (endInMinutes - startInMinutes > 120) {
+    throw new AppError(
+      "failed-precondition",
+      `Schedule for ${dateKey} exceeds maximum 120-minute window`,
+    );
+  }
 }

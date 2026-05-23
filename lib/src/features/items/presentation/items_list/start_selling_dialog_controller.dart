@@ -1,6 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/exceptions/app_exception.dart';
 import 'package:sarqyt/src/features/items/data/items_repository.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
+import 'package:sarqyt/src/features/orders/data/orders_repository.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
 
 part 'start_selling_dialog_controller.g.dart';
@@ -27,12 +29,16 @@ class StartSellingDialogController extends _$StartSellingDialogController {
 
   /// Sets item.isActive = false. The Firestore trigger onItemStatusChanged
   /// will automatically pause all active offers for this item.
+  /// Blocks if there are active orders (confirmed/preparing/readyForPickup).
   Future<bool> stopSelling({
     required ItemID itemId,
     required StoreID storeId,
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      final hasOrders =
+          await ref.read(ordersRepositoryProvider).hasActiveOrdersForItem(itemId);
+      if (hasOrders) throw ActiveOrdersExistException();
       await ref
           .read(itemsRepositoryProvider)
           .setItemActive(storeId, id: itemId, isActive: false);

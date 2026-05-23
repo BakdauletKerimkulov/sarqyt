@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
 
@@ -30,6 +31,16 @@ class StoreOrdersRepository {
   Stream<Order?> watchOrder(OrderID id) {
     final ref = _orderRef(id);
     return ref.snapshots().map((snapshot) => snapshot.data());
+  }
+
+  Future<bool> hasActiveOrdersForItem(ItemID itemId) async {
+    final snap = await _firestore
+        .collection(ordersPath())
+        .where('itemId', isEqualTo: itemId)
+        .where('status', whereIn: ['confirmed', 'preparing', 'readyForPickup'])
+        .limit(1)
+        .get();
+    return snap.docs.isNotEmpty;
   }
 
   Future<void> updateOrderStatus(OrderID orderId, String status) async {

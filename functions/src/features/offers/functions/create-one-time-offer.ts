@@ -10,7 +10,13 @@ import {
 import { StoreDoc } from "../../../shared/types/store-doc";
 import { requireNonEmptyString } from "../helpers/offer-assertions";
 import { readStoreTimeZone, buildStoreAddress } from "../helpers/offer-store";
-import { buildPickupTime, buildDateKey } from "../helpers/offer-timezone";
+import {
+  addDaysToLocalDate,
+  buildDateKey,
+  buildPickupTime,
+  currentDateInTimeZone,
+  startOfDay,
+} from "../helpers/offer-timezone";
 
 interface CreateOneTimeOfferRequest {
   storeId: string;
@@ -81,9 +87,23 @@ export const createOneTimeOffer = onCall(async (req) => {
     if (pickupEnd <= pickupStart) {
       throw new AppError("invalid-argument", "End time must be after start time");
     }
+    const durationMs = pickupEnd.getTime() - pickupStart.getTime();
+    if (durationMs > 120 * 60 * 1000) {
+      throw new AppError("invalid-argument", "Pickup window cannot exceed 2 hours");
+    }
     if (pickupEnd <= new Date()) {
       throw new AppError("invalid-argument", "Pickup time is in the past");
     }
+
+    // visibleFrom: offers for future dates become visible the day before
+    const today = currentDateInTimeZone(timeZone);
+    const isToday =
+      dateParts.year === today.year &&
+      dateParts.month === today.month &&
+      dateParts.day === today.day;
+    const visibleFrom = isToday
+      ? null
+      : startOfDay(addDaysToLocalDate(dateParts, -1), timeZone);
 
     const currencyCode = storeData.currency?.trim() || "KZT";
     const geohash = storeData.location?.geo?.geohash;
@@ -111,6 +131,7 @@ export const createOneTimeOffer = onCall(async (req) => {
       storeName: requireNonEmptyString(storeData.name, "store.name"),
       storeLogo: storeData.logoUrl ?? null,
       storeAddress: buildStoreAddress(storeData),
+      visibleFrom: visibleFrom ? Timestamp.fromDate(visibleFrom) : null,
       pickupStartTime: Timestamp.fromDate(pickupStart),
       pickupEndTime: Timestamp.fromDate(pickupEnd),
       status: "active",

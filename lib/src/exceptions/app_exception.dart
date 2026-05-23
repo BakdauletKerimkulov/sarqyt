@@ -75,6 +75,15 @@ class ParseOrderFailureException extends AppException {
   final String status;
 }
 
+/// Items
+class ActiveOrdersExistException extends AppException {
+  ActiveOrdersExistException()
+    : super(
+        'active-orders-exist',
+        'There are active orders. Cancel them before pausing.'.hardcoded,
+      );
+}
+
 /// Location
 class LocationNotFoundException extends AppException {
   LocationNotFoundException(this.thing)
