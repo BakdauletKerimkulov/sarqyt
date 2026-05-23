@@ -11,16 +11,15 @@ import 'package:sarqyt/src/features/business_console/presentation/help_centre_sc
 import 'package:sarqyt/src/features/business_console/presentation/performance_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/settings_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/store_list_screen.dart';
+import 'package:sarqyt/src/features/items/domain/item.dart';
+import 'package:sarqyt/src/features/items/presentation/item_create/create_item_screen.dart';
 import 'package:sarqyt/src/features/items/presentation/item_screen/item_screen.dart';
 import 'package:sarqyt/src/features/items/presentation/item_tab.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/inbound/create_account_screen.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/inbound/email_screen.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/inbound/review_details_screen.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/inbound/verify_email_screen.dart';
-import 'package:sarqyt/src/features/onboarding/presentation/item/create_item_screen.dart';
-import 'package:sarqyt/src/features/onboarding/presentation/item/price_and_stock_screen.dart';
-import 'package:sarqyt/src/features/onboarding/presentation/item/schedule_screen.dart';
-import 'package:sarqyt/src/features/onboarding/presentation/item/title_and_description_screen.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/welcome/welcome_screen.dart';
 import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_redirect_state.dart';
@@ -49,10 +48,7 @@ enum BusinessRoute {
   reviewDetails,
   email,
   verifyEmail,
-  createItem,
-  titleAndDescription,
-  priceAndStock,
-  schedule,
+  welcome,
   stores,
   dashboard,
   item,
@@ -61,6 +57,7 @@ enum BusinessRoute {
   financials,
   settings,
   helpCentre,
+  newItem,
 }
 
 /// Pure, sync, testable global redirect for the business app.
@@ -68,12 +65,12 @@ enum BusinessRoute {
 /// Layers (evaluated top-to-bottom, first match wins):
 ///  1. Unauthenticated → allow /login & /onboarding/inbound, else → /login
 ///  2. Email not verified → /onboarding/inbound/verify-email
-///  3. Still loading role/storeShips → stay put (don't redirect)
-///  4. Role == guest (claims not set yet) → /onboarding/inbound/verify-email
-///  5. Admin → redirect login/onboarding/forbidden to /stores, else stay
-///  6. Non-partner → /forbidden
-///  7. Partner + pending onboarding → /onboarding/create-item
-///  8. Partner done → redirect login/onboarding/forbidden to /stores, else stay
+///  3. Role == guest (claims not yet set) → /onboarding/inbound/verify-email
+///  4. Non-partner / non-admin → /forbidden
+///  5. Admin → redirect onboarding/login/forbidden to /stores, else stay
+///  6. Partner + storeShips not yet loaded → stay put (avoid bouncing)
+///  7. Partner with a storeShip whose welcome is not done → /onboarding/welcome
+///  8. Partner done → redirect onboarding/login/forbidden to /stores, else stay
 String? businessRedirect({
   required BusinessRedirectState redirectState,
   required String path,
@@ -85,6 +82,7 @@ String? businessRedirect({
   final onLogin = path.startsWith('/login');
   final onOnboarding = path.startsWith('/onboarding');
   final onInbound = path.startsWith('/onboarding/inbound');
+  final onWelcome = path.startsWith('/onboarding/welcome');
   final onForbidden = path.startsWith('/forbidden');
 
   // Layer 1: Unauthenticated — no need to wait for role/storeShips
@@ -100,37 +98,38 @@ String? businessRedirect({
     return verifyPath;
   }
 
-  // Layer 3: Still loading role or storeShips — wait
-  if (redirectState.isLoading) return null;
-
-  // Layer 4: Role == guest (claims not yet set)
+  // Layer 3: Role still loading / claims not set yet → guest
   if (role == UserRole.guest) {
     const verifyPath = '/onboarding/inbound/verify-email';
     if (path == verifyPath) return null;
     return verifyPath;
   }
 
-  // Layer 5: Admin
+  // Layer 4: Non-partner / non-admin
+  if (role != UserRole.partner && role != UserRole.admin) {
+    if (onForbidden) return null;
+    return '/forbidden';
+  }
+
+  // Layer 5: Admin — bypass welcome flow entirely
   if (role == UserRole.admin) {
     if (onLogin || onOnboarding || onForbidden) return '/stores';
     return null;
   }
 
-  // Layer 6: Non-partner
-  if (role != UserRole.partner) {
-    if (onForbidden) return null;
-    return '/forbidden';
+  // Layer 6: Partner — wait for storeShips before deciding welcome vs stores.
+  // This avoids bouncing the user from /stores to /onboarding/welcome and back.
+  if (!redirectState.storeShipsLoaded) {
+    return null;
   }
 
-  // Layer 7: Partner with pending onboarding
-  final pending = storeShips.pendingOnboarding;
-  if (pending != null) {
-    const target = '/onboarding/create-item';
-    if (path.startsWith(target)) return null;
-    return target;
+  // Layer 7: Partner with at least one storeShip pending welcome → /welcome
+  if (storeShips.pendingWelcome != null) {
+    if (onWelcome) return null;
+    return '/onboarding/welcome';
   }
 
-  // Layer 7: Partner done
+  // Layer 8: Partner done
   if (onLogin || onOnboarding || onForbidden) return '/stores';
   return null;
 }
@@ -169,11 +168,11 @@ GoRouter businessRouter(Ref ref) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(state.error?.message ?? 'Page not found'.hardcoded),
+              Text(state.error?.message ?? context.loc.pageNotFound),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => GoRouter.of(context).go('/login'),
-                child: Text('Go to login'.hardcoded),
+                child: Text(context.loc.goToLogin),
               ),
             ],
           ),
@@ -245,26 +244,9 @@ GoRouter businessRouter(Ref ref) {
             ],
           ),
           GoRoute(
-            path: 'create-item',
-            name: BusinessRoute.createItem.name,
-            builder: (context, state) => const CreateItemScreen(),
-            routes: [
-              GoRoute(
-                path: 'title-and-description',
-                name: BusinessRoute.titleAndDescription.name,
-                builder: (context, state) => const TitleAndDescriptionScreen(),
-              ),
-              GoRoute(
-                path: 'price-and-stock',
-                name: BusinessRoute.priceAndStock.name,
-                builder: (context, state) => const PriceAndStockScreen(),
-              ),
-              GoRoute(
-                path: 'schedule',
-                name: BusinessRoute.schedule.name,
-                builder: (context, state) => const ScheduleScreen(),
-              ),
-            ],
+            path: 'welcome',
+            name: BusinessRoute.welcome.name,
+            builder: (context, state) => const WelcomeScreen(),
           ),
         ],
       ),
@@ -276,9 +258,8 @@ GoRouter businessRouter(Ref ref) {
         redirect: (context, state) {
           if (state.uri.path != '/stores') return null;
           final redirectData = ref.read(businessRedirectStateProvider);
-          final completed = redirectData.storeShips
-              .where((s) => s.onboardingStatus == OnboardingStatus.completed)
-              .toList();
+          final completed =
+              redirectData.storeShips.where((s) => s.welcomeCompleted).toList();
           if (completed.length == 1) {
             return '/stores/${completed.first.storeId}/dashboard';
           }
@@ -316,6 +297,14 @@ GoRouter businessRouter(Ref ref) {
                         builder: (context, state) => const DashboardScreen(),
                       ),
                       GoRoute(
+                        path: 'new-item',
+                        name: BusinessRoute.newItem.name,
+                        builder: (context, state) {
+                          final storeId = state.pathParameters['storeId']!;
+                          return CreateItemFormScreen(storeId: storeId);
+                        },
+                      ),
+                      GoRoute(
                         path: 'item/:itemId',
                         name: BusinessRoute.item.name,
                         builder: (context, state) {
@@ -324,10 +313,17 @@ GoRouter businessRouter(Ref ref) {
                           final tab = ItemTabX.fromParam(
                             state.uri.queryParameters['tab'],
                           );
+                          final typeParam =
+                              state.uri.queryParameters['type'];
+                          final itemType = ItemType.values.firstWhere(
+                            (t) => t.name == typeParam,
+                            orElse: () => ItemType.scheduled,
+                          );
                           return ItemScreen(
                             itemId: itemId,
                             storeId: storeId,
                             initialTab: tab,
+                            itemType: itemType,
                           );
                         },
                       ),

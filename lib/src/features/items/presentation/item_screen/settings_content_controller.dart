@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
@@ -7,6 +8,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/items/data/image_upload_repository.dart';
 import 'package:sarqyt/src/features/items/data/items_repository.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
+import 'package:sarqyt/src/features/orders/data/orders_repository.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
 import 'package:uuid/uuid.dart';
 
@@ -53,6 +55,25 @@ class SettingsContentController extends _$SettingsContentController {
 
       final updatedItem = item.copyWith(imageUrl: imageUrl);
       await itemsRepo.updateItem(storeId, item: updatedItem);
+    });
+  }
+
+  /// Returns `true` if the item has active orders (confirmed/preparing/readyForPickup).
+  Future<bool> hasActiveOrders(ItemID itemId) {
+    final ordersRepo = ref.read(ordersRepositoryProvider);
+    return ordersRepo.hasActiveOrdersForItem(itemId);
+  }
+
+  /// Calls the Cloud Function to cascade-delete item, its offers, and image.
+  Future<void> deleteItem({
+    required StoreID storeId,
+    required ItemID itemId,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final callable =
+          FirebaseFunctions.instance.httpsCallable('deleteItem');
+      await callable.call({'storeId': storeId, 'itemId': itemId});
     });
   }
 }

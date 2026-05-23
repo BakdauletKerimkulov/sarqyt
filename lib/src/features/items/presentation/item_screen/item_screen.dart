@@ -12,6 +12,7 @@ import 'package:sarqyt/src/features/items/presentation/item_screen/schedule_cont
 import 'package:sarqyt/src/features/items/presentation/item_screen/settings_content.dart';
 import 'package:sarqyt/src/features/items/presentation/item_tab.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
+import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 class ItemScreen extends ConsumerStatefulWidget {
   const ItemScreen({
@@ -19,11 +20,13 @@ class ItemScreen extends ConsumerStatefulWidget {
     required this.itemId,
     required this.storeId,
     this.initialTab = ItemTab.overview,
+    this.itemType = ItemType.scheduled,
   });
 
   final String itemId;
   final StoreID storeId;
   final ItemTab initialTab;
+  final ItemType itemType;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ItemScreenState();
@@ -31,14 +34,17 @@ class ItemScreen extends ConsumerStatefulWidget {
 
 class _ItemScreenState extends ConsumerState<ItemScreen>
     with SingleTickerProviderStateMixin {
+  late final List<ItemTab> _filteredTabs;
   late final TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _filteredTabs = tabsForItemType(widget.itemType);
+    final initialIndex = _filteredTabs.indexOf(widget.initialTab);
     _tabController = TabController(
-      length: ItemTab.values.length,
-      initialIndex: widget.initialTab.index,
+      length: _filteredTabs.length,
+      initialIndex: initialIndex.clamp(0, _filteredTabs.length - 1),
       vsync: this,
     );
     _tabController.addListener(() {
@@ -50,7 +56,10 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
   void didUpdateWidget(covariant ItemScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.initialTab != oldWidget.initialTab) {
-      _tabController.animateTo(widget.initialTab.index);
+      final newIndex = _filteredTabs.indexOf(widget.initialTab);
+      _tabController.animateTo(
+        newIndex.clamp(0, _filteredTabs.length - 1),
+      );
     }
   }
 
@@ -89,12 +98,12 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
             indicatorColor: AppColors.primary,
             labelColor: AppColors.primary,
             dividerHeight: 1,
-            tabs: ItemTab.values.map((tab) {
+            tabs: _filteredTabs.map((tab) {
               return Tab(
                 height: Sizes.p40,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: [Icon(tab.icon), gapW4, Text(tab.title)],
+                  children: [Icon(tab.icon), gapW4, Text(tab.label(context.loc))],
                 ),
               );
             }).toList(),
@@ -113,7 +122,7 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
   }
 
   Widget _buildTabContent(Item item) {
-    return switch (ItemTab.values[_tabController.index]) {
+    return switch (_filteredTabs[_tabController.index]) {
       ItemTab.overview => OverviewContent(storeId: widget.storeId, item: item),
       ItemTab.calendar => CalendarContent(),
       ItemTab.schedule => ScheduleContent(item: item, storeId: widget.storeId),

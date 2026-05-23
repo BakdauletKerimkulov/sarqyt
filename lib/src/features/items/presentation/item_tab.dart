@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:sarqyt/src/localization/string_hardcoded.dart';
+import 'package:sarqyt/l10n/app_localizations.dart';
+import 'package:sarqyt/src/features/items/domain/item.dart';
 
 enum ItemTab { overview, calendar, schedule, customerRatings, settings }
+
+/// Returns the visible tabs for a given [ItemType].
+/// One-time items skip Calendar and Schedule tabs.
+List<ItemTab> tabsForItemType(ItemType type) {
+  return switch (type) {
+    ItemType.oneTime => [
+      ItemTab.overview,
+      ItemTab.customerRatings,
+      ItemTab.settings,
+    ],
+    ItemType.scheduled => ItemTab.values,
+  };
+}
 
 extension ItemTabX on ItemTab {
   String get param {
@@ -14,13 +28,13 @@ extension ItemTabX on ItemTab {
     };
   }
 
-  String get title {
+  String label(AppLocalizations loc) {
     return switch (this) {
-      ItemTab.overview => 'Overview'.hardcoded,
-      ItemTab.calendar => 'Calendar'.hardcoded,
-      ItemTab.schedule => 'Schedule'.hardcoded,
-      ItemTab.customerRatings => 'Customer ratings'.hardcoded,
-      ItemTab.settings => 'Settings'.hardcoded,
+      ItemTab.overview => loc.overview,
+      ItemTab.calendar => loc.calendar,
+      ItemTab.schedule => loc.schedule,
+      ItemTab.customerRatings => loc.customerRatings,
+      ItemTab.settings => loc.settings,
     };
   }
 

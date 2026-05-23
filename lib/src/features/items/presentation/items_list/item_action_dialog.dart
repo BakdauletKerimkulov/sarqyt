@@ -4,6 +4,7 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/items/presentation/item_tab.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
+import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 
 class ItemActionDialog extends StatelessWidget {
@@ -48,7 +49,7 @@ class ItemActionDialog extends StatelessWidget {
             ),
           ),
           const Divider(),
-          ...ItemTab.values.map((tab) {
+          ...tabsForItemType(item.type).map((tab) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: Sizes.p16),
               child: ListTile(
@@ -58,11 +59,14 @@ class ItemActionDialog extends StatelessWidget {
                   context.goNamed(
                     BusinessRoute.item.name,
                     pathParameters: {'storeId': storeId, 'itemId': item.id},
-                    queryParameters: {'tab': tab.param},
+                    queryParameters: {
+                      'tab': tab.param,
+                      'type': item.type.name,
+                    },
                   );
                 },
                 leading: Icon(tab.icon),
-                title: Text(tab.title),
+                title: Text(tab.label(context.loc)),
                 trailing: Icon(Icons.chevron_right),
               ),
             );
