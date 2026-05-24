@@ -1,21 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sarqyt/l10n/app_localizations.dart';
-import 'package:sarqyt/src/features/items/domain/item.dart';
 
 enum ItemTab { overview, calendar, schedule, customerRatings, settings }
-
-/// Returns the visible tabs for a given [ItemType].
-/// One-time items skip Calendar and Schedule tabs.
-List<ItemTab> tabsForItemType(ItemType type) {
-  return switch (type) {
-    ItemType.oneTime => [
-      ItemTab.overview,
-      ItemTab.customerRatings,
-      ItemTab.settings,
-    ],
-    ItemType.scheduled => ItemTab.values,
-  };
-}
 
 extension ItemTabX on ItemTab {
   String get param {

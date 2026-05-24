@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
-import 'package:sarqyt/src/features/items/presentation/item_tab.dart';
+import 'package:sarqyt/src/features/items/presentation/item_tab.dart' show ItemTab, ItemTabX;
 import 'package:sarqyt/src/features/store/domain/store.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
@@ -49,7 +49,7 @@ class ItemActionDialog extends StatelessWidget {
             ),
           ),
           const Divider(),
-          ...tabsForItemType(item.type).map((tab) {
+          ...ItemTab.values.map((tab) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: Sizes.p16),
               child: ListTile(
@@ -59,10 +59,7 @@ class ItemActionDialog extends StatelessWidget {
                   context.goNamed(
                     BusinessRoute.item.name,
                     pathParameters: {'storeId': storeId, 'itemId': item.id},
-                    queryParameters: {
-                      'tab': tab.param,
-                      'type': item.type.name,
-                    },
+                    queryParameters: {'tab': tab.param},
                   );
                 },
                 leading: Icon(tab.icon),

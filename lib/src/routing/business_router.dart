@@ -11,7 +11,6 @@ import 'package:sarqyt/src/features/business_console/presentation/help_centre_sc
 import 'package:sarqyt/src/features/business_console/presentation/performance_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/settings_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/store_list_screen.dart';
-import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/items/presentation/item_create/create_item_screen.dart';
 import 'package:sarqyt/src/features/items/presentation/item_screen/item_screen.dart';
 import 'package:sarqyt/src/features/items/presentation/item_tab.dart';
@@ -313,17 +312,10 @@ GoRouter businessRouter(Ref ref) {
                           final tab = ItemTabX.fromParam(
                             state.uri.queryParameters['tab'],
                           );
-                          final typeParam =
-                              state.uri.queryParameters['type'];
-                          final itemType = ItemType.values.firstWhere(
-                            (t) => t.name == typeParam,
-                            orElse: () => ItemType.scheduled,
-                          );
                           return ItemScreen(
                             itemId: itemId,
                             storeId: storeId,
                             initialTab: tab,
-                            itemType: itemType,
                           );
                         },
                       ),

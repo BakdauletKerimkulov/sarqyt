@@ -40,7 +40,8 @@ class ItemsRepository {
   }
 
   /// All fields are required and validated by the caller (controller/service).
-  Future<void> createItem(
+  /// Returns the created item's ID.
+  Future<String> createItem(
     StoreID storeId, {
     required String name,
     required String description,
@@ -48,18 +49,21 @@ class ItemsRepository {
     double? estimatedValue,
     required WeeklySchedule schedule,
     String? imageUrl,
-  }) {
+    bool isActive = false,
+  }) async {
     final docRef = _firestore.collection(itemsPath(storeId)).doc();
-    return docRef.set({
+    await docRef.set({
       'id': docRef.id,
       'name': name,
       'description': description,
       'imageUrl': imageUrl,
       'price': price,
+      'isActive': isActive,
       if (estimatedValue != null) 'estimatedValue': estimatedValue,
       'schedule': schedule.toMap(),
       'badges': <Map<String, dynamic>>[],
     });
+    return docRef.id;
   }
 
   Future<void> updateItem(StoreID storeId, {required Item item}) {

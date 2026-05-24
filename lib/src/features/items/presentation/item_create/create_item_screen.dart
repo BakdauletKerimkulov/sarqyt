@@ -7,10 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
-import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/items/domain/weekly_schedule.dart';
 import 'package:sarqyt/src/features/items/presentation/common/weekly_schedule_editor.dart';
 import 'package:sarqyt/src/features/items/presentation/item_create/create_item_form_controller.dart';
@@ -39,7 +37,6 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
   final _priceCtl = TextEditingController();
   final _estimatedValueCtl = TextEditingController();
 
-  ItemType _type = ItemType.scheduled;
   var _submitted = false;
 
   // Image
@@ -52,11 +49,6 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     WeeklySchedule.defaultSchedule().days,
   );
 
-  // One-time fields
-  late DateTime _oneTimeDate = DateTime.now();
-  TimeOfDay _oneTimeStart = const TimeOfDay(hour: 18, minute: 0);
-  TimeOfDay _oneTimeEnd = const TimeOfDay(hour: 20, minute: 0);
-  int _oneTimeQuantity = 1;
 
   @override
   void dispose() {
@@ -67,18 +59,10 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     super.dispose();
   }
 
-  /// Validates the non-text-field parts (schedule / one-time window).
-  /// Text fields are validated by the [Form] via per-field validators.
+  /// Validates non-text-field parts (schedule).
   String? _validateExtras() {
-    if (_type == ItemType.oneTime) {
-      final startMin = _oneTimeStart.hour * 60 + _oneTimeStart.minute;
-      final endMin = _oneTimeEnd.hour * 60 + _oneTimeEnd.minute;
-      if (endMin <= startMin) return 'End time must be after start time';
-    }
-    if (_type == ItemType.scheduled) {
-      final hasEnabled = _schedule.values.any((d) => d.enabled);
-      if (!hasEnabled) return 'Enable at least one day';
-    }
+    final hasEnabled = _schedule.values.any((d) => d.enabled);
+    if (!hasEnabled) return 'Enable at least one day';
     return null;
   }
 
@@ -112,7 +96,6 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     final price = double.parse(_priceCtl.text);
     final evText = _estimatedValueCtl.text;
     final estimatedValue = evText.isNotEmpty ? double.tryParse(evText) : null;
-    final isOneTime = _type == ItemType.oneTime;
 
     await ref
         .read(createItemFormControllerProvider.notifier)
@@ -124,15 +107,6 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
           estimatedValue: estimatedValue,
           schedule: WeeklySchedule(_schedule),
           image: _selectedImage,
-          type: isOneTime ? 'oneTime' : 'scheduled',
-          oneTimeDate: isOneTime
-              ? DateFormat('yyyy-MM-dd').format(_oneTimeDate)
-              : null,
-          oneTimeStartHour: isOneTime ? _oneTimeStart.hour : null,
-          oneTimeStartMinute: isOneTime ? _oneTimeStart.minute : null,
-          oneTimeEndHour: isOneTime ? _oneTimeEnd.hour : null,
-          oneTimeEndMinute: isOneTime ? _oneTimeEnd.minute : null,
-          oneTimeQuantity: isOneTime ? _oneTimeQuantity : null,
         );
 
     if (!mounted) return;
@@ -274,42 +248,8 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                 const Divider(),
                 gapH24,
 
-                // Type selector
-                _Label(loc.type),
-                gapH12,
-                SegmentedButton<ItemType>(
-                  segments: [
-                    ButtonSegment(
-                      value: ItemType.scheduled,
-                      label: Text(loc.scheduled),
-                      icon: const Icon(Icons.calendar_month, size: 18),
-                    ),
-                    ButtonSegment(
-                      value: ItemType.oneTime,
-                      label: Text(loc.oneTime),
-                      icon: const Icon(Icons.flash_on, size: 18),
-                    ),
-                  ],
-                  selected: {_type},
-                  onSelectionChanged: isLoading
-                      ? null
-                      : (v) => setState(() => _type = v.first),
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.resolveWith((states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return AppColors.primary.withAlpha(30);
-                      }
-                      return null;
-                    }),
-                  ),
-                ),
-                gapH24,
-
-                // Type-specific fields
-                if (_type == ItemType.scheduled)
-                  _buildScheduleSection(theme, isLoading),
-                if (_type == ItemType.oneTime)
-                  _buildOneTimeSection(theme, isLoading),
+                // Weekly schedule
+                _buildScheduleSection(theme, isLoading),
 
                 gapH32,
 
@@ -401,73 +341,6 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     );
   }
 
-  Widget _buildOneTimeSection(ThemeData theme, bool isLoading) {
-    final loc = context.loc;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _Label(loc.date),
-        gapH8,
-        InkWell(
-          onTap: isLoading ? null : _pickDate,
-          borderRadius: BorderRadius.circular(Sizes.p8),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(Sizes.p12),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(Sizes.p8),
-            ),
-            child: Text(DateFormat('d MMMM y').format(_oneTimeDate)),
-          ),
-        ),
-        gapH20,
-
-        _Label(loc.pickupWindow),
-        gapH8,
-        Row(
-          children: [
-            Expanded(
-              child: _timeButton(_oneTimeStart, _pickStartTime, isLoading),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: Sizes.p8),
-              child: Text('–'),
-            ),
-            Expanded(child: _timeButton(_oneTimeEnd, _pickEndTime, isLoading)),
-          ],
-        ),
-        gapH20,
-
-        _Label(loc.quantity),
-        gapH8,
-        Row(
-          children: [
-            _CircleBtn(
-              icon: Icons.remove,
-              onPressed: isLoading || _oneTimeQuantity <= 1
-                  ? null
-                  : () => setState(() => _oneTimeQuantity--),
-            ),
-            SizedBox(
-              width: 48,
-              child: Text(
-                '$_oneTimeQuantity',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-            _CircleBtn(
-              icon: Icons.add,
-              onPressed: isLoading || _oneTimeQuantity >= 30
-                  ? null
-                  : () => setState(() => _oneTimeQuantity++),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 
   InputDecoration _inputDeco(String hint) {
     return InputDecoration(
@@ -489,49 +362,6 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     );
   }
 
-  Widget _timeButton(TimeOfDay time, VoidCallback onTap, bool isLoading) {
-    return InkWell(
-      onTap: isLoading ? null : onTap,
-      borderRadius: BorderRadius.circular(Sizes.p8),
-      child: Container(
-        padding: const EdgeInsets.all(Sizes.p12),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(Sizes.p8),
-        ),
-        child: Text(
-          '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-
-  Future<void> _pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _oneTimeDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 30)),
-    );
-    if (picked != null) setState(() => _oneTimeDate = picked);
-  }
-
-  Future<void> _pickStartTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _oneTimeStart,
-    );
-    if (picked != null) setState(() => _oneTimeStart = picked);
-  }
-
-  Future<void> _pickEndTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _oneTimeEnd,
-    );
-    if (picked != null) setState(() => _oneTimeEnd = picked);
-  }
 }
 
 class _Label extends StatelessWidget {
@@ -549,24 +379,3 @@ class _Label extends StatelessWidget {
   }
 }
 
-class _CircleBtn extends StatelessWidget {
-  const _CircleBtn({required this.icon, this.onPressed});
-  final IconData icon;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: onPressed != null ? AppColors.primary : Colors.grey.shade300,
-      shape: const CircleBorder(),
-      child: InkWell(
-        onTap: onPressed,
-        customBorder: const CircleBorder(),
-        child: Padding(
-          padding: const EdgeInsets.all(Sizes.p12),
-          child: Icon(icon, color: Colors.white),
-        ),
-      ),
-    );
-  }
-}

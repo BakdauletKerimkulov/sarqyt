@@ -28,14 +28,7 @@ class CreateItemFormController extends _$CreateItemFormController {
     required double price,
     required double? estimatedValue,
     required WeeklySchedule schedule,
-    required String type,
     Either<File, Uint8List>? image,
-    String? oneTimeDate,
-    int? oneTimeStartHour,
-    int? oneTimeStartMinute,
-    int? oneTimeEndHour,
-    int? oneTimeEndMinute,
-    int? oneTimeQuantity,
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
@@ -65,13 +58,6 @@ class CreateItemFormController extends _$CreateItemFormController {
               estimatedValue: estimatedValue,
               schedule: schedule,
               imageUrl: imageUrl,
-              type: type,
-              oneTimeDate: oneTimeDate,
-              oneTimeStartHour: oneTimeStartHour,
-              oneTimeStartMinute: oneTimeStartMinute,
-              oneTimeEndHour: oneTimeEndHour,
-              oneTimeEndMinute: oneTimeEndMinute,
-              oneTimeQuantity: oneTimeQuantity,
             );
       } catch (e) {
         // Best-effort cleanup of uploaded image if createItem fails.

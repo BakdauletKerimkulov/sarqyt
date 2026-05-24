@@ -20,13 +20,11 @@ class ItemScreen extends ConsumerStatefulWidget {
     required this.itemId,
     required this.storeId,
     this.initialTab = ItemTab.overview,
-    this.itemType = ItemType.scheduled,
   });
 
   final String itemId;
   final StoreID storeId;
   final ItemTab initialTab;
-  final ItemType itemType;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ItemScreenState();
@@ -40,7 +38,7 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
   @override
   void initState() {
     super.initState();
-    _filteredTabs = tabsForItemType(widget.itemType);
+    _filteredTabs = ItemTab.values;
     final initialIndex = _filteredTabs.indexOf(widget.initialTab);
     _tabController = TabController(
       length: _filteredTabs.length,

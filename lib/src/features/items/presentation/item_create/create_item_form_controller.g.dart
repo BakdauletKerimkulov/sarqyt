@@ -40,7 +40,7 @@ final class CreateItemFormControllerProvider
 }
 
 String _$createItemFormControllerHash() =>
-    r'f2013f6708ac121fd3e801a8bda6041519418676';
+    r'2daa07f9b4f8da5ed441f83295f0ea98dee1fd38';
 
 /// Controller for the dashboard "Create item" form.
 /// Tracks loading/error state via [AsyncValue]; the widget only listens.

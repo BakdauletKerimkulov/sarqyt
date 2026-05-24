@@ -27,13 +27,6 @@ export interface ItemDoc {
   packagingType?: string;
   collectionInstructions?: string | null;
   isActive?: boolean;
-  type?: "scheduled" | "oneTime";
-  oneTimeDate?: string; // "YYYY-MM-DD"
-  oneTimeStartHour?: number;
-  oneTimeStartMinute?: number;
-  oneTimeEndHour?: number;
-  oneTimeEndMinute?: number;
-  oneTimeQuantity?: number;
   isBuffetFood?: boolean;
   storingAndAllergens?: string | null;
 }
