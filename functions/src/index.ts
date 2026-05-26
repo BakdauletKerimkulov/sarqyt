@@ -5,7 +5,6 @@ admin.initializeApp();
 // Merchant onboarding
 export { completeMerchantOnboarding } from "./features/merchant-onboarding/functions/complete-merchant-onboarding";
 export { fakeVerifyBusiness } from "./features/merchant-onboarding/functions/fake-verify-business";
-export { skipOptionalOnboarding } from "./features/merchant-onboarding/functions/skip-optional-onboarding";
 export { startMerchantOnboardingData } from "./features/merchant-onboarding/functions/start-merchant-onboarding";
 
 // Offers
@@ -29,6 +28,10 @@ export { onOrderStatusChanged } from "./features/orders/functions/on-order-statu
 
 // Items
 export { deleteItem } from "./features/items/functions/delete-item";
+
+// Stores
+export { createAdditionalStore } from "./features/stores/functions/create-additional-store";
+export { inviteTeamMember } from "./features/stores/functions/invite-team-member";
 
 // Triggers
 export { onOrderCreated } from "./features/triggers/orders";
