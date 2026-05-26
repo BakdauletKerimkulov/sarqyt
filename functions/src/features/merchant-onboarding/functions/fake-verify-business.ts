@@ -20,10 +20,24 @@ export const fakeVerifyBusiness = onCall(async (req) => {
       throw new AppError("invalid-argument", "businessId is required");
     }
 
+    const uid = req.auth.uid;
+
     const businessRef = db.collection(FirestoreCollections.BUSINESSES).doc(businessId);
     const snap = await businessRef.get();
     if (!snap.exists) {
       throw new AppError("not-found", `Business ${businessId} not found`);
+    }
+
+    // Verify caller owns this business
+    // Phase 1 fallback: check business_membership first, then ownerId
+    const membershipSnap = await db
+      .collection(FirestoreCollections.BUSINESSES_MEMBERSHIP)
+      .doc(`${businessId}_${uid}`)
+      .get();
+    const isMembershipOwner = membershipSnap.exists && membershipSnap.data()?.role === "owner";
+    const isLegacyOwner = snap.data()?.ownerId === uid;
+    if (!isMembershipOwner && !isLegacyOwner) {
+      throw new AppError("permission-denied", "Only business owner can verify");
     }
 
     logInfo("fakeVerifyBusiness: starting simulated verification", {
