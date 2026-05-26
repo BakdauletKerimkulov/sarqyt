@@ -81,7 +81,7 @@ export const completeMerchantOnboarding = onCall(async (req) => {
       updatedAt: now,
     };
 
-    const businessId = storeId;
+    const businessId = db.collection(FirestoreCollections.BUSINESSES).doc().id;
     const businessRef = db.collection(FirestoreCollections.BUSINESSES).doc(businessId);
 
     const businessDoc = {
@@ -105,7 +105,6 @@ export const completeMerchantOnboarding = onCall(async (req) => {
       },
       storeType: draftDoc.storeType,
       phoneNumber: draftDoc.phoneNumber,
-      staffIds: [],
       isVisible: true,
       avgRating: 0,
       createdAt: now,
@@ -117,15 +116,31 @@ export const completeMerchantOnboarding = onCall(async (req) => {
       .doc(`${storeId}_${uid}`);
 
     const storeShipDoc = {
+      id: `${storeId}_${uid}`,
       storeId,
       businessId,
       userId: uid,
-      storeRole: "owner",
+      role: "owner",
+      storeRole: "owner", // backward compat — Phase 1
       name: draftDoc.storeName,
       logoUrl: null,
-      status: "active",
-      onboardingStatus: "storeCreated",
-      permissions: ["manage_store", "manage_orders", "manage_offers"],
+      permissions: ["manage_store", "manage_orders", "manage_offers", "manage_team"],
+      welcomeCompleted: false,
+      hasFirstItem: false,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const membershipId = `${businessId}_${uid}`;
+    const membershipRef = db
+      .collection(FirestoreCollections.BUSINESSES_MEMBERSHIP)
+      .doc(membershipId);
+
+    const membershipDoc = {
+      id: membershipId,
+      businessId,
+      userId: uid,
+      role: "owner",
       createdAt: now,
       updatedAt: now,
     };
@@ -135,6 +150,7 @@ export const completeMerchantOnboarding = onCall(async (req) => {
     batch.set(businessRef, businessDoc);
     batch.set(storeRef, storeDoc);
     batch.set(storeShipRef, storeShipDoc);
+    batch.set(membershipRef, membershipDoc);
     batch.set(
       draftRef,
       {
