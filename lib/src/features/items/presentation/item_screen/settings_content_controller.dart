@@ -59,9 +59,9 @@ class SettingsContentController extends _$SettingsContentController {
   }
 
   /// Returns `true` if the item has active orders (confirmed/preparing/readyForPickup).
-  Future<bool> hasActiveOrders(ItemID itemId) {
+  Future<bool> hasActiveOrders(StoreID storeId, ItemID itemId) {
     final ordersRepo = ref.read(ordersRepositoryProvider);
-    return ordersRepo.hasActiveOrdersForItem(itemId);
+    return ordersRepo.hasActiveOrdersForItem(storeId, itemId);
   }
 
   /// Calls the Cloud Function to cascade-delete item, its offers, and image.

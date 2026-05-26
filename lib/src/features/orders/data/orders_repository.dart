@@ -28,14 +28,30 @@ class StoreOrdersRepository {
         .map((snap) => snap.docs.map((doc) => doc.data()).toList());
   }
 
+  Stream<List<Order>> watchOrdersListForItem(
+      StoreID storeId, ItemID itemId) {
+    return _firestore
+        .collection(ordersPath())
+        .where('storeId', isEqualTo: storeId)
+        .where('itemId', isEqualTo: itemId)
+        .orderBy('createdAt', descending: true)
+        .withConverter(
+          fromFirestore: (doc, _) => Order.fromJson(doc.data()!),
+          toFirestore: (Order order, _) => order.toJson(),
+        )
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) => doc.data()).toList());
+  }
+
   Stream<Order?> watchOrder(OrderID id) {
     final ref = _orderRef(id);
     return ref.snapshots().map((snapshot) => snapshot.data());
   }
 
-  Future<bool> hasActiveOrdersForItem(ItemID itemId) async {
+  Future<bool> hasActiveOrdersForItem(StoreID storeId, ItemID itemId) async {
     final snap = await _firestore
         .collection(ordersPath())
+        .where('storeId', isEqualTo: storeId)
         .where('itemId', isEqualTo: itemId)
         .where('status', whereIn: ['confirmed', 'preparing', 'readyForPickup'])
         .limit(1)
@@ -68,4 +84,11 @@ StoreOrdersRepository ordersRepository(Ref ref) {
 Stream<List<Order>> ordersListStream(Ref ref, StoreID id) {
   final repo = ref.watch(ordersRepositoryProvider);
   return repo.watchOrdersListForStore(id);
+}
+
+@riverpod
+Stream<List<Order>> ordersListForItemStream(
+    Ref ref, StoreID storeId, ItemID itemId) {
+  final repo = ref.watch(ordersRepositoryProvider);
+  return repo.watchOrdersListForItem(storeId, itemId);
 }

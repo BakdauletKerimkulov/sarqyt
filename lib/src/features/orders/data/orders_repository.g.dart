@@ -130,3 +130,83 @@ final class OrdersListStreamFamily extends $Family
   @override
   String toString() => r'ordersListStreamProvider';
 }
+
+@ProviderFor(ordersListForItemStream)
+const ordersListForItemStreamProvider = OrdersListForItemStreamFamily._();
+
+final class OrdersListForItemStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Order>>,
+          List<Order>,
+          Stream<List<Order>>
+        >
+    with $FutureModifier<List<Order>>, $StreamProvider<List<Order>> {
+  const OrdersListForItemStreamProvider._({
+    required OrdersListForItemStreamFamily super.from,
+    required (StoreID, ItemID) super.argument,
+  }) : super(
+         retry: null,
+         name: r'ordersListForItemStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$ordersListForItemStreamHash();
+
+  @override
+  String toString() {
+    return r'ordersListForItemStreamProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Order>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Order>> create(Ref ref) {
+    final argument = this.argument as (StoreID, ItemID);
+    return ordersListForItemStream(ref, argument.$1, argument.$2);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is OrdersListForItemStreamProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$ordersListForItemStreamHash() =>
+    r'd1f96b5c052dcda330536b7533210b2c1ee47699';
+
+final class OrdersListForItemStreamFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Order>>, (StoreID, ItemID)> {
+  const OrdersListForItemStreamFamily._()
+    : super(
+        retry: null,
+        name: r'ordersListForItemStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  OrdersListForItemStreamProvider call(StoreID storeId, ItemID itemId) =>
+      OrdersListForItemStreamProvider._(
+        argument: (storeId, itemId),
+        from: this,
+      );
+
+  @override
+  String toString() => r'ordersListForItemStreamProvider';
+}

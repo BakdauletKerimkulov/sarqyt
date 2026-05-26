@@ -78,7 +78,7 @@ class _DeleteItemButtonState extends ConsumerState<_DeleteItemButton> {
     try {
       final controller =
           ref.read(settingsContentControllerProvider.notifier);
-      final hasActive = await controller.hasActiveOrders(widget.item.id);
+      final hasActive = await controller.hasActiveOrders(widget.storeId, widget.item.id);
 
       if (!mounted) return;
 
