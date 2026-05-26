@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
@@ -23,6 +22,7 @@ abstract class Business with _$Business {
     required String name,
     required double commissionRate,
     @TimestampConverter() required DateTime createdAt,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'plan')
     @Default(SubscriptionPlan.free)
     SubscriptionPlan subscriptionPlan,

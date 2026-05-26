@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Store {
 
- StoreID get id; String get name; Location get location; String? get phoneNumber; String? get description; String? get logoUrl; String? get coverUrl; double get avgRating; Currency get currency;
+ StoreID get id; String get name; Location get location;/// Null for legacy documents where businessId == storeId.
+ String? get businessId; String? get phoneNumber; String? get description; String? get logoUrl; String? get coverUrl; double get avgRating; Currency get currency;
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,16 @@ $StoreCopyWith<Store> get copyWith => _$StoreCopyWithImpl<Store>(this as Store, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Store&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.location, location) || other.location == location)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.description, description) || other.description == description)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.avgRating, avgRating) || other.avgRating == avgRating)&&(identical(other.currency, currency) || other.currency == currency));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Store&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.location, location) || other.location == location)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.description, description) || other.description == description)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.avgRating, avgRating) || other.avgRating == avgRating)&&(identical(other.currency, currency) || other.currency == currency));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,location,phoneNumber,description,logoUrl,coverUrl,avgRating,currency);
+int get hashCode => Object.hash(runtimeType,id,name,location,businessId,phoneNumber,description,logoUrl,coverUrl,avgRating,currency);
 
 @override
 String toString() {
-  return 'Store(id: $id, name: $name, location: $location, phoneNumber: $phoneNumber, description: $description, logoUrl: $logoUrl, coverUrl: $coverUrl, avgRating: $avgRating, currency: $currency)';
+  return 'Store(id: $id, name: $name, location: $location, businessId: $businessId, phoneNumber: $phoneNumber, description: $description, logoUrl: $logoUrl, coverUrl: $coverUrl, avgRating: $avgRating, currency: $currency)';
 }
 
 
@@ -45,7 +46,7 @@ abstract mixin class $StoreCopyWith<$Res>  {
   factory $StoreCopyWith(Store value, $Res Function(Store) _then) = _$StoreCopyWithImpl;
 @useResult
 $Res call({
- StoreID id, String name, Location location, String? phoneNumber, String? description, String? logoUrl, String? coverUrl, double avgRating, Currency currency
+ StoreID id, String name, Location location, String? businessId, String? phoneNumber, String? description, String? logoUrl, String? coverUrl, double avgRating, Currency currency
 });
 
 
@@ -62,12 +63,13 @@ class _$StoreCopyWithImpl<$Res>
 
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? location = null,Object? phoneNumber = freezed,Object? description = freezed,Object? logoUrl = freezed,Object? coverUrl = freezed,Object? avgRating = null,Object? currency = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? location = null,Object? businessId = freezed,Object? phoneNumber = freezed,Object? description = freezed,Object? logoUrl = freezed,Object? coverUrl = freezed,Object? avgRating = null,Object? currency = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as StoreID,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as Location,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
+as Location,businessId: freezed == businessId ? _self.businessId : businessId // ignore: cast_nullable_to_non_nullable
+as String?,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,logoUrl: freezed == logoUrl ? _self.logoUrl : logoUrl // ignore: cast_nullable_to_non_nullable
 as String?,coverUrl: freezed == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable
@@ -167,10 +169,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StoreID id,  String name,  Location location,  String? phoneNumber,  String? description,  String? logoUrl,  String? coverUrl,  double avgRating,  Currency currency)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( StoreID id,  String name,  Location location,  String? businessId,  String? phoneNumber,  String? description,  String? logoUrl,  String? coverUrl,  double avgRating,  Currency currency)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Store() when $default != null:
-return $default(_that.id,_that.name,_that.location,_that.phoneNumber,_that.description,_that.logoUrl,_that.coverUrl,_that.avgRating,_that.currency);case _:
+return $default(_that.id,_that.name,_that.location,_that.businessId,_that.phoneNumber,_that.description,_that.logoUrl,_that.coverUrl,_that.avgRating,_that.currency);case _:
   return orElse();
 
 }
@@ -188,10 +190,10 @@ return $default(_that.id,_that.name,_that.location,_that.phoneNumber,_that.descr
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StoreID id,  String name,  Location location,  String? phoneNumber,  String? description,  String? logoUrl,  String? coverUrl,  double avgRating,  Currency currency)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( StoreID id,  String name,  Location location,  String? businessId,  String? phoneNumber,  String? description,  String? logoUrl,  String? coverUrl,  double avgRating,  Currency currency)  $default,) {final _that = this;
 switch (_that) {
 case _Store():
-return $default(_that.id,_that.name,_that.location,_that.phoneNumber,_that.description,_that.logoUrl,_that.coverUrl,_that.avgRating,_that.currency);case _:
+return $default(_that.id,_that.name,_that.location,_that.businessId,_that.phoneNumber,_that.description,_that.logoUrl,_that.coverUrl,_that.avgRating,_that.currency);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +210,10 @@ return $default(_that.id,_that.name,_that.location,_that.phoneNumber,_that.descr
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StoreID id,  String name,  Location location,  String? phoneNumber,  String? description,  String? logoUrl,  String? coverUrl,  double avgRating,  Currency currency)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( StoreID id,  String name,  Location location,  String? businessId,  String? phoneNumber,  String? description,  String? logoUrl,  String? coverUrl,  double avgRating,  Currency currency)?  $default,) {final _that = this;
 switch (_that) {
 case _Store() when $default != null:
-return $default(_that.id,_that.name,_that.location,_that.phoneNumber,_that.description,_that.logoUrl,_that.coverUrl,_that.avgRating,_that.currency);case _:
+return $default(_that.id,_that.name,_that.location,_that.businessId,_that.phoneNumber,_that.description,_that.logoUrl,_that.coverUrl,_that.avgRating,_that.currency);case _:
   return null;
 
 }
@@ -223,12 +225,14 @@ return $default(_that.id,_that.name,_that.location,_that.phoneNumber,_that.descr
 
 
 class _Store extends Store {
-  const _Store({required this.id, required this.name, required this.location, this.phoneNumber, this.description, this.logoUrl, this.coverUrl, this.avgRating = 0, this.currency = Currency.kzt}): super._();
+  const _Store({required this.id, required this.name, required this.location, this.businessId, this.phoneNumber, this.description, this.logoUrl, this.coverUrl, this.avgRating = 0, this.currency = Currency.kzt}): super._();
   
 
 @override final  StoreID id;
 @override final  String name;
 @override final  Location location;
+/// Null for legacy documents where businessId == storeId.
+@override final  String? businessId;
 @override final  String? phoneNumber;
 @override final  String? description;
 @override final  String? logoUrl;
@@ -246,16 +250,16 @@ _$StoreCopyWith<_Store> get copyWith => __$StoreCopyWithImpl<_Store>(this, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Store&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.location, location) || other.location == location)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.description, description) || other.description == description)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.avgRating, avgRating) || other.avgRating == avgRating)&&(identical(other.currency, currency) || other.currency == currency));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Store&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.location, location) || other.location == location)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.description, description) || other.description == description)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.coverUrl, coverUrl) || other.coverUrl == coverUrl)&&(identical(other.avgRating, avgRating) || other.avgRating == avgRating)&&(identical(other.currency, currency) || other.currency == currency));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,location,phoneNumber,description,logoUrl,coverUrl,avgRating,currency);
+int get hashCode => Object.hash(runtimeType,id,name,location,businessId,phoneNumber,description,logoUrl,coverUrl,avgRating,currency);
 
 @override
 String toString() {
-  return 'Store(id: $id, name: $name, location: $location, phoneNumber: $phoneNumber, description: $description, logoUrl: $logoUrl, coverUrl: $coverUrl, avgRating: $avgRating, currency: $currency)';
+  return 'Store(id: $id, name: $name, location: $location, businessId: $businessId, phoneNumber: $phoneNumber, description: $description, logoUrl: $logoUrl, coverUrl: $coverUrl, avgRating: $avgRating, currency: $currency)';
 }
 
 
@@ -266,7 +270,7 @@ abstract mixin class _$StoreCopyWith<$Res> implements $StoreCopyWith<$Res> {
   factory _$StoreCopyWith(_Store value, $Res Function(_Store) _then) = __$StoreCopyWithImpl;
 @override @useResult
 $Res call({
- StoreID id, String name, Location location, String? phoneNumber, String? description, String? logoUrl, String? coverUrl, double avgRating, Currency currency
+ StoreID id, String name, Location location, String? businessId, String? phoneNumber, String? description, String? logoUrl, String? coverUrl, double avgRating, Currency currency
 });
 
 
@@ -283,12 +287,13 @@ class __$StoreCopyWithImpl<$Res>
 
 /// Create a copy of Store
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? location = null,Object? phoneNumber = freezed,Object? description = freezed,Object? logoUrl = freezed,Object? coverUrl = freezed,Object? avgRating = null,Object? currency = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? location = null,Object? businessId = freezed,Object? phoneNumber = freezed,Object? description = freezed,Object? logoUrl = freezed,Object? coverUrl = freezed,Object? avgRating = null,Object? currency = null,}) {
   return _then(_Store(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as StoreID,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as Location,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
+as Location,businessId: freezed == businessId ? _self.businessId : businessId // ignore: cast_nullable_to_non_nullable
+as String?,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,logoUrl: freezed == logoUrl ? _self.logoUrl : logoUrl // ignore: cast_nullable_to_non_nullable
 as String?,coverUrl: freezed == coverUrl ? _self.coverUrl : coverUrl // ignore: cast_nullable_to_non_nullable

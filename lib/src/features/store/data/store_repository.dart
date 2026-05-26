@@ -21,6 +21,9 @@ class StoreRepository {
     return _storeRef(store.id).set(store);
   }
 
+  /// Watches stores owned by [ownerId] (denormalized field).
+  /// For full list including stores where user is operator/employer,
+  /// combine with storeIds from storeShips.
   Stream<List<Store>> watchStoresList(UserID ownerId) {
     return _storesRef()
         .where('ownerId', isEqualTo: ownerId)

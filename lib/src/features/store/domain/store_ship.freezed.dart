@@ -15,7 +15,12 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$StoreShip {
 
- String get storeId; String get businessId; String get userId; List<String> get permissions; String get name; StoreRole get storeRole; String? get logoUrl;@JsonKey(fromJson: _readOnboardingStatus) OnboardingStatus get onboardingStatus;
+ String get storeId; String get businessId; String get userId; List<String> get permissions; String get name;// ignore: invalid_annotation_target
+@JsonKey(readValue: _readRole) StoreRole get role; String? get logoUrl;/// Set to true after the partner taps "Continue" on the welcome screen.
+/// Used by the redirect to decide whether to show the welcome flow.
+ bool get welcomeCompleted;/// Set to true after the partner has created at least one item.
+/// Updated optimistically by the client; eventually consistent.
+ bool get hasFirstItem;
 /// Create a copy of StoreShip
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +33,16 @@ $StoreShipCopyWith<StoreShip> get copyWith => _$StoreShipCopyWithImpl<StoreShip>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StoreShip&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.userId, userId) || other.userId == userId)&&const DeepCollectionEquality().equals(other.permissions, permissions)&&(identical(other.name, name) || other.name == name)&&(identical(other.storeRole, storeRole) || other.storeRole == storeRole)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.onboardingStatus, onboardingStatus) || other.onboardingStatus == onboardingStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StoreShip&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.userId, userId) || other.userId == userId)&&const DeepCollectionEquality().equals(other.permissions, permissions)&&(identical(other.name, name) || other.name == name)&&(identical(other.role, role) || other.role == role)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.welcomeCompleted, welcomeCompleted) || other.welcomeCompleted == welcomeCompleted)&&(identical(other.hasFirstItem, hasFirstItem) || other.hasFirstItem == hasFirstItem));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,storeId,businessId,userId,const DeepCollectionEquality().hash(permissions),name,storeRole,logoUrl,onboardingStatus);
+int get hashCode => Object.hash(runtimeType,storeId,businessId,userId,const DeepCollectionEquality().hash(permissions),name,role,logoUrl,welcomeCompleted,hasFirstItem);
 
 @override
 String toString() {
-  return 'StoreShip(storeId: $storeId, businessId: $businessId, userId: $userId, permissions: $permissions, name: $name, storeRole: $storeRole, logoUrl: $logoUrl, onboardingStatus: $onboardingStatus)';
+  return 'StoreShip(storeId: $storeId, businessId: $businessId, userId: $userId, permissions: $permissions, name: $name, role: $role, logoUrl: $logoUrl, welcomeCompleted: $welcomeCompleted, hasFirstItem: $hasFirstItem)';
 }
 
 
@@ -48,7 +53,7 @@ abstract mixin class $StoreShipCopyWith<$Res>  {
   factory $StoreShipCopyWith(StoreShip value, $Res Function(StoreShip) _then) = _$StoreShipCopyWithImpl;
 @useResult
 $Res call({
- String storeId, String businessId, String userId, List<String> permissions, String name, StoreRole storeRole, String? logoUrl,@JsonKey(fromJson: _readOnboardingStatus) OnboardingStatus onboardingStatus
+ String storeId, String businessId, String userId, List<String> permissions, String name,@JsonKey(readValue: _readRole) StoreRole role, String? logoUrl, bool welcomeCompleted, bool hasFirstItem
 });
 
 
@@ -65,17 +70,18 @@ class _$StoreShipCopyWithImpl<$Res>
 
 /// Create a copy of StoreShip
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? storeId = null,Object? businessId = null,Object? userId = null,Object? permissions = null,Object? name = null,Object? storeRole = null,Object? logoUrl = freezed,Object? onboardingStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? storeId = null,Object? businessId = null,Object? userId = null,Object? permissions = null,Object? name = null,Object? role = null,Object? logoUrl = freezed,Object? welcomeCompleted = null,Object? hasFirstItem = null,}) {
   return _then(_self.copyWith(
 storeId: null == storeId ? _self.storeId : storeId // ignore: cast_nullable_to_non_nullable
 as String,businessId: null == businessId ? _self.businessId : businessId // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,permissions: null == permissions ? _self.permissions : permissions // ignore: cast_nullable_to_non_nullable
 as List<String>,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,storeRole: null == storeRole ? _self.storeRole : storeRole // ignore: cast_nullable_to_non_nullable
+as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as StoreRole,logoUrl: freezed == logoUrl ? _self.logoUrl : logoUrl // ignore: cast_nullable_to_non_nullable
-as String?,onboardingStatus: null == onboardingStatus ? _self.onboardingStatus : onboardingStatus // ignore: cast_nullable_to_non_nullable
-as OnboardingStatus,
+as String?,welcomeCompleted: null == welcomeCompleted ? _self.welcomeCompleted : welcomeCompleted // ignore: cast_nullable_to_non_nullable
+as bool,hasFirstItem: null == hasFirstItem ? _self.hasFirstItem : hasFirstItem // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -160,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name,  StoreRole storeRole,  String? logoUrl, @JsonKey(fromJson: _readOnboardingStatus)  OnboardingStatus onboardingStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name, @JsonKey(readValue: _readRole)  StoreRole role,  String? logoUrl,  bool welcomeCompleted,  bool hasFirstItem)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _StoreShip() when $default != null:
-return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_that.name,_that.storeRole,_that.logoUrl,_that.onboardingStatus);case _:
+return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_that.name,_that.role,_that.logoUrl,_that.welcomeCompleted,_that.hasFirstItem);case _:
   return orElse();
 
 }
@@ -181,10 +187,10 @@ return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name,  StoreRole storeRole,  String? logoUrl, @JsonKey(fromJson: _readOnboardingStatus)  OnboardingStatus onboardingStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name, @JsonKey(readValue: _readRole)  StoreRole role,  String? logoUrl,  bool welcomeCompleted,  bool hasFirstItem)  $default,) {final _that = this;
 switch (_that) {
 case _StoreShip():
-return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_that.name,_that.storeRole,_that.logoUrl,_that.onboardingStatus);case _:
+return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_that.name,_that.role,_that.logoUrl,_that.welcomeCompleted,_that.hasFirstItem);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +207,10 @@ return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name,  StoreRole storeRole,  String? logoUrl, @JsonKey(fromJson: _readOnboardingStatus)  OnboardingStatus onboardingStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String storeId,  String businessId,  String userId,  List<String> permissions,  String name, @JsonKey(readValue: _readRole)  StoreRole role,  String? logoUrl,  bool welcomeCompleted,  bool hasFirstItem)?  $default,) {final _that = this;
 switch (_that) {
 case _StoreShip() when $default != null:
-return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_that.name,_that.storeRole,_that.logoUrl,_that.onboardingStatus);case _:
+return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_that.name,_that.role,_that.logoUrl,_that.welcomeCompleted,_that.hasFirstItem);case _:
   return null;
 
 }
@@ -216,7 +222,7 @@ return $default(_that.storeId,_that.businessId,_that.userId,_that.permissions,_t
 @JsonSerializable()
 
 class _StoreShip implements StoreShip {
-  const _StoreShip({required this.storeId, required this.businessId, required this.userId, required final  List<String> permissions, required this.name, required this.storeRole, this.logoUrl, @JsonKey(fromJson: _readOnboardingStatus) this.onboardingStatus = OnboardingStatus.storeCreated}): _permissions = permissions;
+  const _StoreShip({required this.storeId, required this.businessId, required this.userId, required final  List<String> permissions, required this.name, @JsonKey(readValue: _readRole) required this.role, this.logoUrl, this.welcomeCompleted = false, this.hasFirstItem = false}): _permissions = permissions;
   factory _StoreShip.fromJson(Map<String, dynamic> json) => _$StoreShipFromJson(json);
 
 @override final  String storeId;
@@ -230,9 +236,15 @@ class _StoreShip implements StoreShip {
 }
 
 @override final  String name;
-@override final  StoreRole storeRole;
+// ignore: invalid_annotation_target
+@override@JsonKey(readValue: _readRole) final  StoreRole role;
 @override final  String? logoUrl;
-@override@JsonKey(fromJson: _readOnboardingStatus) final  OnboardingStatus onboardingStatus;
+/// Set to true after the partner taps "Continue" on the welcome screen.
+/// Used by the redirect to decide whether to show the welcome flow.
+@override@JsonKey() final  bool welcomeCompleted;
+/// Set to true after the partner has created at least one item.
+/// Updated optimistically by the client; eventually consistent.
+@override@JsonKey() final  bool hasFirstItem;
 
 /// Create a copy of StoreShip
 /// with the given fields replaced by the non-null parameter values.
@@ -247,16 +259,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StoreShip&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.userId, userId) || other.userId == userId)&&const DeepCollectionEquality().equals(other._permissions, _permissions)&&(identical(other.name, name) || other.name == name)&&(identical(other.storeRole, storeRole) || other.storeRole == storeRole)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.onboardingStatus, onboardingStatus) || other.onboardingStatus == onboardingStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StoreShip&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.userId, userId) || other.userId == userId)&&const DeepCollectionEquality().equals(other._permissions, _permissions)&&(identical(other.name, name) || other.name == name)&&(identical(other.role, role) || other.role == role)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.welcomeCompleted, welcomeCompleted) || other.welcomeCompleted == welcomeCompleted)&&(identical(other.hasFirstItem, hasFirstItem) || other.hasFirstItem == hasFirstItem));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,storeId,businessId,userId,const DeepCollectionEquality().hash(_permissions),name,storeRole,logoUrl,onboardingStatus);
+int get hashCode => Object.hash(runtimeType,storeId,businessId,userId,const DeepCollectionEquality().hash(_permissions),name,role,logoUrl,welcomeCompleted,hasFirstItem);
 
 @override
 String toString() {
-  return 'StoreShip(storeId: $storeId, businessId: $businessId, userId: $userId, permissions: $permissions, name: $name, storeRole: $storeRole, logoUrl: $logoUrl, onboardingStatus: $onboardingStatus)';
+  return 'StoreShip(storeId: $storeId, businessId: $businessId, userId: $userId, permissions: $permissions, name: $name, role: $role, logoUrl: $logoUrl, welcomeCompleted: $welcomeCompleted, hasFirstItem: $hasFirstItem)';
 }
 
 
@@ -267,7 +279,7 @@ abstract mixin class _$StoreShipCopyWith<$Res> implements $StoreShipCopyWith<$Re
   factory _$StoreShipCopyWith(_StoreShip value, $Res Function(_StoreShip) _then) = __$StoreShipCopyWithImpl;
 @override @useResult
 $Res call({
- String storeId, String businessId, String userId, List<String> permissions, String name, StoreRole storeRole, String? logoUrl,@JsonKey(fromJson: _readOnboardingStatus) OnboardingStatus onboardingStatus
+ String storeId, String businessId, String userId, List<String> permissions, String name,@JsonKey(readValue: _readRole) StoreRole role, String? logoUrl, bool welcomeCompleted, bool hasFirstItem
 });
 
 
@@ -284,17 +296,18 @@ class __$StoreShipCopyWithImpl<$Res>
 
 /// Create a copy of StoreShip
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? storeId = null,Object? businessId = null,Object? userId = null,Object? permissions = null,Object? name = null,Object? storeRole = null,Object? logoUrl = freezed,Object? onboardingStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? storeId = null,Object? businessId = null,Object? userId = null,Object? permissions = null,Object? name = null,Object? role = null,Object? logoUrl = freezed,Object? welcomeCompleted = null,Object? hasFirstItem = null,}) {
   return _then(_StoreShip(
 storeId: null == storeId ? _self.storeId : storeId // ignore: cast_nullable_to_non_nullable
 as String,businessId: null == businessId ? _self.businessId : businessId // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,permissions: null == permissions ? _self._permissions : permissions // ignore: cast_nullable_to_non_nullable
 as List<String>,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,storeRole: null == storeRole ? _self.storeRole : storeRole // ignore: cast_nullable_to_non_nullable
+as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as StoreRole,logoUrl: freezed == logoUrl ? _self.logoUrl : logoUrl // ignore: cast_nullable_to_non_nullable
-as String?,onboardingStatus: null == onboardingStatus ? _self.onboardingStatus : onboardingStatus // ignore: cast_nullable_to_non_nullable
-as OnboardingStatus,
+as String?,welcomeCompleted: null == welcomeCompleted ? _self.welcomeCompleted : welcomeCompleted // ignore: cast_nullable_to_non_nullable
+as bool,hasFirstItem: null == hasFirstItem ? _self.hasFirstItem : hasFirstItem // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

@@ -5,8 +5,6 @@ part 'store_ship.g.dart';
 
 enum StoreRole { owner, operator, employer }
 
-enum OnboardingStatus { storeCreated, completed }
-
 @freezed
 abstract class StoreShip with _$StoreShip {
   const factory StoreShip({
@@ -15,35 +13,36 @@ abstract class StoreShip with _$StoreShip {
     required String userId,
     required List<String> permissions,
     required String name,
-    required StoreRole storeRole,
+    // ignore: invalid_annotation_target
+    @JsonKey(readValue: _readRole) required StoreRole role,
     String? logoUrl,
-    @Default(OnboardingStatus.storeCreated)
-    @JsonKey(fromJson: _readOnboardingStatus)
-    OnboardingStatus onboardingStatus,
+
+    /// Set to true after the partner taps "Continue" on the welcome screen.
+    /// Used by the redirect to decide whether to show the welcome flow.
+    @Default(false) bool welcomeCompleted,
+
+    /// Set to true after the partner has created at least one item.
+    /// Updated optimistically by the client; eventually consistent.
+    @Default(false) bool hasFirstItem,
   }) = _StoreShip;
 
   factory StoreShip.fromJson(Map<String, dynamic> json) =>
       _$StoreShipFromJson(json);
 }
 
-/// Backward-compatible parser: treats legacy "itemCreated" as "completed".
-OnboardingStatus _readOnboardingStatus(dynamic value) {
-  return switch (value) {
-    'completed' || 'itemCreated' => OnboardingStatus.completed,
-    'storeCreated' => OnboardingStatus.storeCreated,
-    _ => OnboardingStatus.storeCreated,
-  };
+/// Reads `role` from new docs, falling back to `storeRole` for old docs.
+Object? _readRole(Map map, String key) {
+  return map['role'] ?? map['storeRole'];
 }
 
 extension StoreShipListX on List<StoreShip> {
-  StoreShip? get pendingOnboarding => where(
-    (s) => s.onboardingStatus != OnboardingStatus.completed,
-  ).firstOrNull;
+  /// First storeShip whose welcome flow hasn't been completed yet, or null.
+  StoreShip? get pendingWelcome =>
+      where((s) => !s.welcomeCompleted).firstOrNull;
 
-  String? get defaultStoreId => where(
-    (s) => s.onboardingStatus == OnboardingStatus.completed,
-  ).firstOrNull?.storeId;
+  /// Default storeId to navigate to (first welcome-completed store).
+  String? get defaultStoreId =>
+      where((s) => s.welcomeCompleted).firstOrNull?.storeId;
 
-  bool get hasActiveStores =>
-      any((s) => s.onboardingStatus == OnboardingStatus.completed);
+  bool get hasActiveStores => any((s) => s.welcomeCompleted);
 }

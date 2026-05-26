@@ -289,6 +289,82 @@ final class SingleStoreShipForPartnerFamily extends $Family
   String toString() => r'singleStoreShipForPartnerProvider';
 }
 
+@ProviderFor(storeShipsByStoreId)
+const storeShipsByStoreIdProvider = StoreShipsByStoreIdFamily._();
+
+final class StoreShipsByStoreIdProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<StoreShip>>,
+          List<StoreShip>,
+          Stream<List<StoreShip>>
+        >
+    with $FutureModifier<List<StoreShip>>, $StreamProvider<List<StoreShip>> {
+  const StoreShipsByStoreIdProvider._({
+    required StoreShipsByStoreIdFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'storeShipsByStoreIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$storeShipsByStoreIdHash();
+
+  @override
+  String toString() {
+    return r'storeShipsByStoreIdProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<StoreShip>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<StoreShip>> create(Ref ref) {
+    final argument = this.argument as String;
+    return storeShipsByStoreId(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is StoreShipsByStoreIdProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$storeShipsByStoreIdHash() =>
+    r'752d5210f2a323fd331092148147ec5ff9882987';
+
+final class StoreShipsByStoreIdFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<StoreShip>>, String> {
+  const StoreShipsByStoreIdFamily._()
+    : super(
+        retry: null,
+        name: r'storeShipsByStoreIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  StoreShipsByStoreIdProvider call(String storeId) =>
+      StoreShipsByStoreIdProvider._(argument: storeId, from: this);
+
+  @override
+  String toString() => r'storeShipsByStoreIdProvider';
+}
+
 /// Keeps a live stream of the current partner's [StoreShip] list.
 ///
 /// - `keepAlive: true` so redirect can read `.valueOrNull` synchronously.

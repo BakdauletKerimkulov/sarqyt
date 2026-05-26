@@ -14,11 +14,10 @@ _StoreShip _$StoreShipFromJson(Map<String, dynamic> json) => _StoreShip(
       .map((e) => e as String)
       .toList(),
   name: json['name'] as String,
-  storeRole: $enumDecode(_$StoreRoleEnumMap, json['storeRole']),
+  role: $enumDecode(_$StoreRoleEnumMap, _readRole(json, 'role')),
   logoUrl: json['logoUrl'] as String?,
-  onboardingStatus: json['onboardingStatus'] == null
-      ? OnboardingStatus.storeCreated
-      : _readOnboardingStatus(json['onboardingStatus']),
+  welcomeCompleted: json['welcomeCompleted'] as bool? ?? false,
+  hasFirstItem: json['hasFirstItem'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$StoreShipToJson(_StoreShip instance) =>
@@ -28,18 +27,14 @@ Map<String, dynamic> _$StoreShipToJson(_StoreShip instance) =>
       'userId': instance.userId,
       'permissions': instance.permissions,
       'name': instance.name,
-      'storeRole': _$StoreRoleEnumMap[instance.storeRole]!,
+      'role': _$StoreRoleEnumMap[instance.role]!,
       'logoUrl': instance.logoUrl,
-      'onboardingStatus': _$OnboardingStatusEnumMap[instance.onboardingStatus]!,
+      'welcomeCompleted': instance.welcomeCompleted,
+      'hasFirstItem': instance.hasFirstItem,
     };
 
 const _$StoreRoleEnumMap = {
   StoreRole.owner: 'owner',
   StoreRole.operator: 'operator',
   StoreRole.employer: 'employer',
-};
-
-const _$OnboardingStatusEnumMap = {
-  OnboardingStatus.storeCreated: 'storeCreated',
-  OnboardingStatus.completed: 'completed',
 };

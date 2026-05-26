@@ -37,15 +37,37 @@ class StoreShipRepository {
     });
   }
 
-  Future<void> updateOnboardingStatus({
+  Future<void> markWelcomeCompleted({
     required String storeId,
     required UserID uid,
-    required OnboardingStatus status,
   }) {
     final compositeId = '${storeId}_$uid';
     return _firestore.collection(storeStaffsPath()).doc(compositeId).update({
-      'onboardingStatus': status.name,
+      'welcomeCompleted': true,
     });
+  }
+
+  Future<void> markHasFirstItem({
+    required String storeId,
+    required UserID uid,
+  }) {
+    final compositeId = '${storeId}_$uid';
+    return _firestore.collection(storeStaffsPath()).doc(compositeId).update({
+      'hasFirstItem': true,
+    });
+  }
+
+  /// Watches all team members (storeShips) for a given store.
+  /// Requires composite index on [storeId, userId] (deployed in Stage 7).
+  Stream<List<StoreShip>> watchStoreShipsByStoreId(String storeId) {
+    final ref = _firestore
+        .collection(storeStaffsPath())
+        .withConverter(
+          fromFirestore: (doc, _) => StoreShip.fromJson(doc.data()!),
+          toFirestore: (StoreShip st, _) => st.toJson(),
+        )
+        .where('storeId', isEqualTo: storeId);
+    return ref.snapshots().map((snap) => snap.docs.map((d) => d.data()).toList());
   }
 
   DocumentReference<StoreShip> _storeStaffRef(String storeShipId) => _firestore
@@ -87,6 +109,12 @@ FutureOr<StoreShip?> singleStoreShipForPartner(Ref ref, UserID uid) async {
   final repo = ref.read(storeShipRepositoryProvider);
   final storeShips = await repo.fetchStoreShipsListForPartner(uid);
   return storeShips.first;
+}
+
+@riverpod
+Stream<List<StoreShip>> storeShipsByStoreId(Ref ref, String storeId) {
+  final repo = ref.read(storeShipRepositoryProvider);
+  return repo.watchStoreShipsByStoreId(storeId);
 }
 
 /// Keeps a live stream of the current partner's [StoreShip] list.

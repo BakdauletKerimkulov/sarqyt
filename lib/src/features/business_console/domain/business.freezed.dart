@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Business {
 
- BusinessID get id; UserID get ownerId; String get name; double get commissionRate;@TimestampConverter() DateTime get createdAt;@JsonKey(name: 'plan') SubscriptionPlan get subscriptionPlan; VerificationStatus get verificationStatus; BusinessType? get type; String? get paymentAccountId;@NullableTimestampConverter() DateTime? get updatedAt;
+ // ignore: duplicate_ignore
+ BusinessID get id; UserID get ownerId; String get name; double get commissionRate;@TimestampConverter() DateTime get createdAt;// ignore: invalid_annotation_target
+@JsonKey(name: 'plan') SubscriptionPlan get subscriptionPlan; VerificationStatus get verificationStatus; BusinessType? get type; String? get paymentAccountId;@NullableTimestampConverter() DateTime? get updatedAt;
 /// Create a copy of Business
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -226,6 +228,8 @@ class _Business extends Business {
 @override final  String name;
 @override final  double commissionRate;
 @override@TimestampConverter() final  DateTime createdAt;
+// ignore: duplicate_ignore
+// ignore: invalid_annotation_target
 @override@JsonKey(name: 'plan') final  SubscriptionPlan subscriptionPlan;
 @override@JsonKey() final  VerificationStatus verificationStatus;
 @override final  BusinessType? type;
