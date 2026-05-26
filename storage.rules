@@ -10,30 +10,23 @@ service firebase.storage {
       return isSignedIn() && request.auth.token.role == 'admin';
     }
 
-    function storeExists(storeId) {
-      return firestore.exists(/databases/(default)/documents/stores/$(storeId));
+    /// storeShips-based access check (1 exists() call).
+    function hasStoreAccess(storeId) {
+      return isSignedIn()
+        && firestore.exists(/databases/(default)/documents/storeShips/$(storeId + '_' + request.auth.uid));
     }
 
-    function storeDoc(storeId) {
-      return firestore.get(/databases/(default)/documents/stores/$(storeId));
-    }
-
+    /// Legacy fallback for old documents without storeShip.
     function isStoreOwner(storeId) {
-      return isSignedIn() &&
-        storeExists(storeId) &&
-        request.auth.uid == storeDoc(storeId).data.ownerId;
-    }
-
-    function isStoreStaff(storeId) {
-      return isSignedIn() &&
-        storeExists(storeId) &&
-        storeDoc(storeId).data.staffIds is list &&
-        request.auth.uid in storeDoc(storeId).data.staffIds;
+      return isSignedIn()
+        && firestore.exists(/databases/(default)/documents/stores/$(storeId))
+        && request.auth.uid == firestore.get(/databases/(default)/documents/stores/$(storeId)).data.ownerId;
     }
 
     match /stores/{storeId}/items/{fileName} {
       allow read: if isSignedIn();
-      allow write: if isAdmin() || isStoreOwner(storeId) || isStoreStaff(storeId);
+      allow write: if isAdmin()
+        || hasStoreAccess(storeId) || isStoreOwner(storeId);
     }
   }
 }

@@ -21,74 +21,106 @@ service cloud.firestore {
       );
     }
 
-    function storeExists(storeId) {
-      return exists(/databases/$(database)/documents/stores/$(storeId));
+    // -- storeShips-based access (new) ------------------------------------
+
+    /// 1 exists() call — checks if user has any access to the store.
+    function hasStoreAccess(storeId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/storeShips/$(storeId + '_' + request.auth.uid));
     }
 
-    function storeDoc(storeId) {
-      return get(/databases/$(database)/documents/stores/$(storeId));
+    /// 1 get() call — checks access AND returns the role.
+    /// Implicitly verifies access (no need to call hasStoreAccess first).
+    function hasStoreRole(storeId, role) {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/storeShips/$(storeId + '_' + request.auth.uid)).data.role == role;
     }
+
+    function isStoreOwnerViaShip(storeId) {
+      return hasStoreRole(storeId, 'owner');
+    }
+
+    function hasBusinessMembership(businessId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/business_membership/$(businessId + '_' + request.auth.uid));
+    }
+
+    // -- Legacy helpers (Phase 1 fallback for old documents) --------------
 
     function isStoreOwner(storeId) {
-      return isSignedIn() &&
-        storeExists(storeId) &&
-        request.auth.uid == storeDoc(storeId).data.ownerId;
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/stores/$(storeId))
+        && request.auth.uid == get(/databases/$(database)/documents/stores/$(storeId)).data.ownerId;
     }
 
-    function isStoreStaff(storeId) {
-      return isSignedIn() &&
-        storeExists(storeId) &&
-        storeDoc(storeId).data.staffIds is list &&
-        request.auth.uid in storeDoc(storeId).data.staffIds;
-    }
-
+    // -------------------------------------------------------------------------
+    // Store drafts (merchant onboarding)
+    // -------------------------------------------------------------------------
     match /storeDrafts/{draftId} {
-      allow read: if isSignedIn() && request.auth.uid == resource.data.userId || isAdmin();
+      allow read: if isAdmin()
+        || (isSignedIn() && request.auth.uid == resource.data.userId);
 
-      allow create: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid;
     }
 
+    // -------------------------------------------------------------------------
+    // Stores & items
+    // -------------------------------------------------------------------------
     match /stores/{storeId} {
       allow read: if isSignedIn();
 
       allow create: if canCreateStore();
 
-      allow update, delete: if isAdmin() || isStoreOwner(storeId);
+      allow update, delete: if isAdmin()
+        || hasStoreAccess(storeId) || isStoreOwner(storeId);
 
       match /items/{itemsId} {
         allow read: if isSignedIn();
 
-        allow create, update, delete: if
-          isAdmin() || isStoreOwner(storeId) 
-          // || isStoreStaff(storeId);
+        allow create, update, delete: if isAdmin()
+          || hasStoreAccess(storeId) || isStoreOwner(storeId);
       }
     }
 
+    // -------------------------------------------------------------------------
+    // Store ships (user ↔ store binding)
+    // -------------------------------------------------------------------------
     match /storeShips/{shipId} {
-      allow read: if
-        isAdmin() ||
-        (isSignedIn() && request.auth.uid == resource.data.userId) ||
-        (isSignedIn() && resource.data.storeId is string && isStoreOwner(resource.data.storeId));
+      allow read: if isAdmin()
+        || (isSignedIn() && request.auth.uid == resource.data.userId)
+        || (isSignedIn() && resource.data.storeId is string
+            && (hasStoreAccess(resource.data.storeId) || isStoreOwner(resource.data.storeId)));
 
       allow create: if false;
       allow delete: if false;
 
-      // Allow the storeShip owner to update only onboardingStatus.
       allow update: if
         isSignedIn() &&
         request.auth.uid == resource.data.userId &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['onboardingStatus']);
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['welcomeCompleted', 'hasFirstItem']);
     }
 
+    // -------------------------------------------------------------------------
+    // Businesses
+    // -------------------------------------------------------------------------
     match /businesses/{businessId} {
-      allow read: if request.auth != null && request.auth.uid == resource.data.ownerId || isAdmin()
+      allow read: if isAdmin()
+        || hasBusinessMembership(businessId)
+        || (isSignedIn() && request.auth.uid == resource.data.ownerId);
     }
 
+    // -------------------------------------------------------------------------
+    // Offers (public read, admin-only write via Cloud Functions)
+    // -------------------------------------------------------------------------
     match /offers/{offerId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
     }
 
+    // -------------------------------------------------------------------------
+    // Users & favorites
+    // -------------------------------------------------------------------------
     match /users/{uid} {
       allow read, write: if isAdmin() || (isSignedIn() && request.auth.uid == uid);
 
@@ -97,20 +129,57 @@ service cloud.firestore {
       }
     }
 
+    // -------------------------------------------------------------------------
+    // Reviews
+    // -------------------------------------------------------------------------
     match /reviews/{id} {
       allow read: if true;
       allow create: if isSignedIn();
       allow update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
     }
 
+    // -------------------------------------------------------------------------
+    // Orders
+    // -------------------------------------------------------------------------
     match /orders/{id} {
-      allow read: if isAdmin() ||
-        (isSignedIn() && request.auth.uid == resource.data.customerId) ||
-        (isSignedIn() && resource.data.storeId is string && isStoreOwner(resource.data.storeId)) ||
-        (isSignedIn() && resource.data.storeId is string && isStoreStaff(resource.data.storeId));
-      allow write: if isAdmin() ||
-        (isSignedIn() && resource.data.storeId is string && isStoreOwner(resource.data.storeId)) ||
-        (isSignedIn() && resource.data.storeId is string && isStoreStaff(resource.data.storeId));
+      allow read: if isAdmin()
+        || (isSignedIn() && request.auth.uid == resource.data.customerId)
+        || (isSignedIn() && resource.data.storeId is string
+            && (hasStoreAccess(resource.data.storeId) || isStoreOwner(resource.data.storeId)));
+
+      // Orders are created by Cloud Functions only (payment/reserve flow).
+      allow create: if false;
+
+      // Store owner/staff can update only status and updatedAt.
+      allow update: if isAdmin()
+        || (isSignedIn() && resource.data.storeId is string
+            && (hasStoreAccess(resource.data.storeId) || isStoreOwner(resource.data.storeId))
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']));
+    }
+
+    // -------------------------------------------------------------------------
+    // Payments (managed by Cloud Functions only)
+    // -------------------------------------------------------------------------
+    match /payments/{id} {
+      allow read: if isAdmin()
+        || (isSignedIn() && request.auth.uid == resource.data.customerId);
+      allow write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Business memberships (managed by Cloud Functions only)
+    // -------------------------------------------------------------------------
+    match /business_membership/{id} {
+      allow read: if isAdmin()
+        || (isSignedIn() && request.auth.uid == resource.data.userId);
+      allow write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Internal: processed events dedup (Cloud Functions only)
+    // -------------------------------------------------------------------------
+    match /_processedEvents/{id} {
+      allow read, write: if false;
     }
   }
 }
