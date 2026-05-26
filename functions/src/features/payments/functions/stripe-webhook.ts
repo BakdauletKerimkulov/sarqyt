@@ -86,12 +86,16 @@ export const stripeWebhook = onRequest(
         paymentIntentId: paymentIntent.id,
         offerId,
         createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
 
       logInfo("Order created", { orderId: orderDocId, offerId });
     }
 
-    if (event.type === "payment_intent.canceled") {
+    if (
+      event.type === "payment_intent.canceled" ||
+      event.type === "payment_intent.payment_failed"
+    ) {
       if (offerId && quantity > 0) {
         // Idempotent: use event ID as dedup key
         const flagRef = db.collection("_processedEvents").doc(event.id);
@@ -103,7 +107,7 @@ export const stripeWebhook = onRequest(
             .doc(offerId)
             .update({ quantity: FieldValue.increment(quantity) });
           await flagRef.set({ processedAt: serverTimestamp() });
-          logInfo("Quantity restored (payment canceled)", { offerId, quantity });
+          logInfo(`Quantity restored (${event.type})`, { offerId, quantity });
         }
       }
     }

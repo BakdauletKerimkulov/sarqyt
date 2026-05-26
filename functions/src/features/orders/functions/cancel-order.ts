@@ -4,15 +4,20 @@ import { AppError, toHttpsError } from "../../../app/error";
 import { db, serverTimestamp } from "../../../app/firebase";
 import { logError, logInfo } from "../../../app/logger";
 import { FirestoreCollections } from "../../../shared/constants/constants";
+import { assertStoreAccess } from "../../../shared/helpers/assert-store-access";
 import { getStripe, stripeSecretKey } from "../../../shared/helpers/stripe-client";
 
 interface CancelOrderRequest {
   orderId: string;
 }
 
+const MAX_REFUND_RETRIES = 3;
+
 /**
  * Idempotent: if order is already cancelled, returns success.
- * Cancels order, restores offer quantity in transaction, then refunds Stripe.
+ * Cancels order, restores offer quantity in transaction, then refunds Stripe
+ * with retry logic. If refund fails after retries, order is marked as
+ * "refund_failed" paymentStatus so it can be resolved manually.
  */
 export const cancelOrder = onCall(
   { secrets: [stripeSecretKey] },
@@ -30,7 +35,20 @@ export const cancelOrder = onCall(
 
       const orderRef = db.collection(FirestoreCollections.ORDERS).doc(orderId);
 
-      // Transaction: read + validate + update status + restore quantity
+      // Pre-read order for auth check
+      const preSnap = await orderRef.get();
+      if (!preSnap.exists) {
+        throw new AppError("not-found", "Order not found");
+      }
+      const preOrder = preSnap.data()!;
+
+      // Auth: customer OR store owner/staff
+      const isCustomer = preOrder.customerId === uid;
+      if (!isCustomer) {
+        await assertStoreAccess(uid, preOrder.storeId as string);
+      }
+
+      // Transaction: re-read + validate + update status + restore quantity
       const result = await db.runTransaction(async (tx) => {
         const orderSnap = await tx.get(orderRef);
         if (!orderSnap.exists) {
@@ -48,28 +66,18 @@ export const cancelOrder = onCall(
         if (!["confirmed", "preparing"].includes(status)) {
           throw new AppError(
             "failed-precondition",
-            `Cannot cancel order with status: ${status}`
+            `Cannot cancel order with status: ${status}. Only confirmed or preparing orders can be cancelled.`
           );
-        }
-
-        // Auth check
-        const isCustomer = order.customerId === uid;
-        if (!isCustomer) {
-          const storeId = order.storeId as string;
-          const storeSnap = await tx.get(
-            db.collection(FirestoreCollections.STORES).doc(storeId)
-          );
-          if (storeSnap.data()?.ownerId !== uid) {
-            throw new AppError("permission-denied", "No access to this order");
-          }
         }
 
         const paymentIntentId = order.paymentIntentId as string | undefined;
 
-        // Cancel order
+        // Cancel order — set paymentStatus to "refund_pending" if there's
+        // a payment to refund. This will be updated to "refunded" after
+        // successful Stripe refund, or "refund_failed" if retries exhaust.
         tx.update(orderRef, {
           status: "cancelled",
-          paymentStatus: paymentIntentId ? "refunded" : "paid",
+          paymentStatus: paymentIntentId ? "refund_pending" : "paid",
           updatedAt: serverTimestamp(),
         });
 
@@ -86,12 +94,43 @@ export const cancelOrder = onCall(
         return { alreadyCancelled: false, paymentIntentId };
       });
 
-      // Stripe refund outside transaction (external API call)
+      // Stripe refund with retry logic (outside transaction — external API)
       if (!result.alreadyCancelled && result.paymentIntentId) {
-        const stripe = getStripe();
-        await stripe.refunds.create({
-          payment_intent: result.paymentIntentId,
+        let refunded = false;
+
+        for (let attempt = 1; attempt <= MAX_REFUND_RETRIES; attempt++) {
+          try {
+            const stripe = getStripe();
+            await stripe.refunds.create({
+              payment_intent: result.paymentIntentId,
+            });
+            refunded = true;
+            break;
+          } catch (stripeError) {
+            logError("Stripe refund attempt failed", {
+              orderId,
+              attempt,
+              error: stripeError,
+            });
+            if (attempt < MAX_REFUND_RETRIES) {
+              // Exponential backoff: 1s, 2s, 4s
+              await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
+            }
+          }
+        }
+
+        // Update paymentStatus based on refund outcome
+        await orderRef.update({
+          paymentStatus: refunded ? "refunded" : "refund_failed",
+          updatedAt: serverTimestamp(),
         });
+
+        if (!refunded) {
+          logError("Stripe refund exhausted retries", {
+            orderId,
+            paymentIntentId: result.paymentIntentId,
+          });
+        }
       }
 
       logInfo("cancelOrder done", { orderId, uid });

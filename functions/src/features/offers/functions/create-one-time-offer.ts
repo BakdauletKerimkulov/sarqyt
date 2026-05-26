@@ -7,6 +7,7 @@ import {
   FirestoreCollections,
   UserRole,
 } from "../../../shared/constants/constants";
+import { assertStoreAccess } from "../../../shared/helpers/assert-store-access";
 import { StoreDoc } from "../../../shared/types/store-doc";
 import { requireNonEmptyString } from "../helpers/offer-assertions";
 import { readStoreTimeZone, buildStoreAddress } from "../helpers/offer-store";
@@ -61,16 +62,15 @@ export const createOneTimeOffer = onCall(async (req) => {
       throw new AppError("invalid-argument", "start/end time is required");
     }
 
-    // Load store
+    // Auth: verify store access via storeShips
+    await assertStoreAccess(uid, storeId);
+
+    // Load store data for location/branding
     const storeSnap = await db
       .doc(`${FirestoreCollections.STORES}/${storeId}`)
       .get();
     if (!storeSnap.exists) throw new AppError("not-found", "Store not found");
-
     const storeData = storeSnap.data() as StoreDoc;
-    if (storeData.ownerId !== uid && !(storeData.staffIds ?? []).includes(uid)) {
-      throw new AppError("permission-denied", "No access to this store");
-    }
 
     // Build offer
     const timeZone = readStoreTimeZone(storeData);
@@ -101,9 +101,9 @@ export const createOneTimeOffer = onCall(async (req) => {
       dateParts.year === today.year &&
       dateParts.month === today.month &&
       dateParts.day === today.day;
-    const visibleFrom = isToday
-      ? null
-      : startOfDay(addDaysToLocalDate(dateParts, -1), timeZone);
+    const visibleFrom = isToday ?
+      null :
+      startOfDay(addDaysToLocalDate(dateParts, -1), timeZone);
 
     const currencyCode = storeData.currency?.trim() || "KZT";
     const geohash = storeData.location?.geo?.geohash;

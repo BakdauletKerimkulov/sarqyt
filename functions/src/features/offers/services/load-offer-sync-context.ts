@@ -4,6 +4,7 @@ import {
   FirestoreCollections,
   storeItemPath,
 } from "../../../shared/constants/constants";
+import { assertStoreAccess } from "../../../shared/helpers/assert-store-access";
 import { StoreDoc } from "../../../shared/types/store-doc";
 import { ItemDoc } from "../types/item-doc";
 import { ValidatedOfferSyncContext } from "../types/offer-sync";
@@ -32,12 +33,11 @@ export async function loadAndValidate(
     throw new AppError("not-found", "Store not found");
   }
 
+  // Auth: verify store access via storeShips (with ownerId fallback)
+  await assertStoreAccess(uid, storeId);
+
   const itemData = itemSnap.data() as ItemDoc;
   const storeData = storeSnap.data() as StoreDoc;
-
-  if (storeData.ownerId !== uid && !(storeData.staffIds ?? []).includes(uid)) {
-    throw new AppError("permission-denied", "No access to this store");
-  }
 
   return { itemData, storeData };
 }

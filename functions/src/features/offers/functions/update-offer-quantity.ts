@@ -3,6 +3,7 @@ import { AppError, toHttpsError } from "../../../app/error";
 import { db } from "../../../app/firebase";
 import { logError, logInfo } from "../../../app/logger";
 import { FirestoreCollections } from "../../../shared/constants/constants";
+import { assertStoreAccess } from "../../../shared/helpers/assert-store-access";
 
 interface UpdateOfferQuantityRequest {
   offerId: string;
@@ -33,17 +34,7 @@ export const updateOfferQuantity = onCall(async (req) => {
     const offer = offerSnap.data()!;
     const storeId = offer.storeId as string;
 
-    const storeSnap = await db
-      .collection(FirestoreCollections.STORES)
-      .doc(storeId)
-      .get();
-    const storeData = storeSnap.data();
-    const isOwner = storeData?.ownerId === uid;
-    const isStaff = (storeData?.staffIds as string[] ?? []).includes(uid);
-
-    if (!isOwner && !isStaff) {
-      throw new AppError("permission-denied", "No access to this store");
-    }
+    await assertStoreAccess(uid, storeId);
 
     await offerRef.update({ quantity });
 

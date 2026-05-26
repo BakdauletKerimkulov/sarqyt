@@ -8,7 +8,7 @@ import {
   storeItemPath,
   UserRole,
 } from "../../../shared/constants/constants";
-import { StoreDoc } from "../../../shared/types/store-doc";
+import { assertStoreAccess } from "../../../shared/helpers/assert-store-access";
 import { requireNonEmptyString } from "../../offers/helpers/offer-assertions";
 
 interface DeleteItemRequest {
@@ -36,20 +36,8 @@ export const deleteItem = onCall(async (req) => {
     const storeId = requireNonEmptyString(data.storeId, "storeId");
     const itemId = requireNonEmptyString(data.itemId, "itemId");
 
-    // 3. Ownership verification
-    const storeSnap = await db
-      .doc(`${FirestoreCollections.STORES}/${storeId}`)
-      .get();
-    if (!storeSnap.exists) {
-      throw new AppError("not-found", "Store not found");
-    }
-    const storeData = storeSnap.data() as StoreDoc;
-    if (
-      storeData.ownerId !== uid &&
-      !(storeData.staffIds ?? []).includes(uid)
-    ) {
-      throw new AppError("permission-denied", "No access to this store");
-    }
+    // 3. Auth: verify store access via storeShips
+    await assertStoreAccess(uid, storeId);
 
     // 4. Load item doc
     const itemRef = db.doc(storeItemPath(storeId, itemId));

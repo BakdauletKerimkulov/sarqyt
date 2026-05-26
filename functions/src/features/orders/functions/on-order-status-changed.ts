@@ -10,6 +10,7 @@ const statusLabels: Record<string, string> = {
   readyForPickup: "Your order is ready for pickup!",
   completed: "Order completed. Leave a review!",
   cancelled: "Your order has been cancelled",
+  expired: "Your pickup window has expired",
 };
 
 /**

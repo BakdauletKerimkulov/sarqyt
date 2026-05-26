@@ -3,21 +3,26 @@ import { AppError, toHttpsError } from "../../../app/error";
 import { db, serverTimestamp } from "../../../app/firebase";
 import { logError, logInfo } from "../../../app/logger";
 import { FirestoreCollections } from "../../../shared/constants/constants";
+import { assertStoreAccess } from "../../../shared/helpers/assert-store-access";
 
 interface UpdateOrderStatusRequest {
   orderId: string;
   status: string;
 }
 
+// Cancellation is NOT allowed here — use cancelOrder instead, which
+// handles quantity restoration and Stripe refunds.
 const VALID_TRANSITIONS: Record<string, string[]> = {
-  confirmed: ["preparing", "cancelled"],
-  preparing: ["readyForPickup", "cancelled"],
-  readyForPickup: ["completed", "cancelled"],
+  confirmed: ["preparing"],
+  preparing: ["readyForPickup"],
+  readyForPickup: ["completed"],
+  // completed, cancelled, expired are terminal — no transitions out
 };
 
 /**
  * Updates order status. Only store owner/staff can call this.
- * Enforces valid status transitions.
+ * Enforces valid status transitions inside a transaction to prevent
+ * TOCTOU races on concurrent updates.
  */
 export const updateOrderStatus = onCall(async (req) => {
   try {
@@ -35,44 +40,43 @@ export const updateOrderStatus = onCall(async (req) => {
     }
 
     const orderRef = db.collection(FirestoreCollections.ORDERS).doc(orderId);
-    const orderSnap = await orderRef.get();
 
-    if (!orderSnap.exists) {
+    // Pre-read order to get storeId for auth check
+    const preSnap = await orderRef.get();
+    if (!preSnap.exists) {
       throw new AppError("not-found", "Order not found");
     }
+    const storeId = preSnap.data()!.storeId as string;
 
-    const order = orderSnap.data()!;
-    const currentStatus = order.status as string;
-    const storeId = order.storeId as string;
+    // Auth: verify store access via storeShips
+    await assertStoreAccess(uid, storeId);
 
-    // Auth: store owner or staff only
-    const storeSnap = await db
-      .collection(FirestoreCollections.STORES)
-      .doc(storeId)
-      .get();
-    const storeData = storeSnap.data();
-    const isOwner = storeData?.ownerId === uid;
-    const isStaff = (storeData?.staffIds as string[] ?? []).includes(uid);
+    // Transaction: re-read order + validate transition + update status
+    await db.runTransaction(async (tx) => {
+      const orderSnap = await tx.get(orderRef);
+      if (!orderSnap.exists) {
+        throw new AppError("not-found", "Order not found");
+      }
 
-    if (!isOwner && !isStaff) {
-      throw new AppError("permission-denied", "Only store owner/staff can update orders");
-    }
+      const order = orderSnap.data()!;
+      const currentStatus = order.status as string;
 
-    // Validate transition
-    const allowed = VALID_TRANSITIONS[currentStatus];
-    if (!allowed || !allowed.includes(status)) {
-      throw new AppError(
-        "failed-precondition",
-        `Cannot transition from ${currentStatus} to ${status}`
-      );
-    }
+      // Validate transition
+      const allowed = VALID_TRANSITIONS[currentStatus];
+      if (!allowed || !allowed.includes(status)) {
+        throw new AppError(
+          "failed-precondition",
+          `Cannot transition from ${currentStatus} to ${status}`
+        );
+      }
 
-    await orderRef.update({
-      status,
-      updatedAt: serverTimestamp(),
+      tx.update(orderRef, {
+        status,
+        updatedAt: serverTimestamp(),
+      });
     });
 
-    logInfo("updateOrderStatus done", { orderId, from: currentStatus, to: status });
+    logInfo("updateOrderStatus done", { orderId, to: status });
     return { success: true };
   } catch (error) {
     logError("updateOrderStatus failed", { error, data: req.data });
