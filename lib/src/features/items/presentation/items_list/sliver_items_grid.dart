@@ -32,7 +32,7 @@ class SliverItemsGrid extends ConsumerWidget {
       value: itemsValue,
       data: (items) {
         if (items.isEmpty) {
-          return Center(child: Text('No items found'.hardcoded));
+          return Center(child: Text(context.loc.noItemsFound));
         }
 
         return ResponsiveSliverAlignedGrid(

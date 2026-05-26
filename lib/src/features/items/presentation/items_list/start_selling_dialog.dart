@@ -37,6 +37,7 @@ class StartSellingDialog extends ConsumerWidget {
     final state = ref.watch(startSellingDialogControllerProvider);
     final isLoading = state.isLoading;
     final theme = Theme.of(context);
+    final loc = context.loc;
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -54,7 +55,7 @@ class StartSellingDialog extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Confirm and start selling'.hardcoded,
+                      loc.confirmAndStartSelling,
                       style: theme.textTheme.titleLarge
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -80,7 +81,7 @@ class StartSellingDialog extends ConsumerWidget {
                         color: AppColors.primary, size: 32),
                     gapH12,
                     Text(
-                      'Start date'.hardcoded,
+                      loc.startDate,
                       style: theme.textTheme.titleMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -98,8 +99,7 @@ class StartSellingDialog extends ConsumerWidget {
                     ),
                     gapH8,
                     Text(
-                      'On this date, customers will be able to see your store and your available Surprise Bags in the Sarqyt app.'
-                          .hardcoded,
+                      'On this date, customers will be able to see your store and your available Surprise Bags in the Sarqyt app.',
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(color: Colors.grey.shade600),
                     ),
@@ -112,32 +112,32 @@ class StartSellingDialog extends ConsumerWidget {
                         color: AppColors.primary, size: 32),
                     gapH12,
                     Text(
-                      'Surprise Bag details'.hardcoded,
+                      loc.surpriseBagDetails,
                       style: theme.textTheme.titleMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     gapH16,
                     _DetailRow(
-                      label: 'Name'.hardcoded,
+                      label: loc.name,
                       value: item.name,
                     ),
                     if (item.description != null) ...[
                       gapH12,
                       _DetailRow(
-                        label: 'Description'.hardcoded,
+                        label: loc.description,
                         value: item.description!,
                       ),
                     ],
                     if (item.estimatedValue != null) ...[
                       gapH12,
                       _DetailRow(
-                        label: 'Estimated value'.hardcoded,
+                        label: loc.estimatedValue,
                         value: '${item.estimatedValue!.round()} ₸',
                       ),
                     ],
                     gapH12,
                     _DetailRow(
-                      label: 'Price in app'.hardcoded,
+                      label: loc.priceInApp,
                       value: '${item.price.round()} ₸',
                     ),
                     gapH24,
@@ -149,25 +149,24 @@ class StartSellingDialog extends ConsumerWidget {
                         color: AppColors.primary, size: 32),
                     gapH12,
                     Text(
-                      'Schedule'.hardcoded,
+                      loc.schedule,
                       style: theme.textTheme.titleMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     gapH4,
                     Text(
-                      'Surprise Bags per day'.hardcoded,
+                      loc.surpriseBagsPerDay,
                       style: theme.textTheme.bodySmall
                           ?.copyWith(color: Colors.grey),
                     ),
                     gapH4,
                     Text(
-                      '${item.schedule.maxDayQuantity} x Surprise Bags will be made available on each of your selected days. You can always change this later.'
-                          .hardcoded,
+                      '${item.schedule.maxDayQuantity} x Surprise Bags will be made available on each of your selected days. You can always change this later.',
                       style: theme.textTheme.bodyMedium,
                     ),
                     gapH16,
                     Text(
-                      'Collection times'.hardcoded,
+                      loc.collectionTimes,
                       style: theme.textTheme.bodySmall
                           ?.copyWith(color: Colors.grey),
                     ),
@@ -222,7 +221,7 @@ class StartSellingDialog extends ConsumerWidget {
                             color: Colors.white,
                           ),
                         )
-                      : Text('Confirm and start selling'.hardcoded),
+                      : Text(loc.confirmAndStartSelling),
                 ),
               ),
             ),

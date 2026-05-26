@@ -11,6 +11,8 @@ import 'package:sarqyt/src/features/business_console/presentation/help_centre_sc
 import 'package:sarqyt/src/features/business_console/presentation/performance_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/settings_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/store_list_screen.dart';
+import 'package:sarqyt/src/features/business_console/presentation/stores/add_store_screen.dart';
+import 'package:sarqyt/src/features/business_console/presentation/team/team_list_screen.dart';
 import 'package:sarqyt/src/features/items/presentation/item_create/create_item_screen.dart';
 import 'package:sarqyt/src/features/items/presentation/item_screen/item_screen.dart';
 import 'package:sarqyt/src/features/items/presentation/item_tab.dart';
@@ -57,6 +59,8 @@ enum BusinessRoute {
   settings,
   helpCentre,
   newItem,
+  team,
+  addStore,
 }
 
 /// Pure, sync, testable global redirect for the business app.
@@ -267,6 +271,11 @@ GoRouter businessRouter(Ref ref) {
         builder: (context, state) => const StoreListScreen(),
         routes: [
           GoRoute(
+            path: 'add',
+            name: BusinessRoute.addStore.name,
+            builder: (context, state) => const AddStoreScreen(),
+          ),
+          GoRoute(
             path: ':storeId',
             redirect: (context, state) {
               final storeId = state.pathParameters['storeId']!;
@@ -317,6 +326,14 @@ GoRouter businessRouter(Ref ref) {
                             storeId: storeId,
                             initialTab: tab,
                           );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'team',
+                        name: BusinessRoute.team.name,
+                        builder: (context, state) {
+                          final storeId = state.pathParameters['storeId']!;
+                          return TeamListScreen(storeId: storeId);
                         },
                       ),
                     ],

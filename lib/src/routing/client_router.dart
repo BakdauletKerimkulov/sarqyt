@@ -62,17 +62,17 @@ class ClientShellScaffold extends StatelessWidget {
           NavigationDestination(
             icon: const Icon(Icons.explore_outlined),
             selectedIcon: Icon(Icons.explore, color: AppColors.primary),
-            label: 'Discover'.hardcoded,
+            label: context.loc.discover,
           ),
           NavigationDestination(
             icon: const Icon(Icons.shopping_bag_outlined),
             selectedIcon: Icon(Icons.shopping_bag, color: AppColors.primary),
-            label: 'Orders'.hardcoded,
+            label: context.loc.orders,
           ),
           NavigationDestination(
             icon: const Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person, color: AppColors.primary),
-            label: 'Profile'.hardcoded,
+            label: context.loc.profile,
           ),
         ],
       ),

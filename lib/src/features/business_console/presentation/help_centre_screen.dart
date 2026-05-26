@@ -9,13 +9,14 @@ class HelpCentreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(Sizes.p32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Help centre'.hardcoded,
+            loc.helpCentre,
             style: Theme.of(context)
                 .textTheme
                 .headlineSmall
@@ -23,8 +24,7 @@ class HelpCentreScreen extends StatelessWidget {
           ),
           gapH8,
           Text(
-            'Here you can find answers to most of the questions you might have about how to use Sarqyt. Select a topic below to find the answer to your question.'
-                .hardcoded,
+            'Here you can find answers to most of the questions you might have about how to use Sarqyt. Select a topic below to find the answer to your question.',
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium
@@ -36,8 +36,7 @@ class HelpCentreScreen extends StatelessWidget {
           _BannerCard(
             icon: Icons.play_circle_outline,
             text:
-                'Welcome to Sarqyt! Make sure to watch our tutorial video to learn how to use our app.'
-                    .hardcoded,
+                'Welcome to Sarqyt! Make sure to watch our tutorial video to learn how to use our app.',
             onTap: () => showNotImplementedAlertDialog(context: context),
           ),
           gapH24,
@@ -53,38 +52,34 @@ class HelpCentreScreen extends StatelessWidget {
                   _TopicCard(
                     width: (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) / crossCount,
                     icon: Icons.store_outlined,
-                    title: 'Daily Operations'.hardcoded,
+                    title: loc.dailyOperations,
                     description:
-                        'Get help with your daily operations including managing supply, collection time and customer payments.'
-                            .hardcoded,
+                        'Get help with your daily operations including managing supply, collection time and customer payments.',
                     onTap: () =>
                         showNotImplementedAlertDialog(context: context),
                   ),
                   _TopicCard(
                     width: (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) / crossCount,
                     icon: Icons.account_balance_wallet_outlined,
-                    title: 'Financials'.hardcoded,
-                    description:
-                        'Information about payouts and invoices.'.hardcoded,
+                    title: loc.financials,
+                    description: loc.payoutsAndInvoices,
                     onTap: () =>
                         showNotImplementedAlertDialog(context: context),
                   ),
                   _TopicCard(
                     width: (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) / crossCount,
                     icon: Icons.share_outlined,
-                    title: 'Sharing'.hardcoded,
-                    description:
-                        'Spread the word about our collaboration!'.hardcoded,
+                    title: loc.sharing,
+                    description: loc.spreadTheWord,
                     onTap: () =>
                         showNotImplementedAlertDialog(context: context),
                   ),
                   _TopicCard(
                     width: (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) / crossCount,
                     icon: Icons.help_outline,
-                    title: 'Common Questions'.hardcoded,
+                    title: loc.commonQuestions,
                     description:
-                        'Answers to general questions and other useful information.'
-                            .hardcoded,
+                        'Answers to general questions and other useful information.',
                     onTap: () =>
                         showNotImplementedAlertDialog(context: context),
                   ),
@@ -99,7 +94,7 @@ class HelpCentreScreen extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'Need any further help?'.hardcoded,
+                  loc.needFurtherHelp,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 gapH12,
@@ -117,7 +112,7 @@ class HelpCentreScreen extends StatelessWidget {
                   ),
                   onPressed: () =>
                       showNotImplementedAlertDialog(context: context),
-                  child: Text('Contact us'.hardcoded),
+                  child: Text(loc.contactUs),
                 ),
               ],
             ),

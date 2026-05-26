@@ -69,7 +69,7 @@ class _VerifyDialogState extends ConsumerState<VerifyDialog> {
     final draft = ref.read(businessDraftControllerProvider);
     if (!draft.hasCompletedRequiredFields) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill all required fields'.hardcoded)),
+        SnackBar(content: Text(context.loc.fillAllFields)),
       );
       return;
     }
@@ -86,7 +86,7 @@ class _VerifyDialogState extends ConsumerState<VerifyDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Verification submitted. Processing may take up to 30 seconds...'.hardcoded,
+              context.loc.verificationSubmitted,
             ),
           ),
         );
@@ -103,6 +103,7 @@ class _VerifyDialogState extends ConsumerState<VerifyDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
     final availableHeight = math.max(
       0.0,
       MediaQuery.sizeOf(context).height - (Sizes.p16 * 2),
@@ -112,7 +113,7 @@ class _VerifyDialogState extends ConsumerState<VerifyDialog> {
     return Dialog(
       insetPadding: const EdgeInsets.all(Sizes.p16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Sizes.p16),
+        borderRadius: BorderRadius.circular(Sizes.p24),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 520),
@@ -127,7 +128,7 @@ class _VerifyDialogState extends ConsumerState<VerifyDialog> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Business information required'.hardcoded,
+                        loc.businessInfoRequired,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),

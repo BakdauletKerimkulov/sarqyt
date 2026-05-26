@@ -17,12 +17,17 @@ class SideMenuItem {
     required this.title,
     required this.branchIndex,
     required this.allowedRoles,
+    this.pathSuffix,
   });
 
   final IconData icon;
   final String title;
   final int branchIndex;
   final Set<StoreRole> allowedRoles;
+
+  /// When set, tapping navigates to `/stores/:storeId/{pathSuffix}`
+  /// instead of switching branch.
+  final String? pathSuffix;
 }
 
 /// Section grouping for sidebar.
@@ -55,6 +60,13 @@ const sideMenuSections = [
         title: 'Financials',
         branchIndex: 2,
         allowedRoles: {StoreRole.owner},
+      ),
+      SideMenuItem(
+        icon: Icons.people,
+        title: 'Team',
+        branchIndex: 0,
+        pathSuffix: 'team',
+        allowedRoles: {StoreRole.owner, StoreRole.operator},
       ),
       SideMenuItem(
         icon: Icons.settings,
@@ -185,7 +197,7 @@ class _SidebarContent extends ConsumerWidget {
             top: Sizes.p12,
           ),
           child: Text(
-            section.title.hardcoded,
+            _localizedSectionTitle(context, section.title),
             style: textTheme.labelSmall?.copyWith(
               color: Colors.grey,
               fontWeight: FontWeight.w600,
@@ -196,10 +208,15 @@ class _SidebarContent extends ConsumerWidget {
         for (final item in section.items)
           _MenuTile(
             item: item,
-            isSelected:
-                item.branchIndex >= 0 && item.branchIndex == currentBranch,
+            isSelected: item.pathSuffix == null &&
+                item.branchIndex >= 0 &&
+                item.branchIndex == currentBranch,
             onTap: () {
-              if (item.branchIndex >= 0) {
+              if (item.pathSuffix != null) {
+                context.go(
+                  '/stores/${storeShip.storeId}/${item.pathSuffix}',
+                );
+              } else if (item.branchIndex >= 0) {
                 onBranchTap(item.branchIndex);
               }
             },
@@ -222,7 +239,7 @@ class _SidebarContent extends ConsumerWidget {
                   Center(
                     child: ClipOval(
                       child: Image.asset(
-                        'assets/app-icon-2.png',
+                        'assets/app-icon.png',
                         fit: BoxFit.cover,
                         width: Sizes.p64,
                         height: Sizes.p64,
@@ -244,11 +261,9 @@ class _SidebarContent extends ConsumerWidget {
                         ),
                       ),
                       title: Text(storeShip.name),
-                      trailing: IconButton(
-                        onPressed: () =>
-                            showNotImplementedAlertDialog(context: context),
-                        icon: const Icon(Icons.more_vert),
-                      ),
+                      trailing: const Icon(Icons.more_vert),
+                      onTap: () =>
+                          showNotImplementedAlertDialog(context: context),
                     ),
                   ),
                   gapH24,
@@ -268,7 +283,7 @@ class _SidebarContent extends ConsumerWidget {
                     ),
                     leading: const Icon(Icons.logout, color: Colors.redAccent),
                     title: Text(
-                      'Log out'.hardcoded,
+                      context.loc.logOut,
                       style: textTheme.bodyMedium?.copyWith(
                         color: Colors.redAccent,
                       ),
@@ -277,19 +292,19 @@ class _SidebarContent extends ConsumerWidget {
                       final confirm = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: Text('Log out'.hardcoded),
+                          title: Text(context.loc.logOut),
                           content: Text(
-                            'Are you sure you want to log out?'.hardcoded,
+                            context.loc.logOutConfirmTitle,
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(ctx).pop(false),
-                              child: Text('Cancel'.hardcoded),
+                              child: Text(context.loc.cancel),
                             ),
                             TextButton(
                               onPressed: () => Navigator.of(ctx).pop(true),
                               child: Text(
-                                'Log out'.hardcoded,
+                                context.loc.logOut,
                                 style: const TextStyle(color: Colors.redAccent),
                               ),
                             ),
@@ -310,6 +325,14 @@ class _SidebarContent extends ConsumerWidget {
       ),
     );
   }
+}
+
+String _localizedSectionTitle(BuildContext context, String key) {
+  return switch (key) {
+    'Store' => context.loc.sectionStore,
+    'Support' => context.loc.sectionSupport,
+    _ => key,
+  };
 }
 
 class _MenuTile extends StatelessWidget {

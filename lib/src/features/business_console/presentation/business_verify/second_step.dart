@@ -92,7 +92,7 @@ class _SecondStepForIndividualState
     if (!_submitted) return null;
 
     if (value == null || value.trim().isEmpty) {
-      return 'This field is required'.hardcoded;
+      return context.loc.thisFieldIsRequired;
     }
     return null;
   }
@@ -163,6 +163,7 @@ class _SecondStepForIndividualState
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
     ref.listen(
       businessDraftControllerProvider.select((draft) => draft.individual),
       (_, next) => _applyDraft(next),
@@ -174,13 +175,13 @@ class _SecondStepForIndividualState
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Indiviual'.hardcoded,
+            loc.individual,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           gapH24,
           Row(
             children: [
-              Text('Are you vat registered?'.hardcoded),
+              Text(loc.areYouVatRegistered),
               const Spacer(),
               Switch(
                 value: _isVarRegistered,
@@ -190,7 +191,7 @@ class _SecondStepForIndividualState
           ),
           if (_isVarRegistered) ...[
             gapH24,
-            Text('VAT ID *'.hardcoded),
+            Text(loc.vatId),
             gapH4,
             TextFormField(
               controller: _vatController,
@@ -198,7 +199,7 @@ class _SecondStepForIndividualState
             ),
           ],
           gapH24,
-          Text('Индивидуальный идентификационный номер. *'.hardcoded),
+          Text(loc.iin),
           gapH4,
           TextFormField(
             controller: _iinController,
@@ -207,7 +208,7 @@ class _SecondStepForIndividualState
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
           gapH16,
-          Text('Date of birth *'.hardcoded),
+          Text(loc.dateOfBirth),
           gapH4,
           TextFormField(
             controller: _dateOfBirthController,
@@ -219,7 +220,7 @@ class _SecondStepForIndividualState
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
           gapH16,
-          Text('First name *'.hardcoded),
+          Text(loc.firstName),
           gapH4,
           TextFormField(
             controller: _firstNameController,
@@ -228,7 +229,7 @@ class _SecondStepForIndividualState
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
           gapH16,
-          Text('Last name *'.hardcoded),
+          Text(loc.lastName),
           gapH4,
           TextFormField(
             controller: _lastNameController,
@@ -238,11 +239,11 @@ class _SecondStepForIndividualState
           ),
           gapH16,
           Text(
-            'Address'.hardcoded,
+            loc.address,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           gapH16,
-          Text('Address line 1 *'.hardcoded),
+          Text(loc.addressLine1),
           gapH4,
           TextFormField(
             controller: _addressLine1Controller,
@@ -251,14 +252,14 @@ class _SecondStepForIndividualState
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
           gapH16,
-          Text('Address line 2'.hardcoded),
+          Text(loc.addressLine2),
           gapH4,
           TextFormField(
             controller: _addressLine2Controller,
             decoration: const InputDecoration(border: OutlineInputBorder()),
           ),
           gapH16,
-          Text('Postal code *'.hardcoded),
+          Text(loc.postalCode),
           gapH4,
           TextFormField(
             controller: _postalCodeController,
@@ -267,7 +268,7 @@ class _SecondStepForIndividualState
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
           gapH16,
-          Text('City *'.hardcoded),
+          Text(loc.city),
           gapH4,
           TextFormField(
             controller: _cityController,
@@ -276,7 +277,7 @@ class _SecondStepForIndividualState
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
           gapH16,
-          Text('Region *'.hardcoded),
+          Text(loc.region),
           gapH4,
           TextFormField(
             controller: _regionController,
@@ -285,7 +286,7 @@ class _SecondStepForIndividualState
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
           gapH16,
-          Text('Country *'.hardcoded),
+          Text(loc.country),
           gapH4,
           TextFormField(
             controller: _countryController,
@@ -335,7 +336,7 @@ class _SecondStepForCompanyState extends ConsumerState<SecondStepForCompany> {
     if (!_submitted) return null;
 
     if (value == null || value.trim().isEmpty) {
-      return 'Поле не должно быть пустым';
+      return context.loc.thisFieldIsRequired;
     }
     return null;
   }
@@ -379,6 +380,7 @@ class _SecondStepForCompanyState extends ConsumerState<SecondStepForCompany> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.loc;
     ref.listen(
       businessDraftControllerProvider.select((draft) => draft.company),
       (_, next) => _applyDraft(next),
@@ -390,13 +392,13 @@ class _SecondStepForCompanyState extends ConsumerState<SecondStepForCompany> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Company'.hardcoded,
+            loc.company,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           gapH24,
           Row(
             children: [
-              Text('Are you vat registered?'.hardcoded),
+              Text(loc.areYouVatRegistered),
               const Spacer(),
               Switch(
                 value: _isVarRegistered,
@@ -406,7 +408,7 @@ class _SecondStepForCompanyState extends ConsumerState<SecondStepForCompany> {
           ),
           if (_isVarRegistered) ...[
             gapH24,
-            Text('VAT ID *'.hardcoded),
+            Text(loc.vatId),
             gapH4,
             TextFormField(
               controller: _vatController,
@@ -416,7 +418,7 @@ class _SecondStepForCompanyState extends ConsumerState<SecondStepForCompany> {
             ),
           ],
           gapH24,
-          Text('БИН компании'.hardcoded),
+          Text(loc.companyBin),
           gapH4,
           TextFormField(
             controller: _binController,

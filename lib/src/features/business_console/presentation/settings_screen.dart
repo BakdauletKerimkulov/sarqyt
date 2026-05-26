@@ -137,18 +137,33 @@ class StoreSettingsContent extends ConsumerWidget {
                   'If any of this information is incorrect and needs to be changed, please get in touch with us.',
                 ),
                 gapH24,
-                Text('Store description'),
+                Text(
+                  'Store description',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Text(store.description ?? 'No description yet'),
                 gapH16,
-                Text('Store details'),
+                Text(
+                  'Store details',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 gapH8,
-                Text('Name'),
+                Text(
+                  'Name',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Text(store.name),
                 gapH8,
-                Text('Address'),
+                Text(
+                  'Address',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 SizedBox(width: 100, child: Text(store.addressInfo)),
                 gapH16,
-                Text('Contact details'),
+                Text(
+                  'Contact details',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ],
             );
           },
@@ -169,8 +184,10 @@ class AccountSettingsContent extends StatelessWidget {
         children: [
           Icon(Icons.person_outline, size: 48, color: Colors.grey),
           SizedBox(height: 12),
-          Text('Account settings',
-              style: TextStyle(fontWeight: FontWeight.w600)),
+          Text(
+            'Account settings',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           SizedBox(height: 4),
           Text('Coming soon', style: TextStyle(color: Colors.grey)),
         ],
@@ -190,8 +207,10 @@ class TeamSettingsContent extends StatelessWidget {
         children: [
           Icon(Icons.group_outlined, size: 48, color: Colors.grey),
           SizedBox(height: 12),
-          Text('Team management',
-              style: TextStyle(fontWeight: FontWeight.w600)),
+          Text(
+            'Team management',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           SizedBox(height: 4),
           Text('Coming soon', style: TextStyle(color: Colors.grey)),
         ],

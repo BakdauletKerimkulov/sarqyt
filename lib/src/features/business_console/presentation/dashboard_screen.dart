@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sarqyt/src/common_widgets/outlined_section_widget.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/business_console/domain/business.dart';
 import 'package:sarqyt/src/features/business_console/presentation/business_verify/verify_dialog.dart';
-import 'package:sarqyt/src/features/items/presentation/items_list/create_item_dialog.dart';
 import 'package:sarqyt/src/features/items/presentation/items_list/sliver_items_grid.dart';
-import 'package:sarqyt/src/features/orders/data/orders_repository.dart';
 import 'package:sarqyt/src/features/orders/presentation/business/business_orders_screen.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
@@ -55,8 +54,26 @@ class DashboardScreen extends ConsumerWidget {
             ),
           ),
 
-        if (!business.isConfirmed)
-          const SliverToBoxAdapter(child: gapH24),
+        if (!business.isConfirmed) const SliverToBoxAdapter(child: gapH24),
+
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: Sizes.p32),
+          sliver: OutlinedSectionSliverWidgetWithHeader(
+            header: 'Your surprise bags',
+            trailing: TextButton.icon(
+              icon: const Icon(Icons.add, size: 18),
+              label: Text(context.loc.createNew),
+              style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+              onPressed: () => context.goNamed(
+                BusinessRoute.newItem.name,
+                pathParameters: {'storeId': storeId},
+              ),
+            ),
+            sliver: SliverItemsGrid(storeId: storeId),
+          ),
+        ),
+
+        const SliverToBoxAdapter(child: gapH24),
 
         // Reservations section
         SliverPadding(
@@ -67,36 +84,14 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ),
 
-        const SliverToBoxAdapter(child: gapH16),
-
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: Sizes.p32),
-          sliver: OutlinedSectionSliverWidgetWithHeader(
-            header: 'Your surprise bags',
-            trailing: TextButton.icon(
-              icon: const Icon(Icons.add, size: 18),
-              label: Text('Create new'.hardcoded),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.primary,
-              ),
-              onPressed: () => showDialog(
-                context: context,
-                builder: (_) => CreateItemTypeDialog(storeId: storeId),
-              ),
-            ),
-            sliver: SliverItemsGrid(storeId: storeId),
-          ),
-        ),
+        SliverToBoxAdapter(child: const SizedBox(height: 100)),
       ],
     );
   }
 }
 
 class _VerificationBanner extends StatelessWidget {
-  const _VerificationBanner({
-    required this.status,
-    required this.lineColor,
-  });
+  const _VerificationBanner({required this.status, required this.lineColor});
 
   final VerificationStatus status;
   final Color lineColor;
@@ -105,25 +100,21 @@ class _VerificationBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final (message, color, buttonText) = switch (status) {
       VerificationStatus.unverified => (
-          'Submit your tax information to prevent payout delays',
-          Colors.red,
-          'Submit',
-        ),
+        'Submit your tax information to prevent payout delays',
+        Colors.red,
+        'Submit',
+      ),
       VerificationStatus.submitted => (
-          'Verification in progress. This may take up to 30 seconds...',
-          Colors.orange,
-          null,
-        ),
+        'Verification in progress. This may take up to 30 seconds...',
+        Colors.orange,
+        null,
+      ),
       VerificationStatus.rejected => (
-          'Your verification was rejected. Please resubmit.',
-          Colors.red,
-          'Resubmit',
-        ),
-      VerificationStatus.verified => (
-          '',
-          Colors.transparent,
-          null,
-        ),
+        'Your verification was rejected. Please resubmit.',
+        Colors.red,
+        'Resubmit',
+      ),
+      VerificationStatus.verified => ('', Colors.transparent, null),
     };
 
     return Align(

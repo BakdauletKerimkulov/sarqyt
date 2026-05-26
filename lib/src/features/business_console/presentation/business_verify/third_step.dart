@@ -27,25 +27,26 @@ class _CompanyReview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isVatRegistered = _hasValue(draft.vatId);
+    final loc = context.loc;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Company'.hardcoded,
+          loc.company,
           style: Theme.of(context).textTheme.titleLarge,
         ),
         gapH24,
         _ReviewField(
-          label: 'Are you vat registered?'.hardcoded,
-          value: isVatRegistered ? 'Yes'.hardcoded : 'No'.hardcoded,
+          label: loc.areYouVatRegistered,
+          value: isVatRegistered ? loc.yes : loc.no,
         ),
         if (isVatRegistered) ...[
           gapH24,
-          _ReviewField(label: 'VAT ID *'.hardcoded, value: draft.vatId),
+          _ReviewField(label: loc.vatId, value: draft.vatId),
         ],
         gapH24,
-        _ReviewField(label: 'БИН компании'.hardcoded, value: draft.bin),
+        _ReviewField(label: loc.companyBin, value: draft.bin),
       ],
     );
   }
@@ -59,60 +60,61 @@ class _IndividualReview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isVatRegistered = _hasValue(draft.vatId);
+    final loc = context.loc;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Indiviual'.hardcoded,
+          loc.individual,
           style: Theme.of(context).textTheme.titleLarge,
         ),
         gapH24,
         _ReviewField(
-          label: 'Are you vat registered?'.hardcoded,
-          value: isVatRegistered ? 'Yes'.hardcoded : 'No'.hardcoded,
+          label: loc.areYouVatRegistered,
+          value: isVatRegistered ? loc.yes : loc.no,
         ),
         if (isVatRegistered) ...[
           gapH24,
-          _ReviewField(label: 'VAT ID *'.hardcoded, value: draft.vatId),
+          _ReviewField(label: loc.vatId, value: draft.vatId),
         ],
         gapH24,
         _ReviewField(
-          label: 'Индивидуальный идентификационный номер. *'.hardcoded,
+          label: loc.iin,
           value: draft.iin,
         ),
         gapH16,
         _ReviewField(
-          label: 'Date of birth *'.hardcoded,
+          label: loc.dateOfBirth,
           value: draft.dateOfBirth,
         ),
         gapH16,
-        _ReviewField(label: 'First name *'.hardcoded, value: draft.firstName),
+        _ReviewField(label: loc.firstName, value: draft.firstName),
         gapH16,
-        _ReviewField(label: 'Last name *'.hardcoded, value: draft.lastName),
+        _ReviewField(label: loc.lastName, value: draft.lastName),
         gapH16,
         Text(
-          'Address'.hardcoded,
+          loc.address,
           style: Theme.of(context).textTheme.titleLarge,
         ),
         gapH16,
         _ReviewField(
-          label: 'Address line 1 *'.hardcoded,
+          label: loc.addressLine1,
           value: draft.addressLine1,
         ),
         gapH16,
         _ReviewField(
-          label: 'Address line 2'.hardcoded,
+          label: loc.addressLine2,
           value: draft.addressLine2,
         ),
         gapH16,
-        _ReviewField(label: 'Postal code *'.hardcoded, value: draft.postalCode),
+        _ReviewField(label: loc.postalCode, value: draft.postalCode),
         gapH16,
-        _ReviewField(label: 'City *'.hardcoded, value: draft.city),
+        _ReviewField(label: loc.city, value: draft.city),
         gapH16,
-        _ReviewField(label: 'Region *'.hardcoded, value: draft.region),
+        _ReviewField(label: loc.region, value: draft.region),
         gapH16,
-        _ReviewField(label: 'Country *'.hardcoded, value: draft.country),
+        _ReviewField(label: loc.country, value: draft.country),
       ],
     );
   }

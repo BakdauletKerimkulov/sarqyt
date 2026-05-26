@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sarqyt/l10n/app_localizations.dart';
 import 'package:sarqyt/src/features/business_console/domain/business.dart';
-import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 extension BusinessTypeUiX on BusinessType {
   IconData get icon {
@@ -10,17 +10,17 @@ extension BusinessTypeUiX on BusinessType {
     };
   }
 
-  String get title {
+  String title(AppLocalizations loc) {
     return switch (this) {
-      BusinessType.company => 'Company'.hardcoded,
-      BusinessType.individual => 'Individual'.hardcoded,
+      BusinessType.company => loc.company,
+      BusinessType.individual => loc.individual,
     };
   }
 
-  String get description {
+  String description(AppLocalizations loc) {
     return switch (this) {
-      BusinessType.company => 'A registered business entity'.hardcoded,
-      BusinessType.individual => 'An individual or sole proprietor'.hardcoded,
+      BusinessType.company => loc.registeredEntity,
+      BusinessType.individual => loc.individualOrSole,
     };
   }
 }

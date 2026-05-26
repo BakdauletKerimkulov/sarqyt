@@ -11,13 +11,16 @@ class BusinessRedirectState {
     required this.user,
     required this.role,
     required this.storeShips,
-    required this.isLoading,
+    required this.storeShipsLoaded,
   });
 
   final AppUser? user;
   final UserRole role;
   final List<StoreShip> storeShips;
-  final bool isLoading;
+
+  /// True only when the storeShips stream has emitted at least once.
+  /// The redirect uses this to avoid bouncing the user before data arrives.
+  final bool storeShipsLoaded;
 }
 
 /// Single provider that aggregates all data needed for business redirect.
@@ -32,22 +35,24 @@ BusinessRedirectState businessRedirectState(Ref ref) {
   final roleAsync = ref.watch(userRoleProvider);
   final shipsAsync = ref.watch(currentPartnerStoreShipsProvider);
 
+  // Role is read from the ID token (synchronous-ish, ~1-5ms once cached).
+  // While loading, fall back to guest so the redirect waits on layer 4.
   final role = roleAsync.when(
     data: (r) => r,
     loading: () => UserRole.guest,
     error: (_, __) => UserRole.guest,
   );
-  final storeShips = shipsAsync.when(
-    data: (s) => s,
-    loading: () => const <StoreShip>[],
-    error: (_, __) => const <StoreShip>[],
-  );
-  final isLoading = roleAsync.isLoading || shipsAsync.isLoading;
+
+  // storeShips load asynchronously from Firestore. The redirect must NOT
+  // bounce the user to /onboarding/welcome until we know whether they have
+  // any pending storeShip.
+  final storeShips = shipsAsync.value ?? const <StoreShip>[];
+  final storeShipsLoaded = shipsAsync.hasValue;
 
   return BusinessRedirectState(
     user: user,
     role: role,
     storeShips: storeShips,
-    isLoading: isLoading,
+    storeShipsLoaded: storeShipsLoaded,
   );
 }

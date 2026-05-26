@@ -36,8 +36,9 @@ class StartSellingDialogController extends _$StartSellingDialogController {
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final hasOrders =
-          await ref.read(ordersRepositoryProvider).hasActiveOrdersForItem(itemId);
+      final hasOrders = await ref
+          .read(ordersRepositoryProvider)
+          .hasActiveOrdersForItem(storeId, itemId);
       if (hasOrders) throw ActiveOrdersExistException();
       await ref
           .read(itemsRepositoryProvider)

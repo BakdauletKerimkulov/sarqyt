@@ -15,30 +15,29 @@ class FirstStep extends ConsumerWidget {
     final businessType = ref.watch(
       businessDraftControllerProvider.select((draft) => draft.businessType),
     );
+    final loc = context.loc;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Why we require your tax information'.hardcoded,
+          loc.whyTaxInfo,
           style: Theme.of(context).textTheme.titleLarge,
         ),
         gapH16,
         Text(
-          'Reporting rules for digital platform operators require us to collect and report your information to the tax authorities in your country.'
-              .hardcoded,
+          loc.whyTaxInfoReason1,
         ),
         gapH24,
         Text('What to expect', style: Theme.of(context).textTheme.titleLarge),
         gapH16,
         Text(
-          'You will be asked to review and confirm the information about your business type, tax ID, VAT ID, etc.'
-              .hardcoded,
+          loc.whyTaxInfoReason2,
         ),
         gapH24,
         Text(
-          'Select your business type'.hardcoded,
+          loc.selectBusinessType,
           style: Theme.of(context).textTheme.titleLarge,
         ),
         gapH16,
@@ -55,6 +54,9 @@ class FirstStep extends ConsumerWidget {
                         .read(businessDraftControllerProvider.notifier)
                         .selectBusinessType(type),
                     child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Sizes.p12,
+                      ),
                       decoration: BoxDecoration(
                         border: BoxBorder.all(
                           width: 1.5,
@@ -68,11 +70,15 @@ class FirstStep extends ConsumerWidget {
                           Icon(type.icon),
                           gapH8,
                           Text(
-                            type.title,
+                            type.title(loc),
                             style: Theme.of(context).textTheme.titleLarge,
+                            textAlign: TextAlign.center,
                           ),
                           gapH8,
-                          Text(type.description),
+                          Text(
+                            type.description(loc),
+                            textAlign: TextAlign.center,
+                          ),
                           gapH12,
                           _BusinessTypeRadioIndicator(isSelected: isSelected),
                           gapH16,
