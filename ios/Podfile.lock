@@ -1545,6 +1545,8 @@ PODS:
     - StripeUICore (= 25.6.4)
   - StripeUICore (25.6.4):
     - StripeCore (= 25.6.4)
+  - url_launcher_ios (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -1566,6 +1568,7 @@ DEPENDENCIES:
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - stripe_ios (from `.symlinks/plugins/stripe_ios/ios`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
@@ -1648,6 +1651,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite_darwin/darwin"
   stripe_ios:
     :path: ".symlinks/plugins/stripe_ios/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
   abseil: a05cc83bf02079535e17169a73c5be5ba47f714b
@@ -1708,6 +1713,7 @@ SPEC CHECKSUMS:
   StripePaymentSheet: 29443db7e8635e2d3a00758f1ecebbb17a24ff19
   StripePaymentsUI: 37551e684263db449368ccac27438947e1b45f84
   StripeUICore: f1e43a68ab1e1428f8738df821eb64efac1d871a
+  url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
 
 PODFILE CHECKSUM: e408adfff784d72e68480405fa511e34cc6f3c20
 
