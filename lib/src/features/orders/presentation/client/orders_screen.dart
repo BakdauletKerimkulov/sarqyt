@@ -24,12 +24,12 @@ class OrdersScreen extends ConsumerWidget {
     final ordersAsync = ref.watch(customerOrdersStreamProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('My Orders'.hardcoded)),
+      appBar: AppBar(title: Text(context.loc.myOrders)),
       body: AsyncValueWidget(
         value: ordersAsync,
         data: (orders) {
           if (orders.isEmpty) {
-            return Center(child: Text('No orders yet'.hardcoded));
+            return Center(child: Text(context.loc.noOrdersYet));
           }
 
           final active =
@@ -42,7 +42,7 @@ class OrdersScreen extends ConsumerWidget {
             children: [
               if (active.isNotEmpty) ...[
                 Text(
-                  'Current'.hardcoded,
+                  context.loc.current,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 gapH12,
@@ -60,7 +60,7 @@ class OrdersScreen extends ConsumerWidget {
               if (past.isNotEmpty) ...[
                 gapH8,
                 Text(
-                  'Past orders'.hardcoded,
+                  context.loc.pastOrders,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 gapH12,

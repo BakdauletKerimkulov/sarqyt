@@ -1,6 +1,6 @@
+import 'package:sarqyt/src/utils/async_value_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:sarqyt/src/common_widgets/async_value_widget.dart';
 import 'package:sarqyt/src/common_widgets/responsive_centered_grid.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
@@ -31,7 +31,7 @@ class BusinessOrdersScreen extends ConsumerWidget {
         value: ordersAsync,
         data: (orders) {
           if (orders.isEmpty) {
-            return Center(child: Text('No orders yet'.hardcoded));
+            return Center(child: Text(context.loc.noOrdersYet));
           }
 
           final active = orders
@@ -45,7 +45,7 @@ class BusinessOrdersScreen extends ConsumerWidget {
             children: [
               if (active.isNotEmpty) ...[
                 Text(
-                  'Active orders'.hardcoded,
+                  context.loc.activeOrders,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 gapH12,
@@ -57,7 +57,7 @@ class BusinessOrdersScreen extends ConsumerWidget {
               if (past.isNotEmpty) ...[
                 gapH8,
                 Text(
-                  'Past orders'.hardcoded,
+                  context.loc.pastOrders,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 gapH12,
@@ -79,18 +79,17 @@ class _BusinessOrderCard extends ConsumerStatefulWidget {
   final Order order;
 
   @override
-  ConsumerState<_BusinessOrderCard> createState() =>
-      _BusinessOrderCardState();
+  ConsumerState<_BusinessOrderCard> createState() => _BusinessOrderCardState();
 }
 
 class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
   bool _isLoading = false;
 
-  String? get _nextStatusLabel {
+  String? _nextStatusLabel(BuildContext context) {
     return switch (widget.order.status) {
-      OrderStatus.confirmed => 'Start preparing',
-      OrderStatus.preparing => 'Ready for pickup',
-      OrderStatus.readyForPickup => 'Mark completed',
+      OrderStatus.confirmed => context.loc.startPreparing,
+      OrderStatus.preparing => context.loc.readyForPickup,
+      OrderStatus.readyForPickup => context.loc.markCompleted,
       _ => null,
     };
   }
@@ -115,9 +114,9 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
           .updateOrderStatus(widget.order.id, next);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(humanReadableError(e))));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -140,8 +139,9 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
                 if (order.orderNumber != null)
                   Text(
                     '#${order.orderNumber}',
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 const Spacer(),
                 OrderStatusBadge(status: order.status),
@@ -152,8 +152,9 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
             gapH4,
             Text(
               order.totalFormatted,
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
             if (order.pickupLabel != null) ...[
               gapH4,
@@ -162,7 +163,7 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
             ],
-            if (_nextStatusLabel != null) ...[
+            if (_nextStatusLabel(context) != null) ...[
               gapH12,
               SizedBox(
                 width: double.infinity,
@@ -181,7 +182,7 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
                             color: Colors.white,
                           ),
                         )
-                      : Text(_nextStatusLabel!.hardcoded),
+                      : Text(_nextStatusLabel(context)!),
                 ),
               ),
             ],
@@ -192,40 +193,102 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
   }
 }
 
+enum _OrderFilter { all, active, completed, cancelled }
+
 /// Sliver version of business orders for use inside OutlinedSectionSliver.
-class SliverBusinessOrders extends ConsumerWidget {
+class SliverBusinessOrders extends ConsumerStatefulWidget {
   const SliverBusinessOrders({super.key, required this.storeId});
 
   final String storeId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ordersAsync = ref.watch(ordersListStreamProvider(storeId));
+  ConsumerState<SliverBusinessOrders> createState() =>
+      _SliverBusinessOrdersState();
+}
 
-    return AsyncValueSliverWidget(
-      value: ordersAsync,
-      data: (orders) {
-        if (orders.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(Sizes.p32),
-              child: Text(
-                'Once customers start ordering, their reservations will appear here.'
-                    .hardcoded,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+class _SliverBusinessOrdersState extends ConsumerState<SliverBusinessOrders> {
+  _OrderFilter _filter = _OrderFilter.all;
+
+  static const _activeStatuses = {
+    OrderStatus.confirmed,
+    OrderStatus.preparing,
+    OrderStatus.readyForPickup,
+  };
+
+  List<Order> _applyFilter(List<Order> orders) {
+    return switch (_filter) {
+      _OrderFilter.all => orders,
+      _OrderFilter.active =>
+        orders.where((o) => _activeStatuses.contains(o.status)).toList(),
+      _OrderFilter.completed =>
+        orders.where((o) => o.status == OrderStatus.completed || o.status == OrderStatus.expired).toList(),
+      _OrderFilter.cancelled =>
+        orders.where((o) => o.status == OrderStatus.cancelled).toList(),
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ordersAsync = ref.watch(ordersListStreamProvider(widget.storeId));
+
+    return SliverMainAxisGroup(
+      slivers: [
+        // Filter chips
+        SliverToBoxAdapter(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(bottom: Sizes.p12),
+            child: Row(
+              children: _OrderFilter.values.map((f) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: Sizes.p8),
+                  child: ChoiceChip(
+                    label: Text(switch (f) {
+                      _OrderFilter.all => context.loc.all,
+                      _OrderFilter.active => context.loc.active,
+                      _OrderFilter.completed => context.loc.completed,
+                      _OrderFilter.cancelled => context.loc.cancelled,
+                    }),
+                    selected: _filter == f,
+                    selectedColor: AppColors.primary.withAlpha(30),
+                    onSelected: (_) => setState(() => _filter = f),
+                  ),
+                );
+              }).toList(),
             ),
-          );
-        }
+          ),
+        ),
 
-        return ResponsiveSliverAlignedGrid(
-          itemCount: orders.length,
-          itemBuilder: (context, index) {
-            return _BusinessOrderCard(order: orders[index]);
+        // Orders grid
+        AsyncValueSliverWidget(
+          value: ordersAsync,
+          data: (orders) {
+            final filtered = _applyFilter(orders);
+
+            if (filtered.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(Sizes.p32),
+                  child: Text(
+                    _filter == _OrderFilter.all
+                        ? context.loc.noOrdersDescription
+                        : context.loc.noOrdersWithStatus,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+              );
+            }
+
+            return ResponsiveSliverAlignedGrid(
+              itemCount: filtered.length,
+              itemBuilder: (context, index) {
+                return _BusinessOrderCard(order: filtered[index]);
+              },
+            );
           },
-        );
-      },
+        ),
+      ],
     );
   }
 }

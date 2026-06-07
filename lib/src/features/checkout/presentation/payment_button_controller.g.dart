@@ -34,7 +34,7 @@ final class PaymentButtonControllerProvider
 }
 
 String _$paymentButtonControllerHash() =>
-    r'1d1020ba3aa7a51396afe085664db14a0f5b27f9';
+    r'930e177423655e6337c229bf2dfee40a788c9bdb';
 
 abstract class _$PaymentButtonController extends $AsyncNotifier<void> {
   FutureOr<void> build();

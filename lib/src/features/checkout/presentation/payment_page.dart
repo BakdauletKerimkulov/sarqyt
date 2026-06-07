@@ -8,7 +8,6 @@ import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/checkout/application/checkout_service.dart';
 import 'package:sarqyt/src/features/checkout/presentation/item_quantity_selector.dart';
-import 'package:sarqyt/src/features/checkout/presentation/payment_button_controller.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
@@ -23,9 +22,9 @@ class PaymentPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final offerAsync = ref.watch(offerFutureProvider(offerId));
-    final buttonState = ref.watch(paymentButtonControllerProvider);
+    final buttonState = ref.watch(checkoutControllerProvider);
 
-    ref.listen(paymentButtonControllerProvider, (_, state) {
+    ref.listen(checkoutControllerProvider, (_, state) {
       state.showAlertDialogOnError(context);
     });
 
@@ -67,7 +66,7 @@ class PaymentPage extends ConsumerWidget {
               const Divider(),
               gapH12,
               Text(
-                'Payment method'.toUpperCase().hardcoded,
+                context.loc.paymentMethod,
                 style: Theme.of(
                   context,
                 ).textTheme.labelMedium?.copyWith(color: Colors.grey),
@@ -80,8 +79,7 @@ class PaymentPage extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Sizes.p16),
                 child: Text(
-                  'By reserving this meal you agree to Sarqyt\'s terms & conditions'
-                      .hardcoded,
+                  context.loc.termsAndConditionsReserve,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -101,7 +99,7 @@ class PaymentPage extends ConsumerWidget {
                   Expanded(
                     child: PrimaryButton(
                       isLoading: isLoading,
-                      text: 'Reserve'.hardcoded,
+                      text: context.loc.reserve,
                       onPressed: isLoading
                           ? null
                           : () => _onPay(context, ref, offer, quantity),
@@ -123,30 +121,22 @@ class PaymentPage extends ConsumerWidget {
     Offer offer,
     int quantity,
   ) async {
-    final (result, orderId) = await ref
-        .read(paymentButtonControllerProvider.notifier)
-        .submitPayment(
+    final orderId = await ref
+        .read(checkoutControllerProvider.notifier)
+        .pay(
           offerId: offer.id,
           quantity: quantity,
           storeName: offer.storeName,
         );
     if (!context.mounted) return;
 
-    switch (result) {
-      case PaymentResult.success:
-        if (orderId != null) {
-          context.goNamed(
-            ClientRoute.orderDetail.name,
-            pathParameters: {'orderId': orderId},
-          );
-        } else {
-          context.goNamed(ClientRoute.orders.name);
-        }
-      case PaymentResult.cancelled:
-        break; // Stay on page
-      case PaymentResult.error:
-        break; // Error dialog shown by listener
+    if (orderId != null) {
+      context.goNamed(
+        ClientRoute.orderDetail.name,
+        pathParameters: {'orderId': orderId},
+      );
     }
+    // Error shown by listener, cancelled stays on page
   }
 }
 
@@ -175,12 +165,12 @@ class _PaymentMethodCard extends StatelessWidget {
           gapW12,
           Expanded(
             child: Text(
-              'Card payment'.hardcoded,
+              context.loc.cardPayment,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
           Text(
-            'Selected at checkout'.hardcoded,
+            context.loc.selectedAtCheckout,
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: Colors.grey),
@@ -211,7 +201,7 @@ class TotalWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text('Total'.hardcoded, style: textTheme),
+          Text(context.loc.total, style: textTheme),
           const Spacer(),
           Text('$currency${total.round()}', style: textTheme),
         ],

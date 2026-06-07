@@ -15,6 +15,7 @@ class OrderStatusBadge extends StatelessWidget {
       OrderStatus.readyForPickup => ('Ready', Colors.green),
       OrderStatus.completed => ('Completed', Colors.grey),
       OrderStatus.cancelled => ('Cancelled', Colors.red),
+      OrderStatus.expired => ('Expired', Colors.grey.shade600),
     };
 
     return Container(

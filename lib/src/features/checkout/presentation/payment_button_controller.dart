@@ -11,7 +11,6 @@ class PaymentButtonController extends _$PaymentButtonController {
   @override
   FutureOr<void> build() {}
 
-  /// Initiates payment flow. Returns result + orderId on success.
   Future<(PaymentResult, OrderID?)> submitPayment({
     required String offerId,
     required int quantity,
@@ -19,23 +18,27 @@ class PaymentButtonController extends _$PaymentButtonController {
   }) async {
     state = const AsyncLoading();
 
-    final orderId = await ref
-        .read(checkoutControllerProvider.notifier)
-        .pay(offerId: offerId, quantity: quantity, storeName: storeName);
+    try {
+      final orderId = await ref
+          .read(checkoutControllerProvider.notifier)
+          .pay(offerId: offerId, quantity: quantity, storeName: storeName);
 
-    final checkoutState = ref.read(checkoutControllerProvider);
+      if (orderId != null) {
+        state = const AsyncData(null);
+        return (PaymentResult.success, orderId);
+      }
 
-    if (orderId != null) {
+      final checkoutState = ref.read(checkoutControllerProvider);
+      if (checkoutState.hasError) {
+        state = AsyncError(checkoutState.error!, StackTrace.current);
+        return (PaymentResult.error, null);
+      }
+
       state = const AsyncData(null);
-      return (PaymentResult.success, orderId);
-    }
-
-    if (checkoutState.hasError) {
-      state = AsyncError(checkoutState.error!, StackTrace.current);
+      return (PaymentResult.cancelled, null);
+    } catch (e, st) {
+      state = AsyncError(e, st);
       return (PaymentResult.error, null);
     }
-
-    state = const AsyncData(null);
-    return (PaymentResult.cancelled, null);
   }
 }

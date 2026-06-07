@@ -33,7 +33,7 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
     json['updatedAt'] as Timestamp?,
   ),
   orderNumber: (json['orderNumber'] as num?)?.toInt(),
-  reservationId: json['reservationId'] as String?,
+  offerId: json['offerId'] as String?,
   paymentIntentId: json['paymentIntentId'] as String?,
 );
 
@@ -60,7 +60,7 @@ Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
   'createdAt': const TimestampConverter().toJson(instance.createdAt),
   'updatedAt': const NullableTimestampConverter().toJson(instance.updatedAt),
   'orderNumber': instance.orderNumber,
-  'reservationId': instance.reservationId,
+  'offerId': instance.offerId,
   'paymentIntentId': instance.paymentIntentId,
 };
 
@@ -70,9 +70,12 @@ const _$OrderStatusEnumMap = {
   OrderStatus.readyForPickup: 'readyForPickup',
   OrderStatus.completed: 'completed',
   OrderStatus.cancelled: 'cancelled',
+  OrderStatus.expired: 'expired',
 };
 
 const _$PaymentStatusEnumMap = {
   PaymentStatus.paid: 'paid',
   PaymentStatus.refunded: 'refunded',
+  PaymentStatus.refundPending: 'refundPending',
+  PaymentStatus.refundFailed: 'refundFailed',
 };

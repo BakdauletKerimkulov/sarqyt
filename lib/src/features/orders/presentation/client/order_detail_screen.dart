@@ -1,3 +1,4 @@
+import 'package:sarqyt/src/utils/async_value_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,12 +23,12 @@ class OrderDetailScreen extends ConsumerWidget {
     final orderAsync = ref.watch(customerOrderStreamProvider(orderId));
 
     return Scaffold(
-      appBar: AppBar(title: Text('Order Details'.hardcoded)),
+      appBar: AppBar(title: Text(context.loc.orderDetails)),
       body: AsyncValueWidget(
         value: orderAsync,
         data: (order) {
           if (order == null) {
-            return Center(child: Text('Order not found'.hardcoded));
+            return Center(child: Text(context.loc.orderNotFound));
           }
           return _OrderDetailContent(order: order);
         },
@@ -66,7 +67,7 @@ class _OrderDetailContent extends StatelessWidget {
                 if (order.orderNumber != null) ...[
                   gapH4,
                   Text(
-                    'Order #${order.orderNumber}'.hardcoded,
+                    context.loc.orderNumber(order.orderNumber!.toString()),
                     style: theme.textTheme.bodyMedium
                         ?.copyWith(color: Colors.grey),
                   ),
@@ -79,7 +80,8 @@ class _OrderDetailContent extends StatelessWidget {
           // Pickup countdown timer
           if (order.pickupEndTime != null &&
               order.status != OrderStatus.completed &&
-              order.status != OrderStatus.cancelled)
+              order.status != OrderStatus.cancelled &&
+              order.status != OrderStatus.expired)
             _PickupWindow(order: order),
 
           gapH16,
@@ -108,7 +110,7 @@ class _OrderDetailContent extends StatelessWidget {
                     ),
                     gapH4,
                     Text(
-                      'x${order.itemQuantity}'.hardcoded,
+                      context.loc.itemQuantityPrefix(order.itemQuantity),
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(color: Colors.grey),
                     ),
@@ -129,7 +131,7 @@ class _OrderDetailContent extends StatelessWidget {
           // Pickup window
           if (order.pickupLabel != null) ...[
             Text(
-              'Pickup window'.hardcoded,
+              context.loc.pickupWindow,
               style: theme.textTheme.titleSmall,
             ),
             gapH8,
@@ -147,14 +149,17 @@ class _OrderDetailContent extends StatelessWidget {
 
           // Payment info
           _InfoRow(
-            label: 'Payment'.hardcoded,
-            value: order.paymentStatus == PaymentStatus.paid
-                ? 'Paid'.hardcoded
-                : 'Refunded'.hardcoded,
+            label: context.loc.payment,
+            value: switch (order.paymentStatus) {
+              PaymentStatus.paid => context.loc.paid,
+              PaymentStatus.refunded => context.loc.refunded,
+              PaymentStatus.refundPending => context.loc.refundPending,
+              PaymentStatus.refundFailed => context.loc.refundFailed,
+            },
           ),
           gapH8,
           _InfoRow(
-            label: 'Total'.hardcoded,
+            label: context.loc.total,
             value: order.totalFormatted,
           ),
 
@@ -169,7 +174,7 @@ class _OrderDetailContent extends StatelessWidget {
           if (order.status == OrderStatus.completed) ...[
             gapH24,
             PrimaryButton(
-              text: 'Leave a review'.hardcoded,
+              text: context.loc.leaveAReview,
               onPressed: () => context.pushNamed(
                 ClientRoute.review.name,
                 pathParameters: {'orderId': order.id},
@@ -214,8 +219,8 @@ class _PickupWindow extends StatelessWidget {
           gapH8,
           Text(
             isExpired
-                ? 'Pickup time expired'.hardcoded
-                : 'Pickup window'.hardcoded,
+                ? context.loc.pickupTimeExpired
+                : context.loc.pickupWindow,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           gapH4,
@@ -246,10 +251,10 @@ class _CancelOrderButtonState extends ConsumerState<_CancelOrderButton> {
   Future<void> _cancel() async {
     final confirm = await showAlertDialog(
       context: context,
-      title: 'Cancel order?'.hardcoded,
-      content: 'You will receive a full refund.'.hardcoded,
-      cancelActionText: 'No'.hardcoded,
-      defaultActionText: 'Yes, cancel'.hardcoded,
+      title: context.loc.cancelOrderConfirm,
+      content: context.loc.cancelOrderRefund,
+      cancelActionText: context.loc.no,
+      defaultActionText: context.loc.yesCancel,
     );
     if (confirm != true) return;
 
@@ -261,7 +266,7 @@ class _CancelOrderButtonState extends ConsumerState<_CancelOrderButton> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          SnackBar(content: Text(humanReadableError(e))),
         );
       }
     } finally {
@@ -284,7 +289,7 @@ class _CancelOrderButtonState extends ConsumerState<_CancelOrderButton> {
               height: 20,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Text('Cancel order'.hardcoded),
+          : Text(context.loc.cancelOrder),
     );
   }
 }

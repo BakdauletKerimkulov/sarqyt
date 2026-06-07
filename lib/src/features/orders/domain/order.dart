@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
+import 'package:sarqyt/src/features/offers/domain/offer.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
 import 'package:sarqyt/src/utils/converters.dart';
 
@@ -10,9 +11,9 @@ part 'order.g.dart';
 
 typedef OrderID = String;
 
-enum OrderStatus { confirmed, preparing, readyForPickup, completed, cancelled }
+enum OrderStatus { confirmed, preparing, readyForPickup, completed, cancelled, expired }
 
-enum PaymentStatus { paid, refunded }
+enum PaymentStatus { paid, refunded, refundPending, refundFailed }
 
 @freezed
 abstract class Order with _$Order {
@@ -35,7 +36,7 @@ abstract class Order with _$Order {
     @TimestampConverter() required DateTime createdAt,
     @NullableTimestampConverter() DateTime? updatedAt,
     int? orderNumber,
-    String? reservationId,
+    OfferID? offerId,
     String? paymentIntentId,
   }) = _Order;
 

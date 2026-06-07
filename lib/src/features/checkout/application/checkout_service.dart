@@ -1,11 +1,8 @@
 import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/checkout/data/payment_repository.dart';
-import 'package:sarqyt/src/features/checkout/data/payment_sheet_repository.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
-import 'package:sarqyt/src/features/orders/data/client_orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 
 part 'checkout_service.g.dart';
@@ -115,8 +112,4 @@ class CheckoutController extends _$CheckoutController {
     return state.value;
   }
   */
-}
-
-class _PaymentCancelledException implements Exception {
-  const _PaymentCancelledException();
 }

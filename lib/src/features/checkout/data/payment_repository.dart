@@ -1,4 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'payment_repository.g.dart';
@@ -27,12 +28,18 @@ class PaymentRepository {
     required String offerId,
     required int quantity,
   }) async {
-    final callable = _functions.httpsCallable('reserveOffer');
-    final result = await callable.call<Map<String, dynamic>>({
+    final callable = _functions.httpsCallable(
+      'reserveOffer',
+      options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
+    );
+    final result = await callable.call({
       'offerId': offerId,
       'quantity': quantity,
     });
-    return result.data['orderId'] as String;
+    debugPrint('reserveOffer result: ${result.data}');
+    debugPrint('reserveOffer type: ${result.data.runtimeType}');
+    final data = Map<String, dynamic>.from(result.data as Map);
+    return data['orderId'] as String;
   }
 
   Future<CreatePaymentResult> createPayment({
