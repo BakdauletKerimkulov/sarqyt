@@ -17,10 +17,8 @@ class GeolocatorService {
     permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
-      // Разрешения еще не предоставлены, запрашиваем их.
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Разрешения отклонены.
         return Future.error('Разрешение на местоположение отклонено.');
       }
     }
@@ -46,7 +44,8 @@ GeolocatorService geolocatorService(Ref ref) {
   return GeolocatorService();
 }
 
-@riverpod
+/// Cached user position. keepAlive prevents repeated GPS requests.
+@Riverpod(keepAlive: true)
 FutureOr<Position?> position(Ref ref) {
   final service = ref.read(geolocatorServiceProvider);
   return service.determinePosition();

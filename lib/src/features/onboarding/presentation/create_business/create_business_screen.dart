@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/auth/utils/auth_layout.dart';
-import 'package:sarqyt/src/features/onboarding/data/onboarding_repository.dart';
+import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/onboarding_panel.dart';
 import 'package:sarqyt/src/features/store/data/store_ship_repository.dart';
 import 'package:sarqyt/src/features/store/domain/store_ship.dart';
@@ -17,7 +17,7 @@ class CreateBusinessScreen extends ConsumerWidget {
     return AuthLayout(
       child: OnboardingPanel(
         onSkip: () => _skipOnboarding(context, ref),
-        title: 'Register your business'.hardcoded,
+        title: context.loc.registerYourBusiness,
         child: const CreateBusinessContent(),
       ),
     );
@@ -26,10 +26,16 @@ class CreateBusinessScreen extends ConsumerWidget {
 
 Future<void> _skipOnboarding(BuildContext context, WidgetRef ref) async {
   final ships = ref.read(currentPartnerStoreShipsProvider).value ?? [];
-  final storeId = ships.pendingOnboarding?.storeId;
+  final storeId = ships.pendingWelcome?.storeId;
   if (storeId == null) return;
 
-  ref.read(onboardingRepositoryProvider).skipOptionalOnboarding(storeId);
+  final uid = ref.read(authRepositoryProvider).currentUser?.uid;
+  if (uid == null) return;
+
+  await ref.read(storeShipRepositoryProvider).markWelcomeCompleted(
+    storeId: storeId,
+    uid: uid,
+  );
   ref.invalidate(currentPartnerStoreShipsProvider);
 }
 
@@ -42,15 +48,14 @@ class CreateBusinessContent extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Register your business'.hardcoded,
+          context.loc.registerYourBusiness,
           style: Theme.of(
             context,
           ).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold),
         ),
         gapH8,
         Text(
-          'Add your business details. You can skip this and do it later in settings.'
-              .hardcoded,
+          'Add your business details. You can skip this and do it later in settings.',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         gapH32,
@@ -58,16 +63,15 @@ class CreateBusinessContent extends ConsumerWidget {
           onPressed: () async {
             final isSkipped = await showAlertDialog(
               context: context,
-              title: 'Are you sure you want to skip setting up your business?'
-                  .hardcoded,
-              cancelActionText: 'Cancel'.hardcoded,
+              title: 'Are you sure you want to skip setting up your business?',
+              cancelActionText: context.loc.cancel,
             );
 
             if (isSkipped == true && context.mounted) {
               _skipOnboarding(context, ref);
             }
           },
-          child: Text('Skip for now'.hardcoded),
+          child: Text(context.loc.skipForNow),
         ),
         gapH24,
       ],

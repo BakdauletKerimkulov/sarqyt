@@ -26,7 +26,7 @@ class ReviewDetailsScreen extends StatelessWidget {
       startBackground: 'assets/food-app-business-background.jpg',
       child: OnboardingPanel(
         onBackPressed: () => context.pop(),
-        title: 'Review your store details'.hardcoded,
+        title: context.loc.reviewStoreDetails,
         child: ReviewDetailsContent(),
       ),
     );
@@ -99,7 +99,7 @@ class _ReviewDetailsContentState extends ConsumerState<ReviewDetailsContent> {
                       top: Sizes.p8,
                       right: Sizes.p8,
                       child: PrimaryWebButton(
-                        text: 'Edit'.hardcoded,
+                        text: context.loc.edit,
                         onPressed: () =>
                             showNotImplementedAlertDialog(context: context),
                       ),
@@ -130,7 +130,7 @@ class _ReviewDetailsContentState extends ConsumerState<ReviewDetailsContent> {
         ),
         gapH24,
         PrimaryWebButton(
-          text: 'Continue'.hardcoded,
+          text: context.loc.continueText,
           isLoading: locationValue.isLoading,
           onPressed: () {
             final location = locationValue.value;

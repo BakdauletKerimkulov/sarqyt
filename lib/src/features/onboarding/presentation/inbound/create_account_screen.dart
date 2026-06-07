@@ -28,8 +28,8 @@ class CreateAccountScreen extends StatelessWidget {
               }
               context.goNamed(BusinessRoute.login.name);
             },
-            title: 'Add your business details'.hardcoded,
-            subtitle: 'Please provide your business details below.'.hardcoded,
+            title: context.loc.addBusinessDetails,
+            subtitle: context.loc.provideBusinessDetails,
             child: CreateAccountContent(),
           );
         },

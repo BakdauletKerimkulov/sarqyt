@@ -11,6 +11,7 @@ import 'package:sarqyt/src/features/auth/presentation/sign_in_client/string_vali
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/utils/async_value_ui.dart';
 
+
 class EmailPasswordSignInScreen extends StatelessWidget {
   const EmailPasswordSignInScreen({super.key, required this.formType});
 
@@ -129,7 +130,7 @@ class _EmailPasswordSignInContentState
             ),
             gapH24,
             Text(
-              'Hello! Create Account'.hardcoded,
+              context.loc.helloCreateAccount,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             gapH8,
@@ -149,7 +150,7 @@ class _EmailPasswordSignInContentState
                       TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          hintText: 'Your name'.hardcoded,
+                          hintText: context.loc.yourName,
                           filled: true,
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
@@ -164,7 +165,7 @@ class _EmailPasswordSignInContentState
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        hintText: 'Email'.hardcoded,
+                        hintText: context.loc.email,
                         filled: true,
                         enabled: !state.isLoading,
                         border: OutlineInputBorder(
@@ -173,7 +174,7 @@ class _EmailPasswordSignInContentState
                         ),
                       ),
                       validator: (email) =>
-                          !_submitted ? null : emailErrorText(email ?? ''),
+                          !_submitted ? null : emailErrorText(email ?? '', context.loc),
                       autocorrect: false,
                       textInputAction: TextInputAction.next,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -190,7 +191,7 @@ class _EmailPasswordSignInContentState
                     TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
-                        hintText: _formType.passwordLabelText,
+                        hintText: _formType.passwordLabelText(context.loc),
                         filled: true,
                         enabled: !state.isLoading,
                         border: OutlineInputBorder(
@@ -209,7 +210,7 @@ class _EmailPasswordSignInContentState
                       obscureText: _isHidden,
                       validator: (password) => !_submitted
                           ? null
-                          : passwordErrorText(password ?? '', _formType),
+                          : passwordErrorText(password ?? '', _formType, context.loc),
                       textInputAction: TextInputAction.done,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       onEditingComplete: _passwordEditingComplete,
@@ -226,7 +227,7 @@ class _EmailPasswordSignInContentState
               child: PrimaryButton(
                 onPressed: state.isLoading ? null : () => _submit(),
                 isLoading: state.isLoading,
-                text: _formType.primaryButtonText,
+                text: _formType.primaryButtonText(context.loc),
               ),
             ),
             gapH64,

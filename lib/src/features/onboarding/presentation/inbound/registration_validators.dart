@@ -1,7 +1,7 @@
+import 'package:sarqyt/l10n/app_localizations.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/string_validators.dart';
 import 'package:sarqyt/src/features/store/domain/country.dart';
 import 'package:sarqyt/src/features/store/domain/store_type.dart';
-import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 const kzDialCode = '+7';
 const kzMinLength = 10;
@@ -26,49 +26,48 @@ mixin RegistrationValidators {
     return passwordRegisterSubmitValidator.isValid(password);
   }
 
-  String? passwordErrorText(String password) {
+  String? passwordErrorText(String password, AppLocalizations loc) {
     final bool showErrorText = !canSubmitPassword(password);
     final String errorText = password.isEmpty
-        ? 'Password can\'t be empty'.hardcoded
-        : 'Password is too short'.hardcoded;
+        ? loc.passwordCantBeEmpty
+        : loc.passwordTooShort;
     return showErrorText ? errorText : null;
   }
 
-  String? emailErrorText(String email) {
+  String? emailErrorText(String email, AppLocalizations loc) {
     final bool showErrorText = !canSubmitEmail(email);
     final String errorText = email.isEmpty
-        ? 'Email can\'t be empty'.hardcoded
-        : 'Invalid email'.hardcoded;
+        ? loc.emailCantBeEmpty
+        : loc.invalidEmail;
     return showErrorText ? errorText : null;
   }
 
-  String? errorText(String value) {
+  String? errorText(String value, AppLocalizations loc) {
     final bool showErrorText = !canSubmitted(value);
-    final String errorText = 'Please, fill in the required field'.hardcoded;
-    return showErrorText ? errorText : null;
+    return showErrorText ? loc.pleaseFillRequiredField : null;
   }
 
-  String? storeTypeError(StoreType? type) {
+  String? storeTypeError(StoreType? type, AppLocalizations loc) {
     final bool showErrorText = type == null;
-    return showErrorText ? 'Please select a store type'.hardcoded : null;
+    return showErrorText ? loc.pleaseSelectStoreType : null;
   }
 
-  String? countryErrorText(CountryD? country) {
+  String? countryErrorText(CountryD? country, AppLocalizations loc) {
     final bool showErrorText = country == null;
-    return showErrorText ? 'Please select a country'.hardcoded : null;
+    return showErrorText ? loc.pleaseSelectCountry : null;
   }
 
-  String? kzPhoneValidator(String value) {
+  String? kzPhoneValidator(String value, AppLocalizations loc) {
     final normalized = kzPhoneFormatter(value);
 
     if (normalized.isEmpty) {
-      return 'Phone number can\'t be empty'.hardcoded;
+      return loc.phoneNumberCantBeEmpty;
     }
 
     final validPattern = RegExp(r'^(\+7|7)\d{10}$');
 
     if (!validPattern.hasMatch(normalized)) {
-      return 'Enter a valid phone number'.hardcoded;
+      return loc.enterValidPhoneNumber;
     }
 
     return null;

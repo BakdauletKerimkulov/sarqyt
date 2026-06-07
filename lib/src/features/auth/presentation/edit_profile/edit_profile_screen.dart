@@ -51,7 +51,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Edit profile'.hardcoded)),
+      appBar: AppBar(title: Text(context.loc.editProfile)),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -60,7 +60,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Email (read-only)
-              Text('Email'.hardcoded,
+              Text(context.loc.email,
                   style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               TextField(
@@ -78,7 +78,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               gapH20,
 
               // Display name
-              Text('Name'.hardcoded,
+              Text(context.loc.name,
                   style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               TextField(
@@ -88,7 +88,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey.shade100,
-                  hintText: 'Your name'.hardcoded,
+                  hintText: context.loc.yourName,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(Sizes.p12),
@@ -98,7 +98,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               gapH20,
 
               // Phone
-              Text('Phone'.hardcoded,
+              Text(context.loc.phone,
                   style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               TextField(
@@ -108,7 +108,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey.shade100,
-                  hintText: '+7 (777) 123-4567'.hardcoded,
+                  hintText: context.loc.phoneHint,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(Sizes.p12),
@@ -118,7 +118,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               gapH32,
 
               PrimaryButton(
-                text: 'Save'.hardcoded,
+                text: context.loc.save,
                 isLoading: state.isLoading,
                 onPressed: state.isLoading
                     ? null

@@ -23,7 +23,7 @@ class SignInBusinessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AuthLayout(
       startChild: Text(
-        'Log in to mystore'.toUpperCase().hardcoded,
+        context.loc.logInToMystore,
         textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.bold,
@@ -113,7 +113,7 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Log in to your account'.hardcoded,
+            context.loc.logInToYourAccount,
             style: Theme.of(
               context,
             ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
@@ -127,7 +127,7 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Email address *'.hardcoded,
+                    context.loc.emailAddressRequired,
                     style: TextStyle(color: Colors.grey),
                   ),
                   gapH8,
@@ -148,7 +148,7 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (email) =>
-                        !_submitted ? null : emailErrorText(email ?? ''),
+                        !_submitted ? null : emailErrorText(email ?? '', context.loc),
                     autocorrect: false,
                     textInputAction: TextInputAction.next,
                     onEditingComplete: () => _emailEditingComplete(),
@@ -160,7 +160,7 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
                   ),
                   gapH8,
                   Text(
-                    'Password *'.hardcoded,
+                    context.loc.passwordRequired,
                     style: TextStyle(color: Colors.grey),
                   ),
                   gapH8,
@@ -196,6 +196,7 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
                         : passwordErrorText(
                             password ?? '',
                             EmailPasswordSignInFormType.signIn,
+                            context.loc,
                           ),
                     obscureText: _passwordObscured,
                     autocorrect: false,
@@ -208,7 +209,7 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
                         ? null
                         : () => showNotImplementedAlertDialog(context: context),
                     child: Text(
-                      'Forgot password?'.hardcoded,
+                      context.loc.forgotPassword,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: AppColors.primary,
                         decoration: TextDecoration.underline,
@@ -221,7 +222,7 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
 
                   PrimaryWebButton(
                     isLoading: state.isLoading,
-                    text: 'Log in'.hardcoded,
+                    text: context.loc.logIn,
                     onPressed: state.isLoading ? null : () => _submit(),
                   ),
                   gapH16,
@@ -234,7 +235,7 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
                               BusinessRoute.createAccount.name,
                             ),
                       child: Text(
-                        'Sign up your food business'.hardcoded,
+                        context.loc.signUpYourBusiness,
                         style: TextStyle(fontSize: Sizes.p16),
                       ),
                     ),

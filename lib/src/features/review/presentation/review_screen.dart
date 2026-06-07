@@ -45,7 +45,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     });
 
     return Scaffold(
-      appBar: AppBar(title: Text('Leave a review'.hardcoded)),
+      appBar: AppBar(title: Text(context.loc.leaveAReview)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Sizes.p24),
         child: Column(
@@ -61,7 +61,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
 
             // Store rating
             Text(
-              'How was the store?'.hardcoded,
+              context.loc.howWasTheStore,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             gapH12,
@@ -73,7 +73,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
 
             // Food rating
             Text(
-              'How was the food?'.hardcoded,
+              context.loc.howWasTheFood,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             gapH12,
@@ -85,7 +85,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
 
             // Comment
             Text(
-              'Any comments? (optional)'.hardcoded,
+              context.loc.anyComments,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             gapH12,
@@ -93,7 +93,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
               controller: _commentController,
               maxLines: 4,
               decoration: InputDecoration(
-                hintText: 'Tell us about your experience'.hardcoded,
+                hintText: context.loc.tellUsAboutExperience,
                 filled: true,
                 fillColor: Colors.grey.shade100,
                 border: OutlineInputBorder(
@@ -105,7 +105,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
             gapH32,
 
             PrimaryButton(
-              text: 'Submit review'.hardcoded,
+              text: context.loc.submitReview,
               isLoading: state.isLoading,
               onPressed: state.isLoading || _storeRating == 0 || _foodRating == 0
                   ? null

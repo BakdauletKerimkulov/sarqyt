@@ -22,10 +22,9 @@ class EmailScreen extends StatelessWidget {
       startBackground: 'assets/food-app-business-background.jpg',
       child: OnboardingPanel(
         onBackPressed: () => context.pop(),
-        title: 'Add your email and passord'.hardcoded,
+        title: context.loc.addEmailAndPassword,
         subtitle:
-            'You\'ll need your email and password to log in to your account.'
-                .hardcoded,
+            'You\'ll need your email and password to log in to your account.',
         child: EmailContent(),
       ),
     );
@@ -93,19 +92,19 @@ class _EmailContent extends ConsumerState<EmailContent>
           TextFormField(
             controller: _emailController,
             decoration: InputDecoration(
-              hintText: 'test@test.com'.hardcoded,
+              hintText: 'test@test.com',
               border: OutlineInputBorder(),
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) =>
-                !_submitted ? null : emailErrorText(value ?? ''),
+                !_submitted ? null : emailErrorText(value ?? '', context.loc),
           ),
           gapH16,
 
           TextFormField(
             controller: _passwordController,
             decoration: InputDecoration(
-              hintText: 'Password'.hardcoded,
+              hintText: context.loc.password,
               border: OutlineInputBorder(),
               suffixIcon: IconButton(
                 onPressed: () => setState(() => _isOccured = !_isOccured),
@@ -118,7 +117,7 @@ class _EmailContent extends ConsumerState<EmailContent>
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) =>
-                !_submitted ? null : passwordErrorText(value ?? ''),
+                !_submitted ? null : passwordErrorText(value ?? '', context.loc),
             obscureText: _isOccured,
           ),
 
@@ -128,7 +127,7 @@ class _EmailContent extends ConsumerState<EmailContent>
             initialValue: _acceptedPolicy,
             validator: (value) {
               if (value != true) {
-                return 'You must accept the privacy policy'.hardcoded;
+                return context.loc.mustAcceptPrivacyPolicy;
               }
               return null;
             },

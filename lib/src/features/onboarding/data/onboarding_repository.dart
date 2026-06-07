@@ -25,10 +25,6 @@ class OnboardingRepository {
     return result.data['storeId'] as String;
   }
 
-  Future<void> skipOptionalOnboarding(String storeId) async {
-    final function = _functions.httpsCallable('skipOptionalOnboarding');
-    await function.call({'storeId': storeId});
-  }
 }
 
 @riverpod

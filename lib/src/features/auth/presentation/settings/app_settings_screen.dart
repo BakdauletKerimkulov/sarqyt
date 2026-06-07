@@ -1,9 +1,11 @@
+import 'package:sarqyt/src/utils/async_value_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/auth/data/user_profile_repository.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppSettingsScreen extends ConsumerWidget {
   const AppSettingsScreen({super.key});
@@ -11,7 +13,7 @@ class AppSettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: Text('Settings'.hardcoded)),
+      appBar: AppBar(title: Text(context.loc.settings)),
       body: ListView(
         padding: const EdgeInsets.all(Sizes.p16),
         children: [
@@ -25,13 +27,13 @@ class AppSettingsScreen extends ConsumerWidget {
                     Sizes.p16, Sizes.p16, Sizes.p16, Sizes.p8,
                   ),
                   child: Text(
-                    'Account'.hardcoded,
+                    context.loc.account,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ),
                 ListTile(
                   leading: const Icon(Icons.lock_outline),
-                  title: Text('Change password'.hardcoded),
+                  title: Text(context.loc.changePassword),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showChangePasswordDialog(context, ref),
                 ),
@@ -39,16 +41,14 @@ class AppSettingsScreen extends ConsumerWidget {
                 ListTile(
                   leading: const Icon(Icons.delete_outline, color: Colors.red),
                   title: Text(
-                    'Delete account'.hardcoded,
+                    context.loc.deleteAccount,
                     style: const TextStyle(color: Colors.red),
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => showAlertDialog(
                     context: context,
-                    title: 'Delete account?'.hardcoded,
-                    content:
-                        'This action cannot be undone. Contact support to delete your account.'
-                            .hardcoded,
+                    title: context.loc.deleteAccountConfirm,
+                    content: context.loc.deleteAccountWarning,
                   ),
                 ),
               ],
@@ -66,13 +66,13 @@ class AppSettingsScreen extends ConsumerWidget {
                     Sizes.p16, Sizes.p16, Sizes.p16, Sizes.p8,
                   ),
                   child: Text(
-                    'Notifications'.hardcoded,
+                    context.loc.notifications,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ),
                 SwitchListTile(
                   secondary: const Icon(Icons.notifications_outlined),
-                  title: Text('Push notifications'.hardcoded),
+                  title: Text(context.loc.pushNotifications),
                   value: true,
                   onChanged: (_) =>
                       showNotImplementedAlertDialog(context: context),
@@ -92,31 +92,35 @@ class AppSettingsScreen extends ConsumerWidget {
                     Sizes.p16, Sizes.p16, Sizes.p16, Sizes.p8,
                   ),
                   child: Text(
-                    'About'.hardcoded,
+                    context.loc.about,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
-                  title: Text('Terms of service'.hardcoded),
+                  title: Text(context.loc.termsOfService),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () =>
-                      showNotImplementedAlertDialog(context: context),
+                  onTap: () => launchUrl(
+                    Uri.parse('https://sarqyt-1ab95.web.app/terms-of-service.html'),
+                    mode: LaunchMode.externalApplication,
+                  ),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.privacy_tip_outlined),
-                  title: Text('Privacy policy'.hardcoded),
+                  title: Text(context.loc.privacyPolicy),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () =>
-                      showNotImplementedAlertDialog(context: context),
+                  onTap: () => launchUrl(
+                    Uri.parse('https://sarqyt-1ab95.web.app/privacy-policy.html'),
+                    mode: LaunchMode.externalApplication,
+                  ),
                 ),
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.info_outline),
-                  title: Text('App version'.hardcoded),
+                  title: Text(context.loc.appVersion),
                   trailing: Text(
-                    '1.0.0'.hardcoded,
+                    context.loc.versionNumber,
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -138,7 +142,7 @@ class AppSettingsScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Change password'.hardcoded),
+        title: Text(context.loc.changePassword),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -146,7 +150,7 @@ class AppSettingsScreen extends ConsumerWidget {
               controller: currentCtrl,
               obscureText: true,
               decoration: InputDecoration(
-                labelText: 'Current password'.hardcoded,
+                labelText: context.loc.currentPassword,
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -155,7 +159,7 @@ class AppSettingsScreen extends ConsumerWidget {
               controller: newCtrl,
               obscureText: true,
               decoration: InputDecoration(
-                labelText: 'New password'.hardcoded,
+                labelText: context.loc.newPassword,
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -164,11 +168,11 @@ class AppSettingsScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel'.hardcoded),
+            child: Text(context.loc.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Change'.hardcoded),
+            child: Text(context.loc.change),
           ),
         ],
       ),
@@ -182,13 +186,13 @@ class AppSettingsScreen extends ConsumerWidget {
             );
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Password updated'.hardcoded)),
+            SnackBar(content: Text(context.loc.passwordUpdated)),
           );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString())),
+            SnackBar(content: Text(humanReadableError(e))),
           );
         }
       }

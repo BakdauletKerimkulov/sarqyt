@@ -26,7 +26,7 @@ final class PushNotificationServiceProvider
         argument: null,
         retry: null,
         name: r'pushNotificationServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,7 +55,7 @@ final class PushNotificationServiceProvider
 }
 
 String _$pushNotificationServiceHash() =>
-    r'17775e0430a702bd919f01e747b391eacfa5a4fa';
+    r'2b28907b24737ce5f904706ef1822c5afe3f13e8';
 
 /// Initialize push notifications when user is signed in.
 
@@ -74,7 +74,7 @@ final class InitPushNotificationsProvider
         argument: null,
         retry: null,
         name: r'initPushNotificationsProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -94,4 +94,4 @@ final class InitPushNotificationsProvider
 }
 
 String _$initPushNotificationsHash() =>
-    r'b138857853ba1feb7adb2ab6c2cc78482680aad5';
+    r'abc9f55a072663518c8099e159bd3805cb775b40';

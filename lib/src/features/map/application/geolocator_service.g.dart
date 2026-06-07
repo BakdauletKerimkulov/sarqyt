@@ -56,8 +56,12 @@ final class GeolocatorServiceProvider
 
 String _$geolocatorServiceHash() => r'801847611a108a8b27206e7063040184726e64ee';
 
+/// Cached user position. keepAlive prevents repeated GPS requests.
+
 @ProviderFor(position)
 const positionProvider = PositionProvider._();
+
+/// Cached user position. keepAlive prevents repeated GPS requests.
 
 final class PositionProvider
     extends
@@ -67,13 +71,14 @@ final class PositionProvider
           FutureOr<Position?>
         >
     with $FutureModifier<Position?>, $FutureProvider<Position?> {
+  /// Cached user position. keepAlive prevents repeated GPS requests.
   const PositionProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'positionProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -92,4 +97,4 @@ final class PositionProvider
   }
 }
 
-String _$positionHash() => r'cb01d52b6859ff023bffde371224b0e50af8efec';
+String _$positionHash() => r'0fcdc64f091710d0d5e4c9546d1cb00b19cedb62';

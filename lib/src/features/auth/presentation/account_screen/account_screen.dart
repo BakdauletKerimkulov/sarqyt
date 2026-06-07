@@ -22,7 +22,7 @@ class AccountScreen extends ConsumerWidget {
     final state = ref.watch(accountScreenControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Profile'.hardcoded)),
+      appBar: AppBar(title: Text(context.loc.profile)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(Sizes.p16),
         child: Column(
@@ -62,7 +62,7 @@ class AccountScreen extends ConsumerWidget {
                   : ElevatedButton(
                       onPressed: () =>
                           context.goNamed(ClientRoute.signIn.name),
-                      child: Text('Sign in'.hardcoded),
+                      child: Text(context.loc.signIn),
                     ),
             ),
             gapH32,
@@ -74,14 +74,21 @@ class AccountScreen extends ConsumerWidget {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.edit),
-                      title: Text('Edit profile'.hardcoded),
+                      title: Text(context.loc.editProfile),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => context.pushNamed(ClientRoute.editProfile.name),
                     ),
                     const Divider(height: 1),
                     ListTile(
+                      leading: const Icon(Icons.favorite_outline),
+                      title: Text(context.loc.favorites),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => context.pushNamed(ClientRoute.favorites.name),
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
                       leading: const Icon(Icons.settings),
-                      title: Text('Settings'.hardcoded),
+                      title: Text(context.loc.settings),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => context.pushNamed(ClientRoute.appSettings.name),
                     ),
@@ -97,9 +104,9 @@ class AccountScreen extends ConsumerWidget {
                       : () async {
                           final logout = await showAlertDialog(
                             context: context,
-                            title: 'Are you sure?'.hardcoded,
-                            cancelActionText: 'Cancel'.hardcoded,
-                            defaultActionText: 'Logout'.hardcoded,
+                            title: context.loc.areYouSure,
+                            cancelActionText: context.loc.cancel,
+                            defaultActionText: context.loc.logout,
                           );
                           if (logout == true) {
                             ref
@@ -109,7 +116,7 @@ class AccountScreen extends ConsumerWidget {
                           }
                         },
                   leading: const Icon(Icons.logout_outlined),
-                  title: Text('Log out'.hardcoded),
+                  title: Text(context.loc.logOut),
                 ),
               ),
             ],

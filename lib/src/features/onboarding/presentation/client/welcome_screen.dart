@@ -69,7 +69,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
               actions: [
                 TextButton(
                   onPressed: state.isLoading ? null : _complete,
-                  child: Text('Skip'.hardcoded),
+                  child: Text(context.loc.skip),
                 ),
               ],
             )
@@ -134,8 +134,8 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                         )
                       : Text(
                           _currentPage == _pages.length - 1
-                              ? 'Get started'.hardcoded
-                              : 'Next'.hardcoded,
+                              ? context.loc.getStarted
+                              : context.loc.next,
                           style: const TextStyle(fontSize: 16),
                         ),
                 ),

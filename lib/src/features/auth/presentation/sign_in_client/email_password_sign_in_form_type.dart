@@ -1,30 +1,29 @@
-import 'package:sarqyt/src/localization/string_hardcoded.dart';
+import 'package:sarqyt/l10n/app_localizations.dart';
 
 enum EmailPasswordSignInFormType { signIn, register }
 
 extension EmailPasswordSignInFormTypeX on EmailPasswordSignInFormType {
-  String get passwordLabelText {
+  String passwordLabelText(AppLocalizations loc) {
     if (this == EmailPasswordSignInFormType.register) {
-      return 'Password (8+ characters)'.hardcoded;
+      return loc.passwordHint;
     } else {
-      return 'Password'.hardcoded;
+      return loc.password;
     }
   }
 
-  // Getters
-  String get primaryButtonText {
+  String primaryButtonText(AppLocalizations loc) {
     if (this == EmailPasswordSignInFormType.register) {
-      return 'Create an Account'.hardcoded;
+      return loc.createAnAccount;
     } else {
-      return 'Sign in'.hardcoded;
+      return loc.signIn;
     }
   }
 
-  String get title {
+  String title(AppLocalizations loc) {
     if (this == EmailPasswordSignInFormType.register) {
-      return 'Hello! Create Account'.hardcoded;
+      return loc.helloCreateAccount;
     } else {
-      return 'Welcome back!'.hardcoded;
+      return loc.welcomeBack;
     }
   }
 
@@ -52,11 +51,11 @@ extension EmailPasswordSignInFormTypeX on EmailPasswordSignInFormType {
     }
   }
 
-  String get errorAlertTitle {
+  String errorAlertTitle(AppLocalizations loc) {
     if (this == EmailPasswordSignInFormType.register) {
-      return 'Registration failed'.hardcoded;
+      return loc.registrationFailed;
     } else {
-      return 'Sign in failed'.hardcoded;
+      return loc.signInFailed;
     }
   }
 }

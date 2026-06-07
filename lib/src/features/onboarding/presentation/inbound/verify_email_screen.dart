@@ -19,7 +19,7 @@ class VerifyEmailScreen extends StatelessWidget {
     return AuthLayout(
       startBackground: 'assets/food-app-business-background.jpg',
       child: OnboardingPanel(
-        title: 'Check your inbox'.hardcoded,
+        title: context.loc.checkYourInbox,
         onBackPressed: () =>
             ProviderScope.containerOf(context)
                 .read(authRepositoryProvider)
@@ -94,7 +94,6 @@ class _VerifyEmailContentState extends ConsumerState<_VerifyEmailContent>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(verifyEmailControllerProvider);
-    final user = ref.read(authRepositoryProvider).currentUser;
 
     ref.listen(
       verifyEmailControllerProvider,
@@ -104,10 +103,7 @@ class _VerifyEmailContentState extends ConsumerState<_VerifyEmailContent>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'Click on the link we\'ve sent to ${user?.email} to confirm it\'s really you. If you can\'t see the email, check the Spam folder as well.'
-              .hardcoded,
-        ),
+        Text(context.loc.verifyEmailMessage),
         gapH24,
         if (state.isLoading)
           const Center(child: CircularProgressIndicator())
@@ -117,11 +113,11 @@ class _VerifyEmailContentState extends ConsumerState<_VerifyEmailContent>
               onPressed: () => ref
                   .read(verifyEmailControllerProvider.notifier)
                   .checkAndComplete(),
-              child: Text('Retry'.hardcoded),
+              child: Text(context.loc.retry),
             ),
           TextButton(
             onPressed: _sendVerification,
-            child: Text('Resend verification email'.hardcoded),
+            child: Text(context.loc.resendVerificationEmail),
           ),
         ],
       ],

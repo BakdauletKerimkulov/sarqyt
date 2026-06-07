@@ -1,6 +1,6 @@
+import 'package:sarqyt/l10n/app_localizations.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_form_type.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/string_validators.dart';
-import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 /// Mixin class to be used for client-side email & password validation
 mixin EmailPasswordValidators {
@@ -24,22 +24,23 @@ mixin EmailPasswordValidators {
     return passwordSignInSubmitValidator.isValid(password);
   }
 
-  String? emailErrorText(String email) {
+  String? emailErrorText(String email, AppLocalizations loc) {
     final bool showErrorText = !canSubmitEmail(email);
     final String errorText = email.isEmpty
-        ? 'Email can\'t be empty'.hardcoded
-        : 'Invalid email'.hardcoded;
+        ? loc.emailCantBeEmpty
+        : loc.invalidEmail;
     return showErrorText ? errorText : null;
   }
 
   String? passwordErrorText(
     String password,
     EmailPasswordSignInFormType formType,
+    AppLocalizations loc,
   ) {
     final bool showErrorText = !canSubmitPassword(password, formType);
     final String errorText = password.isEmpty
-        ? 'Password can\'t be empty'.hardcoded
-        : 'Password is too short'.hardcoded;
+        ? loc.passwordCantBeEmpty
+        : loc.passwordTooShort;
     return showErrorText ? errorText : null;
   }
 }
