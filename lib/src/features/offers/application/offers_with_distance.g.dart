@@ -8,51 +8,16 @@ part of 'offers_with_distance.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-
-@ProviderFor(offersWithDistance)
-const offersWithDistanceProvider = OffersWithDistanceProvider._();
-
-final class OffersWithDistanceProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<OfferWithDistance>>,
-          List<OfferWithDistance>,
-          FutureOr<List<OfferWithDistance>>
-        >
-    with
-        $FutureModifier<List<OfferWithDistance>>,
-        $FutureProvider<List<OfferWithDistance>> {
-  const OffersWithDistanceProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'offersWithDistanceProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$offersWithDistanceHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<List<OfferWithDistance>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<OfferWithDistance>> create(Ref ref) {
-    return offersWithDistance(ref);
-  }
-}
-
-String _$offersWithDistanceHash() =>
-    r'39c75c934f64433c06e59b5a286417819b61f491';
+/// Streams nearby offers with distance calculated.
+/// Uses geo-filtered Firestore query when location is available,
+/// falls back to all offers when location is unavailable.
 
 @ProviderFor(offersWithDistanceStream)
 const offersWithDistanceStreamProvider = OffersWithDistanceStreamProvider._();
+
+/// Streams nearby offers with distance calculated.
+/// Uses geo-filtered Firestore query when location is available,
+/// falls back to all offers when location is unavailable.
 
 final class OffersWithDistanceStreamProvider
     extends
@@ -64,6 +29,9 @@ final class OffersWithDistanceStreamProvider
     with
         $FutureModifier<List<OfferWithDistance>>,
         $StreamProvider<List<OfferWithDistance>> {
+  /// Streams nearby offers with distance calculated.
+  /// Uses geo-filtered Firestore query when location is available,
+  /// falls back to all offers when location is unavailable.
   const OffersWithDistanceStreamProvider._()
     : super(
         from: null,
@@ -91,4 +59,4 @@ final class OffersWithDistanceStreamProvider
 }
 
 String _$offersWithDistanceStreamHash() =>
-    r'c3da174e89f2f06f6f036ec9cbe46b8ca5ebfa13';
+    r'996ef15e97408d241ccfeda4a1ae1397e24de72a';

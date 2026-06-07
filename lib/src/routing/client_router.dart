@@ -10,6 +10,7 @@ import 'package:sarqyt/src/features/checkout/presentation/checkout_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_list/discover_screen.dart';
 import 'package:sarqyt/src/features/onboarding/data/client_onboarding_repository.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/client/welcome_screen.dart';
+import 'package:sarqyt/src/features/offers/presentation/favorites/favorites_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/offer_screen.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/store_info.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_detail_screen.dart';
@@ -41,6 +42,7 @@ enum ClientRoute {
   profile,
   editProfile,
   appSettings,
+  favorites,
 }
 
 class ClientShellScaffold extends StatelessWidget {
@@ -229,6 +231,11 @@ GoRouter clientRouter(Ref ref) {
                     path: 'settings',
                     name: ClientRoute.appSettings.name,
                     builder: (context, state) => const AppSettingsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'favorites',
+                    name: ClientRoute.favorites.name,
+                    builder: (context, state) => const FavoritesScreen(),
                   ),
                 ],
               ),

@@ -51,12 +51,12 @@ class DiscoverScreen extends ConsumerWidget {
             );
 
             if (filtered.isEmpty) {
-              return Center(child: Text('No offers found'.hardcoded));
+              return Center(child: Text(context.loc.noOffersFound));
             }
 
             return TabBarView(
               children: [
-                _OfferList(offers: filtered, favIds: favIds, ref: ref),
+                OfferList(offers: filtered, favIds: favIds, ref: ref),
                 DiscoverMapContent(
                   offers: filtered.map((o) => o.offer).toList(),
                 ),
@@ -69,8 +69,9 @@ class DiscoverScreen extends ConsumerWidget {
   }
 }
 
-class _OfferList extends StatelessWidget {
-  const _OfferList({
+class OfferList extends StatelessWidget {
+  const OfferList({
+    super.key,
     required this.offers,
     required this.favIds,
     required this.ref,
@@ -92,7 +93,9 @@ class _OfferList extends StatelessWidget {
           offer: item.offer,
           distanceLabel: item.distanceLabel,
           isFavorite: isFav,
-          onFavoriteToggle: () => _toggleFavorite(item.offer.storeId, isFav),
+          onFavoriteToggle: () => _toggleFavorite(
+            context, item.offer.storeId, item.offer.storeName, isFav,
+          ),
           onPressed: () => context.goNamed(
             ClientRoute.offer.name,
             pathParameters: {'id': item.offer.id},
@@ -103,14 +106,37 @@ class _OfferList extends StatelessWidget {
     );
   }
 
-  void _toggleFavorite(String storeId, bool isFav) {
+  Future<void> _toggleFavorite(
+    BuildContext context,
+    String storeId,
+    String storeName,
+    bool isFav,
+  ) async {
     final user = ref.read(authRepositoryProvider).currentUser;
     if (user == null) return;
     final repo = ref.read(favoritesRepositoryProvider);
-    if (isFav) {
-      repo.removeFavorite(user.uid, storeId);
-    } else {
-      repo.addFavorite(user.uid, storeId);
+    try {
+      if (isFav) {
+        await repo.removeFavorite(user.uid, storeId);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.loc.removedFromFavorites(storeName))),
+          );
+        }
+      } else {
+        await repo.addFavorite(user.uid, storeId);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.loc.addedToFavorites(storeName))),
+          );
+        }
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.loc.failedToUpdateFavorites)),
+        );
+      }
     }
   }
 }

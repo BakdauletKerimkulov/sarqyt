@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
+import 'package:sarqyt/src/features/store/data/store_repository.dart';
+import 'package:sarqyt/src/features/store/domain/store.dart';
 
 part 'favorites_repository.g.dart';
 
@@ -37,4 +39,23 @@ Stream<Set<String>> favoriteStoreIds(Ref ref) {
   final user = ref.watch(authStateChangesProvider).value;
   if (user == null) return Stream.value(const {});
   return ref.watch(favoritesRepositoryProvider).watchFavoriteStoreIds(user.uid);
+}
+
+@riverpod
+AsyncValue<List<Store>> favoriteStores(Ref ref) {
+  final favIdsAsync = ref.watch(favoriteStoreIdsProvider);
+  return favIdsAsync.when(
+    data: (ids) {
+      if (ids.isEmpty) return const AsyncData([]);
+      final stores = <Store>[];
+      for (final id in ids) {
+        final storeAsync = ref.watch(storeStreamProvider(id));
+        final store = storeAsync.value;
+        if (store != null) stores.add(store);
+      }
+      return AsyncData(stores);
+    },
+    loading: () => const AsyncLoading(),
+    error: AsyncError.new,
+  );
 }

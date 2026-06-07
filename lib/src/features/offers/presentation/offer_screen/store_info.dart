@@ -20,7 +20,7 @@ class StoreInfo extends ConsumerWidget {
         value: offerAsync,
         data: (offer) {
           if (offer == null) {
-            return Center(child: Text('Store not found'.hardcoded));
+            return Center(child: Text(context.loc.storeNotFound));
           }
           return SingleChildScrollView(
             padding: const EdgeInsets.all(Sizes.p16),
@@ -61,7 +61,7 @@ class StoreInfo extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Address'.hardcoded,
+                              context.loc.address,
                               style: Theme.of(context).textTheme.titleSmall,
                             ),
                             gapH4,
@@ -85,7 +85,7 @@ class StoreInfo extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Pickup'.hardcoded,
+                            context.loc.pickup,
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                           gapH4,
@@ -104,7 +104,7 @@ class StoreInfo extends ConsumerWidget {
                         size: 20, color: Colors.grey),
                     gapW8,
                     Text(
-                      'Available'.hardcoded,
+                      context.loc.available,
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const Spacer(),

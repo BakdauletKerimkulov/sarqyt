@@ -25,8 +25,7 @@ double _haversineKm(LatLng a, LatLng b) {
   const r = 6371.0;
   final dLat = _rad(b.latitude - a.latitude);
   final dLng = _rad(b.longitude - a.longitude);
-  final h =
-      sin(dLat / 2) * sin(dLat / 2) +
+  final h = sin(dLat / 2) * sin(dLat / 2) +
       cos(_rad(a.latitude)) *
           cos(_rad(b.latitude)) *
           sin(dLng / 2) *
@@ -36,31 +35,26 @@ double _haversineKm(LatLng a, LatLng b) {
 
 double _rad(double deg) => deg * pi / 180;
 
-@riverpod
-Future<List<OfferWithDistance>> offersWithDistance(Ref ref) async {
-  final offers = await ref.watch(offersListFutureProvider.future);
-  return _addDistance(offers, ref);
-}
-
+/// Streams nearby offers with distance calculated.
+/// Uses geo-filtered Firestore query when location is available,
+/// falls back to all offers when location is unavailable.
 @riverpod
 Stream<List<OfferWithDistance>> offersWithDistanceStream(Ref ref) {
   final position = ref.watch(positionProvider).value;
-  final userLatLng = position != null
-      ? LatLng(position.latitude, position.longitude)
-      : null;
-
   final repo = ref.watch(offerRepositoryProvider);
-  return repo.watchAllOffer().map((offers) {
-    return _mapWithDistance(offers, userLatLng);
-  });
-}
 
-List<OfferWithDistance> _addDistance(List<Offer> offers, Ref ref) {
-  final position = ref.watch(positionProvider).value;
-  final userLatLng = position != null
-      ? LatLng(position.latitude, position.longitude)
-      : null;
-  return _mapWithDistance(offers, userLatLng);
+  if (position != null) {
+    final userLatLng = LatLng(position.latitude, position.longitude);
+    return repo
+        .watchNearbyOffers(
+          latitude: position.latitude,
+          longitude: position.longitude,
+        )
+        .map((offers) => _mapWithDistance(offers, userLatLng));
+  }
+
+  // No location — fall back to all offers, no distance info.
+  return repo.watchAllOffers().map((offers) => _mapWithDistance(offers, null));
 }
 
 List<OfferWithDistance> _mapWithDistance(
@@ -68,9 +62,8 @@ List<OfferWithDistance> _mapWithDistance(
   LatLng? userLatLng,
 ) {
   final result = offers.map((offer) {
-    final distance = userLatLng != null
-        ? _haversineKm(userLatLng, offer.latLng)
-        : null;
+    final distance =
+        userLatLng != null ? _haversineKm(userLatLng, offer.latLng) : null;
     return OfferWithDistance(offer: offer, distanceKm: distance);
   }).toList();
 

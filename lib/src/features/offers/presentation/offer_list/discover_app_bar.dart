@@ -21,7 +21,7 @@ class DiscoverAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.white,
       foregroundColor: AppColors.primary,
-      title: Text('Discover'.hardcoded),
+      title: Text(context.loc.discover),
       centerTitle: true,
       actions: [
         if (onFilterPressed != null)

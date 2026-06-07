@@ -60,9 +60,8 @@ class DiscoverFilterController extends _$DiscoverFilterController {
   void reset() => state = const DiscoverFilter();
 }
 
-@riverpod
-List<OfferWithDistance> filteredOffers(
-  Ref ref,
+/// Pure function — testable without Riverpod.
+List<OfferWithDistance> applyFilter(
   List<OfferWithDistance> offers,
   DiscoverFilter filter,
   Set<String> favoriteStoreIds,
@@ -112,4 +111,14 @@ List<OfferWithDistance> filteredOffers(
   }
 
   return result;
+}
+
+@riverpod
+List<OfferWithDistance> filteredOffers(
+  Ref ref,
+  List<OfferWithDistance> offers,
+  DiscoverFilter filter,
+  Set<String> favoriteStoreIds,
+) {
+  return applyFilter(offers, filter, favoriteStoreIds);
 }

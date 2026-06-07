@@ -56,84 +56,6 @@ final class OfferRepositoryProvider
 
 String _$offerRepositoryHash() => r'c6f18aa32e2e819de85ff87305472e8a4e9ba26c';
 
-@ProviderFor(offersListFuture)
-const offersListFutureProvider = OffersListFutureProvider._();
-
-final class OffersListFutureProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<Offer>>,
-          List<Offer>,
-          FutureOr<List<Offer>>
-        >
-    with $FutureModifier<List<Offer>>, $FutureProvider<List<Offer>> {
-  const OffersListFutureProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'offersListFutureProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$offersListFutureHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<List<Offer>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<Offer>> create(Ref ref) {
-    return offersListFuture(ref);
-  }
-}
-
-String _$offersListFutureHash() => r'ebea806ea973d86ce9bb603ce71e64969edc93b3';
-
-@ProviderFor(offersListStream)
-const offersListStreamProvider = OffersListStreamProvider._();
-
-final class OffersListStreamProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<Offer>>,
-          List<Offer>,
-          Stream<List<Offer>>
-        >
-    with $FutureModifier<List<Offer>>, $StreamProvider<List<Offer>> {
-  const OffersListStreamProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'offersListStreamProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$offersListStreamHash();
-
-  @$internal
-  @override
-  $StreamProviderElement<List<Offer>> $createElement(
-    $ProviderPointer pointer,
-  ) => $StreamProviderElement(pointer);
-
-  @override
-  Stream<List<Offer>> create(Ref ref) {
-    return offersListStream(ref);
-  }
-}
-
-String _$offersListStreamHash() => r'bf7f5254f8e131039edd3dda93351901df8750b5';
-
 @ProviderFor(offerFuture)
 const offerFutureProvider = OfferFutureFamily._();
 
@@ -201,4 +123,73 @@ final class OfferFutureFamily extends $Family
 
   @override
   String toString() => r'offerFutureProvider';
+}
+
+@ProviderFor(offerStream)
+const offerStreamProvider = OfferStreamFamily._();
+
+final class OfferStreamProvider
+    extends $FunctionalProvider<AsyncValue<Offer?>, Offer?, Stream<Offer?>>
+    with $FutureModifier<Offer?>, $StreamProvider<Offer?> {
+  const OfferStreamProvider._({
+    required OfferStreamFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'offerStreamProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$offerStreamHash();
+
+  @override
+  String toString() {
+    return r'offerStreamProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<Offer?> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<Offer?> create(Ref ref) {
+    final argument = this.argument as String;
+    return offerStream(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is OfferStreamProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$offerStreamHash() => r'bd8199ec219bd63045d6dce91ad69833c0fed205';
+
+final class OfferStreamFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<Offer?>, String> {
+  const OfferStreamFamily._()
+    : super(
+        retry: null,
+        name: r'offerStreamProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  OfferStreamProvider call(String id) =>
+      OfferStreamProvider._(argument: id, from: this);
+
+  @override
+  String toString() => r'offerStreamProvider';
 }

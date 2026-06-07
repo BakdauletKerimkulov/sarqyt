@@ -1,3 +1,4 @@
+import 'package:sarqyt/src/utils/async_value_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
@@ -41,7 +42,7 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
+            .showSnackBar(SnackBar(content: Text(humanReadableError(e))));
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -51,6 +52,7 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = context.loc;
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -66,7 +68,7 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
                 children: [
                   Expanded(
                     child: Text(
-                      'Surprise Bags for sale'.hardcoded,
+                      loc.surpriseBagsForSale,
                       style: theme.textTheme.titleLarge
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -79,7 +81,7 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
               ),
               gapH16,
               Text(
-                'Sold: $_sold'.hardcoded,
+                loc.soldCount(_sold),
                 style: theme.textTheme.bodyMedium
                     ?.copyWith(color: Colors.grey),
               ),
@@ -125,7 +127,7 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
               gapH4,
               Center(
                 child: Text(
-                  'Total Surprise Bags'.hardcoded,
+                  loc.totalSurpriseBags,
                   style: theme.textTheme.bodySmall
                       ?.copyWith(color: Colors.grey),
                 ),
@@ -153,7 +155,7 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
                             color: Colors.white,
                           ),
                         )
-                      : Text('Save'.hardcoded),
+                      : Text(loc.save),
                 ),
               ),
             ],

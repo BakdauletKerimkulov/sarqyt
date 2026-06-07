@@ -35,14 +35,14 @@ class IngredientsAllergens extends StatelessWidget {
                     Text('Показать анимацию'),
                     gapH16,
                     Text(
-                      'Your surprise bag is a surprise'.hardcoded,
+                      context.loc.surpriseBagIsSurprise,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     gapH16,
                     Text(_text, textAlign: TextAlign.center),
                     gapH16,
                     PrimaryButton(
-                      text: 'Got it!'.hardcoded,
+                      text: context.loc.gotIt,
                       onPressed: () => context.pop(),
                     ),
                   ],

@@ -7,7 +7,9 @@ import 'package:sarqyt/src/common_widgets/decorated_box_with_shadow.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
+import 'package:sarqyt/src/features/offers/data/favorites_repository.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/offer_app_bar.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
@@ -18,44 +20,91 @@ class OfferScreen extends ConsumerWidget {
 
   final OfferID offerId;
 
+  Future<void> _toggleFavorite(
+    BuildContext context,
+    WidgetRef ref,
+    String storeId,
+    String storeName,
+    bool isFav,
+  ) async {
+    final user = ref.read(authRepositoryProvider).currentUser;
+    if (user == null) return;
+    final repo = ref.read(favoritesRepositoryProvider);
+    try {
+      if (isFav) {
+        await repo.removeFavorite(user.uid, storeId);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(context.loc.removedFromFavorites(storeName))),
+          );
+        }
+      } else {
+        await repo.addFavorite(user.uid, storeId);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.loc.addedToFavorites(storeName))),
+          );
+        }
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.loc.failedToUpdateFavorites)),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final offerAsync = ref.watch(offerFutureProvider(offerId));
+    final offerValue = ref.watch(offerStreamProvider(offerId));
+    final favIds = ref.watch(favoriteStoreIdsProvider).value ?? const {};
 
     return Scaffold(
-      appBar: offerAsync.value == null
+      appBar: offerValue.value == null
           ? AppBar(leading: BackButton(onPressed: () => context.pop()))
           : null,
       body: AsyncValueWidget(
-        value: offerAsync,
+        value: offerValue,
         data: (offer) {
-          return offer != null
-              ? CustomScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    OfferSliverAppBar(offer),
-                    OfferSliverContent(offer: offer),
-                  ],
-                )
-              : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Text('Offer not found'.hardcoded)],
-                  ),
-                );
+          if (offer == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [Text(context.loc.offerNotFound)],
+              ),
+            );
+          }
+          final isFav = favIds.contains(offer.storeId);
+          return CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            slivers: [
+              OfferSliverAppBar(
+                offer,
+                isFavorite: isFav,
+                onFavoriteToggle: () => _toggleFavorite(
+                  context, ref, offer.storeId, offer.storeName, isFav,
+                ),
+              ),
+              OfferSliverContent(offer: offer),
+            ],
+          );
         },
       ),
       bottomNavigationBar: DecoratedBoxWithShadow(
         child: SafeArea(
           child: SizedBox(
             width: double.infinity,
-            child: PrimaryButton(
-              onPressed: () => context.goNamed(
-                ClientRoute.checkout.name,
-                pathParameters: {'id': offerId},
-              ),
-              text: 'Reserve'.hardcoded,
-            ),
+            child: offerValue.value != null && !offerValue.value!.isAvailable
+                ? PrimaryButton(onPressed: null, text: context.loc.soldOut)
+                : PrimaryButton(
+                    onPressed: () => context.goNamed(
+                      ClientRoute.checkout.name,
+                      pathParameters: {'id': offerId},
+                    ),
+                    text: context.loc.reserve,
+                  ),
           ),
         ),
       ),
@@ -107,18 +156,15 @@ class OfferSliverContent extends StatelessWidget {
               ListTile(
                 onTap: () => context.goNamed(
                   ClientRoute.store.name,
-                  pathParameters: {
-                    'id': offer.id,
-                    'offerId': offer.id,
-                  },
+                  pathParameters: {'id': offer.id, 'offerId': offer.id},
                 ),
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.location_on),
                 title: Text(
-                  offer.storeAddress ?? 'Address is not specified'.hardcoded,
+                  offer.storeAddress ?? context.loc.addressNotSpecified,
                   style: const TextStyle(color: AppColors.primary),
                 ),
-                subtitle: Text('More information about store'.hardcoded),
+                subtitle: Text(context.loc.moreInfoAboutStore),
                 trailing: const Icon(
                   Icons.chevron_right,
                   color: AppColors.primary,
@@ -127,21 +173,18 @@ class OfferSliverContent extends StatelessWidget {
               const Divider(),
               gapH8,
               Text(
-                'Status: ${offer.status.label()}'.hardcoded,
+                context.loc.offerStatus(offer.status.label()),
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   color: AppColors.primary,
                 ),
               ),
               gapH8,
-              Text('Available items: ${offer.quantity}'.hardcoded),
+              Text(context.loc.availableItemsCount(offer.quantity)),
               gapH16,
               const Divider(),
               gapH12,
-              Text(
-                'Offer details are loaded from store and product snapshot at creation time.'
-                    .hardcoded,
-              ),
+              Text(context.loc.offerDetailsSnapshot),
               const SizedBox(height: 40),
             ],
           ),

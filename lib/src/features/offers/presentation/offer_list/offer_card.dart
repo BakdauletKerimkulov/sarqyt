@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sarqyt/src/common_widgets/animated_favorite_button.dart';
 import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/common_widgets/info_badge.dart';
 import 'package:sarqyt/src/common_widgets/rating_icon.dart';
@@ -44,16 +45,10 @@ class OfferCard extends StatelessWidget {
                 Positioned(
                   right: Sizes.p12,
                   top: Sizes.p12,
-                  child: GestureDetector(
-                    onTap: onFavoriteToggle,
-                    child: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? Colors.red : Colors.white,
-                      size: 28,
-                      shadows: const [
-                        Shadow(blurRadius: 4, color: Colors.black45),
-                      ],
-                    ),
+                  child: AnimatedFavoriteButton(
+                    isFavorite: isFavorite,
+                    storeName: offer.storeName,
+                    onToggle: onFavoriteToggle,
                   ),
                 ),
 

@@ -27,7 +27,7 @@ class RatingInformation extends StatelessWidget {
             RatingIcon(rating: rating.average, size: Sizes.p8),
             gapW16,
             Text(
-              '${rating.average} / 5.0'.hardcoded,
+              context.loc.ratingDisplay(rating.average.toString()),
               style: TextStyle(
                 fontSize: Sizes.p24,
                 fontWeight: FontWeight.w600,
@@ -37,12 +37,12 @@ class RatingInformation extends StatelessWidget {
         ),
         gapH16,
         // TODO: Добавить хайлайты
-        Text('Добавить хайлайты'.hardcoded),
+        Text(context.loc.addHighlights),
         Text('Delicious food'),
-        Text('Quick collection'.hardcoded),
-        Text('Friendly staff'.hardcoded),
+        Text(context.loc.quickCollection),
+        Text(context.loc.friendlyStaff),
         gapH16,
-        Text('Based on 122 ratings over the past 2 months'.hardcoded),
+        Text(context.loc.basedOnRatings),
       ],
     );
   }

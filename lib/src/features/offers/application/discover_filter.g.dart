@@ -128,7 +128,7 @@ final class FilteredOffersProvider
   }
 }
 
-String _$filteredOffersHash() => r'80146c1def69d9876e127684f93629c87abf8dcc';
+String _$filteredOffersHash() => r'8379a4a9774631c8faa0ae71c11775fdeaf71509';
 
 final class FilteredOffersFamily extends $Family
     with

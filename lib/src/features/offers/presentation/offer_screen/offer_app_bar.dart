@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sarqyt/src/common_widgets/animated_favorite_button.dart';
 import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/common_widgets/info_badge.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
@@ -7,9 +8,16 @@ import 'package:sarqyt/src/features/offers/domain/offer.dart';
 import 'package:share_plus/share_plus.dart';
 
 class OfferSliverAppBar extends ConsumerWidget {
-  const OfferSliverAppBar(this.offer, {super.key});
+  const OfferSliverAppBar(
+    this.offer, {
+    super.key,
+    this.isFavorite = false,
+    this.onFavoriteToggle,
+  });
 
   final Offer offer;
+  final bool isFavorite;
+  final VoidCallback? onFavoriteToggle;
 
   static const _expandedHeight = 250.0;
 
@@ -20,6 +28,11 @@ class OfferSliverAppBar extends ConsumerWidget {
       expandedHeight: _expandedHeight,
       stretch: true,
       actions: [
+        AnimatedFavoriteButton(
+          isFavorite: isFavorite,
+          storeName: offer.storeName,
+          onToggle: onFavoriteToggle,
+        ),
         IconButton(
           icon: const Icon(Icons.share),
           onPressed: () => SharePlus.instance.share(

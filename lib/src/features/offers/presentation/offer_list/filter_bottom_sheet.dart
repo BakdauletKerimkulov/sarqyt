@@ -24,7 +24,7 @@ class FilterBottomSheet extends ConsumerWidget {
             Row(
               children: [
                 Text(
-                  'Filters'.hardcoded,
+                  context.loc.filters,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const Spacer(),
@@ -33,7 +33,7 @@ class FilterBottomSheet extends ConsumerWidget {
                     ctrl.reset();
                     Navigator.pop(context);
                   },
-                  child: Text('Reset'.hardcoded),
+                  child: Text(context.loc.reset),
                 ),
               ],
             ),
@@ -42,8 +42,8 @@ class FilterBottomSheet extends ConsumerWidget {
             // Favorites
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              activeColor: AppColors.primary,
-              title: Text('Favorites only'.hardcoded),
+              activeThumbColor: AppColors.primary,
+              title: Text(context.loc.favoritesOnly),
               secondary: const Icon(Icons.favorite, color: Colors.red),
               value: filter.favoritesOnly,
               onChanged: (_) => ctrl.toggleFavoritesOnly(),
@@ -54,7 +54,7 @@ class FilterBottomSheet extends ConsumerWidget {
 
             // Pickup time
             Text(
-              'Pickup time'.hardcoded,
+              context.loc.pickupTime,
               style: Theme.of(context).textTheme.titleSmall,
             ),
             gapH12,
@@ -63,9 +63,9 @@ class FilterBottomSheet extends ConsumerWidget {
               children: PickupTimeFilter.values.map((t) {
                 return ChoiceChip(
                   label: Text(switch (t) {
-                    PickupTimeFilter.all => 'All'.hardcoded,
-                    PickupTimeFilter.today => 'Today'.hardcoded,
-                    PickupTimeFilter.tomorrow => 'Tomorrow'.hardcoded,
+                    PickupTimeFilter.all => context.loc.all,
+                    PickupTimeFilter.today => context.loc.today,
+                    PickupTimeFilter.tomorrow => context.loc.tomorrow,
                   }),
                   selected: filter.pickupTime == t,
                   selectedColor: AppColors.primary.withAlpha(30),
@@ -77,7 +77,7 @@ class FilterBottomSheet extends ConsumerWidget {
 
             // Sort by
             Text(
-              'Sort by'.hardcoded,
+              context.loc.sortBy,
               style: Theme.of(context).textTheme.titleSmall,
             ),
             gapH12,
@@ -86,9 +86,9 @@ class FilterBottomSheet extends ConsumerWidget {
               children: SortBy.values.map((s) {
                 return ChoiceChip(
                   label: Text(switch (s) {
-                    SortBy.distance => 'Nearest'.hardcoded,
-                    SortBy.price => 'Cheapest'.hardcoded,
-                    SortBy.time => 'Soonest'.hardcoded,
+                    SortBy.distance => context.loc.nearest,
+                    SortBy.price => context.loc.cheapest,
+                    SortBy.time => context.loc.soonest,
                   }),
                   selected: filter.sortBy == s,
                   selectedColor: AppColors.primary.withAlpha(30),
@@ -111,7 +111,7 @@ class FilterBottomSheet extends ConsumerWidget {
                   ),
                 ),
                 onPressed: () => Navigator.pop(context),
-                child: Text('Apply'.hardcoded),
+                child: Text(context.loc.apply),
               ),
             ),
           ],

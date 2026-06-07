@@ -10,49 +10,53 @@ class FakeClientOfferRepository implements ClientOfferRepository {
   final _offers = InMemoryStore(kTestOffers);
 
   @override
-  Future<List<Offer>> fetchAllOffer({
-    double latitude = 43.238949,
-    double longitude = 43.238949,
-    double radius = 21,
-    List<String> itemCategories = const [],
-    String? pickupEarliest,
-    String? pickupLatest,
-    bool hiddenOnly = false,
-    bool weCareOnly = false,
+  Stream<List<Offer>> watchNearbyOffers({
+    required double latitude,
+    required double longitude,
+    int precision = 4,
   }) {
+    return watchAllOffers();
+  }
+
+  @override
+  Future<List<Offer>> fetchNearbyOffers({
+    required double latitude,
+    required double longitude,
+    int precision = 4,
+  }) async {
     final now = DateTime.now();
-    final visibleOffers = _offers.value.where((offer) {
-      final visibleFrom =
-          offer.visibleFrom ??
-          offer.pickupStartTime.subtract(const Duration(days: 1));
+    return _offers.value.where((offer) {
       return offer.status == OfferStatus.active &&
-          !visibleFrom.isAfter(now) &&
           offer.pickupEndTime.isAfter(now);
-    }).toList()..sort((a, b) => a.pickupStartTime.compareTo(b.pickupStartTime));
-    return Future.value(visibleOffers);
+    }).toList();
+  }
+
+  @override
+  Stream<List<Offer>> watchAllOffers() {
+    return _offers.stream.map((offers) {
+      final now = DateTime.now();
+      return offers
+          .where((o) =>
+              o.status == OfferStatus.active && o.pickupEndTime.isAfter(now))
+          .toList();
+    });
   }
 
   @override
   Future<Offer?> getOfferById(String id) async {
-    return Future.value(_getOffer(_offers.value, id));
-  }
-
-  Offer? _getOffer(List<Offer> offers, String id) {
-    return offers.firstWhere((o) => o.productId == id);
+    return _offers.value.cast<Offer?>().firstWhere(
+          (o) => o?.productId == id,
+          orElse: () => null,
+        );
   }
 
   @override
-  Stream<List<Offer>> watchAllOffer({
-    double latitude = 0.0,
-    double longitude = 0.0,
-    double radius = 10,
-    List<String> itemCategories = const [],
-    String? pickupEarliest,
-    String? pickupLatest,
-    bool hiddenOnly = false,
-    bool weCareOnly = false,
-  }) {
-    // TODO: implement watchAllOffer
-    throw UnimplementedError();
+  Stream<Offer?> watchOfferByIdStream(String id) {
+    return _offers.stream.map(
+      (offers) => offers.cast<Offer?>().firstWhere(
+            (o) => o?.productId == id,
+            orElse: () => null,
+          ),
+    );
   }
 }

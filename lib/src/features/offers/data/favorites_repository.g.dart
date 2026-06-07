@@ -95,3 +95,50 @@ final class FavoriteStoreIdsProvider
 }
 
 String _$favoriteStoreIdsHash() => r'09673170bd914c8886adbce4e6243797642c4fec';
+
+@ProviderFor(favoriteStores)
+const favoriteStoresProvider = FavoriteStoresProvider._();
+
+final class FavoriteStoresProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Store>>,
+          AsyncValue<List<Store>>,
+          AsyncValue<List<Store>>
+        >
+    with $Provider<AsyncValue<List<Store>>> {
+  const FavoriteStoresProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoriteStoresProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoriteStoresHash();
+
+  @$internal
+  @override
+  $ProviderElement<AsyncValue<List<Store>>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AsyncValue<List<Store>> create(Ref ref) {
+    return favoriteStores(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<List<Store>> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<List<Store>>>(value),
+    );
+  }
+}
+
+String _$favoriteStoresHash() => r'6edfe363e4ae5a7c9e589ff815233b12a4d6099d';
