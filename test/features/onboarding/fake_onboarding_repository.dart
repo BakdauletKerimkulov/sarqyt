@@ -4,12 +4,8 @@ import 'package:sarqyt/src/features/onboarding/data/onboarding_repository.dart';
 class FakeOnboardingRepository implements OnboardingRepository {
   bool failCreateDraft = false;
   bool failCompleteMerchant = false;
-  bool failSkipOnboarding = false;
-
   bool createDraftCalled = false;
   bool completeMerchantCalled = false;
-  bool skipOnboardingCalled = false;
-  String? lastSkipStoreId;
 
   @override
   Future<String> createStoreDraft(Map<String, dynamic> data) async {
@@ -25,15 +21,6 @@ class FakeOnboardingRepository implements OnboardingRepository {
     }
     completeMerchantCalled = true;
     return 'store-id-test';
-  }
-
-  @override
-  Future<void> skipOptionalOnboarding(String storeId) async {
-    if (failSkipOnboarding) {
-      throw Exception('skipOptionalOnboarding CF failed');
-    }
-    skipOnboardingCalled = true;
-    lastSkipStoreId = storeId;
   }
 
   @override

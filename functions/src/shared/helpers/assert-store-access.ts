@@ -9,7 +9,9 @@ import { StoreShipDoc } from "../types/store-ship-doc";
  * Phase 1 fallback: if no storeShip exists, checks `stores/{storeId}.ownerId`
  * for backward compatibility with documents created before the migration.
  *
- * @returns The storeShip document data (or a synthetic one for the ownerId fallback).
+ * @param {string} uid User ID.
+ * @param {string} storeId Store ID.
+ * @return {Promise<StoreShipDoc>} The storeShip document data.
  */
 export async function assertStoreAccess(
   uid: string,

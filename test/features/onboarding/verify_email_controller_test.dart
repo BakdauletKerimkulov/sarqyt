@@ -30,9 +30,6 @@ class _TestAppUser extends AppUser {
   }
 
   @override
-  Future<void> delete() async {}
-
-  @override
   Future<UserRole> getRole() async => UserRole.partner;
 }
 

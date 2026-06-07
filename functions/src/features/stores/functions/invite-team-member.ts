@@ -66,9 +66,9 @@ export const inviteTeamMember = onCall(async (req) => {
     }
 
     // Create storeShip for invitee
-    const permissions = data.permissions?.length
-      ? data.permissions
-      : DEFAULT_PERMISSIONS[data.role] ?? [];
+    const permissions = data.permissions?.length ?
+      data.permissions :
+      DEFAULT_PERMISSIONS[data.role] ?? [];
 
     const now = serverTimestamp();
     const shipId = `${data.storeId}_${inviteeUid}`;
