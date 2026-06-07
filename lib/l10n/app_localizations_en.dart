@@ -976,4 +976,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get termsAndConditionsReserve =>
       'By reserving this meal you agree to Sarqyt\'\'s terms & conditions';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String addedToFavorites(String storeName) {
+    return '$storeName added to favorites';
+  }
+
+  @override
+  String removedFromFavorites(String storeName) {
+    return '$storeName removed from favorites';
+  }
+
+  @override
+  String get failedToUpdateFavorites => 'Failed to update favorites';
+
+  @override
+  String get noFavoriteRestaurants =>
+      'You don\'\'t have any favorite restaurants yet';
+
+  @override
+  String get addToFavorites => 'Add to favorites';
+
+  @override
+  String get removeFromFavorites => 'Remove from favorites';
 }

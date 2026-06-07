@@ -391,5 +391,23 @@
   "verifyEmailMessage": "We''ve sent a verification email to your inbox. Open the link to verify your account.",
   "onboardingPrivacyNote": "By continuing you accept our privacy policy",
 
-  "termsAndConditionsReserve": "By reserving this meal you agree to Sarqyt''s terms & conditions"
+  "termsAndConditionsReserve": "By reserving this meal you agree to Sarqyt''s terms & conditions",
+
+  "favorites": "Favorites",
+  "addedToFavorites": "{storeName} added to favorites",
+  "@addedToFavorites": {
+    "placeholders": {
+      "storeName": {"type": "String"}
+    }
+  },
+  "removedFromFavorites": "{storeName} removed from favorites",
+  "@removedFromFavorites": {
+    "placeholders": {
+      "storeName": {"type": "String"}
+    }
+  },
+  "failedToUpdateFavorites": "Failed to update favorites",
+  "noFavoriteRestaurants": "You don''t have any favorite restaurants yet",
+  "addToFavorites": "Add to favorites",
+  "removeFromFavorites": "Remove from favorites"
 }

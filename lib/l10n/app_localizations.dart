@@ -1959,6 +1959,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'By reserving this meal you agree to Sarqyt\'\'s terms & conditions'**
   String get termsAndConditionsReserve;
+
+  /// No description provided for @favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// No description provided for @addedToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'{storeName} added to favorites'**
+  String addedToFavorites(String storeName);
+
+  /// No description provided for @removedFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'{storeName} removed from favorites'**
+  String removedFromFavorites(String storeName);
+
+  /// No description provided for @failedToUpdateFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update favorites'**
+  String get failedToUpdateFavorites;
+
+  /// No description provided for @noFavoriteRestaurants.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'\'t have any favorite restaurants yet'**
+  String get noFavoriteRestaurants;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFromFavorites;
 }
 
 class _AppLocalizationsDelegate

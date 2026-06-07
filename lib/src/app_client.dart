@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sarqyt/l10n/app_localizations.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
-import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 
 class MyAppClient extends ConsumerWidget {
@@ -46,7 +46,9 @@ class MyAppClient extends ConsumerWidget {
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       restorationScopeId: 'appClient',
-      onGenerateTitle: (context) => 'Sarqyt'.hardcoded,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
     );
   }
 }

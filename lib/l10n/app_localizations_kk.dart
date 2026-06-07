@@ -972,4 +972,29 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get termsAndConditionsReserve =>
       'Бұл тамақты брондай отырып, Sarqyt шарттарын қабылдайсыз';
+
+  @override
+  String get favorites => 'Таңдаулылар';
+
+  @override
+  String addedToFavorites(String storeName) {
+    return '$storeName таңдаулыларға қосылды';
+  }
+
+  @override
+  String removedFromFavorites(String storeName) {
+    return '$storeName таңдаулылардан алынды';
+  }
+
+  @override
+  String get failedToUpdateFavorites => 'Таңдаулыларды жаңарту мүмкін болмады';
+
+  @override
+  String get noFavoriteRestaurants => 'Сізде әлі таңдаулы мейрамханалар жоқ';
+
+  @override
+  String get addToFavorites => 'Таңдаулыларға қосу';
+
+  @override
+  String get removeFromFavorites => 'Таңдаулылардан алу';
 }

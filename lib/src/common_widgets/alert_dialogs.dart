@@ -92,8 +92,8 @@ Future<void> showExceptionAlertDialog({
   context: context,
   title: title,
   content: exception.toString(),
-  defaultActionText: 'OK'.hardcoded,
+  defaultActionText: context.loc.ok,
 );
 
 Future<void> showNotImplementedAlertDialog({required BuildContext context}) =>
-    showAlertDialog(context: context, title: 'Not implemented'.hardcoded);
+    showAlertDialog(context: context, title: context.loc.notImplemented);

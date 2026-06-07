@@ -16,7 +16,9 @@ class AppBootstrap {
     // * Initialize user token refresh service (forces ID token refresh
     // * when server updates custom claims via refreshTime in users/{uid})
     container.read(userTokenRefreshServiceProvider);
-    container.read(initPushNotificationsProvider);
+    // * listen (not read) so the provider stays subscribed and re-runs when
+    // * authStateChanges emits a signed-in user.
+    container.listen(initPushNotificationsProvider, (_, __) {});
     final errorLogger = container.read(errorLoggerProvider);
     registerErrorHandler(errorLogger);
 
@@ -24,16 +26,18 @@ class AppBootstrap {
   }
 
   void registerErrorHandler(ErrorLogger errorLogger) {
-    // * Send Flutter errors to Crashlytics
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.presentError(details);
       errorLogger.logError(details.exception, details.stack);
-      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+      if (!kIsWeb) {
+        FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+      }
     };
-    // * Handle errors from the underlying platform/OS
     PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
       errorLogger.logError(error, stack);
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      if (!kIsWeb) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      }
       return true;
     };
 

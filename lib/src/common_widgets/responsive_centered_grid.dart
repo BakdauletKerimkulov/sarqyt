@@ -70,7 +70,7 @@ class ResponsiveSliverAlignedGrid extends StatelessWidget {
       return SliverToBoxAdapter(
         child: Center(
           child: Text(
-            'No products found'.hardcoded,
+            context.loc.noProductsFound,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),

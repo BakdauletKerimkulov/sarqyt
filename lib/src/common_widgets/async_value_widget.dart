@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sarqyt/src/common_widgets/error_message_widget.dart';
+import 'package:sarqyt/src/utils/async_value_ui.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 
 /// A reusable widget to provide default loading and error widgets when working
@@ -19,7 +20,7 @@ class AsyncValueWidget<T> extends StatelessWidget {
       data: data,
       error: (e, st) {
         debugPrint(st.toString());
-        return Center(child: ErrorMessageWidget(e.toString()));
+        return Center(child: ErrorMessageWidget(humanReadableError(e)));
       },
 
       loading: () => Center(
@@ -58,7 +59,7 @@ class AsyncValueSliverWidget<T> extends StatelessWidget {
         ),
       ),
       error: (e, st) => SliverToBoxAdapter(
-        child: Center(child: ErrorMessageWidget(e.toString())),
+        child: Center(child: ErrorMessageWidget(humanReadableError(e))),
       ),
     );
   }

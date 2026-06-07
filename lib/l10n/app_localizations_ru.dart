@@ -973,4 +973,29 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get termsAndConditionsReserve =>
       'Бронируя этот обед, вы соглашаетесь с условиями Sarqyt';
+
+  @override
+  String get favorites => 'Избранное';
+
+  @override
+  String addedToFavorites(String storeName) {
+    return '$storeName добавлен в избранное';
+  }
+
+  @override
+  String removedFromFavorites(String storeName) {
+    return '$storeName удалён из избранного';
+  }
+
+  @override
+  String get failedToUpdateFavorites => 'Не удалось обновить избранное';
+
+  @override
+  String get noFavoriteRestaurants => 'У вас пока нет избранных ресторанов';
+
+  @override
+  String get addToFavorites => 'Добавить в избранное';
+
+  @override
+  String get removeFromFavorites => 'Убрать из избранного';
 }

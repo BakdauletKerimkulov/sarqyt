@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 
 /// Primary button based on [ElevatedButton]. Useful for CTAs in the app.
@@ -21,15 +22,23 @@ class PrimaryButton extends StatelessWidget {
     return SizedBox(
       height: Sizes.p48,
       child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: Colors.grey.shade300,
+          disabledForegroundColor: Colors.grey.shade500,
+        ),
         onPressed: onPressed,
         child: isLoading
             ? const CircularProgressIndicator(color: Colors.white)
             : Text(
                 text,
                 textAlign: TextAlign.center,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge!.copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: onPressed != null
+                          ? Colors.white
+                          : Colors.grey.shade500,
+                    ),
               ),
       ),
     );

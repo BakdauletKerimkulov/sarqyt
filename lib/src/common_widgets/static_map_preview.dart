@@ -30,7 +30,7 @@ class StaticMapPreview extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.map_outlined),
-              Text('Location not found'.hardcoded),
+              Text(context.loc.locationNotFound),
             ],
           ),
         ),

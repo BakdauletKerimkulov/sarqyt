@@ -32,6 +32,8 @@ class CustomImage extends StatelessWidget {
               imageUrl: localhostFriendlyImageUrl(imageUrl),
               width: double.infinity,
               fit: fit,
+              errorWidget: (_, __, ___) =>
+                  Image.asset('assets/icons/error-image.png', fit: fit),
             )
           : Image.asset(imageUrl, fit: fit, width: double.infinity),
     );
