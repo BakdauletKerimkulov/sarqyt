@@ -440,5 +440,13 @@
   "storingAndAllergensLabel": "Storing and allergens",
   "storingAndAllergensHint": "e.g. Store in fridge, may contain nuts",
   "storingAndAllergensDescription": "You can add recommendations for storing and handling food, including warnings about allergens, here, and they will be shown in the app.",
-  "descriptionHint": "Describe your product"
+  "descriptionHint": "Describe your product",
+
+  "orderHistory": "Order history",
+  "recentOrders": "Recent orders",
+  "noActiveOrders": "No active orders",
+  "statusConfirmed": "Confirmed",
+  "statusPreparing": "Preparing",
+  "statusReady": "Ready",
+  "statusCompleted": "Completed"
 }

@@ -361,5 +361,13 @@
   "storingAndAllergensLabel": "Хранение и аллергены",
   "storingAndAllergensHint": "Напр. хранить в холодильнике, может содержать орехи",
   "storingAndAllergensDescription": "Здесь вы можете добавить рекомендации по хранению и обращению с продуктами, включая информацию об аллергенах. Они будут показаны в приложении.",
-  "descriptionHint": "Опишите ваш продукт"
+  "descriptionHint": "Опишите ваш продукт",
+
+  "orderHistory": "История заказов",
+  "recentOrders": "Недавние заказы",
+  "noActiveOrders": "Нет активных заказов",
+  "statusConfirmed": "Подтверждён",
+  "statusPreparing": "Готовится",
+  "statusReady": "Готов к выдаче",
+  "statusCompleted": "Завершён"
 }

@@ -1066,4 +1066,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get descriptionHint => 'Describe your product';
+
+  @override
+  String get orderHistory => 'Order history';
+
+  @override
+  String get recentOrders => 'Recent orders';
+
+  @override
+  String get noActiveOrders => 'No active orders';
+
+  @override
+  String get statusConfirmed => 'Confirmed';
+
+  @override
+  String get statusPreparing => 'Preparing';
+
+  @override
+  String get statusReady => 'Ready';
+
+  @override
+  String get statusCompleted => 'Completed';
 }
