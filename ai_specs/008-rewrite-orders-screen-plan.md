@@ -37,11 +37,11 @@ Redesign the client orders screen to show active orders with a visual 4-dot prog
 ### Phase 2 — Order history screen + routing
 **Goal:** `/orders/history` route works, `OrderHistoryScreen` shows all orders chronologically, bottom nav stays visible.
 
-- [ ] `lib/src/routing/client_router.dart` — add `orderHistory` to `ClientRoute` enum. Add `GoRoute(path: 'history', name: ClientRoute.orderHistory.name)` as child of `/orders` **before** the `:orderId` route to avoid dynamic segment conflict.
-- [ ] `lib/src/features/orders/presentation/client/order_history_screen.dart` — create screen: `ConsumerWidget`, watches `customerOrdersStreamProvider`, renders all orders newest-first as compact cards via `AsyncValueWidget`. Empty state if no orders. Back button in AppBar.
-- [ ] `lib/src/features/orders/presentation/client/orders_screen.dart` — wire AppBar history `IconButton` to `context.pushNamed(ClientRoute.orderHistory.name)`
-- [ ] TDD: `OrdersScreen` AppBar contains history icon; tapping navigates to `orderHistory` route
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] `lib/src/routing/client_router.dart` — add `orderHistory` to `ClientRoute` enum. Add `GoRoute(path: 'history', name: ClientRoute.orderHistory.name)` as child of `/orders` **before** the `:orderId` route to avoid dynamic segment conflict.
+- [x] `lib/src/features/orders/presentation/client/order_history_screen.dart` — create screen: `ConsumerWidget`, watches `customerOrdersStreamProvider`, renders all orders newest-first as compact cards via `AsyncValueWidget`. Empty state if no orders. Back button in AppBar.
+- [x] `lib/src/features/orders/presentation/client/orders_screen.dart` — wire AppBar history `IconButton` to `context.pushNamed(ClientRoute.orderHistory.name)`
+- [x] TDD: `OrdersScreen` AppBar contains history icon; tapping navigates to `orderHistory` route (already implemented)
+- [x] Verify: `flutter analyze && flutter test`
 
 ### Phase 3 — Detail screen progress line + final polish
 **Goal:** `OrderDetailScreen` shows progress line for active/completed orders, badge for cancelled/expired. All requirements validated.
