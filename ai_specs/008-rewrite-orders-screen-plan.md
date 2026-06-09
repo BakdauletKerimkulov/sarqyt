@@ -2,7 +2,7 @@
 
 Source: `ai_specs/008-rewrite-orders-screen-spec.md`
 Created: 2026-06-09
-Status: in-progress
+Status: complete
 
 ## Overview
 Redesign the client orders screen to show active orders with a visual 4-dot progress line, a "Recent orders" section (max 3), and a dedicated order history screen. The existing `_OrderCard` is replaced with three specialized widgets: inline expanded view (1 active), active order cards (>1 active), and recent order cards. `OrderDetailScreen` gets the progress line for active/completed orders while cancelled/expired keep the badge. New `/orders/history` route added to `ClientRoute` enum.
@@ -46,10 +46,10 @@ Redesign the client orders screen to show active orders with a visual 4-dot prog
 ### Phase 3 — Detail screen progress line + final polish
 **Goal:** `OrderDetailScreen` shows progress line for active/completed orders, badge for cancelled/expired. All requirements validated.
 
-- [ ] `lib/src/features/orders/presentation/client/order_detail_screen.dart` — replace `Center(child: OrderStatusBadge(...))` (line 55) with: if status is confirmed/preparing/readyForPickup/completed → `OrderStatusProgressLine`, else → `OrderStatusBadge`
-- [ ] TDD: `OrderDetailScreen` for `preparing` order shows progress line, for `completed` shows fully-filled progress line, for `cancelled` shows badge
-- [ ] TDD: `OrdersScreen` with 1 active order shows inline view; with 2+ shows cards; with 0 active and 5 past shows empty state + 3 recent cards
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] `lib/src/features/orders/presentation/client/order_detail_screen.dart` — replace `Center(child: OrderStatusBadge(...))` (line 55) with: if status is confirmed/preparing/readyForPickup/completed → `OrderStatusProgressLine`, else → `OrderStatusBadge`
+- [x] TDD: `OrderDetailScreen` for `preparing` order shows progress line, for `completed` shows fully-filled progress line, for `cancelled` shows badge
+- [x] TDD: `OrdersScreen` with 1 active order shows inline view; with 2+ shows cards; with 0 active and 5 past shows empty state + 3 recent cards
+- [x] Verify: `flutter analyze && flutter test`
 
 ## Data layer changes
 _None._ Existing `customerOrdersStreamProvider` and `customerOrderStreamProvider` are sufficient.
