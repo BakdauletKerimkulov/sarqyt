@@ -30,8 +30,7 @@ class OrdersScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.history),
             tooltip: context.loc.orderHistory,
-            // Route will be wired in Phase 2 when orderHistory is added to ClientRoute
-            onPressed: () {},
+            onPressed: () => context.pushNamed(ClientRoute.orderHistory.name),
           ),
         ],
       ),
