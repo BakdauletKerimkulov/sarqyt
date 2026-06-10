@@ -2001,6 +2001,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove from favorites'**
   String get removeFromFavorites;
+
+  /// No description provided for @loadingPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading, please wait...'**
+  String get loadingPleaseWait;
 }
 
 class _AppLocalizationsDelegate

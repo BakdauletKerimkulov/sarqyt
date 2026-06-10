@@ -997,4 +997,7 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get removeFromFavorites => 'Таңдаулылардан алу';
+
+  @override
+  String get loadingPleaseWait => 'Жүктелуде, күте тұрыңыз...';
 }

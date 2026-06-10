@@ -330,5 +330,7 @@
   "failedToUpdateFavorites": "Таңдаулыларды жаңарту мүмкін болмады",
   "noFavoriteRestaurants": "Сізде әлі таңдаулы мейрамханалар жоқ",
   "addToFavorites": "Таңдаулыларға қосу",
-  "removeFromFavorites": "Таңдаулылардан алу"
+  "removeFromFavorites": "Таңдаулылардан алу",
+
+  "loadingPleaseWait": "Жүктелуде, күте тұрыңыз..."
 }

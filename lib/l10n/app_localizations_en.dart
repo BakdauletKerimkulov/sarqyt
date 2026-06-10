@@ -1002,4 +1002,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get removeFromFavorites => 'Remove from favorites';
+
+  @override
+  String get loadingPleaseWait => 'Loading, please wait...';
 }

@@ -236,7 +236,7 @@ void main() {
       );
     });
 
-    test('/login → stay', () {
+    test('/login → /loading (redirects to loading screen)', () {
       expect(
         _redirect(
           user: partner,
@@ -244,7 +244,7 @@ void main() {
           storeShipsLoaded: false,
           path: '/login',
         ),
-        isNull,
+        '/loading',
       );
     });
   });
@@ -337,6 +337,40 @@ void main() {
           role: UserRole.partner,
           storeShips: _completedShips,
           path: '/forbidden',
+        ),
+        '/stores',
+      );
+    });
+  });
+
+  group('Layer 6 — Partner on /login with storeShips not yet loaded', () {
+    late FakeAppUser partner;
+    setUp(() => partner = _user(role: UserRole.partner));
+
+    test('/login → /loading (immediate transition to loading screen)', () {
+      expect(
+        _redirect(
+          user: partner,
+          role: UserRole.partner,
+          storeShipsLoaded: false,
+          path: '/login',
+        ),
+        '/loading',
+      );
+    });
+  });
+
+  group('Layer 8 — Partner done redirects away from /loading', () {
+    late FakeAppUser partner;
+    setUp(() => partner = _user(role: UserRole.partner));
+
+    test('/loading → /stores', () {
+      expect(
+        _redirect(
+          user: partner,
+          role: UserRole.partner,
+          storeShips: _completedShips,
+          path: '/loading',
         ),
         '/stores',
       );

@@ -330,5 +330,7 @@
   "failedToUpdateFavorites": "Не удалось обновить избранное",
   "noFavoriteRestaurants": "У вас пока нет избранных ресторанов",
   "addToFavorites": "Добавить в избранное",
-  "removeFromFavorites": "Убрать из избранного"
+  "removeFromFavorites": "Убрать из избранного",
+
+  "loadingPleaseWait": "Загрузка, подождите..."
 }

@@ -23,6 +23,7 @@ import 'package:sarqyt/src/features/onboarding/presentation/inbound/verify_email
 import 'package:sarqyt/src/features/onboarding/presentation/welcome/welcome_screen.dart';
 import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
+import 'package:sarqyt/src/routing/business_loading_screen.dart';
 import 'package:sarqyt/src/routing/business_redirect_state.dart';
 import 'package:sarqyt/src/routing/forbidden_page.dart';
 import 'package:sarqyt/src/routing/store_startup.dart';
@@ -43,6 +44,7 @@ StoreShip currentStoreShip(Ref ref) => throw UnimplementedError(
 
 enum BusinessRoute {
   login,
+  loading,
   onboarding,
   inbound,
   createAccount,
@@ -87,6 +89,7 @@ String? businessRedirect({
   final onInbound = path.startsWith('/onboarding/inbound');
   final onWelcome = path.startsWith('/onboarding/welcome');
   final onForbidden = path.startsWith('/forbidden');
+  final onLoading = path.startsWith('/loading');
 
   // Layer 1: Unauthenticated — no need to wait for role/storeShips
   if (user == null) {
@@ -121,8 +124,9 @@ String? businessRedirect({
   }
 
   // Layer 6: Partner — wait for storeShips before deciding welcome vs stores.
-  // This avoids bouncing the user from /stores to /onboarding/welcome and back.
+  // Redirect /login → /loading so user sees a loading screen, not a frozen form.
   if (!redirectState.storeShipsLoaded) {
+    if (onLogin) return '/loading';
     return null;
   }
 
@@ -133,7 +137,7 @@ String? businessRedirect({
   }
 
   // Layer 8: Partner done
-  if (onLogin || onOnboarding || onForbidden) return '/stores';
+  if (onLogin || onOnboarding || onForbidden || onLoading) return '/stores';
   return null;
 }
 
@@ -202,6 +206,12 @@ GoRouter businessRouter(Ref ref) {
         path: '/login',
         name: BusinessRoute.login.name,
         builder: (context, state) => const SignInBusinessScreen(),
+      ),
+
+      GoRoute(
+        path: '/loading',
+        name: BusinessRoute.loading.name,
+        builder: (context, state) => const BusinessLoadingScreen(),
       ),
 
       GoRoute(

@@ -998,4 +998,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get removeFromFavorites => 'Убрать из избранного';
+
+  @override
+  String get loadingPleaseWait => 'Загрузка, подождите...';
 }
