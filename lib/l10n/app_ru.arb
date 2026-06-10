@@ -253,6 +253,9 @@
   "chooseAStore": "Выберите магазин",
   "noStoresFound": "Магазины не найдены",
   "ratingDisplay": "{average} / 5.0",
+  "noReviewsYet": "Отзывов пока нет",
+  "allReviews": "Все отзывы",
+
   "addHighlights": "Добавить особенности",
   "quickCollection": "Быстрая выдача",
   "friendlyStaff": "Дружелюбный персонал",

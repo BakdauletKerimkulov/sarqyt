@@ -809,6 +809,12 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get noReviewsYet => 'Отзывов пока нет';
+
+  @override
+  String get allReviews => 'Все отзывы';
+
+  @override
   String get addHighlights => 'Добавить особенности';
 
   @override

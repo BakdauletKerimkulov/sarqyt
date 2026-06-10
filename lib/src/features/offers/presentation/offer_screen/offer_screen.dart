@@ -12,6 +12,7 @@ import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/offers/data/favorites_repository.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/offer_app_bar.dart';
+import 'package:sarqyt/src/features/review/presentation/widgets/reviews_section.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 
@@ -185,6 +186,14 @@ class OfferSliverContent extends StatelessWidget {
               const Divider(),
               gapH12,
               Text(context.loc.offerDetailsSnapshot),
+              gapH16,
+              const Divider(),
+              gapH12,
+              ReviewsSection(
+                storeId: offer.storeId,
+                avgRating: offer.storeAvgRating,
+                reviewCount: offer.storeReviewCount,
+              ),
               const SizedBox(height: 40),
             ],
           ),

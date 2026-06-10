@@ -323,6 +323,9 @@
       "average": {"type": "String"}
     }
   },
+  "noReviewsYet": "No reviews yet",
+  "allReviews": "All reviews",
+
   "addHighlights": "Add highlights",
   "quickCollection": "Quick collection",
   "friendlyStaff": "Friendly staff",

@@ -253,6 +253,9 @@
   "chooseAStore": "Дүкенді таңдаңыз",
   "noStoresFound": "Дүкендер табылмады",
   "ratingDisplay": "{average} / 5.0",
+  "noReviewsYet": "Пікірлер әлі жоқ",
+  "allReviews": "Барлық пікірлер",
+
   "addHighlights": "Ерекшеліктер қосу",
   "quickCollection": "Жылдам беру",
   "friendlyStaff": "Мейірімді қызметкерлер",

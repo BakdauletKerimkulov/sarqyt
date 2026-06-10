@@ -83,7 +83,11 @@ class OfferCard extends StatelessWidget {
                   gapH12,
                   Row(
                     children: [
-                      RatingIcon(),
+                      RatingIcon(
+                        rating: offer.storeAvgRating > 0
+                            ? offer.storeAvgRating
+                            : null,
+                      ),
                       gapW8,
                       if (distanceLabel != null && distanceLabel!.isNotEmpty) ...[
                         Text(

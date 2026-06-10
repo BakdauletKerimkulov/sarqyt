@@ -64,6 +64,11 @@ abstract class Offer with _$Offer {
     required String createdBy,
     @JsonKey(fromJson: Offer._readStatus, toJson: Offer._writeStatus)
     required OfferStatus status,
+    // Store rating (denormalized from Store doc via daily-sync)
+    @JsonKey(fromJson: Offer._readOptionalDouble)
+    @Default(0.0)
+    double storeAvgRating,
+    @Default(0) int storeReviewCount,
   }) = _Offer;
 
   const Offer._();
@@ -181,6 +186,11 @@ abstract class Offer with _$Offer {
       }
     }
     throw ArgumentError('Unsupported geopoint value: $v');
+  }
+
+  static double _readOptionalDouble(dynamic v) {
+    if (v is num) return v.toDouble();
+    return 0.0;
   }
 
   static GeoPoint _writeGeoPoint(GeoPoint v) => v;

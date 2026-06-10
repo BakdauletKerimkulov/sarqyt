@@ -2,7 +2,7 @@
 
 Source: `ai_specs/010-reviews-feature-spec.md`
 Created: 2026-06-10
-Status: in-progress (phase 1 complete)
+Status: in-progress (phase 2 complete)
 
 ## Overview
 Complete the partially-implemented reviews feature: rename `foodRating` → `offerRating`, add Cloud Function aggregation (`onReviewWritten`), display real store ratings on offer cards and detail screens, and build a store reviews list screen. Phase 1 proves the critical path end-to-end: rename + aggregation + rating visible on cards.
@@ -42,14 +42,14 @@ Complete the partially-implemented reviews feature: rename `foodRating` → `off
 ### Phase 2 — Display ratings on cards + reviews preview on offer detail
 **Goal:** Real ratings visible on OfferCard. Offer detail screen shows reviews section with last 3 reviews.
 
-- [ ] `lib/src/features/offers/domain/offer.dart` — add `@Default(0.0) double storeAvgRating`, `@Default(0) int storeReviewCount`
-- [ ] `lib/src/features/offers/presentation/offer_list/offer_card.dart` — pass `offer.storeAvgRating` to `RatingIcon(rating: ...)`; show "New" badge when 0
-- [ ] `lib/src/features/review/application/store_reviews_provider.dart` — `@riverpod` stream provider parameterized by storeId, uses `reviewRepository.watchStoreReviews(storeId, limit: limit)`
-- [ ] `lib/src/features/review/presentation/widgets/review_card.dart` — single review display: star ratings, comment snippet, relative date. Reused in preview and full list
-- [ ] `lib/src/features/review/presentation/widgets/reviews_section.dart` — RatingIcon + "{avg} / 5.0 ({count})" + last 3 reviews via `storeReviewsProvider(storeId, limit: 3)`. If >3 reviews: "All reviews" button. If 0: "No reviews yet"
-- [ ] `lib/src/features/offers/presentation/offer_screen/offer_screen.dart` — mount `ReviewsSection` in `OfferSliverContent` after store info divider (around line 185)
-- [ ] Delete `lib/src/features/offers/presentation/offer_screen/rating_information.dart` — dead code, replaced by `ReviewsSection`
-- [ ] Verify: `flutter analyze && dart run build_runner build --delete-conflicting-outputs && flutter test`
+- [x] `lib/src/features/offers/domain/offer.dart` — add `@Default(0.0) double storeAvgRating`, `@Default(0) int storeReviewCount`
+- [x] `lib/src/features/offers/presentation/offer_list/offer_card.dart` — pass `offer.storeAvgRating` to `RatingIcon(rating: ...)`; show "New" badge when 0
+- [x] `lib/src/features/review/application/store_reviews_provider.dart` — `@riverpod` stream provider parameterized by storeId, uses `reviewRepository.watchStoreReviews(storeId, limit: limit)`
+- [x] `lib/src/features/review/presentation/widgets/review_card.dart` — single review display: star ratings, comment snippet, relative date. Reused in preview and full list
+- [x] `lib/src/features/review/presentation/widgets/reviews_section.dart` — RatingIcon + "{avg} / 5.0 ({count})" + last 3 reviews via `storeReviewsProvider(storeId, limit: 3)`. If >3 reviews: "All reviews" button. If 0: "No reviews yet"
+- [x] `lib/src/features/offers/presentation/offer_screen/offer_screen.dart` — mount `ReviewsSection` in `OfferSliverContent` after store info divider (around line 185)
+- [x] Delete `lib/src/features/offers/presentation/offer_screen/rating_information.dart` — dead code, replaced by `ReviewsSection`
+- [x] Verify: `flutter analyze && dart run build_runner build --delete-conflicting-outputs && flutter test`
 
 ### Phase 3 — Full reviews list + routing + daily-sync + security
 **Goal:** Navigate to full store reviews screen, daily-sync populates rating on Offer docs, security rules protect server fields.

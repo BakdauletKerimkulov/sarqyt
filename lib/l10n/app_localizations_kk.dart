@@ -810,6 +810,12 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
+  String get noReviewsYet => 'Пікірлер әлі жоқ';
+
+  @override
+  String get allReviews => 'Барлық пікірлер';
+
+  @override
   String get addHighlights => 'Ерекшеліктер қосу';
 
   @override

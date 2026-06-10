@@ -1642,6 +1642,18 @@ abstract class AppLocalizations {
   /// **'{average} / 5.0'**
   String ratingDisplay(String average);
 
+  /// No description provided for @noReviewsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get noReviewsYet;
+
+  /// No description provided for @allReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'All reviews'**
+  String get allReviews;
+
   /// No description provided for @addHighlights.
   ///
   /// In en, this message translates to:

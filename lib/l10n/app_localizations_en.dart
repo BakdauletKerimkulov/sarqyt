@@ -813,6 +813,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get noReviewsYet => 'No reviews yet';
+
+  @override
+  String get allReviews => 'All reviews';
+
+  @override
   String get addHighlights => 'Add highlights';
 
   @override
