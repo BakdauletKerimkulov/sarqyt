@@ -153,7 +153,7 @@
   "noOrdersWithStatus": "Бұл статуста тапсырыстар жоқ",
   "orders": "Тапсырыстар",
   "howWasTheStore": "Дүкен қалай болды?",
-  "howWasTheFood": "Тамақ қалай болды?",
+  "howWasTheOffer": "Ұсыныс қалай болды?",
   "anyComments": "Пікірлер (міндетті емес)",
   "tellUsAboutExperience": "Тәжірибеңіз туралы айтыңыз",
   "submitReview": "Пікір жіберу",

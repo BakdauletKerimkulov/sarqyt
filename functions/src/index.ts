@@ -35,3 +35,4 @@ export { inviteTeamMember } from "./features/stores/functions/invite-team-member
 
 // Triggers
 export { onOrderCreated } from "./features/triggers/orders";
+export { onReviewWritten } from "./features/triggers/reviews";

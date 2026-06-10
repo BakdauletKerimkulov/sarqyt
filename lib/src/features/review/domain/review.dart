@@ -10,6 +10,11 @@ part 'review.g.dart';
 
 typedef ReviewID = String;
 
+/// Reads `offerRating` with fallback to `foodRating` for old documents.
+Object? _readOfferRating(Map<dynamic, dynamic> map, String key) {
+  return map['offerRating'] ?? map['foodRating'];
+}
+
 @freezed
 abstract class Review with _$Review {
   const factory Review({
@@ -18,14 +23,15 @@ abstract class Review with _$Review {
     required StoreID storeId,
     required UserID userId,
     required int storeRating,
-    required int foodRating,
+    // ignore: invalid_annotation_target
+    @JsonKey(readValue: _readOfferRating) required int offerRating,
     String? comment,
     @TimestampConverter() required DateTime createdAt,
   }) = _Review;
 
   const Review._();
 
-  double get averageRating => (storeRating + foodRating) / 2;
+  double get averageRating => (storeRating + offerRating) / 2;
 
   factory Review.fromJson(Map<String, dynamic> json) =>
       _$ReviewFromJson(json);

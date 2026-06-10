@@ -493,7 +493,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get howWasTheStore => 'Как вам заведение?';
 
   @override
-  String get howWasTheFood => 'Как вам еда?';
+  String get howWasTheOffer => 'Как вам предложение?';
 
   @override
   String get anyComments => 'Комментарии (необязательно)';

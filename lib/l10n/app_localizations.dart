@@ -1042,11 +1042,11 @@ abstract class AppLocalizations {
   /// **'How was the store?'**
   String get howWasTheStore;
 
-  /// No description provided for @howWasTheFood.
+  /// No description provided for @howWasTheOffer.
   ///
   /// In en, this message translates to:
-  /// **'How was the food?'**
-  String get howWasTheFood;
+  /// **'How was the offer?'**
+  String get howWasTheOffer;
 
   /// No description provided for @anyComments.
   ///

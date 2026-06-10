@@ -493,7 +493,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get howWasTheStore => 'Дүкен қалай болды?';
 
   @override
-  String get howWasTheFood => 'Тамақ қалай болды?';
+  String get howWasTheOffer => 'Ұсыныс қалай болды?';
 
   @override
   String get anyComments => 'Пікірлер (міндетті емес)';

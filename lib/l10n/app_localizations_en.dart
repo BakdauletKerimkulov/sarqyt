@@ -495,7 +495,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get howWasTheStore => 'How was the store?';
 
   @override
-  String get howWasTheFood => 'How was the food?';
+  String get howWasTheOffer => 'How was the offer?';
 
   @override
   String get anyComments => 'Any comments? (optional)';

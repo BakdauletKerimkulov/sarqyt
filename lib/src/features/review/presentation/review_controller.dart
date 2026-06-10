@@ -15,7 +15,7 @@ class ReviewController extends _$ReviewController {
     required OrderID orderId,
     required StoreID storeId,
     required int storeRating,
-    required int foodRating,
+    required int offerRating,
     String? comment,
   }) async {
     final user = ref.read(authRepositoryProvider).currentUser;
@@ -28,7 +28,7 @@ class ReviewController extends _$ReviewController {
             storeId: storeId,
             userId: user.uid,
             storeRating: storeRating,
-            foodRating: foodRating,
+            offerRating: offerRating,
             comment: comment,
           );
     });
