@@ -43,10 +43,10 @@ Eliminate the duplicate storeShips Firestore query, add a `/loading` route with 
 ### Phase 3 — Error handling polish + manual QA
 **Goal:** Loading screen handles all error/edge cases from the spec.
 
-- [ ] `lib/src/routing/business_loading_screen.dart` — add error state handling: watch `currentPartnerStoreShipsProvider` for `AsyncError`, display error message + retry button (`ref.invalidate`), "Go to login" navigates to `/login`
-- [ ] TDD: `test/routing/business_redirect_test.dart` — admin user + path `/loading` → returns `/stores` (layer 5 includes `/loading` in redirect-away set)
-- [ ] TDD: `test/routing/business_redirect_test.dart` — unauthenticated + path `/loading` → returns `/login` (layer 1 doesn't allow `/loading`)
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] `lib/src/routing/business_loading_screen.dart` — add error state handling: watch `currentPartnerStoreShipsProvider` for `AsyncError`, display error message + retry button (`ref.invalidate`), "Go to login" navigates to `/login`
+- [x] TDD: `test/routing/business_redirect_test.dart` — admin user + path `/loading` → returns `/stores` (layer 5 includes `/loading` in redirect-away set)
+- [x] TDD: `test/routing/business_redirect_test.dart` — unauthenticated + path `/loading` → returns `/login` (layer 1 doesn't allow `/loading`) (already implemented)
+- [x] Verify: `flutter analyze && flutter test`
 
 ## Data layer changes
 _None._

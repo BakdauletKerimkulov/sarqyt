@@ -119,7 +119,7 @@ String? businessRedirect({
 
   // Layer 5: Admin — bypass welcome flow entirely
   if (role == UserRole.admin) {
-    if (onLogin || onOnboarding || onForbidden) return '/stores';
+    if (onLogin || onOnboarding || onForbidden || onLoading) return '/stores';
     return null;
   }
 

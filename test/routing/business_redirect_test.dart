@@ -377,6 +377,24 @@ void main() {
     });
   });
 
+  group('Layer 5 — Admin redirects away from /loading', () {
+    late FakeAppUser admin;
+    setUp(() => admin = _user(role: UserRole.admin));
+
+    test('/loading → /stores', () {
+      expect(
+        _redirect(user: admin, role: UserRole.admin, path: '/loading'),
+        '/stores',
+      );
+    });
+  });
+
+  group('Layer 1 — Unauthenticated on /loading', () {
+    test('/loading → /login', () {
+      expect(_redirect(path: '/loading'), '/login');
+    });
+  });
+
   group('Edge — partner with no storeShips at all (loaded, empty)', () {
     late FakeAppUser partner;
     setUp(() => partner = _user(role: UserRole.partner));
