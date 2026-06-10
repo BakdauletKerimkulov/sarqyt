@@ -64,7 +64,7 @@ final class StoreStartupProvider
   }
 }
 
-String _$storeStartupHash() => r'02f033eecbab977f273692f41a2ed4107d2692c1';
+String _$storeStartupHash() => r'9210d6e524c14f81302f1410af0dfe99ec0e8601';
 
 final class StoreStartupFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<StoreStartupData>, String> {

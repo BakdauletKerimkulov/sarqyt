@@ -147,7 +147,7 @@ class _RouterRefreshNotifier extends ChangeNotifier {
 
   void refresh() {
     _timer?.cancel();
-    _timer = Timer(const Duration(milliseconds: 100), notifyListeners);
+    _timer = Timer(const Duration(milliseconds: 16), notifyListeners);
   }
 
   @override

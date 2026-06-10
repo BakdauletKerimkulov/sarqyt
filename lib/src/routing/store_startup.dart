@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/business_console/data/business_repository.dart';
 import 'package:sarqyt/src/features/business_console/domain/business.dart';
 import 'package:sarqyt/src/features/store/data/store_ship_repository.dart';
@@ -21,12 +20,9 @@ class StoreStartupData {
 
 @riverpod
 Future<StoreStartupData> storeStartup(Ref ref, String storeId) async {
-  final user = ref.read(authRepositoryProvider).currentUser;
-  if (user == null) throw StateError('User not authenticated');
-
-  final ships = await ref.watch(
-    storeShipsListStreamForPartnerProvider(user.uid).future,
-  );
+  // Reuse the storeShips already loaded by businessRedirectStateProvider.
+  // This eliminates a duplicate Firestore query on sign-in.
+  final ships = await ref.watch(currentPartnerStoreShipsProvider.future);
   final ship = ships.firstWhere(
     (s) => s.storeId == storeId,
     orElse: () => throw StateError('Store $storeId not found'),

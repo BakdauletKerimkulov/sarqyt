@@ -35,10 +35,10 @@ Eliminate the duplicate storeShips Firestore query, add a `/loading` route with 
 ### Phase 2 — Eliminate duplicate storeShips fetch + reduce debounce
 **Goal:** `storeStartupProvider` reuses storeShips from redirect; debounce reduced. Total sign-in time drops to ~1.5s.
 
-- [ ] TDD: `test/routing/store_startup_test.dart` — `storeStartupProvider` returns `StoreStartupData` when given a storeId matching an already-loaded storeShip from `currentPartnerStoreShipsProvider`, without subscribing to `storeShipsListStreamForPartnerProvider`
-- [ ] `lib/src/routing/store_startup.dart` — rewrite `storeStartupProvider`: read storeShips from `ref.watch(currentPartnerStoreShipsProvider)` instead of `storeShipsListStreamForPartnerProvider`. Extract matching ship by `storeId`. Only `fetchBusinessInfo()` remains as async call.
-- [ ] `lib/src/routing/business_router.dart` — reduce `_RouterRefreshNotifier` debounce from `100ms` to `16ms`. If testing reveals flickering, increase to `32ms`.
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] TDD: `test/routing/store_startup_test.dart` — `storeStartupProvider` returns `StoreStartupData` when given a storeId matching an already-loaded storeShip from `currentPartnerStoreShipsProvider`, without subscribing to `storeShipsListStreamForPartnerProvider`
+- [x] `lib/src/routing/store_startup.dart` — rewrite `storeStartupProvider`: read storeShips from `ref.watch(currentPartnerStoreShipsProvider)` instead of `storeShipsListStreamForPartnerProvider`. Extract matching ship by `storeId`. Only `fetchBusinessInfo()` remains as async call.
+- [x] `lib/src/routing/business_router.dart` — reduce `_RouterRefreshNotifier` debounce from `100ms` to `16ms`. If testing reveals flickering, increase to `32ms`.
+- [x] Verify: `flutter analyze && flutter test`
 
 ### Phase 3 — Error handling polish + manual QA
 **Goal:** Loading screen handles all error/edge cases from the spec.
