@@ -7,6 +7,7 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/orders/data/client_orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_status_badge.dart';
+import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 
@@ -128,7 +129,7 @@ class _OrderCard extends StatelessWidget {
                   Icon(Icons.schedule, size: 16, color: Colors.grey),
                   gapW4,
                   Text(
-                    order.pickupLabel ?? dateStr,
+                    order.pickupLabelLocalized(context) ?? dateStr,
                     style: theme.textTheme.bodySmall
                         ?.copyWith(color: Colors.grey),
                   ),

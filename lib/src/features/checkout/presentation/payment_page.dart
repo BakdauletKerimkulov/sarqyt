@@ -10,6 +10,7 @@ import 'package:sarqyt/src/features/checkout/application/checkout_service.dart';
 import 'package:sarqyt/src/features/checkout/presentation/item_quantity_selector.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
+import 'package:sarqyt/src/features/offers/presentation/offer_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 import 'package:sarqyt/src/utils/async_value_ui.dart';
@@ -58,7 +59,7 @@ class PaymentPage extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     gapH8,
-                    Text(offer.pickupLabel),
+                    Text(offer.pickupLabelLocalized(context)),
                   ],
                 ),
               ),

@@ -8,6 +8,7 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/orders/data/orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_status_badge.dart';
+import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 
@@ -156,10 +157,10 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            if (order.pickupLabel != null) ...[
+            if (order.pickupLabelLocalized(context) != null) ...[
               gapH4,
               Text(
-                order.pickupLabel!,
+                order.pickupLabelLocalized(context)!,
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
             ],

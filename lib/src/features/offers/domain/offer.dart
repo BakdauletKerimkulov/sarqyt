@@ -9,15 +9,6 @@ part 'offer.g.dart';
 
 enum OfferStatus { active, paused, expired }
 
-extension OfferStatusX on OfferStatus {
-  String label() {
-    return switch (this) {
-      OfferStatus.active => 'Active',
-      OfferStatus.paused => 'Paused',
-      OfferStatus.expired => 'Expired',
-    };
-  }
-}
 
 typedef OfferID = String;
 
@@ -94,16 +85,6 @@ abstract class Offer with _$Offer {
     return _readDate(v);
   }
 
-  String get statusLabel {
-    switch (status) {
-      case OfferStatus.active:
-        return 'Active';
-      case OfferStatus.paused:
-        return 'Paused';
-      case OfferStatus.expired:
-        return 'Expired';
-    }
-  }
 
   /// Writes DateTime to Firestore Timestamp.
   static Timestamp _writeDate(DateTime v) => Timestamp.fromDate(v);
@@ -203,33 +184,5 @@ abstract class Offer with _$Offer {
   bool get isAvailable => quantity > 0;
   int get itemsAvailable => quantity;
   String get displayName => name;
-  String get availableText => isAvailable ? 'Left $quantity' : 'Sold out';
   LatLng get latLng => LatLng(geopoint.latitude, geopoint.longitude);
-  String? get distanceFormatter => null;
-
-  /// "Сегодня", "Завтра", or formatted date.
-  String get pickupDayLabel {
-    final now = DateTime.now();
-    final pickupDate = pickupStartTime;
-    final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
-    final pickupDay = DateTime(
-      pickupDate.year,
-      pickupDate.month,
-      pickupDate.day,
-    );
-
-    if (pickupDay == today) return 'Today';
-    if (pickupDay == tomorrow) return 'Tomorrow';
-    return '${pickupDay.day}.${pickupDay.month.toString().padLeft(2, '0')}';
-  }
-
-  /// "Сегодня, 18:00 – 20:00"
-  String get pickupLabel {
-    final start =
-        '${pickupStartTime.hour}:${pickupStartTime.minute.toString().padLeft(2, '0')}';
-    final end =
-        '${pickupEndTime.hour}:${pickupEndTime.minute.toString().padLeft(2, '0')}';
-    return '$pickupDayLabel, $start – $end';
-  }
 }

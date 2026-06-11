@@ -99,10 +99,19 @@
   "discover": "Обзор",
   "offerNotFound": "Предложение не найдено",
   "soldOut": "Распродано",
+  "itemsLeft": "Осталось {quantity}",
+  "@itemsLeft": {
+    "placeholders": {
+      "quantity": {"type": "int"}
+    }
+  },
   "reserve": "Забронировать",
   "addressNotSpecified": "Адрес не указан",
   "moreInfoAboutStore": "Подробнее о заведении",
   "offerStatus": "Статус: {status}",
+  "offerStatusActive": "Активно",
+  "offerStatusPaused": "Приостановлено",
+  "offerStatusExpired": "Истекло",
   "availableItemsCount": "Доступно: {quantity}",
   "offerDetailsSnapshot": "Данные предложения загружены из снимка магазина и товара на момент создания.",
   "noOffersFound": "Предложения не найдены",
@@ -255,11 +264,13 @@
   "ratingDisplay": "{average} / 5.0",
   "noReviewsYet": "Отзывов пока нет",
   "allReviews": "Все отзывы",
+  "reviewCountLabel": "{count, plural, =1{1 отзыв} few{{count} отзыва} many{{count} отзывов} other{{count} отзывов}}",
+  "@reviewCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
 
-  "addHighlights": "Добавить особенности",
-  "quickCollection": "Быстрая выдача",
-  "friendlyStaff": "Дружелюбный персонал",
-  "basedOnRatings": "На основе 122 оценок за последние 2 месяца",
   "surpriseBagIsSurprise": "Ваш сюрприз-пакет — это сюрприз",
   "gotIt": "Понятно!",
   "surpriseBagsForSale": "Сюрприз-пакеты в продаже",

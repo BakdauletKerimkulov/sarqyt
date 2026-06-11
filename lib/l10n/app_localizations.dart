@@ -694,6 +694,12 @@ abstract class AppLocalizations {
   /// **'Sold out'**
   String get soldOut;
 
+  /// No description provided for @itemsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Left {quantity}'**
+  String itemsLeft(int quantity);
+
   /// No description provided for @reserve.
   ///
   /// In en, this message translates to:
@@ -717,6 +723,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Status: {status}'**
   String offerStatus(String status);
+
+  /// No description provided for @offerStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get offerStatusActive;
+
+  /// No description provided for @offerStatusPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get offerStatusPaused;
+
+  /// No description provided for @offerStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get offerStatusExpired;
 
   /// No description provided for @availableItemsCount.
   ///
@@ -1654,29 +1678,11 @@ abstract class AppLocalizations {
   /// **'All reviews'**
   String get allReviews;
 
-  /// No description provided for @addHighlights.
+  /// No description provided for @reviewCountLabel.
   ///
   /// In en, this message translates to:
-  /// **'Add highlights'**
-  String get addHighlights;
-
-  /// No description provided for @quickCollection.
-  ///
-  /// In en, this message translates to:
-  /// **'Quick collection'**
-  String get quickCollection;
-
-  /// No description provided for @friendlyStaff.
-  ///
-  /// In en, this message translates to:
-  /// **'Friendly staff'**
-  String get friendlyStaff;
-
-  /// No description provided for @basedOnRatings.
-  ///
-  /// In en, this message translates to:
-  /// **'Based on 122 ratings over the past 2 months'**
-  String get basedOnRatings;
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String reviewCountLabel(int count);
 
   /// No description provided for @surpriseBagIsSurprise.
   ///

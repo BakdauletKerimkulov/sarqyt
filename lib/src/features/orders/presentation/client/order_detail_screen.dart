@@ -9,6 +9,7 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/orders/data/client_orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_status_badge.dart';
+import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
@@ -129,7 +130,7 @@ class _OrderDetailContent extends StatelessWidget {
           gapH16,
 
           // Pickup window
-          if (order.pickupLabel != null) ...[
+          if (order.pickupLabelLocalized(context) != null) ...[
             Text(
               context.loc.pickupWindow,
               style: theme.textTheme.titleSmall,
@@ -139,7 +140,7 @@ class _OrderDetailContent extends StatelessWidget {
               children: [
                 const Icon(Icons.schedule, size: 20, color: Colors.grey),
                 gapW8,
-                Text(order.pickupLabel!, style: theme.textTheme.bodyLarge),
+                Text(order.pickupLabelLocalized(context)!, style: theme.textTheme.bodyLarge),
               ],
             ),
             gapH16,
@@ -225,7 +226,7 @@ class _PickupWindow extends StatelessWidget {
           ),
           gapH4,
           Text(
-            order.pickupLabel ?? '',
+            order.pickupLabelLocalized(context) ?? '',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

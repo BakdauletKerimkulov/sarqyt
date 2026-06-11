@@ -12,6 +12,7 @@ import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/offers/data/favorites_repository.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
 import 'package:sarqyt/src/features/offers/presentation/offer_screen/offer_app_bar.dart';
+import 'package:sarqyt/src/features/offers/presentation/offer_ui_helpers.dart';
 import 'package:sarqyt/src/features/review/presentation/widgets/reviews_section.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
@@ -138,7 +139,7 @@ class OfferSliverContent extends StatelessWidget {
                       children: [
                         _TitleRow(offer.name),
                         gapH8,
-                        _CollectRow('Collect: ${offer.pickupLabel}'),
+                        _CollectRow('Collect: ${offer.pickupLabelLocalized(context)}'),
                       ],
                     ),
                   ),
@@ -174,7 +175,7 @@ class OfferSliverContent extends StatelessWidget {
               const Divider(),
               gapH8,
               Text(
-                context.loc.offerStatus(offer.status.label()),
+                context.loc.offerStatus(offer.status.localizedLabel(context)),
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   color: AppColors.primary,
@@ -193,6 +194,11 @@ class OfferSliverContent extends StatelessWidget {
                 storeId: offer.storeId,
                 avgRating: offer.storeAvgRating,
                 reviewCount: offer.storeReviewCount,
+                onAllReviewsTap: () => context.pushNamed(
+                  ClientRoute.storeReviews.name,
+                  pathParameters: {'storeId': offer.storeId},
+                  queryParameters: {'storeName': offer.storeName},
+                ),
               ),
               const SizedBox(height: 40),
             ],

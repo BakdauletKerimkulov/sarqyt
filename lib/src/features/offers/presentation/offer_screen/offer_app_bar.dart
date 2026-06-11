@@ -5,6 +5,7 @@ import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/common_widgets/info_badge.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
+import 'package:sarqyt/src/features/offers/presentation/offer_ui_helpers.dart';
 import 'package:share_plus/share_plus.dart';
 
 class OfferSliverAppBar extends ConsumerWidget {
@@ -83,7 +84,7 @@ class OfferSliverAppBar extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        InfoBadge(text: offer.availableText),
+                        InfoBadge(text: offer.availableTextLocalized(context)),
                         gapH8,
                         Row(
                           children: [

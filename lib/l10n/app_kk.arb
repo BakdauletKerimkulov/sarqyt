@@ -99,10 +99,19 @@
   "discover": "Жаңалықтар",
   "offerNotFound": "Ұсыныс табылмады",
   "soldOut": "Тауысылды",
+  "itemsLeft": "Қалды {quantity}",
+  "@itemsLeft": {
+    "placeholders": {
+      "quantity": {"type": "int"}
+    }
+  },
   "reserve": "Брондау",
   "addressNotSpecified": "Мекенжай көрсетілмеген",
   "moreInfoAboutStore": "Дүкен туралы толықтау",
   "offerStatus": "Статус: {status}",
+  "offerStatusActive": "Белсенді",
+  "offerStatusPaused": "Тоқтатылған",
+  "offerStatusExpired": "Мерзімі өткен",
   "availableItemsCount": "Қол жетімді: {quantity}",
   "offerDetailsSnapshot": "Ұсыныс мәліметтері құрылу кезіндегі дүкен мен тауар суретінен жүктелген.",
   "noOffersFound": "Ұсыныстар табылмады",
@@ -255,11 +264,13 @@
   "ratingDisplay": "{average} / 5.0",
   "noReviewsYet": "Пікірлер әлі жоқ",
   "allReviews": "Барлық пікірлер",
+  "reviewCountLabel": "{count, plural, =1{1 пікір} other{{count} пікір}}",
+  "@reviewCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
 
-  "addHighlights": "Ерекшеліктер қосу",
-  "quickCollection": "Жылдам беру",
-  "friendlyStaff": "Мейірімді қызметкерлер",
-  "basedOnRatings": "Соңғы 2 айдағы 122 бағалау негізінде",
   "surpriseBagIsSurprise": "Сіздің тосын-пакетіңіз — тосын",
   "gotIt": "Түсіндім!",
   "surpriseBagsForSale": "Сатылымдағы тосын-пакеттер",

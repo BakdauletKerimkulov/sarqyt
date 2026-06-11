@@ -309,6 +309,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get soldOut => 'Распродано';
 
   @override
+  String itemsLeft(int quantity) {
+    return 'Осталось $quantity';
+  }
+
+  @override
   String get reserve => 'Забронировать';
 
   @override
@@ -321,6 +326,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String offerStatus(String status) {
     return 'Статус: $status';
   }
+
+  @override
+  String get offerStatusActive => 'Активно';
+
+  @override
+  String get offerStatusPaused => 'Приостановлено';
+
+  @override
+  String get offerStatusExpired => 'Истекло';
 
   @override
   String availableItemsCount(int quantity) {
@@ -815,16 +829,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get allReviews => 'Все отзывы';
 
   @override
-  String get addHighlights => 'Добавить особенности';
-
-  @override
-  String get quickCollection => 'Быстрая выдача';
-
-  @override
-  String get friendlyStaff => 'Дружелюбный персонал';
-
-  @override
-  String get basedOnRatings => 'На основе 122 оценок за последние 2 месяца';
+  String reviewCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count отзывов',
+      many: '$count отзывов',
+      few: '$count отзыва',
+      one: '1 отзыв',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get surpriseBagIsSurprise => 'Ваш сюрприз-пакет — это сюрприз';

@@ -311,6 +311,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soldOut => 'Sold out';
 
   @override
+  String itemsLeft(int quantity) {
+    return 'Left $quantity';
+  }
+
+  @override
   String get reserve => 'Reserve';
 
   @override
@@ -323,6 +328,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String offerStatus(String status) {
     return 'Status: $status';
   }
+
+  @override
+  String get offerStatusActive => 'Active';
+
+  @override
+  String get offerStatusPaused => 'Paused';
+
+  @override
+  String get offerStatusExpired => 'Expired';
 
   @override
   String availableItemsCount(int quantity) {
@@ -819,16 +833,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allReviews => 'All reviews';
 
   @override
-  String get addHighlights => 'Add highlights';
-
-  @override
-  String get quickCollection => 'Quick collection';
-
-  @override
-  String get friendlyStaff => 'Friendly staff';
-
-  @override
-  String get basedOnRatings => 'Based on 122 ratings over the past 2 months';
+  String reviewCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get surpriseBagIsSurprise => 'Your surprise bag is a surprise';

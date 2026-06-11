@@ -309,6 +309,11 @@ class AppLocalizationsKk extends AppLocalizations {
   String get soldOut => 'Тауысылды';
 
   @override
+  String itemsLeft(int quantity) {
+    return 'Қалды $quantity';
+  }
+
+  @override
   String get reserve => 'Брондау';
 
   @override
@@ -321,6 +326,15 @@ class AppLocalizationsKk extends AppLocalizations {
   String offerStatus(String status) {
     return 'Статус: $status';
   }
+
+  @override
+  String get offerStatusActive => 'Белсенді';
+
+  @override
+  String get offerStatusPaused => 'Тоқтатылған';
+
+  @override
+  String get offerStatusExpired => 'Мерзімі өткен';
 
   @override
   String availableItemsCount(int quantity) {
@@ -816,16 +830,15 @@ class AppLocalizationsKk extends AppLocalizations {
   String get allReviews => 'Барлық пікірлер';
 
   @override
-  String get addHighlights => 'Ерекшеліктер қосу';
-
-  @override
-  String get quickCollection => 'Жылдам беру';
-
-  @override
-  String get friendlyStaff => 'Мейірімді қызметкерлер';
-
-  @override
-  String get basedOnRatings => 'Соңғы 2 айдағы 122 бағалау негізінде';
+  String reviewCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count пікір',
+      one: '1 пікір',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get surpriseBagIsSurprise => 'Сіздің тосын-пакетіңіз — тосын';

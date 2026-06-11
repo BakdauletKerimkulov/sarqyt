@@ -112,6 +112,12 @@
   "discover": "Discover",
   "offerNotFound": "Offer not found",
   "soldOut": "Sold out",
+  "itemsLeft": "Left {quantity}",
+  "@itemsLeft": {
+    "placeholders": {
+      "quantity": {"type": "int"}
+    }
+  },
   "reserve": "Reserve",
   "addressNotSpecified": "Address is not specified",
   "moreInfoAboutStore": "More information about store",
@@ -121,6 +127,9 @@
       "status": {"type": "String"}
     }
   },
+  "offerStatusActive": "Active",
+  "offerStatusPaused": "Paused",
+  "offerStatusExpired": "Expired",
   "availableItemsCount": "Available items: {quantity}",
   "@availableItemsCount": {
     "placeholders": {
@@ -325,11 +334,13 @@
   },
   "noReviewsYet": "No reviews yet",
   "allReviews": "All reviews",
+  "reviewCountLabel": "{count, plural, =1{1 review} other{{count} reviews}}",
+  "@reviewCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
 
-  "addHighlights": "Add highlights",
-  "quickCollection": "Quick collection",
-  "friendlyStaff": "Friendly staff",
-  "basedOnRatings": "Based on 122 ratings over the past 2 months",
   "surpriseBagIsSurprise": "Your surprise bag is a surprise",
   "gotIt": "Got it!",
 

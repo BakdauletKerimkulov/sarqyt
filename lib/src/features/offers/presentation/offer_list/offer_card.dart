@@ -6,6 +6,7 @@ import 'package:sarqyt/src/common_widgets/rating_icon.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
+import 'package:sarqyt/src/features/offers/presentation/offer_ui_helpers.dart';
 
 class OfferCard extends StatelessWidget {
   const OfferCard({
@@ -40,7 +41,7 @@ class OfferCard extends StatelessWidget {
                 Positioned(
                   left: Sizes.p12,
                   top: Sizes.p12,
-                  child: InfoBadge(text: offer.availableText),
+                  child: InfoBadge(text: offer.availableTextLocalized(context)),
                 ),
                 Positioned(
                   right: Sizes.p12,
@@ -77,7 +78,7 @@ class OfferCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Text(
-                    offer.pickupLabel,
+                    offer.pickupLabelLocalized(context),
                     style: const TextStyle(color: Colors.grey),
                   ),
                   gapH12,
