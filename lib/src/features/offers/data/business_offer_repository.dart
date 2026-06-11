@@ -18,7 +18,7 @@ class BusinessOfferRepository {
     required String storeId,
     required String itemId,
   }) async {
-    final callable = _functions.httpsCallable("sincItemOffers");
+    final callable = _functions.httpsCallable("syncItemOffers");
     final result = await callable.call({'storeId': storeId, 'itemId': itemId});
     log(result.data.toString());
   }

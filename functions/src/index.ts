@@ -8,7 +8,7 @@ export { fakeVerifyBusiness } from "./features/merchant-onboarding/functions/fak
 export { startMerchantOnboardingData } from "./features/merchant-onboarding/functions/start-merchant-onboarding";
 
 // Offers
-export { sincItemOffers } from "./features/offers/functions/sinc_item_offers";
+export { syncItemOffers } from "./features/offers/functions/sync-item-offers";
 export { dailySyncOffers } from "./features/offers/functions/daily-sync-offers";
 export { createOneTimeOffer } from "./features/offers/functions/create-one-time-offer";
 export { onItemStatusChanged } from "./features/offers/functions/on-item-status-changed";
