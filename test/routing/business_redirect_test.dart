@@ -11,6 +11,7 @@ String? _redirect({
   UserRole role = UserRole.guest,
   List<StoreShip> storeShips = const [],
   bool storeShipsLoaded = true,
+  bool roleLoaded = true,
   required String path,
 }) {
   return businessRedirect(
@@ -19,6 +20,7 @@ String? _redirect({
       role: role,
       storeShips: storeShips,
       storeShipsLoaded: storeShipsLoaded,
+      roleLoaded: roleLoaded,
     ),
     path: path,
   );
@@ -110,7 +112,60 @@ void main() {
     });
   });
 
-  group('Layer 3 — Verified but guest (claims still propagating)', () {
+  group('Layer 3 — Role loading (roleLoaded: false)', () {
+    late FakeAppUser verified;
+    setUp(() => verified = _user(emailVerified: true));
+
+    test('/login → /loading', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          roleLoaded: false,
+          path: '/login',
+        ),
+        '/loading',
+      );
+    });
+
+    test('/stores/x/dashboard → /loading', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          roleLoaded: false,
+          path: '/stores/x/dashboard',
+        ),
+        '/loading',
+      );
+    });
+
+    test('/loading → stay', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          roleLoaded: false,
+          path: '/loading',
+        ),
+        isNull,
+      );
+    });
+
+    test('roleLoaded: true → falls through to guest layer', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          roleLoaded: true,
+          path: '/onboarding/inbound/verify-email',
+        ),
+        isNull,
+      );
+    });
+  });
+
+  group('Layer 4 — Verified guest allows inbound paths', () {
     late FakeAppUser verified;
     setUp(() => verified = _user(emailVerified: true));
 
@@ -125,12 +180,67 @@ void main() {
       );
     });
 
+    test('/onboarding/inbound/create-account → stay', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/onboarding/inbound/create-account',
+        ),
+        isNull,
+      );
+    });
+
+    test('/onboarding/inbound/review-details → stay', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/onboarding/inbound/review-details',
+        ),
+        isNull,
+      );
+    });
+
+    test('/onboarding/inbound/email → stay', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/onboarding/inbound/email',
+        ),
+        isNull,
+      );
+    });
+
     test('/stores → /onboarding/inbound/verify-email', () {
       expect(
         _redirect(
           user: verified,
           role: UserRole.guest,
           path: '/stores',
+        ),
+        '/onboarding/inbound/verify-email',
+      );
+    });
+
+    test('/login → /onboarding/inbound/verify-email', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/login',
+        ),
+        '/onboarding/inbound/verify-email',
+      );
+    });
+
+    test('/onboarding/welcome → /onboarding/inbound/verify-email', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/onboarding/welcome',
         ),
         '/onboarding/inbound/verify-email',
       );

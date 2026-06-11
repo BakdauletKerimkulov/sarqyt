@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:sarqyt/src/features/auth/data/fake_auth_repository.dart';
 import 'package:sarqyt/src/features/onboarding/application/merchant_onboarding_service.dart';
 import 'package:sarqyt/src/features/store/domain/country.dart';
@@ -23,6 +24,7 @@ void main() {
     postalCode: '050000',
     country: CountryD(isoCode: 'KAZ', name: 'Казахстан'),
     phoneNumber: '+77001234567',
+    location: const LatLng(43.238949, 76.945465),
   );
 
   setUp(() {
@@ -67,6 +69,46 @@ void main() {
 
       expect(fakeOnboarding.createDraftCalled, isFalse,
           reason: 'createStoreDraft must not be called if registration failed');
+    });
+
+    test('if createStoreDraft fails: deleteAccount is called (rollback)', () async {
+      fakeOnboarding.failCreateDraft = true;
+
+      await expectLater(
+        () => service.register(email: email, password: password, draft: draft),
+        throwsA(isA<Exception>()),
+      );
+
+      expect(fakeAuth.deleteAccountCalled, isTrue);
+      expect(fakeAuth.currentUser, isNull);
+    });
+
+    test('if deleteAccount fails during rollback: falls back to signOut', () async {
+      fakeOnboarding.failCreateDraft = true;
+      fakeAuth.failDeleteAccount = true;
+
+      await expectLater(
+        () => service.register(email: email, password: password, draft: draft),
+        throwsA(isA<Exception>()),
+      );
+
+      expect(fakeAuth.deleteAccountCalled, isTrue);
+      expect(fakeAuth.signOutCalled, isTrue);
+    });
+
+    test('rollback rethrows the original error, not the delete/signOut error', () async {
+      fakeOnboarding.failCreateDraft = true;
+
+      await expectLater(
+        () => service.register(email: email, password: password, draft: draft),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('startMerchantOnboarding CF failed'),
+          ),
+        ),
+      );
     });
 
     test('draft data is passed to createStoreDraft', () async {

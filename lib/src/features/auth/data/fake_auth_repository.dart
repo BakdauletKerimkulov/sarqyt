@@ -20,6 +20,11 @@ class FakeAuthRepository implements AuthRepository {
   // List to keep track of all users
   final List<FakeAppUser> _users = [];
 
+  /// Test instrumentation for deleteAccount.
+  bool deleteAccountCalled = false;
+  bool failDeleteAccount = false;
+  bool signOutCalled = false;
+
   @override
   Stream<AppUser?> authStateChanges() => _authState.stream;
 
@@ -28,6 +33,15 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async {
+    signOutCalled = true;
+    _authState.value = null;
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    deleteAccountCalled = true;
+    if (failDeleteAccount) throw Exception('deleteAccount failed');
+    _users.removeWhere((u) => u.uid == _authState.value?.uid);
     _authState.value = null;
   }
 

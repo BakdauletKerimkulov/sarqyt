@@ -22,6 +22,10 @@ class AuthRepository {
 
   Future<void> signOut() => _auth.signOut();
 
+  /// Delete the currently signed-in user's Auth account.
+  /// Safe immediately after account creation (fresh token).
+  Future<void> deleteAccount() async => _auth.currentUser?.delete();
+
   Future<void> signInWithEmailAndPassword(String email, String password) =>
       _auth.signInWithEmailAndPassword(email: email, password: password);
 

@@ -12,6 +12,7 @@ class BusinessRedirectState {
     required this.role,
     required this.storeShips,
     required this.storeShipsLoaded,
+    required this.roleLoaded,
   });
 
   final AppUser? user;
@@ -21,6 +22,10 @@ class BusinessRedirectState {
   /// True only when the storeShips stream has emitted at least once.
   /// The redirect uses this to avoid bouncing the user before data arrives.
   final bool storeShipsLoaded;
+
+  /// True when the role stream has emitted data or error.
+  /// False while the ID token is still loading on cold start.
+  final bool roleLoaded;
 }
 
 /// Single provider that aggregates all data needed for business redirect.
@@ -43,6 +48,8 @@ BusinessRedirectState businessRedirectState(Ref ref) {
     error: (_, __) => UserRole.guest,
   );
 
+  final roleLoaded = roleAsync.hasValue || roleAsync.hasError;
+
   // storeShips load asynchronously from Firestore. The redirect must NOT
   // bounce the user to /onboarding/welcome until we know whether they have
   // any pending storeShip.
@@ -54,5 +61,6 @@ BusinessRedirectState businessRedirectState(Ref ref) {
     role: role,
     storeShips: storeShips,
     storeShipsLoaded: storeShipsLoaded,
+    roleLoaded: roleLoaded,
   );
 }

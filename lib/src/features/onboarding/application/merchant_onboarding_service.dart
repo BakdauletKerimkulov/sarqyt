@@ -27,8 +27,12 @@ class MerchantOnboardingService {
     } catch (e) {
       if (userCreated) {
         try {
-          await _authRepository.signOut();
-        } catch (_) {}
+          await _authRepository.deleteAccount();
+        } catch (_) {
+          try {
+            await _authRepository.signOut();
+          } catch (_) {}
+        }
       }
       rethrow;
     }

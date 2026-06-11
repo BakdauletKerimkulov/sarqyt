@@ -56,6 +56,9 @@ class _FakeAuthRepo implements AuthRepository {
   @override
   Future<AppUser?> createUserWithEmailAndPassword(String e, String p) async =>
       null;
+
+  @override
+  Future<void> deleteAccount() async {}
 }
 
 void main() {
