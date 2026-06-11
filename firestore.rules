@@ -72,8 +72,12 @@ service cloud.firestore {
 
       allow create: if canCreateStore();
 
-      allow update, delete: if isAdmin()
-        || hasStoreAccess(storeId) || isStoreOwner(storeId);
+      allow delete: if isAdmin()
+        || isStoreOwnerViaShip(storeId) || isStoreOwner(storeId);
+
+      allow update: if isAdmin()
+        || ((hasStoreAccess(storeId) || isStoreOwner(storeId))
+            && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['avgRating', 'reviewCount'])));
 
       match /items/{itemsId} {
         allow read: if isSignedIn();
@@ -134,8 +138,22 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
     match /reviews/{id} {
       allow read: if true;
-      allow create: if isSignedIn();
-      allow update, delete: if isSignedIn() && request.auth.uid == resource.data.userId;
+
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.rating is number
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+
+      allow update: if isSignedIn()
+        && request.auth.uid == resource.data.userId
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'storeId'])
+        && request.resource.data.rating is number
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+
+      allow delete: if isSignedIn()
+        && request.auth.uid == resource.data.userId;
     }
 
     // -------------------------------------------------------------------------
