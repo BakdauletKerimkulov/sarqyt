@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
 
 part 'client_offer_repository.g.dart';
@@ -37,10 +36,10 @@ class ClientOfferRepository {
     ).geohash.substring(0, precision);
 
     final prefixes = [centerHash, ...neighborGeohashesOf(geohash: centerHash)];
-    final now = DateTime.now();
 
     // One Firestore listener per geohash tile (9 total at given precision).
     // Each query uses equality on status + geohash prefix range.
+    // now is evaluated inside .map() so expired offers drop on every snapshot.
     final streams = prefixes.map((prefix) {
       return _firestore
           .collection(offersPath())
@@ -49,12 +48,14 @@ class ClientOfferRepository {
           .startAt([prefix])
           .endAt(['$prefix\uf8ff'])
           .snapshots()
-          .map((snap) => snap.docs
-              .map((d) => Offer.fromJson(d.data()))
-              .where((o) => o.pickupEndTime.isAfter(now))
-              .where(
-                  (o) => o.visibleFrom == null || !o.visibleFrom!.isAfter(now))
-              .toList());
+          .map((snap) {
+        final now = DateTime.now();
+        return snap.docs
+            .map((d) => Offer.fromJson(d.data()))
+            .where((o) => o.pickupEndTime.isAfter(now))
+            .where((o) => o.visibleFrom == null || !o.visibleFrom!.isAfter(now))
+            .toList();
+      });
     });
 
     // Merge all tile streams, deduplicate by offer id.
@@ -99,18 +100,23 @@ class ClientOfferRepository {
   // ---------------------------------------------------------------------------
 
   Stream<List<Offer>> watchAllOffers() {
-    final now = DateTime.now();
-    final nowTs = Timestamp.fromDate(now);
+    final nowTs = Timestamp.fromDate(DateTime.now());
 
+    // Server-side filter is pinned to subscription time — can't refresh it.
+    // Client-side .map() re-evaluates now on each snapshot to drop expired.
     return _firestore
         .collection(offersPath())
         .where('status', isEqualTo: OfferStatus.active.name)
         .where('pickupEndTime', isGreaterThan: nowTs)
         .orderBy('pickupEndTime')
         .snapshots()
-        .map((snap) => snap.docs
-            .map((d) => Offer.fromJson(d.data()))
-            .toList());
+        .map((snap) {
+      final now = DateTime.now();
+      return snap.docs
+          .map((d) => Offer.fromJson(d.data()))
+          .where((o) => o.pickupEndTime.isAfter(now))
+          .toList();
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -140,37 +146,13 @@ class ClientOfferRepository {
       );
 
   /// Merges N streams into one, deduplicating offers by id.
+  /// CombineLatestStream cancels all inner subscriptions on outer cancel,
+  /// and waits for every tile to emit before the first event (no partial UI).
   static Stream<List<Offer>> _mergeStreams(
     List<Stream<List<Offer>>> streams,
-  ) async* {
-    // Accumulate latest snapshot from each tile.
-    final buckets = List<List<Offer>>.filled(streams.length, const []);
-    // Listen to all streams, yield merged list on any update.
-    await for (final _ in _anyOf(streams, buckets)) {
-      yield _dedup(buckets.expand((l) => l).toList());
-    }
-  }
-
-  /// Yields an event whenever any of [streams] emits, updating [buckets].
-  static Stream<void> _anyOf(
-    List<Stream<List<Offer>>> streams,
-    List<List<Offer>> buckets,
-  ) async* {
-    // Create a broadcast stream that forwards events from all tile streams.
-    final controller = StreamController<void>();
-    final subs = <StreamSubscription>[];
-    for (var i = 0; i < streams.length; i++) {
-      subs.add(streams[i].listen((data) {
-        buckets[i] = data;
-        controller.add(null);
-      }));
-    }
-    yield* controller.stream;
-    for (final s in subs) {
-      await s.cancel();
-    }
-    await controller.close();
-  }
+  ) =>
+      CombineLatestStream.list(streams)
+          .map((lists) => _dedup(lists.expand((l) => l).toList()));
 
   static List<Offer> _dedup(List<Offer> offers) {
     final seen = <String>{};
