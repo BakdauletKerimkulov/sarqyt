@@ -7,8 +7,14 @@ import { FirestoreCollections } from "../../../shared/constants/constants";
 interface ReserveOfferRequest {
   offerId: string;
   quantity: number;
-  idempotencyKey?: string;
+  idempotencyKey: string;
 }
+
+/** Max active (confirmed/preparing/readyForPickup) orders per user. */
+const MAX_ACTIVE_ORDERS_PER_USER = 5;
+
+/** Max items a single order can reserve. */
+const MAX_QUANTITY_PER_ORDER = 5;
 
 /**
  * Idempotent: uses idempotencyKey to prevent duplicate orders.
@@ -28,13 +34,39 @@ export const reserveOffer = onCall(async (request) => {
   if (!quantity || typeof quantity !== "number" || quantity < 1) {
     throw new AppError("invalid-argument", "quantity must be >= 1");
   }
+  if (quantity > MAX_QUANTITY_PER_ORDER) {
+    throw new AppError(
+      "invalid-argument",
+      `quantity must be <= ${MAX_QUANTITY_PER_ORDER}`
+    );
+  }
+  if (!idempotencyKey || typeof idempotencyKey !== "string") {
+    throw new AppError("invalid-argument", "idempotencyKey is required");
+  }
 
-  // Deterministic order ID for idempotency
-  const orderDocId = idempotencyKey ?? `${uid}_${offerId}_${Date.now()}`;
+  // Deterministic order ID — prefixed with uid to prevent cross-user collisions
+  const orderDocId = `${uid}_${idempotencyKey}`;
 
   try {
     const offerRef = db.collection(FirestoreCollections.OFFERS).doc(offerId);
     const orderRef = db.collection(FirestoreCollections.ORDERS).doc(orderDocId);
+
+    // Check active order count BEFORE the transaction (read-only query,
+    // not part of the transaction lock set — acceptable for a soft limit).
+    const activeStatuses = ["confirmed", "preparing", "readyForPickup"];
+    const activeSnap = await db
+      .collection(FirestoreCollections.ORDERS)
+      .where("customerId", "==", uid)
+      .where("status", "in", activeStatuses)
+      .limit(MAX_ACTIVE_ORDERS_PER_USER)
+      .get();
+
+    if (activeSnap.size >= MAX_ACTIVE_ORDERS_PER_USER) {
+      throw new AppError(
+        "resource-exhausted",
+        `You already have ${MAX_ACTIVE_ORDERS_PER_USER} active orders`
+      );
+    }
 
     await db.runTransaction(async (tx) => {
       const [offerSnap, orderSnap] = await Promise.all([

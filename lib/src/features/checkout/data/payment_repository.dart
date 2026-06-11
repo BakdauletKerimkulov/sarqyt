@@ -1,6 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'payment_repository.g.dart';
 
@@ -23,7 +23,7 @@ class PaymentRepository {
 
   PaymentRepository(this._functions);
 
-  /// Reserve without payment — creates order directly. For testing.
+  /// Reserve without payment — creates order directly.
   Future<String> reserveOffer({
     required String offerId,
     required int quantity,
@@ -35,9 +35,8 @@ class PaymentRepository {
     final result = await callable.call({
       'offerId': offerId,
       'quantity': quantity,
+      'idempotencyKey': const Uuid().v4(),
     });
-    debugPrint('reserveOffer result: ${result.data}');
-    debugPrint('reserveOffer type: ${result.data.runtimeType}');
     final data = Map<String, dynamic>.from(result.data as Map);
     return data['orderId'] as String;
   }
