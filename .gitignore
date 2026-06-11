@@ -46,12 +46,16 @@ app.*.map.json
 
 # Firebase
 .env
+.firebase/
 firebase-export-*/
 functions/build/
 
 # Platform secrets
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+
+# Envied generated secrets
+lib/env.g.dart
 
 # VS Code
 .vscode/
