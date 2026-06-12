@@ -1,9 +1,11 @@
+import 'package:sarqyt/src/exceptions/app_exception.dart';
 import 'package:sarqyt/src/features/onboarding/data/onboarding_repository.dart';
 
 /// In-memory fake for OnboardingRepository. Controls success/failure per method.
 class FakeOnboardingRepository implements OnboardingRepository {
   bool failCreateDraft = false;
   bool failCompleteMerchant = false;
+  bool failCompleteMerchantWithDraftNotFound = false;
   bool createDraftCalled = false;
   bool completeMerchantCalled = false;
 
@@ -16,6 +18,7 @@ class FakeOnboardingRepository implements OnboardingRepository {
 
   @override
   Future<String> completeMerchantOnboarding() async {
+    if (failCompleteMerchantWithDraftNotFound) throw DraftNotFoundException();
     if (failCompleteMerchant) {
       throw Exception('completeMerchantOnboarding CF failed');
     }

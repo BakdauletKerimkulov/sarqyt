@@ -61,6 +61,7 @@ void main() {
       // Register same email twice to trigger EmailAlreadyInUseException
       await service.register(email: email, password: password, draft: draft);
       fakeOnboarding.createDraftCalled = false; // reset
+      await fakeAuth.signOut(); // sign out so the second call attempts user creation
 
       await expectLater(
         () => service.register(email: email, password: password, draft: draft),
@@ -109,6 +110,21 @@ void main() {
           ),
         ),
       );
+    });
+
+    test('already-signed-in user: skips createUser, calls createStoreDraft only',
+        () async {
+      // Pre-register a user so currentUser is non-null
+      await fakeAuth.createUserWithEmailAndPassword(email, password);
+      fakeOnboarding.createDraftCalled = false; // reset from first call
+
+      // Create a fresh service instance — user is already signed in
+      final s = MerchantOnboardingService(fakeAuth, fakeOnboarding);
+      await s.register(email: email, password: password, draft: draft);
+
+      expect(fakeOnboarding.createDraftCalled, isTrue);
+      // If the service tried to create the user again, it would throw
+      // EmailAlreadyInUseException — test passing proves it skipped creation.
     });
 
     test('draft data is passed to createStoreDraft', () async {

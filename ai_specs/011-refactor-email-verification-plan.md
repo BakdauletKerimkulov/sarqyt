@@ -36,15 +36,15 @@ Fix four compounding defects in business-app registration/onboarding navigation:
 ### Phase 2 — Draft-not-found recovery UI
 **Goal:** Verified guest with expired/missing draft sees a recovery state on verify-email and can re-enter store details.
 
-- [ ] `lib/src/exceptions/app_exception.dart` — add `DraftNotFoundException extends AppException` to the sealed hierarchy
-- [ ] `lib/src/features/onboarding/data/onboarding_repository.dart` — wrap `completeMerchantOnboarding` call: catch `FirebaseFunctionsException` with code `not-found`, rethrow as `DraftNotFoundException`
-- [ ] TDD: `test/features/onboarding/verify_email_controller_test.dart` — add case: `completeMerchantOnboarding` throws `DraftNotFoundException` → controller state has `DraftNotFoundException` error; `completed` remains false
-- [ ] `lib/src/features/onboarding/presentation/inbound/verify_email_controller.dart` — expose `isDraftNotFound` getter (check `state.error is DraftNotFoundException`); add `stopPolling` flag set when draft-not-found detected
-- [ ] `lib/src/features/onboarding/presentation/inbound/verify_email_screen.dart` — render recovery state when `isDraftNotFound`: localized title + message + primary button navigating to `BusinessRoute.createAccount`; stop timer when `isDraftNotFound`; filter `DraftNotFoundException` out of `ref.listen` error dialog
-- [ ] TDD: `test/features/onboarding/verify_email_controller_test.dart` — add case: signed-in user calls `register` with draft-only (no `createUserWithEmailAndPassword`) when `currentUser != null`
-- [ ] `lib/src/features/onboarding/presentation/inbound/create_account_controller.dart` — already-signed-in branch: if `authRepository.currentUser != null`, skip `createUserWithEmailAndPassword`, call `createStoreDraft` only
-- [ ] `lib/src/features/onboarding/presentation/inbound/email_screen.dart` — detect signed-in user via `authRepository.currentUser`; if signed-in: pre-fill + disable email field, hide password field, hide privacy-policy checkbox, change CTA label to `context.loc.submitDetails`
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] `lib/src/exceptions/app_exception.dart` — add `DraftNotFoundException extends AppException` to the sealed hierarchy
+- [x] `lib/src/features/onboarding/data/onboarding_repository.dart` — wrap `completeMerchantOnboarding` call: catch `FirebaseFunctionsException` with code `not-found`, rethrow as `DraftNotFoundException`
+- [x] TDD: `test/features/onboarding/verify_email_controller_test.dart` — add case: `completeMerchantOnboarding` throws `DraftNotFoundException` → controller state has `DraftNotFoundException` error; `completed` remains false
+- [x] `lib/src/features/onboarding/presentation/inbound/verify_email_controller.dart` — expose `isDraftNotFound` getter (check `state.error is DraftNotFoundException`); add `stopPolling` flag set when draft-not-found detected
+- [x] `lib/src/features/onboarding/presentation/inbound/verify_email_screen.dart` — render recovery state when `isDraftNotFound`: localized title + message + primary button navigating to `BusinessRoute.createAccount`; stop timer when `isDraftNotFound`; filter `DraftNotFoundException` out of `ref.listen` error dialog
+- [x] TDD: `test/features/onboarding/merchant_onboarding_service_test.dart` — add case: signed-in user calls `register` with draft-only (no `createUserWithEmailAndPassword`) when `currentUser != null`
+- [x] `lib/src/features/onboarding/application/merchant_onboarding_service.dart` — already-signed-in branch: if `currentUser != null`, skip `createUserWithEmailAndPassword`, call `createStoreDraft` only
+- [x] `lib/src/features/onboarding/presentation/inbound/email_screen.dart` — detect signed-in user via `authRepository.currentUser`; if signed-in: pre-fill + disable email field, hide password field, hide privacy-policy checkbox, change CTA label
+- [x] Verify: `flutter analyze && flutter test`
 
 ### Phase 3 — Welcome guard + i18n
 **Goal:** Owner-only welcome filter; all new strings localized.

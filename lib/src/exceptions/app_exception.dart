@@ -84,6 +84,16 @@ class ActiveOrdersExistException extends AppException {
       );
 }
 
+/// Onboarding
+class DraftNotFoundException extends AppException {
+  DraftNotFoundException()
+    : super(
+        'draft-not-found',
+        'Registration session expired. Please fill in your details again.'
+            .hardcoded,
+      );
+}
+
 /// Location
 class LocationNotFoundException extends AppException {
   LocationNotFoundException(this.thing)
