@@ -50,15 +50,8 @@ void main() {
       expect(offer.isAvailable, false);
     });
 
-    test('availableText shows Left N for available', () {
-      final offer = _makeOffer(quantity: 3);
-      expect(offer.availableText, 'Left 3');
-    });
-
-    test('availableText shows Sold out for 0', () {
-      final offer = _makeOffer(quantity: 0);
-      expect(offer.availableText, 'Sold out');
-    });
+    // availableText is a presentation-layer extension (availableTextLocalized)
+    // that requires BuildContext — tested in widget tests, not here.
 
     test('discountPercent calculates correctly', () {
       final offer = _makeOffer().copyWith(
@@ -74,32 +67,7 @@ void main() {
       expect(offer.discountPercent, 0);
     });
 
-    test('pickupDayLabel returns Today for today', () {
-      final now = DateTime.now();
-      final offer = _makeOffer(
-        pickupStart: DateTime(now.year, now.month, now.day, 18, 0),
-        pickupEnd: DateTime(now.year, now.month, now.day, 20, 0),
-      );
-      expect(offer.pickupDayLabel, 'Today');
-    });
-
-    test('pickupDayLabel returns Tomorrow for tomorrow', () {
-      final tomorrow = DateTime.now().add(const Duration(days: 1));
-      final offer = _makeOffer(
-        pickupStart: DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 18, 0),
-        pickupEnd: DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 20, 0),
-      );
-      expect(offer.pickupDayLabel, 'Tomorrow');
-    });
-
-    test('pickupLabel contains time range', () {
-      final now = DateTime.now();
-      final offer = _makeOffer(
-        pickupStart: DateTime(now.year, now.month, now.day, 18, 0),
-        pickupEnd: DateTime(now.year, now.month, now.day, 20, 0),
-      );
-      expect(offer.pickupLabel, contains('18:00'));
-      expect(offer.pickupLabel, contains('20:00'));
-    });
+    // pickupDayLabel and pickupLabel are presentation-layer extensions
+    // that require BuildContext — tested in widget tests, not here.
   });
 }

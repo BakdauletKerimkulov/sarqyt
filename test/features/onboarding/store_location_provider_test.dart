@@ -46,21 +46,15 @@ void main() {
       expect(fakeMapRepo.queries, isEmpty);
     });
 
-    test('fetches coordinates when draft has address data', () async {
+    test('fetches coordinates via getCoordinates', () async {
       final fakeMapRepo = FakeMapRepository();
       final container = createContainer(fakeMapRepo: fakeMapRepo);
 
-      // Заполняем draft
-      container
-          .read(storeDraftControllerProvider.notifier)
-          .saveStepOne(
-            name: 'Sarqyt',
-            storeType: StoreType.cafe,
+      await container.read(storeLocationProvider.notifier).getCoordinates(
             address: 'Проспект Гагарина 124',
-            postalCode: '050000',
             locality: 'Алматы',
-            country: const CountryD(isoCode: 'KAZ', name: 'Казахстан'),
-            phoneNumber: '+77771112233',
+            isoCode: 'KAZ',
+            postalCode: '050000',
           );
 
       final result = await container.read(storeLocationProvider.future);
@@ -70,68 +64,49 @@ void main() {
       expect(fakeMapRepo.queries.first, contains('Алматы'));
     });
 
-    test('returns cached location from draft without fetching', () async {
+    test('skips fetch when query unchanged', () async {
       final fakeMapRepo = FakeMapRepository();
       final container = createContainer(fakeMapRepo: fakeMapRepo);
 
-      // Draft уже содержит location
-      container
-          .read(storeDraftControllerProvider.notifier)
-          .saveStepOne(
-            name: 'Sarqyt',
-            storeType: StoreType.cafe,
+      await container.read(storeLocationProvider.notifier).getCoordinates(
             address: 'Проспект Гагарина 124',
-            postalCode: '050000',
             locality: 'Алматы',
-            country: const CountryD(isoCode: 'KAZ', name: 'Казахстан'),
-            phoneNumber: '+77771112233',
+            isoCode: 'KAZ',
+            postalCode: '050000',
           );
-      container
-          .read(storeDraftControllerProvider.notifier)
-          .saveLocation(const LatLng(43.0, 77.0));
 
-      final result = await container.read(storeLocationProvider.future);
+      // Тот же query — не должен вызвать повторный запрос
+      await container.read(storeLocationProvider.notifier).getCoordinates(
+            address: 'Проспект Гагарина 124',
+            locality: 'Алматы',
+            isoCode: 'KAZ',
+            postalCode: '050000',
+          );
 
-      // Должен вернуть location из draft, не делая запрос
-      expect(result, const LatLng(43.0, 77.0));
-      expect(fakeMapRepo.queries, isEmpty);
+      expect(fakeMapRepo.queries, hasLength(1));
     });
 
-    test('re-fetches when address changes', () async {
+    test('re-fetches when query changes', () async {
       final fakeMapRepo = FakeMapRepository();
       final container = createContainer(fakeMapRepo: fakeMapRepo);
 
-      // Первый адрес
-      container
-          .read(storeDraftControllerProvider.notifier)
-          .saveStepOne(
-            name: 'Sarqyt',
-            storeType: StoreType.cafe,
+      await container.read(storeLocationProvider.notifier).getCoordinates(
             address: 'Проспект Гагарина 124',
-            postalCode: '050000',
             locality: 'Алматы',
-            country: const CountryD(isoCode: 'KAZ', name: 'Казахстан'),
-            phoneNumber: '+77771112233',
+            isoCode: 'KAZ',
+            postalCode: '050000',
           );
 
       final result1 = await container.read(storeLocationProvider.future);
       expect(result1, const LatLng(43.2380, 76.9450));
 
-      // Меняем адрес — saveStepOne сбрасывает location
-      container
-          .read(storeDraftControllerProvider.notifier)
-          .saveStepOne(
-            name: 'Sarqyt',
-            storeType: StoreType.cafe,
+      await container.read(storeLocationProvider.notifier).getCoordinates(
             address: 'Улица Кенесары 40',
-            postalCode: '010000',
             locality: 'Астана',
-            country: const CountryD(isoCode: 'KAZ', name: 'Казахстан'),
-            phoneNumber: '+77771112233',
+            isoCode: 'KAZ',
+            postalCode: '010000',
           );
 
-      // Invalidate чтобы provider перечитал draft
-      container.invalidate(storeLocationProvider);
       final result2 = await container.read(storeLocationProvider.future);
 
       expect(result2, const LatLng(51.1694, 71.4491));

@@ -89,38 +89,6 @@ void main() {
     });
   });
 
-  group('Order.pickupLabel', () {
-    test('null when start or end is null', () {
-      final order = _makeOrder();
-      expect(order.pickupLabel, isNull);
-    });
-
-    test('shows Сегодня for today', () {
-      final now = DateTime.now();
-      final start = DateTime(now.year, now.month, now.day, 18, 0);
-      final end = DateTime(now.year, now.month, now.day, 20, 0);
-      final order = _makeOrder(pickupStartTime: start, pickupEndTime: end);
-      expect(order.pickupLabel, 'Сегодня, 18:00 – 20:00');
-    });
-
-    test('shows Завтра for tomorrow', () {
-      final tomorrow = DateTime.now().add(const Duration(days: 1));
-      final start = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 9, 30);
-      final end = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 11, 0);
-      final order = _makeOrder(pickupStartTime: start, pickupEndTime: end);
-      expect(order.pickupLabel, 'Завтра, 9:30 – 11:00');
-    });
-
-    test('shows day.month for other dates', () {
-      final future = DateTime.now().add(const Duration(days: 5));
-      final start = DateTime(future.year, future.month, future.day, 14, 0);
-      final end = DateTime(future.year, future.month, future.day, 16, 0);
-      final order = _makeOrder(pickupStartTime: start, pickupEndTime: end);
-      final label = order.pickupLabel!;
-      // Should contain day number and time
-      expect(label, contains('14:00 – 16:00'));
-      expect(label, isNot(contains('Сегодня')));
-      expect(label, isNot(contains('Завтра')));
-    });
-  });
+  // pickupLabel is a presentation-layer extension (pickupLabelLocalized)
+  // that requires BuildContext — tested in widget tests, not here.
 }
