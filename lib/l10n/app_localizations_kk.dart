@@ -467,10 +467,25 @@ class AppLocalizationsKk extends AppLocalizations {
   String get cancelOrderConfirm => 'Тапсырысты болдырмау?';
 
   @override
-  String get cancelOrderRefund => 'Ақшаңыз толық қайтарылады.';
+  String get cancelOrderRefund => 'Бұл әрекетті кері қайтару мүмкін емес.';
 
   @override
   String get yesCancel => 'Иә, болдырмау';
+
+  @override
+  String get payOnPickup => 'Алған кезде төлеу';
+
+  @override
+  String get cancelReason => 'Болдырмау себебі';
+
+  @override
+  String get cancelReasonHint => 'Себебін жазыңыз';
+
+  @override
+  String get orderCancelledByStore => 'Дүкен болдырмаған';
+
+  @override
+  String get cancelReasonRequired => 'Болдырмау себебін жазыңыз';
 
   @override
   String get activeOrders => 'Белсенді тапсырыстар';
@@ -1019,4 +1034,17 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get loadingPleaseWait => 'Жүктелуде, күте тұрыңыз...';
+
+  @override
+  String get draftExpiredTitle => 'Тіркелу сессиясының мерзімі өтті';
+
+  @override
+  String get draftExpiredMessage =>
+      'Дүкен деректеріңіздің мерзімі өтті. Тіркелуді аяқтау үшін деректеріңізді қайтадан толтырыңыз.';
+
+  @override
+  String get fillDetailsAgain => 'Деректерді қайта толтыру';
+
+  @override
+  String get submitDetails => 'Деректерді жіберу';
 }

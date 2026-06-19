@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import { onCall } from "firebase-functions/v2/https";
 import { AppError, toHttpsError } from "../../../app/error";
 import { logError, logInfo } from "../../../app/logger";
@@ -86,6 +87,12 @@ export const reserveOffer = onCall(async (request) => {
         throw new AppError("failed-precondition", "Offer is not active");
       }
 
+      // R6: reject if pickup window has already closed
+      const pickupEnd = offer.pickupEndTime as Timestamp | undefined;
+      if (pickupEnd && pickupEnd.toMillis() <= Timestamp.now().toMillis()) {
+        throw new AppError("failed-precondition", "Pickup window has closed");
+      }
+
       const available = (offer.quantity as number) ?? 0;
       if (available < quantity) {
         throw new AppError(
@@ -94,7 +101,16 @@ export const reserveOffer = onCall(async (request) => {
         );
       }
 
-      tx.update(offerRef, { quantity: available - quantity });
+      const newQuantity = available - quantity;
+      // R7: mark offer as soldOut when quantity reaches 0
+      const offerUpdate: Record<string, unknown> = {
+        quantity: newQuantity,
+        updatedAt: serverTimestamp(),
+      };
+      if (newQuantity === 0) {
+        offerUpdate.status = "soldOut";
+      }
+      tx.update(offerRef, offerUpdate);
 
       const unitPrice = typeof offer.price === "number" ?
         offer.price :
@@ -115,9 +131,9 @@ export const reserveOffer = onCall(async (request) => {
         pickupStartTime: offer.pickupStartTime ?? null,
         pickupEndTime: offer.pickupEndTime ?? null,
         status: "confirmed",
-        paymentStatus: "paid",
         offerId,
         createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
     });
 

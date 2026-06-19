@@ -467,10 +467,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cancelOrderConfirm => 'Отменить заказ?';
 
   @override
-  String get cancelOrderRefund => 'Вам будет оформлен полный возврат.';
+  String get cancelOrderRefund => 'Это действие нельзя отменить.';
 
   @override
   String get yesCancel => 'Да, отменить';
+
+  @override
+  String get payOnPickup => 'Оплата при получении';
+
+  @override
+  String get cancelReason => 'Причина отмены';
+
+  @override
+  String get cancelReasonHint => 'Укажите причину';
+
+  @override
+  String get orderCancelledByStore => 'Отменено магазином';
+
+  @override
+  String get cancelReasonRequired => 'Укажите причину отмены';
 
   @override
   String get activeOrders => 'Активные заказы';
@@ -1022,4 +1037,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get loadingPleaseWait => 'Загрузка, подождите...';
+
+  @override
+  String get draftExpiredTitle => 'Сессия регистрации истекла';
+
+  @override
+  String get draftExpiredMessage =>
+      'Данные вашего магазина устарели. Пожалуйста, заполните данные снова для завершения регистрации.';
+
+  @override
+  String get fillDetailsAgain => 'Заполнить данные снова';
+
+  @override
+  String get submitDetails => 'Отправить данные';
 }

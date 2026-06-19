@@ -168,11 +168,8 @@ service cloud.firestore {
       // Orders are created by Cloud Functions only (payment/reserve flow).
       allow create: if false;
 
-      // Store owner/staff can update only status and updatedAt.
-      allow update: if isAdmin()
-        || (isSignedIn() && resource.data.storeId is string
-            && (hasStoreAccess(resource.data.storeId) || isStoreOwner(resource.data.storeId))
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']));
+      // All order status changes go through Cloud Functions (admin SDK).
+      allow update: if isAdmin();
     }
 
     // -------------------------------------------------------------------------

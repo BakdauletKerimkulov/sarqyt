@@ -153,8 +153,13 @@
   "pickupTimeExpired": "Время самовывоза истекло",
   "cancelOrder": "Отменить заказ",
   "cancelOrderConfirm": "Отменить заказ?",
-  "cancelOrderRefund": "Вам будет оформлен полный возврат.",
+  "cancelOrderRefund": "Это действие нельзя отменить.",
   "yesCancel": "Да, отменить",
+  "payOnPickup": "Оплата при получении",
+  "cancelReason": "Причина отмены",
+  "cancelReasonHint": "Укажите причину",
+  "orderCancelledByStore": "Отменено магазином",
+  "cancelReasonRequired": "Укажите причину отмены",
   "activeOrders": "Активные заказы",
   "active": "Активные",
   "completed": "Завершённые",
@@ -346,5 +351,10 @@
   "addToFavorites": "Добавить в избранное",
   "removeFromFavorites": "Убрать из избранного",
 
-  "loadingPleaseWait": "Загрузка, подождите..."
+  "loadingPleaseWait": "Загрузка, подождите...",
+
+  "draftExpiredTitle": "Сессия регистрации истекла",
+  "draftExpiredMessage": "Данные вашего магазина устарели. Пожалуйста, заполните данные снова для завершения регистрации.",
+  "fillDetailsAgain": "Заполнить данные снова",
+  "submitDetails": "Отправить данные"
 }

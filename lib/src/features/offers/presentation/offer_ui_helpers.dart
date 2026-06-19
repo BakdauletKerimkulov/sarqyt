@@ -40,6 +40,7 @@ extension OfferStatusLabelX on OfferStatus {
       OfferStatus.active => loc.offerStatusActive,
       OfferStatus.paused => loc.offerStatusPaused,
       OfferStatus.expired => loc.offerStatusExpired,
+      OfferStatus.soldOut => loc.soldOut,
     };
   }
 }

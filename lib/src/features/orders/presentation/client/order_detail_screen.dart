@@ -151,12 +151,7 @@ class _OrderDetailContent extends StatelessWidget {
           // Payment info
           _InfoRow(
             label: context.loc.payment,
-            value: switch (order.paymentStatus) {
-              PaymentStatus.paid => context.loc.paid,
-              PaymentStatus.refunded => context.loc.refunded,
-              PaymentStatus.refundPending => context.loc.refundPending,
-              PaymentStatus.refundFailed => context.loc.refundFailed,
-            },
+            value: context.loc.payOnPickup,
           ),
           gapH8,
           _InfoRow(
@@ -164,9 +159,43 @@ class _OrderDetailContent extends StatelessWidget {
             value: order.totalFormatted,
           ),
 
-          // Cancel button for active orders
+          // Cancellation reason (when cancelled by store)
+          if (order.status == OrderStatus.cancelled &&
+              order.cancelledBy == CancelledBy.store) ...[
+            gapH16,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(Sizes.p12),
+              decoration: BoxDecoration(
+                color: Colors.red.withAlpha(20),
+                borderRadius: BorderRadius.circular(Sizes.p8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.loc.orderCancelledByStore,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (order.cancellationReason != null) ...[
+                    gapH4,
+                    Text(
+                      order.cancellationReason!,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+
+          // Cancel button for active orders (including readyForPickup)
           if (order.status == OrderStatus.confirmed ||
-              order.status == OrderStatus.preparing) ...[
+              order.status == OrderStatus.preparing ||
+              order.status == OrderStatus.readyForPickup) ...[
             gapH24,
             _CancelOrderButton(orderId: order.id),
           ],

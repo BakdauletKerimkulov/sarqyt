@@ -70,4 +70,47 @@ void main() {
     // pickupDayLabel and pickupLabel are presentation-layer extensions
     // that require BuildContext — tested in widget tests, not here.
   });
+
+  group('Offer._readStatus via fromJson', () {
+    Map<String, dynamic> baseOfferJson() => {
+          'id': 'offer1',
+          'storeId': 'store1',
+          'productId': 'item1',
+          'quantity': 5,
+          'name': 'Surprise Bag',
+          'price': 1500,
+          'currencyCode': 'KZT',
+          'currencySymbol': '₸',
+          'storeName': 'Test Store',
+          'geopoint': const GeoPoint(43.25, 76.94),
+          'pickupStartTime': Timestamp.fromDate(DateTime(2026, 7, 1, 10)),
+          'pickupEndTime': Timestamp.fromDate(DateTime(2026, 7, 1, 14)),
+          'createdAt': Timestamp.fromDate(DateTime(2026, 6, 1)),
+          'createdBy': 'uid1',
+          'status': 'active',
+        };
+
+    test('parses "soldOut" status', () {
+      final json = baseOfferJson()..['status'] = 'soldOut';
+      final offer = Offer.fromJson(json);
+      expect(offer.status, OfferStatus.soldOut);
+    });
+
+    test('parses "active" status', () {
+      final json = baseOfferJson()..['status'] = 'active';
+      final offer = Offer.fromJson(json);
+      expect(offer.status, OfferStatus.active);
+    });
+
+    test('parses "inactive" as paused (backward compat)', () {
+      final json = baseOfferJson()..['status'] = 'inactive';
+      final offer = Offer.fromJson(json);
+      expect(offer.status, OfferStatus.paused);
+    });
+
+    test('isActive returns false for soldOut', () {
+      final offer = _makeOffer(status: OfferStatus.soldOut);
+      expect(offer.isActive, false);
+    });
+  });
 }

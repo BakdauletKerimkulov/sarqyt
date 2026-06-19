@@ -7,7 +7,7 @@ import 'package:latlong2/latlong.dart';
 part 'offer.freezed.dart';
 part 'offer.g.dart';
 
-enum OfferStatus { active, paused, expired }
+enum OfferStatus { active, paused, expired, soldOut }
 
 
 typedef OfferID = String;
@@ -150,6 +150,8 @@ abstract class Offer with _$Offer {
         return OfferStatus.paused;
       case 'expired':
         return OfferStatus.expired;
+      case 'soldOut':
+        return OfferStatus.soldOut;
       case null:
         return OfferStatus.active;
       default:

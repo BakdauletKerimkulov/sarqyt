@@ -153,8 +153,13 @@
   "pickupTimeExpired": "Алу уақыты өтті",
   "cancelOrder": "Тапсырысты болдырмау",
   "cancelOrderConfirm": "Тапсырысты болдырмау?",
-  "cancelOrderRefund": "Ақшаңыз толық қайтарылады.",
+  "cancelOrderRefund": "Бұл әрекетті кері қайтару мүмкін емес.",
   "yesCancel": "Иә, болдырмау",
+  "payOnPickup": "Алған кезде төлеу",
+  "cancelReason": "Болдырмау себебі",
+  "cancelReasonHint": "Себебін жазыңыз",
+  "orderCancelledByStore": "Дүкен болдырмаған",
+  "cancelReasonRequired": "Болдырмау себебін жазыңыз",
   "activeOrders": "Белсенді тапсырыстар",
   "active": "Белсенді",
   "completed": "Аяқталған",
@@ -346,5 +351,10 @@
   "addToFavorites": "Таңдаулыларға қосу",
   "removeFromFavorites": "Таңдаулылардан алу",
 
-  "loadingPleaseWait": "Жүктелуде, күте тұрыңыз..."
+  "loadingPleaseWait": "Жүктелуде, күте тұрыңыз...",
+
+  "draftExpiredTitle": "Тіркелу сессиясының мерзімі өтті",
+  "draftExpiredMessage": "Дүкен деректеріңіздің мерзімі өтті. Тіркелуді аяқтау үшін деректеріңізді қайтадан толтырыңыз.",
+  "fillDetailsAgain": "Деректерді қайта толтыру",
+  "submitDetails": "Деректерді жіберу"
 }

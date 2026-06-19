@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 
@@ -91,4 +92,61 @@ void main() {
 
   // pickupLabel is a presentation-layer extension (pickupLabelLocalized)
   // that requires BuildContext — tested in widget tests, not here.
+
+  group('Order.fromJson backward compatibility', () {
+    Map<String, dynamic> baseJson() => {
+          'id': 'o1',
+          'itemId': 'i1',
+          'storeId': 's1',
+          'customerId': 'u1',
+          'itemName': 'Surprise bag',
+          'storeName': 'Test Store',
+          'unitPrice': 1500,
+          'itemQuantity': 2,
+          'status': 'confirmed',
+          'createdAt': Timestamp.fromDate(DateTime(2026, 1, 1)),
+        };
+
+    test('handles null paymentStatus (new orders)', () {
+      final json = baseJson(); // no paymentStatus key
+      final order = Order.fromJson(json);
+      expect(order.paymentStatus, isNull);
+    });
+
+    test('handles existing paymentStatus "paid" (old orders)', () {
+      final json = baseJson()..['paymentStatus'] = 'paid';
+      final order = Order.fromJson(json);
+      expect(order.paymentStatus, PaymentStatus.paid);
+    });
+
+    test('reads cancellationReason', () {
+      final json = baseJson()
+        ..['status'] = 'cancelled'
+        ..['cancellationReason'] = 'Store closed early';
+      final order = Order.fromJson(json);
+      expect(order.cancellationReason, 'Store closed early');
+    });
+
+    test('reads cancelledBy store', () {
+      final json = baseJson()
+        ..['status'] = 'cancelled'
+        ..['cancelledBy'] = 'store';
+      final order = Order.fromJson(json);
+      expect(order.cancelledBy, CancelledBy.store);
+    });
+
+    test('reads cancelledBy customer', () {
+      final json = baseJson()
+        ..['status'] = 'cancelled'
+        ..['cancelledBy'] = 'customer';
+      final order = Order.fromJson(json);
+      expect(order.cancelledBy, CancelledBy.customer);
+    });
+
+    test('cancelledBy defaults to null when absent', () {
+      final json = baseJson();
+      final order = Order.fromJson(json);
+      expect(order.cancelledBy, isNull);
+    });
+  });
 }

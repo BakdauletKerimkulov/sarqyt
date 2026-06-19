@@ -161,20 +161,14 @@ class _PaymentMethodCard extends StatelessWidget {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(Sizes.p4),
             ),
-            child: const Icon(Icons.credit_card, size: 20, color: Colors.grey),
+            child: const Icon(Icons.store, size: 20, color: Colors.grey),
           ),
           gapW12,
           Expanded(
             child: Text(
-              context.loc.cardPayment,
+              context.loc.payOnPickup,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-          ),
-          Text(
-            context.loc.selectedAtCheckout,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: Colors.grey),
           ),
         ],
       ),

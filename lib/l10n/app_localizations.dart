@@ -991,7 +991,7 @@ abstract class AppLocalizations {
   /// No description provided for @cancelOrderRefund.
   ///
   /// In en, this message translates to:
-  /// **'You will receive a full refund.'**
+  /// **'This action cannot be undone.'**
   String get cancelOrderRefund;
 
   /// No description provided for @yesCancel.
@@ -999,6 +999,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, cancel'**
   String get yesCancel;
+
+  /// No description provided for @payOnPickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay on pickup'**
+  String get payOnPickup;
+
+  /// No description provided for @cancelReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get cancelReason;
+
+  /// No description provided for @cancelReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter reason'**
+  String get cancelReasonHint;
+
+  /// No description provided for @orderCancelledByStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by store'**
+  String get orderCancelledByStore;
+
+  /// No description provided for @cancelReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a reason'**
+  String get cancelReasonRequired;
 
   /// No description provided for @activeOrders.
   ///
@@ -2025,6 +2055,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading, please wait...'**
   String get loadingPleaseWait;
+
+  /// No description provided for @draftExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration session expired'**
+  String get draftExpiredTitle;
+
+  /// No description provided for @draftExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your store details have expired. Please fill in your details again to complete registration.'**
+  String get draftExpiredMessage;
+
+  /// No description provided for @fillDetailsAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in details again'**
+  String get fillDetailsAgain;
+
+  /// No description provided for @submitDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit details'**
+  String get submitDetails;
 }
 
 class _AppLocalizationsDelegate

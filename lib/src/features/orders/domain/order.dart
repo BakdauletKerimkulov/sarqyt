@@ -15,6 +15,8 @@ enum OrderStatus { confirmed, preparing, readyForPickup, completed, cancelled, e
 
 enum PaymentStatus { paid, refunded, refundPending, refundFailed }
 
+enum CancelledBy { customer, store }
+
 @freezed
 abstract class Order with _$Order {
   const factory Order({
@@ -30,7 +32,9 @@ abstract class Order with _$Order {
     @Default('₸') String currencySymbol,
     required int itemQuantity,
     required OrderStatus status,
-    required PaymentStatus paymentStatus,
+    PaymentStatus? paymentStatus,
+    String? cancellationReason,
+    CancelledBy? cancelledBy,
     @NullableTimestampConverter() DateTime? pickupStartTime,
     @NullableTimestampConverter() DateTime? pickupEndTime,
     @TimestampConverter() required DateTime createdAt,

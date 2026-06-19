@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/checkout/data/payment_repository.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
+import 'package:uuid/uuid.dart';
 
 part 'checkout_service.g.dart';
 
@@ -35,16 +34,24 @@ typedef CheckoutResult = OrderID?;
 
 @riverpod
 class CheckoutController extends _$CheckoutController {
+  String _idempotencyKey = const Uuid().v4();
+  int _lastQuantity = 1;
+
   @override
   FutureOr<CheckoutResult> build() => null;
 
-  /// Reserve without payment — for testing with real restaurants.
-  /// TODO: Replace with pay() when Kaspi Pay is integrated.
+  /// Reserve without online payment — order is paid on pickup at the store.
   Future<CheckoutResult> pay({
     required String offerId,
     required int quantity,
     required String storeName,
   }) async {
+    // Regenerate key if quantity changed since last attempt
+    if (quantity != _lastQuantity) {
+      _idempotencyKey = const Uuid().v4();
+      _lastQuantity = quantity;
+    }
+
     state = const AsyncLoading();
 
     state = await AsyncValue.guard(() async {
@@ -52,6 +59,7 @@ class CheckoutController extends _$CheckoutController {
       final orderId = await paymentRepo.reserveOffer(
         offerId: offerId,
         quantity: quantity,
+        idempotencyKey: _idempotencyKey,
       );
       return orderId;
     });
@@ -60,56 +68,4 @@ class CheckoutController extends _$CheckoutController {
 
     return state.value;
   }
-
-  /* --- Stripe payment flow (for when payment system is ready) ---
-  Future<CheckoutResult> payWithStripe({
-    required String offerId,
-    required int quantity,
-    required String storeName,
-  }) async {
-    final link = ref.keepAlive();
-    state = const AsyncLoading();
-
-    state = await AsyncValue.guard(() async {
-      final paymentRepo = ref.read(paymentRepositoryProvider);
-      final paymentSheetRepo = ref.read(paymentSheetRepositoryProvider);
-
-      final result = await paymentRepo.createPayment(
-        offerId: offerId,
-        quantity: quantity,
-      );
-
-      await paymentSheetRepo.initPaymentSheet(
-        paymentIntentClientSecret: result.paymentIntentClientSecret,
-        ephemeralKey: result.ephemeralKey,
-        stripeCustomerId: result.stripeCustomerId,
-        merchantDisplayName: storeName,
-      );
-
-      final success = await paymentSheetRepo.presentPaymentSheet();
-      if (!success) throw const _PaymentCancelledException();
-
-      final ordersRepo = ref.read(clientOrdersRepositoryProvider);
-      final order = await ordersRepo
-          .watchOrderByPaymentIntent(result.paymentIntentId, user.uid)
-          .where((o) => o != null)
-          .first
-          .timeout(const Duration(seconds: 15), onTimeout: () => null);
-
-      if (order == null) {
-        throw TimeoutException('Order not received yet.');
-      }
-      return order.id;
-    });
-
-    link.close();
-
-    if (state.hasError && state.error is _PaymentCancelledException) {
-      state = const AsyncData(null);
-      return null;
-    }
-    if (state.hasError) return null;
-    return state.value;
-  }
-  */
 }
