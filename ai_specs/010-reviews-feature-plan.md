@@ -2,7 +2,7 @@
 
 Source: `ai_specs/010-reviews-feature-spec.md`
 Created: 2026-06-10
-Status: in-progress (phase 2 complete)
+Status: complete
 
 ## Overview
 Complete the partially-implemented reviews feature: rename `foodRating` → `offerRating`, add Cloud Function aggregation (`onReviewWritten`), display real store ratings on offer cards and detail screens, and build a store reviews list screen. Phase 1 proves the critical path end-to-end: rename + aggregation + rating visible on cards.
@@ -54,13 +54,13 @@ Complete the partially-implemented reviews feature: rename `foodRating` → `off
 ### Phase 3 — Full reviews list + routing + daily-sync + security
 **Goal:** Navigate to full store reviews screen, daily-sync populates rating on Offer docs, security rules protect server fields.
 
-- [ ] `lib/src/features/review/presentation/store_reviews_screen.dart` — full-screen list of reviews for a store; AppBar with store name; uses `storeReviewsProvider(storeId, limit: 50)`; reuses `ReviewCard`
-- [ ] `lib/src/routing/client_router.dart` — add `storeReviews` to `ClientRoute` enum; add `GoRoute` at path `/store-reviews/:storeId` with `storeName` query param; deep link fallback shows generic "Reviews" title
-- [ ] `functions/src/features/offers/types/offer-sync.ts` — add `storeAvgRating` (number) and `storeReviewCount` (number) to `MaterializedOfferFields`
-- [ ] `functions/src/features/offers/services/build-expected-offers.ts` — copy `avgRating` → `storeAvgRating` and `reviewCount` → `storeReviewCount` from `StoreDoc` into materialized offer fields
-- [ ] `lib/l10n/app_en.arb`, `app_ru.arb`, `app_kk.arb` — add `noReviewsYet`, `allReviews`, `reviewCount` (parameterized), review date format; remove dead keys: `addHighlights`, `quickCollection`, `friendlyStaff`, `basedOnRatings`
-- [ ] `firestore.rules` — add `serverFieldsUnchanged(['avgRating', 'reviewCount'])` to `stores/{storeId}` update rule
-- [ ] Verify: `flutter analyze && dart run build_runner build --delete-conflicting-outputs && flutter test`
+- [x] `lib/src/features/review/presentation/store_reviews_screen.dart` — full-screen list of reviews for a store; AppBar with store name; uses `storeReviewsProvider(storeId, limit: 50)`; reuses `ReviewCard`
+- [x] `lib/src/routing/client_router.dart` — add `storeReviews` to `ClientRoute` enum; add `GoRoute` at path `/store-reviews/:storeId` with `storeName` query param; deep link fallback shows generic "Reviews" title
+- [x] `functions/src/features/offers/types/offer-sync.ts` — add `storeAvgRating` (number) and `storeReviewCount` (number) to `MaterializedOfferFields`
+- [x] `functions/src/features/offers/services/build-expected-offers.ts` — copy `avgRating` → `storeAvgRating` and `reviewCount` → `storeReviewCount` from `StoreDoc` into materialized offer fields
+- [x] `lib/l10n/app_en.arb`, `app_ru.arb`, `app_kk.arb` — add `noReviewsYet`, `allReviews`, `reviewCount` (parameterized), review date format; remove dead keys: `addHighlights`, `quickCollection`, `friendlyStaff`, `basedOnRatings`
+- [x] `firestore.rules` — add `serverFieldsUnchanged(['avgRating', 'reviewCount'])` to `stores/{storeId}` update rule
+- [x] Verify: `flutter analyze && dart run build_runner build --delete-conflicting-outputs && flutter test`
 
 ## Data layer changes
 - **Store document:** add `reviewCount` (int, default 0). `avgRating` already exists. Both server-authoritative via CF.

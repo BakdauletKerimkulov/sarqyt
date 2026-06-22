@@ -43,6 +43,8 @@ interface OfferMaterializationTemplate {
   storeLogo: string | null;
   storeAddress: string | null;
   productImage: string | null;
+  storeAvgRating: number;
+  storeReviewCount: number;
 }
 
 function buildMaterializationTemplate(
@@ -84,6 +86,8 @@ function buildMaterializationTemplate(
     storeLogo: storeData.logoUrl ?? null,
     storeAddress: buildStoreAddress(storeData),
     productImage: itemData.imageUrl ?? null,
+    storeAvgRating: storeData.avgRating ?? 0,
+    storeReviewCount: storeData.reviewCount ?? 0,
   };
 }
 
@@ -136,6 +140,8 @@ function materializeOfferForDate(
     pickupStartTime: Timestamp.fromDate(pickupStart),
     pickupEndTime: Timestamp.fromDate(pickupEnd),
     status: "active",
+    storeAvgRating: template.storeAvgRating,
+    storeReviewCount: template.storeReviewCount,
   };
 
   return {

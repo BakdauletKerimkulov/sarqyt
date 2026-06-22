@@ -18,6 +18,7 @@ import 'package:sarqyt/src/features/auth/presentation/edit_profile/edit_profile_
 import 'package:sarqyt/src/features/auth/presentation/settings/app_settings_screen.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/orders_screen.dart';
 import 'package:sarqyt/src/features/review/presentation/review_screen.dart';
+import 'package:sarqyt/src/features/review/presentation/store_reviews_screen.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/app_router_refresh_stream.dart';
 import 'package:sarqyt/src/routing/not_found_screen.dart';
@@ -43,6 +44,7 @@ enum ClientRoute {
   editProfile,
   appSettings,
   favorites,
+  storeReviews,
 }
 
 class ClientShellScaffold extends StatelessWidget {
@@ -135,6 +137,17 @@ GoRouter clientRouter(Ref ref) {
         pageBuilder: (context, state) {
           final param = state.pathParameters['id']!;
           return MaterialPage(child: CheckoutScreen(offerId: param));
+        },
+      ),
+      GoRoute(
+        path: '/store-reviews/:storeId',
+        name: ClientRoute.storeReviews.name,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final storeId = state.pathParameters['storeId']!;
+          final storeName = state.uri.queryParameters['storeName'] ??
+              context.loc.allReviews;
+          return StoreReviewsScreen(storeId: storeId, storeName: storeName);
         },
       ),
 

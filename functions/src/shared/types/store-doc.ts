@@ -38,6 +38,7 @@ export interface StoreDoc {
   logoUrl?: string | null;
   coverUrl?: string | null;
   avgRating?: number;
+  reviewCount?: number;
   currency?: string;
   isVisible?: boolean;
   createdAt: FieldValue | Timestamp;
