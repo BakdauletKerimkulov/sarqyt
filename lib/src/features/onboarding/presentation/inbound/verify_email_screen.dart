@@ -148,17 +148,14 @@ class _DraftNotFoundRecovery extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Registration session expired'.hardcoded,
+          context.loc.draftExpiredTitle,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         gapH12,
-        Text(
-          'Your store details have expired. Please fill in your details again to complete registration.'
-              .hardcoded,
-        ),
+        Text(context.loc.draftExpiredMessage),
         gapH24,
         PrimaryWebButton(
-          text: 'Fill in details again'.hardcoded,
+          text: context.loc.fillDetailsAgain,
           onPressed: () => context.goNamed(BusinessRoute.createAccount.name),
         ),
       ],

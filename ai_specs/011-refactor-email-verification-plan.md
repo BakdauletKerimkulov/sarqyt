@@ -2,7 +2,7 @@
 
 Source: `ai_specs/011-refactor-email-verification-spec.md`
 Created: 2026-06-12
-Status: draft
+Status: complete
 
 ## Overview
 Fix four compounding defects in business-app registration/onboarding navigation: (1) dead-end for verified guests with missing/expired drafts, (2) incomplete rollback on failed registration, (3) cold-start verify-email flash, (4) unguarded welcome screen for non-owners. Phase 1 fixes the redirect and rollback (the two mutually-dependent critical-path defects). Phase 2 adds the recovery UI on verify-email and the already-signed-in branch on email screen. Phase 3 hardens welcome guard and adds i18n.
@@ -49,11 +49,11 @@ Fix four compounding defects in business-app registration/onboarding navigation:
 ### Phase 3 — Welcome guard + i18n
 **Goal:** Owner-only welcome filter; all new strings localized.
 
-- [ ] TDD: `test/features/store/store_ship_extension_test.dart` (new file) — `pendingWelcome` returns owner with `welcomeCompleted: false`; returns null for employee/operator with `welcomeCompleted: false`; returns null when all completed
-- [ ] `lib/src/features/store/domain/store_ship.dart` — `StoreShipListX.pendingWelcome`: add `role == StoreRole.owner` filter
-- [ ] `lib/src/features/onboarding/presentation/welcome/welcome_screen.dart` — guard: if resolved ship's role is not `owner`, call `markWelcomeCompleted` immediately (auto-skip)
-- [ ] `lib/l10n/app_en.arb`, `lib/l10n/app_ru.arb`, `lib/l10n/app_kk.arb` — add keys: `draftExpiredTitle`, `draftExpiredMessage`, `fillDetailsAgain`, `submitDetails`
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] TDD: `test/features/store/store_ship_extension_test.dart` (new file) — `pendingWelcome` returns owner with `welcomeCompleted: false`; returns null for employee/operator with `welcomeCompleted: false`; returns null when all completed
+- [x] `lib/src/features/store/domain/store_ship.dart` — `StoreShipListX.pendingWelcome`: add `role == StoreRole.owner` filter
+- [x] `lib/src/features/onboarding/presentation/welcome/welcome_screen.dart` — guard: if resolved ship's role is not `owner`, call `markWelcomeCompleted` immediately (auto-skip)
+- [x] `lib/l10n/app_en.arb`, `lib/l10n/app_ru.arb`, `lib/l10n/app_kk.arb` — add keys: `draftExpiredTitle`, `draftExpiredMessage`, `fillDetailsAgain`, `submitDetails`
+- [x] Verify: `flutter analyze && flutter test`
 
 ## Data layer changes
 _None._ No schema, security rules, collection paths, or index changes.

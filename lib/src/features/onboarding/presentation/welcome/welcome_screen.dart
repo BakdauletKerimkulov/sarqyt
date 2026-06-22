@@ -31,8 +31,8 @@ class WelcomeScreen extends ConsumerWidget {
         child: AsyncValueWidget(
           value: shipsAsync,
           data: (ships) {
-            // Pick the first pending storeShip — or fall back to any first one.
-            final ship = ships.pendingWelcome ?? ships.firstOrNull;
+            // Pick the first pending owner storeShip.
+            final ship = ships.pendingWelcome;
             if (ship == null) {
               return Text(context.loc.noStoreFound);
             }

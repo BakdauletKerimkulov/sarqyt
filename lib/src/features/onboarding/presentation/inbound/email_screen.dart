@@ -25,10 +25,10 @@ class EmailScreen extends ConsumerWidget {
       child: OnboardingPanel(
         onBackPressed: () => context.pop(),
         title: isSignedIn
-            ? 'Submit details'.hardcoded
+            ? context.loc.submitDetails
             : context.loc.addEmailAndPassword,
         subtitle: isSignedIn
-            ? 'Re-enter your store details to complete registration.'.hardcoded
+            ? context.loc.draftExpiredMessage
             : 'You\'ll need your email and password to log in to your account.',
         child: EmailContent(),
       ),
@@ -210,7 +210,7 @@ class _EmailContent extends ConsumerState<EmailContent>
 
           PrimaryWebButton(
             text: _isSignedIn
-                ? 'Submit details'.hardcoded
+                ? context.loc.submitDetails
                 : 'Continue',
             isLoading: isLoading,
             onPressed: _submit,
