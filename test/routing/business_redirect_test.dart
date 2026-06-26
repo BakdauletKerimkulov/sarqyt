@@ -5,7 +5,7 @@ import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/routing/business_redirect_state.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 
-/// Shorthand to call [businessRedirect] with the new signature.
+/// Shorthand to call [businessRedirect] with the Uri-based signature.
 String? _redirect({
   AppUser? user,
   UserRole role = UserRole.guest,
@@ -13,6 +13,7 @@ String? _redirect({
   bool storeShipsLoaded = true,
   bool roleLoaded = true,
   required String path,
+  Map<String, String> queryParameters = const {},
 }) {
   return businessRedirect(
     redirectState: BusinessRedirectState(
@@ -22,7 +23,7 @@ String? _redirect({
       storeShipsLoaded: storeShipsLoaded,
       roleLoaded: roleLoaded,
     ),
-    path: path,
+    uri: Uri(path: path, queryParameters: queryParameters.isEmpty ? null : queryParameters),
   );
 }
 
@@ -502,6 +503,46 @@ void main() {
   group('Layer 1 — Unauthenticated on /loading', () {
     test('/loading → /login', () {
       expect(_redirect(path: '/loading'), '/login');
+    });
+  });
+
+  group('Admin dev menu — /dev route guard', () {
+    late FakeAppUser admin;
+    late FakeAppUser partner;
+    setUp(() {
+      admin = _user(role: UserRole.admin);
+      partner = _user(role: UserRole.partner);
+    });
+
+    test('admin at /dev → stay', () {
+      expect(
+        _redirect(user: admin, role: UserRole.admin, path: '/dev'),
+        isNull,
+      );
+    });
+
+    test('partner at /dev → /stores', () {
+      expect(
+        _redirect(
+          user: partner,
+          role: UserRole.partner,
+          storeShips: _completedShips,
+          path: '/dev',
+        ),
+        '/stores',
+      );
+    });
+
+    test('admin at onboarding with devMenu=true → stay (bypass)', () {
+      expect(
+        _redirect(
+          user: admin,
+          role: UserRole.admin,
+          path: '/onboarding/inbound/review-details',
+          queryParameters: {'devMenu': 'true'},
+        ),
+        isNull,
+      );
     });
   });
 

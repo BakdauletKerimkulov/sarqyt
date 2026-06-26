@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
+import 'package:sarqyt/src/features/dev_menu/presentation/dev_menu_screen.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_business/sigin_in_business_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/dashboard_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/financials_screen.dart';
@@ -63,6 +64,7 @@ enum BusinessRoute {
   newItem,
   team,
   addStore,
+  dev,
 }
 
 /// Pure, sync, testable global redirect for the business app.
@@ -79,8 +81,9 @@ enum BusinessRoute {
 ///  9. Partner done → redirect onboarding/login/forbidden to /stores, else stay
 String? businessRedirect({
   required BusinessRedirectState redirectState,
-  required String path,
+  required Uri uri,
 }) {
+  final path = uri.path;
   final user = redirectState.user;
   final role = redirectState.role;
   final storeShips = redirectState.storeShips;
@@ -91,6 +94,7 @@ String? businessRedirect({
   final onWelcome = path.startsWith('/onboarding/welcome');
   final onForbidden = path.startsWith('/forbidden');
   final onLoading = path.startsWith('/loading');
+  final onDev = path.startsWith('/dev');
 
   // Layer 1: Unauthenticated — no need to wait for role/storeShips
   if (user == null) {
@@ -125,8 +129,13 @@ String? businessRedirect({
     return '/forbidden';
   }
 
+  // Layer 5.5: /dev is admin-only — partner must be redirected
+  if (onDev && role != UserRole.admin) return '/stores';
+
   // Layer 6: Admin — bypass welcome flow entirely
   if (role == UserRole.admin) {
+    // devMenu=true query param: allow admin to reach any screen (e.g. onboarding)
+    if (uri.queryParameters['devMenu'] == 'true') return null;
     if (onLogin || onOnboarding || onForbidden || onLoading) return '/stores';
     return null;
   }
@@ -199,7 +208,7 @@ GoRouter businessRouter(Ref ref) {
       final redirectState = ref.read(businessRedirectStateProvider);
       return businessRedirect(
         redirectState: redirectState,
-        path: state.uri.path,
+        uri: state.uri,
       );
     },
     refreshListenable: refresh,
@@ -270,6 +279,12 @@ GoRouter businessRouter(Ref ref) {
             builder: (context, state) => const WelcomeScreen(),
           ),
         ],
+      ),
+
+      GoRoute(
+        path: '/dev',
+        name: BusinessRoute.dev.name,
+        builder: (context, state) => const DevMenuScreen(),
       ),
 
       // Store selection screen (if > 1)
