@@ -32,10 +32,10 @@ Add a floating debug menu for admin users in the business app. A FAB (bug icon) 
 ### Phase 2 — FAB + category grouping + parameter inputs
 **Goal:** Admin sees bug FAB on all store-scoped screens. Dev menu groups routes by category with editable path parameter fields.
 
-- [ ] `lib/src/routing/scaffold_with_nested_navigation.dart` — add `floatingActionButton` to `Scaffold` in narrow layout (line 117) and inner `Scaffold` in wide layout (line 144); gate visibility on `ref.watch(userRoleProvider)` matching `UserRole.admin`; convert `ScaffoldWithNestedNavigation` to `ConsumerWidget`; FAB icon `Icons.bug_report`, onTap → `context.go('/dev')`
-- [ ] `lib/src/features/dev_menu/presentation/dev_menu_screen.dart` — group routes into categories (Onboarding, Store/Dashboard, Settings, Other); show section headers; for routes with `:paramName` segments, show `TextField` per param; pre-fill `:storeId` from current context if available; append `?devMenu=true` to generated path for onboarding routes; navigate with entered values on tap
-- [ ] TDD: partner on dashboard → FAB not visible; admin on dashboard → FAB visible (widget test if feasible, otherwise manual QA only — note in task)
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] `lib/src/routing/scaffold_with_nested_navigation.dart` — add `floatingActionButton` to `Scaffold` in narrow layout (line 117) and inner `Scaffold` in wide layout (line 144); gate visibility on `ref.watch(userRoleProvider)` matching `UserRole.admin`; convert `ScaffoldWithNestedNavigation` to `ConsumerWidget`; FAB icon `Icons.bug_report`, onTap → `context.go('/dev')`
+- [x] `lib/src/features/dev_menu/presentation/dev_menu_screen.dart` — group routes into categories (Onboarding, Store/Dashboard, Settings, Other); show section headers; for routes with `:paramName` segments, show `TextField` per param; pre-fill `:storeId` from current context if available; append `?devMenu=true` to generated path for onboarding routes; navigate with entered values on tap
+- [x] TDD: partner on dashboard → FAB not visible; admin on dashboard → FAB visible (manual QA only — widget test not feasible without mocking StatefulNavigationShell; per architecture.md: "No widget tests required unless UI is complex/critical")
+- [x] Verify: `flutter analyze && flutter test`
 
 ### Phase 3 — Nice-to-haves (search + copy)
 **Goal:** Search/filter bar and copy-path button.

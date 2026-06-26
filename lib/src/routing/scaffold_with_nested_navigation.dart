@@ -7,6 +7,7 @@ import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
+import 'package:sarqyt/src/features/auth/domain/app_user.dart';
 import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
@@ -95,7 +96,7 @@ final sideMenuItems = sideMenuSections
     .where((i) => i.branchIndex >= 0)
     .toList();
 
-class ScaffoldWithNestedNavigation extends StatelessWidget {
+class ScaffoldWithNestedNavigation extends ConsumerWidget {
   const ScaffoldWithNestedNavigation({Key? key, required this.navigationShell})
     : super(key: key ?? const ValueKey('ScaffoldWithNestedNavigation'));
 
@@ -109,14 +110,24 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentBranch = navigationShell.currentIndex;
+    final isAdmin =
+        ref.watch(userRoleProvider).value == UserRole.admin;
+
+    final fab = isAdmin
+        ? FloatingActionButton(
+            onPressed: () => context.goNamed(BusinessRoute.dev.name),
+            child: const Icon(Icons.bug_report),
+          )
+        : null;
 
     final size = MediaQuery.sizeOf(context);
     if (size.width < 450) {
       return Scaffold(
         appBar: _GlobalAppBar(showMenuButton: true),
         body: navigationShell,
+        floatingActionButton: fab,
         drawer: Drawer(
           child: _SidebarContent(
             currentBranch: currentBranch,
@@ -141,7 +152,11 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
           ),
           const VerticalDivider(width: 1, thickness: 1),
           Expanded(
-            child: Scaffold(appBar: _GlobalAppBar(), body: navigationShell),
+            child: Scaffold(
+              appBar: _GlobalAppBar(),
+              body: navigationShell,
+              floatingActionButton: fab,
+            ),
           ),
         ],
       ),
