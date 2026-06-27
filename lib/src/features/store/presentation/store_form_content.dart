@@ -12,18 +12,20 @@ class StoreFormContent extends StatefulWidget {
     super.key,
     required this.initialDraft,
     required this.onSubmit,
-    required this.submitText,
+    this.submitText = '',
+    this.showSubmitButton = true,
   });
 
   final StoreDraft initialDraft;
   final void Function(StoreDraft)? onSubmit;
   final String submitText;
+  final bool showSubmitButton;
 
   @override
-  State<StatefulWidget> createState() => _StoreFormContentState();
+  State<StatefulWidget> createState() => StoreFormContentState();
 }
 
-class _StoreFormContentState extends State<StoreFormContent> {
+class StoreFormContentState extends State<StoreFormContent> {
   final _node = FocusScopeNode();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -260,11 +262,13 @@ class _StoreFormContentState extends State<StoreFormContent> {
                   !_submitted ? null : _phoneError(value ?? ''),
               autovalidateMode: AutovalidateMode.onUserInteraction,
             ),
-            gapH24,
-            PrimaryWebButton(
-              text: widget.submitText,
-              onPressed: () => submit(),
-            ),
+            if (widget.showSubmitButton) ...[
+              gapH24,
+              PrimaryWebButton(
+                text: widget.submitText,
+                onPressed: () => submit(),
+              ),
+            ],
           ],
         ),
       ),
