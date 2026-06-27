@@ -33,10 +33,10 @@ Add an edit dialog to `ReviewDetailsScreen` that reuses `StoreFormContent` insid
 ### Phase 2 — Create EditStoreDraftDialog + wire into ReviewDetailsScreen
 **Goal:** End-to-end: tapping Edit opens dialog with pre-filled form, Save calls `saveStepOne()` and triggers geocoding if address changed.
 
-- [ ] `lib/src/features/onboarding/presentation/inbound/edit_store_draft_dialog.dart` — new `StatefulWidget`: `AlertDialog` with scrollable `StoreFormContent(showSubmitButton: false)`, Cancel/Save actions. Save calls `formKey.currentState!.submit()`, on success calls `saveStepOne()` via `StoreDraftController`, pops with `true`.
-- [ ] `lib/src/features/onboarding/presentation/inbound/review_details_screen.dart` — replace `showNotImplementedAlertDialog` (line 108) with `showDialog<bool>(child: EditStoreDraftDialog(...))`. On result `true`, call `_geocodeIfNeeded()`.
-- [ ] `lib/src/features/onboarding/presentation/inbound/review_details_screen.dart` — remove unused `alert_dialogs.dart` import if `showNotImplementedAlertDialog` was the only usage.
-- [ ] Verify: `flutter analyze`
+- [x] `lib/src/features/onboarding/presentation/inbound/edit_store_draft_dialog.dart` — new `StatefulWidget`: `AlertDialog` with scrollable `StoreFormContent(showSubmitButton: false)`, Cancel/Save actions. Save calls `formKey.currentState!.submit()`, on success calls `saveStepOne()` via `StoreDraftController`, pops with `true`.
+- [x] `lib/src/features/onboarding/presentation/inbound/review_details_screen.dart` — replace `showNotImplementedAlertDialog` (line 108) with `showDialog<bool>(child: EditStoreDraftDialog(...))`. On result `true`, call `_geocodeIfNeeded()`.
+- [x] `lib/src/features/onboarding/presentation/inbound/review_details_screen.dart` — remove unused `alert_dialogs.dart` import if `showNotImplementedAlertDialog` was the only usage.
+- [x] Verify: `flutter analyze`
 
 ### Phase 3 — Unit tests for StoreDraftController
 **Goal:** Verify `saveStepOne()` address-change detection and location reset logic.
