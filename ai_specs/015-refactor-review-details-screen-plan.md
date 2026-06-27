@@ -2,7 +2,7 @@
 
 Source: `ai_specs/015-refactor-review-details-screen-spec.md`
 Created: 2026-06-27
-Status: draft
+Status: complete
 
 ## Overview
 Add an edit dialog to `ReviewDetailsScreen` that reuses `StoreFormContent` inside an `AlertDialog`. Requires: (1) make `StoreFormContent` externally submittable via public state class + `showSubmitButton` param, (2) create `EditStoreDraftDialog` widget, (3) wire it into `ReviewDetailsScreen` replacing the placeholder. Follows `InviteMemberDialog` pattern for dialog structure.
@@ -41,10 +41,10 @@ Add an edit dialog to `ReviewDetailsScreen` that reuses `StoreFormContent` insid
 ### Phase 3 — Unit tests for StoreDraftController
 **Goal:** Verify `saveStepOne()` address-change detection and location reset logic.
 
-- [ ] TDD: `saveStepOne()` resets `location` to `null` when address fields change
-- [ ] TDD: `saveStepOne()` preserves `location` when only name/phone/storeType change
-- [ ] `test/src/features/onboarding/presentation/inbound/store_draft_controller_test.dart` — implement above tests using `ProviderContainer`
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] TDD: `saveStepOne()` resets `location` to `null` when address fields change (already implemented)
+- [x] TDD: `saveStepOne()` preserves `location` when only name/phone/storeType change (already implemented)
+- [x] `test/features/onboarding/store_draft_controller_test.dart` — implement above tests using `ProviderContainer`
+- [x] Verify: `flutter analyze && flutter test`
 
 ## Data layer changes
 _None._
