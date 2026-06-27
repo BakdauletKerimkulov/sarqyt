@@ -53,7 +53,11 @@ class _ReviewDetailsContentState extends ConsumerState<ReviewDetailsContent> {
 
   void _geocodeIfNeeded() {
     final draft = ref.read(storeDraftControllerProvider);
-    if (draft.location != null) return; // already have coordinates
+    if (draft.location != null) {
+      // Provider was auto-disposed; re-seed with coordinates saved in draft.
+      ref.read(storeLocationProvider.notifier).setLocation(draft.location!);
+      return;
+    }
     if (!draft.hasEnoughDataForCoordinates) return;
 
     ref.read(storeLocationProvider.notifier).getCoordinates(

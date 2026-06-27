@@ -153,6 +153,26 @@ void main() {
       expect(draft2.location, isNull);
     });
 
+    test('setLocation seeds provider state without API call', () async {
+      final fakeMapRepo = FakeMapRepository();
+      final container = createContainer(fakeMapRepo: fakeMapRepo);
+
+      const knownLocation = LatLng(43.2380, 76.9450);
+
+      // Simulate re-entering ReviewDetailsScreen when draft already has coords:
+      // the provider was auto-disposed and recreated → build() returns null.
+      // setLocation should seed it with the known value.
+      container
+          .read(storeLocationProvider.notifier)
+          .setLocation(knownLocation);
+
+      final result = await container.read(storeLocationProvider.future);
+
+      expect(result, knownLocation);
+      // No API call should have been made
+      expect(fakeMapRepo.queries, isEmpty);
+    });
+
     test('saveStepOne preserves location when address unchanged', () {
       final fakeMapRepo = FakeMapRepository();
       final container = createContainer(fakeMapRepo: fakeMapRepo);
