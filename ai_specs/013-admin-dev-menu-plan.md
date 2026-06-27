@@ -2,7 +2,7 @@
 
 Source: `ai_specs/013-admin-dev-menu-spec.md`
 Created: 2026-06-26
-Status: in-progress
+Status: complete
 
 ## Overview
 Add a floating debug menu for admin users in the business app. A FAB (bug icon) on all store-scoped screens opens a full-screen `/dev` route listing every `BusinessRoute` with category grouping and parameter inputs. Admin redirect bypass via `devMenu=true` query param allows navigating to onboarding screens that Layer 6 normally blocks.
@@ -40,8 +40,8 @@ Add a floating debug menu for admin users in the business app. A FAB (bug icon) 
 ### Phase 3 — Nice-to-haves (search + copy)
 **Goal:** Search/filter bar and copy-path button.
 
-- [ ] `lib/src/features/dev_menu/presentation/dev_menu_screen.dart` — add `TextField` at top for filtering routes by name; add copy-path `IconButton` per route item using `Clipboard.setData`
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] `lib/src/features/dev_menu/presentation/dev_menu_screen.dart` — add `TextField` at top for filtering routes by name; add copy-path `IconButton` per route item using `Clipboard.setData`
+- [x] Verify: `flutter analyze && flutter test`
 
 ## Data layer changes
 _None._

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -73,7 +74,6 @@ List<String> _extractParams(String path) {
 
 /// True for routes that are blocked by admin redirect (onboarding paths).
 bool _needsDevMenuBypass(String path) => path.startsWith('/onboarding');
-
 // ── Screen ──
 
 class DevMenuScreen extends ConsumerStatefulWidget {
@@ -88,6 +88,7 @@ class _DevMenuScreenState extends ConsumerState<DevMenuScreen> {
   /// Key format: `routeName:paramName`.
   final _paramValues = <String, String>{};
 
+  String _searchQuery = '';
   String? _defaultStoreId;
 
   @override
@@ -121,8 +122,14 @@ class _DevMenuScreenState extends ConsumerState<DevMenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final routes =
-        BusinessRoute.values.where((r) => r != BusinessRoute.dev).toList();
+    final query = _searchQuery.toLowerCase();
+    final routes = BusinessRoute.values.where((r) {
+      if (r == BusinessRoute.dev) return false;
+      if (query.isEmpty) return true;
+      final path = _routePaths[r] ?? '/${r.name}';
+      return r.name.toLowerCase().contains(query) ||
+          path.toLowerCase().contains(query);
+    }).toList();
 
     // Group by category, preserving enum order within each group.
     final grouped = <_RouteCategory, List<BusinessRoute>>{};
@@ -139,6 +146,15 @@ class _DevMenuScreenState extends ConsumerState<DevMenuScreen> {
       body: ListView(
         padding: const EdgeInsets.all(Sizes.p16),
         children: [
+          TextField(
+            decoration: const InputDecoration(
+              hintText: 'Filter routes...',
+              prefixIcon: Icon(Icons.search),
+              isDense: true,
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (v) => setState(() => _searchQuery = v),
+          ),
           for (final cat in categoryOrder)
             if (grouped[cat] case final routes?)
               _CategorySection(
@@ -149,6 +165,7 @@ class _DevMenuScreenState extends ConsumerState<DevMenuScreen> {
                 onParamChanged: (key, value) =>
                     setState(() => _paramValues[key] = value),
                 onRouteTap: (route) => context.go(_resolvedPath(route)),
+                resolvedPathFor: _resolvedPath,
               ),
         ],
       ),
@@ -166,6 +183,7 @@ class _CategorySection extends StatelessWidget {
     required this.defaultStoreId,
     required this.onParamChanged,
     required this.onRouteTap,
+    required this.resolvedPathFor,
   });
 
   final String label;
@@ -174,6 +192,7 @@ class _CategorySection extends StatelessWidget {
   final String? defaultStoreId;
   final void Function(String key, String value) onParamChanged;
   final ValueChanged<BusinessRoute> onRouteTap;
+  final String Function(BusinessRoute) resolvedPathFor;
 
   @override
   Widget build(BuildContext context) {
@@ -182,10 +201,7 @@ class _CategorySection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            top: Sizes.p16,
-            bottom: Sizes.p8,
-          ),
+          padding: const EdgeInsets.only(top: Sizes.p16, bottom: Sizes.p8),
           child: Text(
             label,
             style: textTheme.labelSmall?.copyWith(
@@ -202,6 +218,7 @@ class _CategorySection extends StatelessWidget {
             defaultStoreId: defaultStoreId,
             onParamChanged: onParamChanged,
             onTap: () => onRouteTap(route),
+            resolvedPath: resolvedPathFor(route),
           ),
       ],
     );
@@ -215,6 +232,7 @@ class _RouteItem extends StatelessWidget {
     required this.defaultStoreId,
     required this.onParamChanged,
     required this.onTap,
+    required this.resolvedPath,
   });
 
   final BusinessRoute route;
@@ -222,6 +240,7 @@ class _RouteItem extends StatelessWidget {
   final String? defaultStoreId;
   final void Function(String key, String value) onParamChanged;
   final VoidCallback onTap;
+  final String resolvedPath;
 
   @override
   Widget build(BuildContext context) {
@@ -236,14 +255,21 @@ class _RouteItem extends StatelessWidget {
           subtitle: Text(path),
           onTap: onTap,
           dense: true,
+          trailing: IconButton(
+            icon: const Icon(Icons.copy, size: Sizes.p16),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: resolvedPath));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Copied: $resolvedPath'),
+                duration: const Duration(seconds: 1),
+              ));
+            },
+          ),
         ),
         if (params.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(
-              left: Sizes.p16,
-              right: Sizes.p16,
-              bottom: Sizes.p8,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: Sizes.p16)
+                .copyWith(bottom: Sizes.p8),
             child: Wrap(
               spacing: Sizes.p8,
               runSpacing: Sizes.p4,
