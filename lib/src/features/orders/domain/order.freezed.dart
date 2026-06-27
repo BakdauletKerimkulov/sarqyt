@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Order {
 
- OrderID get id; ItemID get itemId; StoreID get storeId; UserID get customerId; String get itemName; String get storeName; String? get itemImageUrl; double get unitPrice; String get currencyCode; String get currencySymbol; int get itemQuantity; OrderStatus get status; PaymentStatus? get paymentStatus; String? get cancellationReason; CancelledBy? get cancelledBy;@NullableTimestampConverter() DateTime? get pickupStartTime;@NullableTimestampConverter() DateTime? get pickupEndTime;@TimestampConverter() DateTime get createdAt;@NullableTimestampConverter() DateTime? get updatedAt; int? get orderNumber; OfferID? get offerId; String? get paymentIntentId;
+ OrderID get id; ItemID get itemId; StoreID get storeId; UserID get customerId; String get itemName; String get storeName; String? get itemImageUrl; double get unitPrice; String get currencyCode; String get currencySymbol; int get itemQuantity; OrderStatus get status;@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) PaymentStatus? get paymentStatus; String? get cancellationReason; CancelledBy? get cancelledBy;@NullableTimestampConverter() DateTime? get pickupStartTime;@NullableTimestampConverter() DateTime? get pickupEndTime;@TimestampConverter() DateTime get createdAt;@NullableTimestampConverter() DateTime? get updatedAt; int? get orderNumber; OfferID? get offerId; String? get paymentIntentId;
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $OrderCopyWith<$Res>  {
   factory $OrderCopyWith(Order value, $Res Function(Order) _then) = _$OrderCopyWithImpl;
 @useResult
 $Res call({
- OrderID id, ItemID itemId, StoreID storeId, UserID customerId, String itemName, String storeName, String? itemImageUrl, double unitPrice, String currencyCode, String currencySymbol, int itemQuantity, OrderStatus status, PaymentStatus? paymentStatus, String? cancellationReason, CancelledBy? cancelledBy,@NullableTimestampConverter() DateTime? pickupStartTime,@NullableTimestampConverter() DateTime? pickupEndTime,@TimestampConverter() DateTime createdAt,@NullableTimestampConverter() DateTime? updatedAt, int? orderNumber, OfferID? offerId, String? paymentIntentId
+ OrderID id, ItemID itemId, StoreID storeId, UserID customerId, String itemName, String storeName, String? itemImageUrl, double unitPrice, String currencyCode, String currencySymbol, int itemQuantity, OrderStatus status,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) PaymentStatus? paymentStatus, String? cancellationReason, CancelledBy? cancelledBy,@NullableTimestampConverter() DateTime? pickupStartTime,@NullableTimestampConverter() DateTime? pickupEndTime,@TimestampConverter() DateTime createdAt,@NullableTimestampConverter() DateTime? updatedAt, int? orderNumber, OfferID? offerId, String? paymentIntentId
 });
 
 
@@ -174,7 +174,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( OrderID id,  ItemID itemId,  StoreID storeId,  UserID customerId,  String itemName,  String storeName,  String? itemImageUrl,  double unitPrice,  String currencyCode,  String currencySymbol,  int itemQuantity,  OrderStatus status,  PaymentStatus? paymentStatus,  String? cancellationReason,  CancelledBy? cancelledBy, @NullableTimestampConverter()  DateTime? pickupStartTime, @NullableTimestampConverter()  DateTime? pickupEndTime, @TimestampConverter()  DateTime createdAt, @NullableTimestampConverter()  DateTime? updatedAt,  int? orderNumber,  OfferID? offerId,  String? paymentIntentId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( OrderID id,  ItemID itemId,  StoreID storeId,  UserID customerId,  String itemName,  String storeName,  String? itemImageUrl,  double unitPrice,  String currencyCode,  String currencySymbol,  int itemQuantity,  OrderStatus status, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  PaymentStatus? paymentStatus,  String? cancellationReason,  CancelledBy? cancelledBy, @NullableTimestampConverter()  DateTime? pickupStartTime, @NullableTimestampConverter()  DateTime? pickupEndTime, @TimestampConverter()  DateTime createdAt, @NullableTimestampConverter()  DateTime? updatedAt,  int? orderNumber,  OfferID? offerId,  String? paymentIntentId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
 return $default(_that.id,_that.itemId,_that.storeId,_that.customerId,_that.itemName,_that.storeName,_that.itemImageUrl,_that.unitPrice,_that.currencyCode,_that.currencySymbol,_that.itemQuantity,_that.status,_that.paymentStatus,_that.cancellationReason,_that.cancelledBy,_that.pickupStartTime,_that.pickupEndTime,_that.createdAt,_that.updatedAt,_that.orderNumber,_that.offerId,_that.paymentIntentId);case _:
@@ -195,7 +195,7 @@ return $default(_that.id,_that.itemId,_that.storeId,_that.customerId,_that.itemN
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( OrderID id,  ItemID itemId,  StoreID storeId,  UserID customerId,  String itemName,  String storeName,  String? itemImageUrl,  double unitPrice,  String currencyCode,  String currencySymbol,  int itemQuantity,  OrderStatus status,  PaymentStatus? paymentStatus,  String? cancellationReason,  CancelledBy? cancelledBy, @NullableTimestampConverter()  DateTime? pickupStartTime, @NullableTimestampConverter()  DateTime? pickupEndTime, @TimestampConverter()  DateTime createdAt, @NullableTimestampConverter()  DateTime? updatedAt,  int? orderNumber,  OfferID? offerId,  String? paymentIntentId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( OrderID id,  ItemID itemId,  StoreID storeId,  UserID customerId,  String itemName,  String storeName,  String? itemImageUrl,  double unitPrice,  String currencyCode,  String currencySymbol,  int itemQuantity,  OrderStatus status, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  PaymentStatus? paymentStatus,  String? cancellationReason,  CancelledBy? cancelledBy, @NullableTimestampConverter()  DateTime? pickupStartTime, @NullableTimestampConverter()  DateTime? pickupEndTime, @TimestampConverter()  DateTime createdAt, @NullableTimestampConverter()  DateTime? updatedAt,  int? orderNumber,  OfferID? offerId,  String? paymentIntentId)  $default,) {final _that = this;
 switch (_that) {
 case _Order():
 return $default(_that.id,_that.itemId,_that.storeId,_that.customerId,_that.itemName,_that.storeName,_that.itemImageUrl,_that.unitPrice,_that.currencyCode,_that.currencySymbol,_that.itemQuantity,_that.status,_that.paymentStatus,_that.cancellationReason,_that.cancelledBy,_that.pickupStartTime,_that.pickupEndTime,_that.createdAt,_that.updatedAt,_that.orderNumber,_that.offerId,_that.paymentIntentId);case _:
@@ -215,7 +215,7 @@ return $default(_that.id,_that.itemId,_that.storeId,_that.customerId,_that.itemN
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( OrderID id,  ItemID itemId,  StoreID storeId,  UserID customerId,  String itemName,  String storeName,  String? itemImageUrl,  double unitPrice,  String currencyCode,  String currencySymbol,  int itemQuantity,  OrderStatus status,  PaymentStatus? paymentStatus,  String? cancellationReason,  CancelledBy? cancelledBy, @NullableTimestampConverter()  DateTime? pickupStartTime, @NullableTimestampConverter()  DateTime? pickupEndTime, @TimestampConverter()  DateTime createdAt, @NullableTimestampConverter()  DateTime? updatedAt,  int? orderNumber,  OfferID? offerId,  String? paymentIntentId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( OrderID id,  ItemID itemId,  StoreID storeId,  UserID customerId,  String itemName,  String storeName,  String? itemImageUrl,  double unitPrice,  String currencyCode,  String currencySymbol,  int itemQuantity,  OrderStatus status, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)  PaymentStatus? paymentStatus,  String? cancellationReason,  CancelledBy? cancelledBy, @NullableTimestampConverter()  DateTime? pickupStartTime, @NullableTimestampConverter()  DateTime? pickupEndTime, @TimestampConverter()  DateTime createdAt, @NullableTimestampConverter()  DateTime? updatedAt,  int? orderNumber,  OfferID? offerId,  String? paymentIntentId)?  $default,) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
 return $default(_that.id,_that.itemId,_that.storeId,_that.customerId,_that.itemName,_that.storeName,_that.itemImageUrl,_that.unitPrice,_that.currencyCode,_that.currencySymbol,_that.itemQuantity,_that.status,_that.paymentStatus,_that.cancellationReason,_that.cancelledBy,_that.pickupStartTime,_that.pickupEndTime,_that.createdAt,_that.updatedAt,_that.orderNumber,_that.offerId,_that.paymentIntentId);case _:
@@ -230,7 +230,7 @@ return $default(_that.id,_that.itemId,_that.storeId,_that.customerId,_that.itemN
 @JsonSerializable()
 
 class _Order extends Order {
-  const _Order({required this.id, required this.itemId, required this.storeId, required this.customerId, required this.itemName, required this.storeName, this.itemImageUrl, required this.unitPrice, this.currencyCode = 'KZT', this.currencySymbol = '₸', required this.itemQuantity, required this.status, this.paymentStatus, this.cancellationReason, this.cancelledBy, @NullableTimestampConverter() this.pickupStartTime, @NullableTimestampConverter() this.pickupEndTime, @TimestampConverter() required this.createdAt, @NullableTimestampConverter() this.updatedAt, this.orderNumber, this.offerId, this.paymentIntentId}): super._();
+  const _Order({required this.id, required this.itemId, required this.storeId, required this.customerId, required this.itemName, required this.storeName, this.itemImageUrl, required this.unitPrice, this.currencyCode = 'KZT', this.currencySymbol = '₸', required this.itemQuantity, required this.status, @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) this.paymentStatus, this.cancellationReason, this.cancelledBy, @NullableTimestampConverter() this.pickupStartTime, @NullableTimestampConverter() this.pickupEndTime, @TimestampConverter() required this.createdAt, @NullableTimestampConverter() this.updatedAt, this.orderNumber, this.offerId, this.paymentIntentId}): super._();
   factory _Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
 @override final  OrderID id;
@@ -245,7 +245,7 @@ class _Order extends Order {
 @override@JsonKey() final  String currencySymbol;
 @override final  int itemQuantity;
 @override final  OrderStatus status;
-@override final  PaymentStatus? paymentStatus;
+@override@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) final  PaymentStatus? paymentStatus;
 @override final  String? cancellationReason;
 @override final  CancelledBy? cancelledBy;
 @override@NullableTimestampConverter() final  DateTime? pickupStartTime;
@@ -289,7 +289,7 @@ abstract mixin class _$OrderCopyWith<$Res> implements $OrderCopyWith<$Res> {
   factory _$OrderCopyWith(_Order value, $Res Function(_Order) _then) = __$OrderCopyWithImpl;
 @override @useResult
 $Res call({
- OrderID id, ItemID itemId, StoreID storeId, UserID customerId, String itemName, String storeName, String? itemImageUrl, double unitPrice, String currencyCode, String currencySymbol, int itemQuantity, OrderStatus status, PaymentStatus? paymentStatus, String? cancellationReason, CancelledBy? cancelledBy,@NullableTimestampConverter() DateTime? pickupStartTime,@NullableTimestampConverter() DateTime? pickupEndTime,@TimestampConverter() DateTime createdAt,@NullableTimestampConverter() DateTime? updatedAt, int? orderNumber, OfferID? offerId, String? paymentIntentId
+ OrderID id, ItemID itemId, StoreID storeId, UserID customerId, String itemName, String storeName, String? itemImageUrl, double unitPrice, String currencyCode, String currencySymbol, int itemQuantity, OrderStatus status,@JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue) PaymentStatus? paymentStatus, String? cancellationReason, CancelledBy? cancelledBy,@NullableTimestampConverter() DateTime? pickupStartTime,@NullableTimestampConverter() DateTime? pickupEndTime,@TimestampConverter() DateTime createdAt,@NullableTimestampConverter() DateTime? updatedAt, int? orderNumber, OfferID? offerId, String? paymentIntentId
 });
 
 

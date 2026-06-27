@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
@@ -32,6 +34,7 @@ abstract class Order with _$Order {
     @Default('₸') String currencySymbol,
     required int itemQuantity,
     required OrderStatus status,
+    @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)
     PaymentStatus? paymentStatus,
     String? cancellationReason,
     CancelledBy? cancelledBy,

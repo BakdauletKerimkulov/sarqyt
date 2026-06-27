@@ -22,6 +22,7 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   paymentStatus: $enumDecodeNullable(
     _$PaymentStatusEnumMap,
     json['paymentStatus'],
+    unknownValue: JsonKey.nullForUndefinedEnumValue,
   ),
   cancellationReason: json['cancellationReason'] as String?,
   cancelledBy: $enumDecodeNullable(_$CancelledByEnumMap, json['cancelledBy']),

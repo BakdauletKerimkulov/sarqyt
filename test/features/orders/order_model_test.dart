@@ -148,5 +148,11 @@ void main() {
       final order = Order.fromJson(json);
       expect(order.cancelledBy, isNull);
     });
+
+    test('handles unknown paymentStatus gracefully (e.g. "expired")', () {
+      final json = baseJson()..['paymentStatus'] = 'expired';
+      final order = Order.fromJson(json);
+      expect(order.paymentStatus, isNull);
+    });
   });
 }
