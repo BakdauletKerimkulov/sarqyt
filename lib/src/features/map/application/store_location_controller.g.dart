@@ -33,7 +33,7 @@ final class StoreLocationProvider
   StoreLocation create() => StoreLocation();
 }
 
-String _$storeLocationHash() => r'68587ec4cfe6f837bd8b10fba2743efbc05fd456';
+String _$storeLocationHash() => r'b00f140603ac5a74e367f7f7ed6827a100634453';
 
 abstract class _$StoreLocation extends $AsyncNotifier<LatLng?> {
   FutureOr<LatLng?> build();
