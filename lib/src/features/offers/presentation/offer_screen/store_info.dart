@@ -4,6 +4,7 @@ import 'package:sarqyt/src/common_widgets/async_value_widget.dart';
 import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
+import 'package:sarqyt/src/features/offers/presentation/offer_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 class StoreInfo extends ConsumerWidget {
@@ -89,7 +90,7 @@ class StoreInfo extends ConsumerWidget {
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                           gapH4,
-                          Text(offer.pickupLabel),
+                          Text(offer.pickupLabelLocalized(context)),
                         ],
                       ),
                     ),
@@ -108,7 +109,7 @@ class StoreInfo extends ConsumerWidget {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     const Spacer(),
-                    Text(offer.availableText),
+                    Text(offer.availableTextLocalized(context)),
                   ],
                 ),
               ],

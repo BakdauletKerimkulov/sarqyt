@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/utils/auth_layout.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/inbound/create_account_controller.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/inbound/registration_validators.dart';
@@ -13,18 +14,22 @@ import 'package:sarqyt/src/features/onboarding/presentation/onboarding_panel.dar
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/utils/async_value_ui.dart';
 
-class EmailScreen extends StatelessWidget {
+class EmailScreen extends ConsumerWidget {
   const EmailScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSignedIn = ref.read(authRepositoryProvider).currentUser != null;
     return AuthLayout(
       startBackground: 'assets/food-app-business-background.jpg',
       child: OnboardingPanel(
         onBackPressed: () => context.pop(),
-        title: context.loc.addEmailAndPassword,
-        subtitle:
-            'You\'ll need your email and password to log in to your account.',
+        title: isSignedIn
+            ? context.loc.submitDetails
+            : context.loc.addEmailAndPassword,
+        subtitle: isSignedIn
+            ? context.loc.draftExpiredMessage
+            : 'You\'ll need your email and password to log in to your account.',
         child: EmailContent(),
       ),
     );
@@ -49,6 +54,9 @@ class _EmailContent extends ConsumerState<EmailContent>
   bool _acceptedPolicy = false;
   bool _isOccured = true;
 
+  /// True when the user is already signed in (recovery flow).
+  bool _isSignedIn = false;
+
   String get email => _emailController.text;
   String get password => _passwordController.text;
 
@@ -66,6 +74,12 @@ class _EmailContent extends ConsumerState<EmailContent>
   @override
   void initState() {
     super.initState();
+    final currentUser = ref.read(authRepositoryProvider).currentUser;
+    if (currentUser != null) {
+      _isSignedIn = true;
+      _emailController.text = currentUser.email ?? '';
+      _acceptedPolicy = true; // already accepted during initial registration
+    }
   }
 
   @override
@@ -91,6 +105,7 @@ class _EmailContent extends ConsumerState<EmailContent>
         children: [
           TextFormField(
             controller: _emailController,
+            enabled: !_isSignedIn,
             decoration: InputDecoration(
               hintText: 'test@test.com',
               border: OutlineInputBorder(),
@@ -99,98 +114,104 @@ class _EmailContent extends ConsumerState<EmailContent>
             validator: (value) =>
                 !_submitted ? null : emailErrorText(value ?? '', context.loc),
           ),
-          gapH16,
 
-          TextFormField(
-            controller: _passwordController,
-            decoration: InputDecoration(
-              hintText: context.loc.password,
-              border: OutlineInputBorder(),
-              suffixIcon: IconButton(
-                onPressed: () => setState(() => _isOccured = !_isOccured),
-                icon: Icon(
-                  _isOccured
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
+          if (!_isSignedIn) ...[
+            gapH16,
+
+            TextFormField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                hintText: context.loc.password,
+                border: OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  onPressed: () => setState(() => _isOccured = !_isOccured),
+                  icon: Icon(
+                    _isOccured
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                  ),
                 ),
               ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => !_submitted
+                  ? null
+                  : passwordErrorText(value ?? '', context.loc),
+              obscureText: _isOccured,
             ),
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: (value) =>
-                !_submitted ? null : passwordErrorText(value ?? '', context.loc),
-            obscureText: _isOccured,
-          ),
 
-          gapH24,
+            gapH24,
 
-          FormField<bool>(
-            initialValue: _acceptedPolicy,
-            validator: (value) {
-              if (value != true) {
-                return context.loc.mustAcceptPrivacyPolicy;
-              }
-              return null;
-            },
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            builder: (state) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Checkbox(
-                        value: state.value,
-                        onChanged: (value) {
-                          state.didChange(value);
-                          setState(() => _acceptedPolicy = value ?? false);
-                        },
-                      ),
-
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _acceptedPolicy = !(_acceptedPolicy);
-                              state.didChange(_acceptedPolicy);
-                            });
+            FormField<bool>(
+              initialValue: _acceptedPolicy,
+              validator: (value) {
+                if (value != true) {
+                  return context.loc.mustAcceptPrivacyPolicy;
+                }
+                return null;
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              builder: (state) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Checkbox(
+                          value: state.value,
+                          onChanged: (value) {
+                            state.didChange(value);
+                            setState(() => _acceptedPolicy = value ?? false);
                           },
-                          child: RichText(
-                            text: TextSpan(
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              children: [
-                                const TextSpan(text: 'I agree to the '),
-                                TextSpan(
-                                  text: 'Privacy Policy',
-                                  style: const TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontWeight: FontWeight.w500,
+                        ),
+
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _acceptedPolicy = !(_acceptedPolicy);
+                                state.didChange(_acceptedPolicy);
+                              });
+                            },
+                            child: RichText(
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                children: [
+                                  const TextSpan(text: 'I agree to the '),
+                                  TextSpan(
+                                    text: 'Privacy Policy',
+                                    style: const TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // TODO: открыть страницу политики
+                                        showNotImplementedAlertDialog(
+                                          context: context,
+                                        );
+                                      },
                                   ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      // TODO: открыть страницу политики
-                                      showNotImplementedAlertDialog(
-                                        context: context,
-                                      );
-                                    },
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            },
-          ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
 
           gapH16,
 
           PrimaryWebButton(
-            text: 'Continue',
+            text: _isSignedIn
+                ? context.loc.submitDetails
+                : 'Continue',
             isLoading: isLoading,
             onPressed: _submit,
           ),

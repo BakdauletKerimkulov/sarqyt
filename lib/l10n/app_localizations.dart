@@ -694,6 +694,12 @@ abstract class AppLocalizations {
   /// **'Sold out'**
   String get soldOut;
 
+  /// No description provided for @itemsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Left {quantity}'**
+  String itemsLeft(int quantity);
+
   /// No description provided for @reserve.
   ///
   /// In en, this message translates to:
@@ -717,6 +723,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Status: {status}'**
   String offerStatus(String status);
+
+  /// No description provided for @offerStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get offerStatusActive;
+
+  /// No description provided for @offerStatusPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get offerStatusPaused;
+
+  /// No description provided for @offerStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get offerStatusExpired;
 
   /// No description provided for @availableItemsCount.
   ///
@@ -967,7 +991,7 @@ abstract class AppLocalizations {
   /// No description provided for @cancelOrderRefund.
   ///
   /// In en, this message translates to:
-  /// **'You will receive a full refund.'**
+  /// **'This action cannot be undone.'**
   String get cancelOrderRefund;
 
   /// No description provided for @yesCancel.
@@ -975,6 +999,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, cancel'**
   String get yesCancel;
+
+  /// No description provided for @payOnPickup.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay on pickup'**
+  String get payOnPickup;
+
+  /// No description provided for @cancelReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get cancelReason;
+
+  /// No description provided for @cancelReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter reason'**
+  String get cancelReasonHint;
+
+  /// No description provided for @orderCancelledByStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by store'**
+  String get orderCancelledByStore;
+
+  /// No description provided for @cancelReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a reason'**
+  String get cancelReasonRequired;
 
   /// No description provided for @activeOrders.
   ///
@@ -1042,11 +1096,11 @@ abstract class AppLocalizations {
   /// **'How was the store?'**
   String get howWasTheStore;
 
-  /// No description provided for @howWasTheFood.
+  /// No description provided for @howWasTheOffer.
   ///
   /// In en, this message translates to:
-  /// **'How was the food?'**
-  String get howWasTheFood;
+  /// **'How was the offer?'**
+  String get howWasTheOffer;
 
   /// No description provided for @anyComments.
   ///
@@ -1642,29 +1696,23 @@ abstract class AppLocalizations {
   /// **'{average} / 5.0'**
   String ratingDisplay(String average);
 
-  /// No description provided for @addHighlights.
+  /// No description provided for @noReviewsYet.
   ///
   /// In en, this message translates to:
-  /// **'Add highlights'**
-  String get addHighlights;
+  /// **'No reviews yet'**
+  String get noReviewsYet;
 
-  /// No description provided for @quickCollection.
+  /// No description provided for @allReviews.
   ///
   /// In en, this message translates to:
-  /// **'Quick collection'**
-  String get quickCollection;
+  /// **'All reviews'**
+  String get allReviews;
 
-  /// No description provided for @friendlyStaff.
+  /// No description provided for @reviewCountLabel.
   ///
   /// In en, this message translates to:
-  /// **'Friendly staff'**
-  String get friendlyStaff;
-
-  /// No description provided for @basedOnRatings.
-  ///
-  /// In en, this message translates to:
-  /// **'Based on 122 ratings over the past 2 months'**
-  String get basedOnRatings;
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String reviewCountLabel(int count);
 
   /// No description provided for @surpriseBagIsSurprise.
   ///
@@ -2007,6 +2055,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading, please wait...'**
   String get loadingPleaseWait;
+
+  /// No description provided for @draftExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration session expired'**
+  String get draftExpiredTitle;
+
+  /// No description provided for @draftExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your store details have expired. Please fill in your details again to complete registration.'**
+  String get draftExpiredMessage;
+
+  /// No description provided for @fillDetailsAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in details again'**
+  String get fillDetailsAgain;
+
+  /// No description provided for @submitDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit details'**
+  String get submitDetails;
 }
 
 class _AppLocalizationsDelegate

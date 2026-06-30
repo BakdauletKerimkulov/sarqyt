@@ -19,7 +19,13 @@ _Order _$OrderFromJson(Map<String, dynamic> json) => _Order(
   currencySymbol: json['currencySymbol'] as String? ?? '₸',
   itemQuantity: (json['itemQuantity'] as num).toInt(),
   status: $enumDecode(_$OrderStatusEnumMap, json['status']),
-  paymentStatus: $enumDecode(_$PaymentStatusEnumMap, json['paymentStatus']),
+  paymentStatus: $enumDecodeNullable(
+    _$PaymentStatusEnumMap,
+    json['paymentStatus'],
+    unknownValue: JsonKey.nullForUndefinedEnumValue,
+  ),
+  cancellationReason: json['cancellationReason'] as String?,
+  cancelledBy: $enumDecodeNullable(_$CancelledByEnumMap, json['cancelledBy']),
   pickupStartTime: const NullableTimestampConverter().fromJson(
     json['pickupStartTime'] as Timestamp?,
   ),
@@ -50,7 +56,9 @@ Map<String, dynamic> _$OrderToJson(_Order instance) => <String, dynamic>{
   'currencySymbol': instance.currencySymbol,
   'itemQuantity': instance.itemQuantity,
   'status': _$OrderStatusEnumMap[instance.status]!,
-  'paymentStatus': _$PaymentStatusEnumMap[instance.paymentStatus]!,
+  'paymentStatus': _$PaymentStatusEnumMap[instance.paymentStatus],
+  'cancellationReason': instance.cancellationReason,
+  'cancelledBy': _$CancelledByEnumMap[instance.cancelledBy],
   'pickupStartTime': const NullableTimestampConverter().toJson(
     instance.pickupStartTime,
   ),
@@ -78,4 +86,9 @@ const _$PaymentStatusEnumMap = {
   PaymentStatus.refunded: 'refunded',
   PaymentStatus.refundPending: 'refundPending',
   PaymentStatus.refundFailed: 'refundFailed',
+};
+
+const _$CancelledByEnumMap = {
+  CancelledBy.customer: 'customer',
+  CancelledBy.store: 'store',
 };

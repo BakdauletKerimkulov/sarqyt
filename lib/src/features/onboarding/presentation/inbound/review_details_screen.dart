@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
 import 'package:sarqyt/src/common_widgets/async_value_widget.dart';
 import 'package:sarqyt/src/common_widgets/info_badge.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
@@ -10,6 +9,7 @@ import 'package:sarqyt/src/common_widgets/static_map_preview.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/auth/utils/auth_layout.dart';
 import 'package:sarqyt/src/features/map/application/store_location_controller.dart';
+import 'package:sarqyt/src/features/onboarding/presentation/inbound/edit_store_draft_dialog.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/inbound/store_draft_controller.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/onboarding_panel.dart';
 import 'package:sarqyt/src/features/store/domain/store_draft.dart';
@@ -53,7 +53,11 @@ class _ReviewDetailsContentState extends ConsumerState<ReviewDetailsContent> {
 
   void _geocodeIfNeeded() {
     final draft = ref.read(storeDraftControllerProvider);
-    if (draft.location != null) return; // already have coordinates
+    if (draft.location != null) {
+      // Provider was auto-disposed; re-seed with coordinates saved in draft.
+      ref.read(storeLocationProvider.notifier).setLocation(draft.location!);
+      return;
+    }
     if (!draft.hasEnoughDataForCoordinates) return;
 
     ref.read(storeLocationProvider.notifier).getCoordinates(
@@ -100,8 +104,16 @@ class _ReviewDetailsContentState extends ConsumerState<ReviewDetailsContent> {
                       right: Sizes.p8,
                       child: PrimaryWebButton(
                         text: context.loc.edit,
-                        onPressed: () =>
-                            showNotImplementedAlertDialog(context: context),
+                        onPressed: () async {
+                          final result = await showDialog<bool>(
+                            context: context,
+                            builder: (_) =>
+                                EditStoreDraftDialog(initialDraft: draft),
+                          );
+                          if (result == true) {
+                            _geocodeIfNeeded();
+                          }
+                        },
                       ),
                     ),
                   ],

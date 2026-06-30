@@ -27,7 +27,7 @@ class ReviewScreen extends ConsumerStatefulWidget {
 
 class _ReviewScreenState extends ConsumerState<ReviewScreen> {
   int _storeRating = 0;
-  int _foodRating = 0;
+  int _offerRating = 0;
   final _commentController = TextEditingController();
 
   @override
@@ -71,15 +71,15 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
             ),
             gapH24,
 
-            // Food rating
+            // Offer rating
             Text(
-              context.loc.howWasTheFood,
+              context.loc.howWasTheOffer,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             gapH12,
             _StarRow(
-              rating: _foodRating,
-              onChanged: (v) => setState(() => _foodRating = v),
+              rating: _offerRating,
+              onChanged: (v) => setState(() => _offerRating = v),
             ),
             gapH24,
 
@@ -107,7 +107,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
             PrimaryButton(
               text: context.loc.submitReview,
               isLoading: state.isLoading,
-              onPressed: state.isLoading || _storeRating == 0 || _foodRating == 0
+              onPressed: state.isLoading || _storeRating == 0 || _offerRating == 0
                   ? null
                   : _submit,
             ),
@@ -124,7 +124,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
           orderId: widget.orderId,
           storeId: widget.storeId,
           storeRating: _storeRating,
-          foodRating: _foodRating,
+          offerRating: _offerRating,
           comment: _commentController.text.trim().isEmpty
               ? null
               : _commentController.text.trim(),

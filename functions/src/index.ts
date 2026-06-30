@@ -8,7 +8,7 @@ export { fakeVerifyBusiness } from "./features/merchant-onboarding/functions/fak
 export { startMerchantOnboardingData } from "./features/merchant-onboarding/functions/start-merchant-onboarding";
 
 // Offers
-export { sincItemOffers } from "./features/offers/functions/sinc_item_offers";
+export { syncItemOffers } from "./features/offers/functions/sync-item-offers";
 export { dailySyncOffers } from "./features/offers/functions/daily-sync-offers";
 export { createOneTimeOffer } from "./features/offers/functions/create-one-time-offer";
 export { onItemStatusChanged } from "./features/offers/functions/on-item-status-changed";
@@ -16,8 +16,6 @@ export { cleanupOldData } from "./features/offers/functions/cleanup-old-offers";
 export { updateOfferQuantity } from "./features/offers/functions/update-offer-quantity";
 
 // Payments
-export { createPayment } from "./features/payments/functions/create-payment";
-export { stripeWebhook } from "./features/payments/functions/stripe-webhook";
 export { reserveOffer } from "./features/payments/functions/reserve-offer";
 
 // Orders
@@ -35,3 +33,4 @@ export { inviteTeamMember } from "./features/stores/functions/invite-team-member
 
 // Triggers
 export { onOrderCreated } from "./features/triggers/orders";
+export { onReviewWritten } from "./features/triggers/reviews";

@@ -10,6 +10,7 @@ import 'package:sarqyt/src/features/checkout/application/checkout_service.dart';
 import 'package:sarqyt/src/features/checkout/presentation/item_quantity_selector.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
+import 'package:sarqyt/src/features/offers/presentation/offer_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 import 'package:sarqyt/src/utils/async_value_ui.dart';
@@ -58,7 +59,7 @@ class PaymentPage extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     gapH8,
-                    Text(offer.pickupLabel),
+                    Text(offer.pickupLabelLocalized(context)),
                   ],
                 ),
               ),
@@ -160,20 +161,14 @@ class _PaymentMethodCard extends StatelessWidget {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(Sizes.p4),
             ),
-            child: const Icon(Icons.credit_card, size: 20, color: Colors.grey),
+            child: const Icon(Icons.store, size: 20, color: Colors.grey),
           ),
           gapW12,
           Expanded(
             child: Text(
-              context.loc.cardPayment,
+              context.loc.payOnPickup,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-          ),
-          Text(
-            context.loc.selectedAtCheckout,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: Colors.grey),
           ),
         ],
       ),

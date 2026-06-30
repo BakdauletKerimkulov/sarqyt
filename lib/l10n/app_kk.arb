@@ -99,10 +99,19 @@
   "discover": "Жаңалықтар",
   "offerNotFound": "Ұсыныс табылмады",
   "soldOut": "Тауысылды",
+  "itemsLeft": "Қалды {quantity}",
+  "@itemsLeft": {
+    "placeholders": {
+      "quantity": {"type": "int"}
+    }
+  },
   "reserve": "Брондау",
   "addressNotSpecified": "Мекенжай көрсетілмеген",
   "moreInfoAboutStore": "Дүкен туралы толықтау",
   "offerStatus": "Статус: {status}",
+  "offerStatusActive": "Белсенді",
+  "offerStatusPaused": "Тоқтатылған",
+  "offerStatusExpired": "Мерзімі өткен",
   "availableItemsCount": "Қол жетімді: {quantity}",
   "offerDetailsSnapshot": "Ұсыныс мәліметтері құрылу кезіндегі дүкен мен тауар суретінен жүктелген.",
   "noOffersFound": "Ұсыныстар табылмады",
@@ -144,8 +153,13 @@
   "pickupTimeExpired": "Алу уақыты өтті",
   "cancelOrder": "Тапсырысты болдырмау",
   "cancelOrderConfirm": "Тапсырысты болдырмау?",
-  "cancelOrderRefund": "Ақшаңыз толық қайтарылады.",
+  "cancelOrderRefund": "Бұл әрекетті кері қайтару мүмкін емес.",
   "yesCancel": "Иә, болдырмау",
+  "payOnPickup": "Алған кезде төлеу",
+  "cancelReason": "Болдырмау себебі",
+  "cancelReasonHint": "Себебін жазыңыз",
+  "orderCancelledByStore": "Дүкен болдырмаған",
+  "cancelReasonRequired": "Болдырмау себебін жазыңыз",
   "activeOrders": "Белсенді тапсырыстар",
   "active": "Белсенді",
   "completed": "Аяқталған",
@@ -153,7 +167,7 @@
   "noOrdersWithStatus": "Бұл статуста тапсырыстар жоқ",
   "orders": "Тапсырыстар",
   "howWasTheStore": "Дүкен қалай болды?",
-  "howWasTheFood": "Тамақ қалай болды?",
+  "howWasTheOffer": "Ұсыныс қалай болды?",
   "anyComments": "Пікірлер (міндетті емес)",
   "tellUsAboutExperience": "Тәжірибеңіз туралы айтыңыз",
   "submitReview": "Пікір жіберу",
@@ -253,10 +267,15 @@
   "chooseAStore": "Дүкенді таңдаңыз",
   "noStoresFound": "Дүкендер табылмады",
   "ratingDisplay": "{average} / 5.0",
-  "addHighlights": "Ерекшеліктер қосу",
-  "quickCollection": "Жылдам беру",
-  "friendlyStaff": "Мейірімді қызметкерлер",
-  "basedOnRatings": "Соңғы 2 айдағы 122 бағалау негізінде",
+  "noReviewsYet": "Пікірлер әлі жоқ",
+  "allReviews": "Барлық пікірлер",
+  "reviewCountLabel": "{count, plural, =1{1 пікір} other{{count} пікір}}",
+  "@reviewCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
   "surpriseBagIsSurprise": "Сіздің тосын-пакетіңіз — тосын",
   "gotIt": "Түсіндім!",
   "surpriseBagsForSale": "Сатылымдағы тосын-пакеттер",
@@ -332,5 +351,10 @@
   "addToFavorites": "Таңдаулыларға қосу",
   "removeFromFavorites": "Таңдаулылардан алу",
 
-  "loadingPleaseWait": "Жүктелуде, күте тұрыңыз..."
+  "loadingPleaseWait": "Жүктелуде, күте тұрыңыз...",
+
+  "draftExpiredTitle": "Тіркелу сессиясының мерзімі өтті",
+  "draftExpiredMessage": "Дүкен деректеріңіздің мерзімі өтті. Тіркелуді аяқтау үшін деректеріңізді қайтадан толтырыңыз.",
+  "fillDetailsAgain": "Деректерді қайта толтыру",
+  "submitDetails": "Деректерді жіберу"
 }

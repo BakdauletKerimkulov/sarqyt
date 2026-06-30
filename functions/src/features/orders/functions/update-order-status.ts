@@ -11,7 +11,7 @@ interface UpdateOrderStatusRequest {
 }
 
 // Cancellation is NOT allowed here — use cancelOrder instead, which
-// handles quantity restoration and Stripe refunds.
+// handles quantity restoration and offer reactivation.
 const VALID_TRANSITIONS: Record<string, string[]> = {
   confirmed: ["preparing"],
   preparing: ["readyForPickup"],

@@ -19,6 +19,7 @@ abstract class Store with _$Store {
     String? logoUrl,
     String? coverUrl,
     @Default(0) double avgRating,
+    @Default(0) int reviewCount,
     @Default(Currency.kzt) Currency currency,
   }) = _Store;
 
@@ -50,6 +51,7 @@ abstract class Store with _$Store {
       logoUrl: map['logoUrl'] as String?,
       coverUrl: map['coverUrl'] as String?,
       avgRating: (map['avgRating'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: (map['reviewCount'] as num?)?.toInt() ?? 0,
       currency: Currency.values.firstWhere(
         (c) => c.code == (map['currency'] as String?),
         orElse: () => Currency.kzt,
@@ -67,6 +69,7 @@ abstract class Store with _$Store {
     'logoUrl': logoUrl,
     'coverUrl': coverUrl,
     'avgRating': avgRating,
+    'reviewCount': reviewCount,
     'currency': currency.code,
   };
 }

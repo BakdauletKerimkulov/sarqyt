@@ -64,6 +64,14 @@ class StoreOrdersRepository {
     await callable.call({'orderId': orderId, 'status': status});
   }
 
+  Future<void> cancelOrder(OrderID orderId, {String? reason}) async {
+    final callable = _functions.httpsCallable('cancelOrder');
+    await callable.call({
+      'orderId': orderId,
+      if (reason != null) 'reason': reason,
+    });
+  }
+
   DocumentReference<Order> _orderRef(OrderID id) => _firestore
       .doc(orderPath(id))
       .withConverter(

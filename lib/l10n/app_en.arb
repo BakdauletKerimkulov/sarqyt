@@ -112,6 +112,12 @@
   "discover": "Discover",
   "offerNotFound": "Offer not found",
   "soldOut": "Sold out",
+  "itemsLeft": "Left {quantity}",
+  "@itemsLeft": {
+    "placeholders": {
+      "quantity": {"type": "int"}
+    }
+  },
   "reserve": "Reserve",
   "addressNotSpecified": "Address is not specified",
   "moreInfoAboutStore": "More information about store",
@@ -121,6 +127,9 @@
       "status": {"type": "String"}
     }
   },
+  "offerStatusActive": "Active",
+  "offerStatusPaused": "Paused",
+  "offerStatusExpired": "Expired",
   "availableItemsCount": "Available items: {quantity}",
   "@availableItemsCount": {
     "placeholders": {
@@ -181,8 +190,13 @@
   "pickupTimeExpired": "Pickup time expired",
   "cancelOrder": "Cancel order",
   "cancelOrderConfirm": "Cancel order?",
-  "cancelOrderRefund": "You will receive a full refund.",
+  "cancelOrderRefund": "This action cannot be undone.",
   "yesCancel": "Yes, cancel",
+  "payOnPickup": "Pay on pickup",
+  "cancelReason": "Cancellation reason",
+  "cancelReasonHint": "Enter reason",
+  "orderCancelledByStore": "Cancelled by store",
+  "cancelReasonRequired": "Please enter a reason",
 
   "activeOrders": "Active orders",
   "active": "Active",
@@ -196,7 +210,7 @@
   "orders": "Orders",
 
   "howWasTheStore": "How was the store?",
-  "howWasTheFood": "How was the food?",
+  "howWasTheOffer": "How was the offer?",
   "anyComments": "Any comments? (optional)",
   "tellUsAboutExperience": "Tell us about your experience",
   "submitReview": "Submit review",
@@ -323,10 +337,15 @@
       "average": {"type": "String"}
     }
   },
-  "addHighlights": "Add highlights",
-  "quickCollection": "Quick collection",
-  "friendlyStaff": "Friendly staff",
-  "basedOnRatings": "Based on 122 ratings over the past 2 months",
+  "noReviewsYet": "No reviews yet",
+  "allReviews": "All reviews",
+  "reviewCountLabel": "{count, plural, =1{1 review} other{{count} reviews}}",
+  "@reviewCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
   "surpriseBagIsSurprise": "Your surprise bag is a surprise",
   "gotIt": "Got it!",
 
@@ -411,5 +430,10 @@
   "addToFavorites": "Add to favorites",
   "removeFromFavorites": "Remove from favorites",
 
-  "loadingPleaseWait": "Loading, please wait..."
+  "loadingPleaseWait": "Loading, please wait...",
+
+  "draftExpiredTitle": "Registration session expired",
+  "draftExpiredMessage": "Your store details have expired. Please fill in your details again to complete registration.",
+  "fillDetailsAgain": "Fill in details again",
+  "submitDetails": "Submit details"
 }

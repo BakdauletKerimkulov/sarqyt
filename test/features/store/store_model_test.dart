@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sarqyt/src/features/store/domain/address.dart';
@@ -67,6 +68,44 @@ void main() {
         ),
       );
       expect(store.addressInfo, 'Kabanbay Batyr 53, Astana, Kazakhstan');
+    });
+  });
+
+  group('Store.fromMap reviewCount', () {
+    Map<String, dynamic> makeStoreMap({
+      double? avgRating,
+      int? reviewCount,
+    }) =>
+        {
+          'id': 's1',
+          'name': 'Test',
+          'location': {
+            'address': {
+              'country': {'isoCode': 'KZ', 'name': 'Kazakhstan'},
+              'address': 'Kabanbay 53',
+              'locality': 'Astana',
+              'postalCode': '010000',
+            },
+            'geo': {
+              'geopoint': const GeoPoint(51.1694, 71.4491),
+              'geohash': 'v0m5y',
+            },
+          },
+          if (avgRating != null) 'avgRating': avgRating,
+          if (reviewCount != null) 'reviewCount': reviewCount,
+        };
+
+    test('parses reviewCount when present', () {
+      final store = Store.fromMap(
+        makeStoreMap(avgRating: 4.2, reviewCount: 15),
+      );
+      expect(store.reviewCount, 15);
+      expect(store.avgRating, 4.2);
+    });
+
+    test('defaults reviewCount to 0 when absent', () {
+      final store = Store.fromMap(makeStoreMap());
+      expect(store.reviewCount, 0);
     });
   });
 

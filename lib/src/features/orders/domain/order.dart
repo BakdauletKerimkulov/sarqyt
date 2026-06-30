@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
@@ -15,6 +17,8 @@ enum OrderStatus { confirmed, preparing, readyForPickup, completed, cancelled, e
 
 enum PaymentStatus { paid, refunded, refundPending, refundFailed }
 
+enum CancelledBy { customer, store }
+
 @freezed
 abstract class Order with _$Order {
   const factory Order({
@@ -30,7 +34,10 @@ abstract class Order with _$Order {
     @Default('₸') String currencySymbol,
     required int itemQuantity,
     required OrderStatus status,
-    required PaymentStatus paymentStatus,
+    @JsonKey(unknownEnumValue: JsonKey.nullForUndefinedEnumValue)
+    PaymentStatus? paymentStatus,
+    String? cancellationReason,
+    CancelledBy? cancelledBy,
     @NullableTimestampConverter() DateTime? pickupStartTime,
     @NullableTimestampConverter() DateTime? pickupEndTime,
     @TimestampConverter() required DateTime createdAt,
@@ -54,28 +61,6 @@ abstract class Order with _$Order {
 
   bool get isPickupExpired =>
       pickupEndTime != null && DateTime.now().isAfter(pickupEndTime!);
-
-  /// "Сегодня, 18:00 – 20:00" or null
-  String? get pickupLabel {
-    if (pickupStartTime == null || pickupEndTime == null) return null;
-    final start = pickupStartTime!;
-    final end = pickupEndTime!;
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
-    final pickupDay = DateTime(start.year, start.month, start.day);
-
-    final dayLabel = pickupDay == today
-        ? 'Сегодня'
-        : pickupDay == tomorrow
-            ? 'Завтра'
-            : '${pickupDay.day}.${pickupDay.month.toString().padLeft(2, '0')}';
-
-    final startStr =
-        '${start.hour}:${start.minute.toString().padLeft(2, '0')}';
-    final endStr = '${end.hour}:${end.minute.toString().padLeft(2, '0')}';
-    return '$dayLabel, $startStr – $endStr';
-  }
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 }

@@ -9,6 +9,7 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/orders/data/client_orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_status_badge.dart';
+import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
@@ -129,7 +130,7 @@ class _OrderDetailContent extends StatelessWidget {
           gapH16,
 
           // Pickup window
-          if (order.pickupLabel != null) ...[
+          if (order.pickupLabelLocalized(context) != null) ...[
             Text(
               context.loc.pickupWindow,
               style: theme.textTheme.titleSmall,
@@ -139,7 +140,7 @@ class _OrderDetailContent extends StatelessWidget {
               children: [
                 const Icon(Icons.schedule, size: 20, color: Colors.grey),
                 gapW8,
-                Text(order.pickupLabel!, style: theme.textTheme.bodyLarge),
+                Text(order.pickupLabelLocalized(context)!, style: theme.textTheme.bodyLarge),
               ],
             ),
             gapH16,
@@ -150,12 +151,7 @@ class _OrderDetailContent extends StatelessWidget {
           // Payment info
           _InfoRow(
             label: context.loc.payment,
-            value: switch (order.paymentStatus) {
-              PaymentStatus.paid => context.loc.paid,
-              PaymentStatus.refunded => context.loc.refunded,
-              PaymentStatus.refundPending => context.loc.refundPending,
-              PaymentStatus.refundFailed => context.loc.refundFailed,
-            },
+            value: context.loc.payOnPickup,
           ),
           gapH8,
           _InfoRow(
@@ -163,9 +159,43 @@ class _OrderDetailContent extends StatelessWidget {
             value: order.totalFormatted,
           ),
 
-          // Cancel button for active orders
+          // Cancellation reason (when cancelled by store)
+          if (order.status == OrderStatus.cancelled &&
+              order.cancelledBy == CancelledBy.store) ...[
+            gapH16,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(Sizes.p12),
+              decoration: BoxDecoration(
+                color: Colors.red.withAlpha(20),
+                borderRadius: BorderRadius.circular(Sizes.p8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.loc.orderCancelledByStore,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (order.cancellationReason != null) ...[
+                    gapH4,
+                    Text(
+                      order.cancellationReason!,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+
+          // Cancel button for active orders (including readyForPickup)
           if (order.status == OrderStatus.confirmed ||
-              order.status == OrderStatus.preparing) ...[
+              order.status == OrderStatus.preparing ||
+              order.status == OrderStatus.readyForPickup) ...[
             gapH24,
             _CancelOrderButton(orderId: order.id),
           ],
@@ -225,7 +255,7 @@ class _PickupWindow extends StatelessWidget {
           ),
           gapH4,
           Text(
-            order.pickupLabel ?? '',
+            order.pickupLabelLocalized(context) ?? '',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

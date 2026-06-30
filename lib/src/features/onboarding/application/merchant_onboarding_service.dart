@@ -18,17 +18,24 @@ class MerchantOnboardingService {
     required String password,
     required StoreDraft draft,
   }) async {
+    final alreadySignedIn = _authRepository.currentUser != null;
     var userCreated = false;
     try {
-      await _authRepository.createUserWithEmailAndPassword(email, password);
-      userCreated = true;
+      if (!alreadySignedIn) {
+        await _authRepository.createUserWithEmailAndPassword(email, password);
+        userCreated = true;
+      }
 
       await _onboardingRepository.createStoreDraft(draft.toCallableMap());
     } catch (e) {
       if (userCreated) {
         try {
-          await _authRepository.signOut();
-        } catch (_) {}
+          await _authRepository.deleteAccount();
+        } catch (_) {
+          try {
+            await _authRepository.signOut();
+          } catch (_) {}
+        }
       }
       rethrow;
     }

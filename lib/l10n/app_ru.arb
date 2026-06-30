@@ -99,10 +99,19 @@
   "discover": "Обзор",
   "offerNotFound": "Предложение не найдено",
   "soldOut": "Распродано",
+  "itemsLeft": "Осталось {quantity}",
+  "@itemsLeft": {
+    "placeholders": {
+      "quantity": {"type": "int"}
+    }
+  },
   "reserve": "Забронировать",
   "addressNotSpecified": "Адрес не указан",
   "moreInfoAboutStore": "Подробнее о заведении",
   "offerStatus": "Статус: {status}",
+  "offerStatusActive": "Активно",
+  "offerStatusPaused": "Приостановлено",
+  "offerStatusExpired": "Истекло",
   "availableItemsCount": "Доступно: {quantity}",
   "offerDetailsSnapshot": "Данные предложения загружены из снимка магазина и товара на момент создания.",
   "noOffersFound": "Предложения не найдены",
@@ -144,8 +153,13 @@
   "pickupTimeExpired": "Время самовывоза истекло",
   "cancelOrder": "Отменить заказ",
   "cancelOrderConfirm": "Отменить заказ?",
-  "cancelOrderRefund": "Вам будет оформлен полный возврат.",
+  "cancelOrderRefund": "Это действие нельзя отменить.",
   "yesCancel": "Да, отменить",
+  "payOnPickup": "Оплата при получении",
+  "cancelReason": "Причина отмены",
+  "cancelReasonHint": "Укажите причину",
+  "orderCancelledByStore": "Отменено магазином",
+  "cancelReasonRequired": "Укажите причину отмены",
   "activeOrders": "Активные заказы",
   "active": "Активные",
   "completed": "Завершённые",
@@ -153,7 +167,7 @@
   "noOrdersWithStatus": "Нет заказов с этим статусом",
   "orders": "Заказы",
   "howWasTheStore": "Как вам заведение?",
-  "howWasTheFood": "Как вам еда?",
+  "howWasTheOffer": "Как вам предложение?",
   "anyComments": "Комментарии (необязательно)",
   "tellUsAboutExperience": "Расскажите о своём опыте",
   "submitReview": "Отправить отзыв",
@@ -253,10 +267,15 @@
   "chooseAStore": "Выберите магазин",
   "noStoresFound": "Магазины не найдены",
   "ratingDisplay": "{average} / 5.0",
-  "addHighlights": "Добавить особенности",
-  "quickCollection": "Быстрая выдача",
-  "friendlyStaff": "Дружелюбный персонал",
-  "basedOnRatings": "На основе 122 оценок за последние 2 месяца",
+  "noReviewsYet": "Отзывов пока нет",
+  "allReviews": "Все отзывы",
+  "reviewCountLabel": "{count, plural, =1{1 отзыв} few{{count} отзыва} many{{count} отзывов} other{{count} отзывов}}",
+  "@reviewCountLabel": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
   "surpriseBagIsSurprise": "Ваш сюрприз-пакет — это сюрприз",
   "gotIt": "Понятно!",
   "surpriseBagsForSale": "Сюрприз-пакеты в продаже",
@@ -332,5 +351,10 @@
   "addToFavorites": "Добавить в избранное",
   "removeFromFavorites": "Убрать из избранного",
 
-  "loadingPleaseWait": "Загрузка, подождите..."
+  "loadingPleaseWait": "Загрузка, подождите...",
+
+  "draftExpiredTitle": "Сессия регистрации истекла",
+  "draftExpiredMessage": "Данные вашего магазина устарели. Пожалуйста, заполните данные снова для завершения регистрации.",
+  "fillDetailsAgain": "Заполнить данные снова",
+  "submitDetails": "Отправить данные"
 }

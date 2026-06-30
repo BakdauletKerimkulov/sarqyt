@@ -22,6 +22,8 @@ export interface MaterializedOfferFields {
   pickupStartTime: Timestamp;
   pickupEndTime: Timestamp;
   status: string;
+  storeAvgRating: number;
+  storeReviewCount: number;
 }
 
 export interface ExpectedOffer {

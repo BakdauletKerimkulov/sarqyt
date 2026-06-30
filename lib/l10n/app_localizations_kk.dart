@@ -309,6 +309,11 @@ class AppLocalizationsKk extends AppLocalizations {
   String get soldOut => 'Тауысылды';
 
   @override
+  String itemsLeft(int quantity) {
+    return 'Қалды $quantity';
+  }
+
+  @override
   String get reserve => 'Брондау';
 
   @override
@@ -321,6 +326,15 @@ class AppLocalizationsKk extends AppLocalizations {
   String offerStatus(String status) {
     return 'Статус: $status';
   }
+
+  @override
+  String get offerStatusActive => 'Белсенді';
+
+  @override
+  String get offerStatusPaused => 'Тоқтатылған';
+
+  @override
+  String get offerStatusExpired => 'Мерзімі өткен';
 
   @override
   String availableItemsCount(int quantity) {
@@ -453,10 +467,25 @@ class AppLocalizationsKk extends AppLocalizations {
   String get cancelOrderConfirm => 'Тапсырысты болдырмау?';
 
   @override
-  String get cancelOrderRefund => 'Ақшаңыз толық қайтарылады.';
+  String get cancelOrderRefund => 'Бұл әрекетті кері қайтару мүмкін емес.';
 
   @override
   String get yesCancel => 'Иә, болдырмау';
+
+  @override
+  String get payOnPickup => 'Алған кезде төлеу';
+
+  @override
+  String get cancelReason => 'Болдырмау себебі';
+
+  @override
+  String get cancelReasonHint => 'Себебін жазыңыз';
+
+  @override
+  String get orderCancelledByStore => 'Дүкен болдырмаған';
+
+  @override
+  String get cancelReasonRequired => 'Болдырмау себебін жазыңыз';
 
   @override
   String get activeOrders => 'Белсенді тапсырыстар';
@@ -493,7 +522,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get howWasTheStore => 'Дүкен қалай болды?';
 
   @override
-  String get howWasTheFood => 'Тамақ қалай болды?';
+  String get howWasTheOffer => 'Ұсыныс қалай болды?';
 
   @override
   String get anyComments => 'Пікірлер (міндетті емес)';
@@ -810,16 +839,21 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get addHighlights => 'Ерекшеліктер қосу';
+  String get noReviewsYet => 'Пікірлер әлі жоқ';
 
   @override
-  String get quickCollection => 'Жылдам беру';
+  String get allReviews => 'Барлық пікірлер';
 
   @override
-  String get friendlyStaff => 'Мейірімді қызметкерлер';
-
-  @override
-  String get basedOnRatings => 'Соңғы 2 айдағы 122 бағалау негізінде';
+  String reviewCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count пікір',
+      one: '1 пікір',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get surpriseBagIsSurprise => 'Сіздің тосын-пакетіңіз — тосын';
@@ -1000,4 +1034,17 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get loadingPleaseWait => 'Жүктелуде, күте тұрыңыз...';
+
+  @override
+  String get draftExpiredTitle => 'Тіркелу сессиясының мерзімі өтті';
+
+  @override
+  String get draftExpiredMessage =>
+      'Дүкен деректеріңіздің мерзімі өтті. Тіркелуді аяқтау үшін деректеріңізді қайтадан толтырыңыз.';
+
+  @override
+  String get fillDetailsAgain => 'Деректерді қайта толтыру';
+
+  @override
+  String get submitDetails => 'Деректерді жіберу';
 }

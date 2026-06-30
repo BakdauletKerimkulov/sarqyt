@@ -28,6 +28,10 @@ _Offer _$OfferFromJson(Map<String, dynamic> json) => _Offer(
   createdAt: Offer._readDate(json['createdAt']),
   createdBy: json['createdBy'] as String,
   status: Offer._readStatus(json['status']),
+  storeAvgRating: json['storeAvgRating'] == null
+      ? 0.0
+      : Offer._readOptionalDouble(json['storeAvgRating']),
+  storeReviewCount: (json['storeReviewCount'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$OfferToJson(_Offer instance) => <String, dynamic>{
@@ -52,4 +56,6 @@ Map<String, dynamic> _$OfferToJson(_Offer instance) => <String, dynamic>{
   'createdAt': Offer._writeDate(instance.createdAt),
   'createdBy': instance.createdBy,
   'status': Offer._writeStatus(instance.status),
+  'storeAvgRating': instance.storeAvgRating,
+  'storeReviewCount': instance.storeReviewCount,
 };

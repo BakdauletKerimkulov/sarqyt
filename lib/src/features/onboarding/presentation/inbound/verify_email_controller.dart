@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/exceptions/app_exception.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/onboarding/data/onboarding_repository.dart';
 import 'package:sarqyt/src/features/onboarding/presentation/inbound/store_draft_controller.dart';
@@ -9,16 +10,20 @@ part 'verify_email_controller.g.dart';
 @riverpod
 class VerifyEmailController extends _$VerifyEmailController {
   bool _completed = false;
+  bool _stopPolling = false;
 
   @override
   FutureOr<void> build() {}
 
   bool get completed => _completed;
 
+  /// True when the CF returned not-found (draft expired / missing).
+  bool get isDraftNotFound => state.error is DraftNotFoundException;
+
   /// Called when the app resumes or by the polling timer.
   /// Reloads user, checks emailVerified, then completes onboarding.
   Future<void> checkAndComplete() async {
-    if (state.isLoading || _completed) return;
+    if (state.isLoading || _completed || _stopPolling) return;
 
     final authRepo = ref.read(authRepositoryProvider);
     final user = authRepo.currentUser;
@@ -39,6 +44,10 @@ class VerifyEmailController extends _$VerifyEmailController {
     // state may have changed (e.g. emailVerified is now true).
     ref.invalidate(userRoleProvider);
     ref.invalidate(currentPartnerStoreShipsProvider);
+
+    if (state.hasError && state.error is DraftNotFoundException) {
+      _stopPolling = true;
+    }
 
     if (!state.hasError) {
       _completed = true;

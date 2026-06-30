@@ -309,6 +309,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get soldOut => 'Распродано';
 
   @override
+  String itemsLeft(int quantity) {
+    return 'Осталось $quantity';
+  }
+
+  @override
   String get reserve => 'Забронировать';
 
   @override
@@ -321,6 +326,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String offerStatus(String status) {
     return 'Статус: $status';
   }
+
+  @override
+  String get offerStatusActive => 'Активно';
+
+  @override
+  String get offerStatusPaused => 'Приостановлено';
+
+  @override
+  String get offerStatusExpired => 'Истекло';
 
   @override
   String availableItemsCount(int quantity) {
@@ -453,10 +467,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cancelOrderConfirm => 'Отменить заказ?';
 
   @override
-  String get cancelOrderRefund => 'Вам будет оформлен полный возврат.';
+  String get cancelOrderRefund => 'Это действие нельзя отменить.';
 
   @override
   String get yesCancel => 'Да, отменить';
+
+  @override
+  String get payOnPickup => 'Оплата при получении';
+
+  @override
+  String get cancelReason => 'Причина отмены';
+
+  @override
+  String get cancelReasonHint => 'Укажите причину';
+
+  @override
+  String get orderCancelledByStore => 'Отменено магазином';
+
+  @override
+  String get cancelReasonRequired => 'Укажите причину отмены';
 
   @override
   String get activeOrders => 'Активные заказы';
@@ -493,7 +522,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get howWasTheStore => 'Как вам заведение?';
 
   @override
-  String get howWasTheFood => 'Как вам еда?';
+  String get howWasTheOffer => 'Как вам предложение?';
 
   @override
   String get anyComments => 'Комментарии (необязательно)';
@@ -809,16 +838,23 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get addHighlights => 'Добавить особенности';
+  String get noReviewsYet => 'Отзывов пока нет';
 
   @override
-  String get quickCollection => 'Быстрая выдача';
+  String get allReviews => 'Все отзывы';
 
   @override
-  String get friendlyStaff => 'Дружелюбный персонал';
-
-  @override
-  String get basedOnRatings => 'На основе 122 оценок за последние 2 месяца';
+  String reviewCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count отзывов',
+      many: '$count отзывов',
+      few: '$count отзыва',
+      one: '1 отзыв',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get surpriseBagIsSurprise => 'Ваш сюрприз-пакет — это сюрприз';
@@ -1001,4 +1037,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get loadingPleaseWait => 'Загрузка, подождите...';
+
+  @override
+  String get draftExpiredTitle => 'Сессия регистрации истекла';
+
+  @override
+  String get draftExpiredMessage =>
+      'Данные вашего магазина устарели. Пожалуйста, заполните данные снова для завершения регистрации.';
+
+  @override
+  String get fillDetailsAgain => 'Заполнить данные снова';
+
+  @override
+  String get submitDetails => 'Отправить данные';
 }

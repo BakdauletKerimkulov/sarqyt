@@ -311,6 +311,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soldOut => 'Sold out';
 
   @override
+  String itemsLeft(int quantity) {
+    return 'Left $quantity';
+  }
+
+  @override
   String get reserve => 'Reserve';
 
   @override
@@ -323,6 +328,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String offerStatus(String status) {
     return 'Status: $status';
   }
+
+  @override
+  String get offerStatusActive => 'Active';
+
+  @override
+  String get offerStatusPaused => 'Paused';
+
+  @override
+  String get offerStatusExpired => 'Expired';
 
   @override
   String availableItemsCount(int quantity) {
@@ -455,10 +469,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelOrderConfirm => 'Cancel order?';
 
   @override
-  String get cancelOrderRefund => 'You will receive a full refund.';
+  String get cancelOrderRefund => 'This action cannot be undone.';
 
   @override
   String get yesCancel => 'Yes, cancel';
+
+  @override
+  String get payOnPickup => 'Pay on pickup';
+
+  @override
+  String get cancelReason => 'Cancellation reason';
+
+  @override
+  String get cancelReasonHint => 'Enter reason';
+
+  @override
+  String get orderCancelledByStore => 'Cancelled by store';
+
+  @override
+  String get cancelReasonRequired => 'Please enter a reason';
 
   @override
   String get activeOrders => 'Active orders';
@@ -495,7 +524,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get howWasTheStore => 'How was the store?';
 
   @override
-  String get howWasTheFood => 'How was the food?';
+  String get howWasTheOffer => 'How was the offer?';
 
   @override
   String get anyComments => 'Any comments? (optional)';
@@ -813,16 +842,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get addHighlights => 'Add highlights';
+  String get noReviewsYet => 'No reviews yet';
 
   @override
-  String get quickCollection => 'Quick collection';
+  String get allReviews => 'All reviews';
 
   @override
-  String get friendlyStaff => 'Friendly staff';
-
-  @override
-  String get basedOnRatings => 'Based on 122 ratings over the past 2 months';
+  String reviewCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get surpriseBagIsSurprise => 'Your surprise bag is a surprise';
@@ -1005,4 +1039,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadingPleaseWait => 'Loading, please wait...';
+
+  @override
+  String get draftExpiredTitle => 'Registration session expired';
+
+  @override
+  String get draftExpiredMessage =>
+      'Your store details have expired. Please fill in your details again to complete registration.';
+
+  @override
+  String get fillDetailsAgain => 'Fill in details again';
+
+  @override
+  String get submitDetails => 'Submit details';
 }

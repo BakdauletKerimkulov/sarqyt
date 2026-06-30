@@ -12,6 +12,11 @@ class StoreLocation extends _$StoreLocation {
   @override
   FutureOr<LatLng?> build() => null;
 
+  /// Seed the provider with an already-known location (e.g. from draft).
+  void setLocation(LatLng location) {
+    state = AsyncData(location);
+  }
+
   Future<void> getCoordinates({
     required String address,
     required String locality,

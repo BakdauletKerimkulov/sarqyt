@@ -6,6 +6,7 @@ import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
+import 'package:sarqyt/src/features/offers/presentation/offer_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 class ItemCard extends StatefulWidget {
@@ -115,7 +116,7 @@ class _ItemCardState extends State<ItemCard> {
                         ),
                       ),
                       Text(
-                        offer!.pickupLabel,
+                        offer!.pickupLabelLocalized(context),
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,

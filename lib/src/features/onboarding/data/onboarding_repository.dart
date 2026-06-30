@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/exceptions/app_exception.dart';
 
 part 'onboarding_repository.g.dart';
 
@@ -21,8 +22,13 @@ class OnboardingRepository {
 
   Future<String> completeMerchantOnboarding() async {
     final function = _functions.httpsCallable('completeMerchantOnboarding');
-    final result = await function.call({});
-    return result.data['storeId'] as String;
+    try {
+      final result = await function.call({});
+      return result.data['storeId'] as String;
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'not-found') throw DraftNotFoundException();
+      rethrow;
+    }
   }
 
 }

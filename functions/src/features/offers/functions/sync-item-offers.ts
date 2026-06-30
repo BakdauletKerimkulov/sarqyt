@@ -8,14 +8,14 @@ import {
   diffAndApply,
   loadAndValidate,
 } from "../services/sync-offers-service";
-import { SincOffersRequest } from "../types/sinc-offers-request";
+import { SyncOffersRequest } from "../types/sync-offers-request";
 
 /**
  * Cloud Function handler: synchronize offers for one item for the next 7 days.
  * Validates auth/ownership, delegates business logic to the service layer.
  * @return {Promise<{ created: number, updated: number, paused: number }>}
  */
-export const sincItemOffers = onCall(async (req) => {
+export const syncItemOffers = onCall(async (req) => {
   try {
     // --- Auth ---
     if (req.auth == null) {
@@ -28,7 +28,7 @@ export const sincItemOffers = onCall(async (req) => {
     }
 
     // --- Parse input ---
-    const data = (req.data ?? {}) as Partial<SincOffersRequest>;
+    const data = (req.data ?? {}) as Partial<SyncOffersRequest>;
     const storeId = requireNonEmptyString(data.storeId, "storeId");
     const itemId = requireNonEmptyString(data.itemId, "itemId");
 
@@ -51,10 +51,10 @@ export const sincItemOffers = onCall(async (req) => {
       rangeEnd,
     });
 
-    logInfo("sincItemOffers done", { storeId, itemId, ...result });
+    logInfo("syncItemOffers done", { storeId, itemId, ...result });
     return result;
   } catch (error) {
-    logError("sincItemOffers failed", { error, data: req.data });
+    logError("syncItemOffers failed", { error, data: req.data });
     throw toHttpsError(error);
   }
 });

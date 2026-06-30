@@ -1,5 +1,17 @@
 {
   "include": [
-    ".eslintrc.js"
-  ]
+    ".eslintrc.js",
+    "test"
+  ],
+  "compilerOptions": {
+    "module": "NodeNext",
+    "esModuleInterop": true,
+    "moduleResolution": "nodenext",
+    "noImplicitReturns": true,
+    "rootDir": ".",
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2017"
+  }
 }

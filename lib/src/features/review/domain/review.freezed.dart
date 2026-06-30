@@ -15,7 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Review {
 
- ReviewID get id; OrderID get orderId; StoreID get storeId; UserID get userId; int get storeRating; int get foodRating; String? get comment;@TimestampConverter() DateTime get createdAt;
+ ReviewID get id; OrderID get orderId; StoreID get storeId; UserID get userId; int get storeRating;// ignore: invalid_annotation_target
+@JsonKey(readValue: _readOfferRating) int get offerRating; String? get comment;@TimestampConverter() DateTime get createdAt;
 /// Create a copy of Review
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +29,16 @@ $ReviewCopyWith<Review> get copyWith => _$ReviewCopyWithImpl<Review>(this as Rev
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Review&&(identical(other.id, id) || other.id == id)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.storeRating, storeRating) || other.storeRating == storeRating)&&(identical(other.foodRating, foodRating) || other.foodRating == foodRating)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Review&&(identical(other.id, id) || other.id == id)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.storeRating, storeRating) || other.storeRating == storeRating)&&(identical(other.offerRating, offerRating) || other.offerRating == offerRating)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,orderId,storeId,userId,storeRating,foodRating,comment,createdAt);
+int get hashCode => Object.hash(runtimeType,id,orderId,storeId,userId,storeRating,offerRating,comment,createdAt);
 
 @override
 String toString() {
-  return 'Review(id: $id, orderId: $orderId, storeId: $storeId, userId: $userId, storeRating: $storeRating, foodRating: $foodRating, comment: $comment, createdAt: $createdAt)';
+  return 'Review(id: $id, orderId: $orderId, storeId: $storeId, userId: $userId, storeRating: $storeRating, offerRating: $offerRating, comment: $comment, createdAt: $createdAt)';
 }
 
 
@@ -48,7 +49,7 @@ abstract mixin class $ReviewCopyWith<$Res>  {
   factory $ReviewCopyWith(Review value, $Res Function(Review) _then) = _$ReviewCopyWithImpl;
 @useResult
 $Res call({
- ReviewID id, OrderID orderId, StoreID storeId, UserID userId, int storeRating, int foodRating, String? comment,@TimestampConverter() DateTime createdAt
+ ReviewID id, OrderID orderId, StoreID storeId, UserID userId, int storeRating,@JsonKey(readValue: _readOfferRating) int offerRating, String? comment,@TimestampConverter() DateTime createdAt
 });
 
 
@@ -65,14 +66,14 @@ class _$ReviewCopyWithImpl<$Res>
 
 /// Create a copy of Review
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? orderId = null,Object? storeId = null,Object? userId = null,Object? storeRating = null,Object? foodRating = null,Object? comment = freezed,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? orderId = null,Object? storeId = null,Object? userId = null,Object? storeRating = null,Object? offerRating = null,Object? comment = freezed,Object? createdAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as ReviewID,orderId: null == orderId ? _self.orderId : orderId // ignore: cast_nullable_to_non_nullable
 as OrderID,storeId: null == storeId ? _self.storeId : storeId // ignore: cast_nullable_to_non_nullable
 as StoreID,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as UserID,storeRating: null == storeRating ? _self.storeRating : storeRating // ignore: cast_nullable_to_non_nullable
-as int,foodRating: null == foodRating ? _self.foodRating : foodRating // ignore: cast_nullable_to_non_nullable
+as int,offerRating: null == offerRating ? _self.offerRating : offerRating // ignore: cast_nullable_to_non_nullable
 as int,comment: freezed == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ReviewID id,  OrderID orderId,  StoreID storeId,  UserID userId,  int storeRating,  int foodRating,  String? comment, @TimestampConverter()  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ReviewID id,  OrderID orderId,  StoreID storeId,  UserID userId,  int storeRating, @JsonKey(readValue: _readOfferRating)  int offerRating,  String? comment, @TimestampConverter()  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Review() when $default != null:
-return $default(_that.id,_that.orderId,_that.storeId,_that.userId,_that.storeRating,_that.foodRating,_that.comment,_that.createdAt);case _:
+return $default(_that.id,_that.orderId,_that.storeId,_that.userId,_that.storeRating,_that.offerRating,_that.comment,_that.createdAt);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.id,_that.orderId,_that.storeId,_that.userId,_that.storeRat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ReviewID id,  OrderID orderId,  StoreID storeId,  UserID userId,  int storeRating,  int foodRating,  String? comment, @TimestampConverter()  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ReviewID id,  OrderID orderId,  StoreID storeId,  UserID userId,  int storeRating, @JsonKey(readValue: _readOfferRating)  int offerRating,  String? comment, @TimestampConverter()  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _Review():
-return $default(_that.id,_that.orderId,_that.storeId,_that.userId,_that.storeRating,_that.foodRating,_that.comment,_that.createdAt);case _:
+return $default(_that.id,_that.orderId,_that.storeId,_that.userId,_that.storeRating,_that.offerRating,_that.comment,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.id,_that.orderId,_that.storeId,_that.userId,_that.storeRat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ReviewID id,  OrderID orderId,  StoreID storeId,  UserID userId,  int storeRating,  int foodRating,  String? comment, @TimestampConverter()  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ReviewID id,  OrderID orderId,  StoreID storeId,  UserID userId,  int storeRating, @JsonKey(readValue: _readOfferRating)  int offerRating,  String? comment, @TimestampConverter()  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Review() when $default != null:
-return $default(_that.id,_that.orderId,_that.storeId,_that.userId,_that.storeRating,_that.foodRating,_that.comment,_that.createdAt);case _:
+return $default(_that.id,_that.orderId,_that.storeId,_that.userId,_that.storeRating,_that.offerRating,_that.comment,_that.createdAt);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.id,_that.orderId,_that.storeId,_that.userId,_that.storeRat
 @JsonSerializable()
 
 class _Review extends Review {
-  const _Review({required this.id, required this.orderId, required this.storeId, required this.userId, required this.storeRating, required this.foodRating, this.comment, @TimestampConverter() required this.createdAt}): super._();
+  const _Review({required this.id, required this.orderId, required this.storeId, required this.userId, required this.storeRating, @JsonKey(readValue: _readOfferRating) required this.offerRating, this.comment, @TimestampConverter() required this.createdAt}): super._();
   factory _Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);
 
 @override final  ReviewID id;
@@ -224,7 +225,8 @@ class _Review extends Review {
 @override final  StoreID storeId;
 @override final  UserID userId;
 @override final  int storeRating;
-@override final  int foodRating;
+// ignore: invalid_annotation_target
+@override@JsonKey(readValue: _readOfferRating) final  int offerRating;
 @override final  String? comment;
 @override@TimestampConverter() final  DateTime createdAt;
 
@@ -241,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Review&&(identical(other.id, id) || other.id == id)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.storeRating, storeRating) || other.storeRating == storeRating)&&(identical(other.foodRating, foodRating) || other.foodRating == foodRating)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Review&&(identical(other.id, id) || other.id == id)&&(identical(other.orderId, orderId) || other.orderId == orderId)&&(identical(other.storeId, storeId) || other.storeId == storeId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.storeRating, storeRating) || other.storeRating == storeRating)&&(identical(other.offerRating, offerRating) || other.offerRating == offerRating)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,orderId,storeId,userId,storeRating,foodRating,comment,createdAt);
+int get hashCode => Object.hash(runtimeType,id,orderId,storeId,userId,storeRating,offerRating,comment,createdAt);
 
 @override
 String toString() {
-  return 'Review(id: $id, orderId: $orderId, storeId: $storeId, userId: $userId, storeRating: $storeRating, foodRating: $foodRating, comment: $comment, createdAt: $createdAt)';
+  return 'Review(id: $id, orderId: $orderId, storeId: $storeId, userId: $userId, storeRating: $storeRating, offerRating: $offerRating, comment: $comment, createdAt: $createdAt)';
 }
 
 
@@ -261,7 +263,7 @@ abstract mixin class _$ReviewCopyWith<$Res> implements $ReviewCopyWith<$Res> {
   factory _$ReviewCopyWith(_Review value, $Res Function(_Review) _then) = __$ReviewCopyWithImpl;
 @override @useResult
 $Res call({
- ReviewID id, OrderID orderId, StoreID storeId, UserID userId, int storeRating, int foodRating, String? comment,@TimestampConverter() DateTime createdAt
+ ReviewID id, OrderID orderId, StoreID storeId, UserID userId, int storeRating,@JsonKey(readValue: _readOfferRating) int offerRating, String? comment,@TimestampConverter() DateTime createdAt
 });
 
 
@@ -278,14 +280,14 @@ class __$ReviewCopyWithImpl<$Res>
 
 /// Create a copy of Review
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? orderId = null,Object? storeId = null,Object? userId = null,Object? storeRating = null,Object? foodRating = null,Object? comment = freezed,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? orderId = null,Object? storeId = null,Object? userId = null,Object? storeRating = null,Object? offerRating = null,Object? comment = freezed,Object? createdAt = null,}) {
   return _then(_Review(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as ReviewID,orderId: null == orderId ? _self.orderId : orderId // ignore: cast_nullable_to_non_nullable
 as OrderID,storeId: null == storeId ? _self.storeId : storeId // ignore: cast_nullable_to_non_nullable
 as StoreID,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as UserID,storeRating: null == storeRating ? _self.storeRating : storeRating // ignore: cast_nullable_to_non_nullable
-as int,foodRating: null == foodRating ? _self.foodRating : foodRating // ignore: cast_nullable_to_non_nullable
+as int,offerRating: null == offerRating ? _self.offerRating : offerRating // ignore: cast_nullable_to_non_nullable
 as int,comment: freezed == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,

@@ -8,6 +8,7 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/orders/data/orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_status_badge.dart';
+import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 
@@ -85,6 +86,12 @@ class _BusinessOrderCard extends ConsumerStatefulWidget {
 class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
   bool _isLoading = false;
 
+  static const _activeStatuses = {
+    OrderStatus.confirmed,
+    OrderStatus.preparing,
+    OrderStatus.readyForPickup,
+  };
+
   String? _nextStatusLabel(BuildContext context) {
     return switch (widget.order.status) {
       OrderStatus.confirmed => context.loc.startPreparing,
@@ -123,10 +130,31 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
     }
   }
 
+  Future<void> _cancelOrder() async {
+    final reason = await _showCancelReasonDialog(context);
+    if (reason == null) return;
+
+    setState(() => _isLoading = true);
+    try {
+      await ref
+          .read(ordersRepositoryProvider)
+          .cancelOrder(widget.order.id, reason: reason);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(humanReadableError(e))));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final order = widget.order;
     final theme = Theme.of(context);
+    final isActive = _activeStatuses.contains(order.status);
 
     return Card(
       child: Padding(
@@ -156,10 +184,10 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            if (order.pickupLabel != null) ...[
+            if (order.pickupLabelLocalized(context) != null) ...[
               gapH4,
               Text(
-                order.pickupLabel!,
+                order.pickupLabelLocalized(context)!,
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
             ],
@@ -186,11 +214,71 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
                 ),
               ),
             ],
+            if (isActive) ...[
+              gapH8,
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: _isLoading ? null : _cancelOrder,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                  child: Text(context.loc.cancelOrder),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
+}
+
+Future<String?> _showCancelReasonDialog(BuildContext context) {
+  final controller = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
+  return showDialog<String>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(context.loc.cancelOrderConfirm),
+      content: Form(
+        key: formKey,
+        child: TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            labelText: context.loc.cancelReason,
+            hintText: context.loc.cancelReasonHint,
+          ),
+          maxLines: 3,
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return context.loc.cancelReasonRequired;
+            }
+            return null;
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: Text(context.loc.no),
+        ),
+        TextButton(
+          onPressed: () {
+            if (formKey.currentState!.validate()) {
+              Navigator.of(ctx).pop(controller.text.trim());
+            }
+          },
+          child: Text(
+            context.loc.yesCancel,
+            style: const TextStyle(color: Colors.red),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 enum _OrderFilter { all, active, completed, cancelled }

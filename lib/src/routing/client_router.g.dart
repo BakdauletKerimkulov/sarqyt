@@ -48,4 +48,4 @@ final class ClientRouterProvider
   }
 }
 
-String _$clientRouterHash() => r'dc2cbbd7a8db3d78ad4fabf55240ff8eba89883c';
+String _$clientRouterHash() => r'37b14ae6f3d2d8ac691387ecac3d5bd5315b95b6';

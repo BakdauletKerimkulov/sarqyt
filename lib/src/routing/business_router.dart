@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
+import 'package:sarqyt/src/features/dev_menu/presentation/dev_menu_screen.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_business/sigin_in_business_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/dashboard_screen.dart';
 import 'package:sarqyt/src/features/business_console/presentation/financials_screen.dart';
@@ -63,6 +64,7 @@ enum BusinessRoute {
   newItem,
   team,
   addStore,
+  dev,
 }
 
 /// Pure, sync, testable global redirect for the business app.
@@ -70,16 +72,18 @@ enum BusinessRoute {
 /// Layers (evaluated top-to-bottom, first match wins):
 ///  1. Unauthenticated → allow /login & /onboarding/inbound, else → /login
 ///  2. Email not verified → /onboarding/inbound/verify-email
-///  3. Role == guest (claims not yet set) → /onboarding/inbound/verify-email
-///  4. Non-partner / non-admin → /forbidden
-///  5. Admin → redirect onboarding/login/forbidden to /stores, else stay
-///  6. Partner + storeShips not yet loaded → stay put (avoid bouncing)
-///  7. Partner with a storeShip whose welcome is not done → /onboarding/welcome
-///  8. Partner done → redirect onboarding/login/forbidden to /stores, else stay
+///  3. Role still loading → hold on /loading
+///  4. Role == guest (verified, claims not set) → allow /onboarding/inbound/*, else → verify-email
+///  5. Non-partner / non-admin → /forbidden
+///  6. Admin → redirect onboarding/login/forbidden to /stores, else stay
+///  7. Partner + storeShips not yet loaded → stay put (avoid bouncing)
+///  8. Partner with a storeShip whose welcome is not done → /onboarding/welcome
+///  9. Partner done → redirect onboarding/login/forbidden to /stores, else stay
 String? businessRedirect({
   required BusinessRedirectState redirectState,
-  required String path,
+  required Uri uri,
 }) {
+  final path = uri.path;
   final user = redirectState.user;
   final role = redirectState.role;
   final storeShips = redirectState.storeShips;
@@ -90,6 +94,7 @@ String? businessRedirect({
   final onWelcome = path.startsWith('/onboarding/welcome');
   final onForbidden = path.startsWith('/forbidden');
   final onLoading = path.startsWith('/loading');
+  final onDev = path.startsWith('/dev');
 
   // Layer 1: Unauthenticated — no need to wait for role/storeShips
   if (user == null) {
@@ -104,39 +109,51 @@ String? businessRedirect({
     return verifyPath;
   }
 
-  // Layer 3: Role still loading / claims not set yet → guest
+  // Layer 3: Role still loading — hold on /loading to prevent verify-email flash
+  if (!redirectState.roleLoaded) {
+    if (onLoading) return null;
+    return '/loading';
+  }
+
+  // Layer 4: Verified guest (claims not set) — allow any inbound path for
+  // draft recovery; non-inbound paths still redirect to verify-email.
   if (role == UserRole.guest) {
     const verifyPath = '/onboarding/inbound/verify-email';
-    if (path == verifyPath) return null;
+    if (onInbound) return null;
     return verifyPath;
   }
 
-  // Layer 4: Non-partner / non-admin
+  // Layer 5: Non-partner / non-admin
   if (role != UserRole.partner && role != UserRole.admin) {
     if (onForbidden) return null;
     return '/forbidden';
   }
 
-  // Layer 5: Admin — bypass welcome flow entirely
+  // Layer 5.5: /dev is admin-only — partner must be redirected
+  if (onDev && role != UserRole.admin) return '/stores';
+
+  // Layer 6: Admin — bypass welcome flow entirely
   if (role == UserRole.admin) {
+    // devMenu=true query param: allow admin to reach any screen (e.g. onboarding)
+    if (uri.queryParameters['devMenu'] == 'true') return null;
     if (onLogin || onOnboarding || onForbidden || onLoading) return '/stores';
     return null;
   }
 
-  // Layer 6: Partner — wait for storeShips before deciding welcome vs stores.
+  // Layer 7: Partner — wait for storeShips before deciding welcome vs stores.
   // Redirect /login → /loading so user sees a loading screen, not a frozen form.
   if (!redirectState.storeShipsLoaded) {
     if (onLogin) return '/loading';
     return null;
   }
 
-  // Layer 7: Partner with at least one storeShip pending welcome → /welcome
+  // Layer 8: Partner with at least one storeShip pending welcome → /welcome
   if (storeShips.pendingWelcome != null) {
     if (onWelcome) return null;
     return '/onboarding/welcome';
   }
 
-  // Layer 8: Partner done
+  // Layer 9: Partner done
   if (onLogin || onOnboarding || onForbidden || onLoading) return '/stores';
   return null;
 }
@@ -191,7 +208,7 @@ GoRouter businessRouter(Ref ref) {
       final redirectState = ref.read(businessRedirectStateProvider);
       return businessRedirect(
         redirectState: redirectState,
-        path: state.uri.path,
+        uri: state.uri,
       );
     },
     refreshListenable: refresh,
@@ -262,6 +279,12 @@ GoRouter businessRouter(Ref ref) {
             builder: (context, state) => const WelcomeScreen(),
           ),
         ],
+      ),
+
+      GoRoute(
+        path: '/dev',
+        name: BusinessRoute.dev.name,
+        builder: (context, state) => const DevMenuScreen(),
       ),
 
       // Store selection screen (if > 1)

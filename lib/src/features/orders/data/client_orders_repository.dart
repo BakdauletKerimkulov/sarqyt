@@ -12,9 +12,12 @@ class ClientOrdersRepository {
   final FirebaseFirestore _firestore;
   final FirebaseFunctions _functions;
 
-  Future<void> cancelOrder(OrderID orderId) async {
+  Future<void> cancelOrder(OrderID orderId, {String? reason}) async {
     final callable = _functions.httpsCallable('cancelOrder');
-    await callable.call({'orderId': orderId});
+    await callable.call({
+      'orderId': orderId,
+      if (reason != null) 'reason': reason,
+    });
   }
 
   Stream<List<Order>> watchOrdersForCustomer(UserID uid) {

@@ -50,15 +50,8 @@ void main() {
       expect(offer.isAvailable, false);
     });
 
-    test('availableText shows Left N for available', () {
-      final offer = _makeOffer(quantity: 3);
-      expect(offer.availableText, 'Left 3');
-    });
-
-    test('availableText shows Sold out for 0', () {
-      final offer = _makeOffer(quantity: 0);
-      expect(offer.availableText, 'Sold out');
-    });
+    // availableText is a presentation-layer extension (availableTextLocalized)
+    // that requires BuildContext — tested in widget tests, not here.
 
     test('discountPercent calculates correctly', () {
       final offer = _makeOffer().copyWith(
@@ -74,32 +67,50 @@ void main() {
       expect(offer.discountPercent, 0);
     });
 
-    test('pickupDayLabel returns Today for today', () {
-      final now = DateTime.now();
-      final offer = _makeOffer(
-        pickupStart: DateTime(now.year, now.month, now.day, 18, 0),
-        pickupEnd: DateTime(now.year, now.month, now.day, 20, 0),
-      );
-      expect(offer.pickupDayLabel, 'Today');
+    // pickupDayLabel and pickupLabel are presentation-layer extensions
+    // that require BuildContext — tested in widget tests, not here.
+  });
+
+  group('Offer._readStatus via fromJson', () {
+    Map<String, dynamic> baseOfferJson() => {
+          'id': 'offer1',
+          'storeId': 'store1',
+          'productId': 'item1',
+          'quantity': 5,
+          'name': 'Surprise Bag',
+          'price': 1500,
+          'currencyCode': 'KZT',
+          'currencySymbol': '₸',
+          'storeName': 'Test Store',
+          'geopoint': const GeoPoint(43.25, 76.94),
+          'pickupStartTime': Timestamp.fromDate(DateTime(2026, 7, 1, 10)),
+          'pickupEndTime': Timestamp.fromDate(DateTime(2026, 7, 1, 14)),
+          'createdAt': Timestamp.fromDate(DateTime(2026, 6, 1)),
+          'createdBy': 'uid1',
+          'status': 'active',
+        };
+
+    test('parses "soldOut" status', () {
+      final json = baseOfferJson()..['status'] = 'soldOut';
+      final offer = Offer.fromJson(json);
+      expect(offer.status, OfferStatus.soldOut);
     });
 
-    test('pickupDayLabel returns Tomorrow for tomorrow', () {
-      final tomorrow = DateTime.now().add(const Duration(days: 1));
-      final offer = _makeOffer(
-        pickupStart: DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 18, 0),
-        pickupEnd: DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 20, 0),
-      );
-      expect(offer.pickupDayLabel, 'Tomorrow');
+    test('parses "active" status', () {
+      final json = baseOfferJson()..['status'] = 'active';
+      final offer = Offer.fromJson(json);
+      expect(offer.status, OfferStatus.active);
     });
 
-    test('pickupLabel contains time range', () {
-      final now = DateTime.now();
-      final offer = _makeOffer(
-        pickupStart: DateTime(now.year, now.month, now.day, 18, 0),
-        pickupEnd: DateTime(now.year, now.month, now.day, 20, 0),
-      );
-      expect(offer.pickupLabel, contains('18:00'));
-      expect(offer.pickupLabel, contains('20:00'));
+    test('parses "inactive" as paused (backward compat)', () {
+      final json = baseOfferJson()..['status'] = 'inactive';
+      final offer = Offer.fromJson(json);
+      expect(offer.status, OfferStatus.paused);
+    });
+
+    test('isActive returns false for soldOut', () {
+      final offer = _makeOffer(status: OfferStatus.soldOut);
+      expect(offer.isActive, false);
     });
   });
 }

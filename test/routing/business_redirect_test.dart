@@ -5,13 +5,15 @@ import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/routing/business_redirect_state.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 
-/// Shorthand to call [businessRedirect] with the new signature.
+/// Shorthand to call [businessRedirect] with the Uri-based signature.
 String? _redirect({
   AppUser? user,
   UserRole role = UserRole.guest,
   List<StoreShip> storeShips = const [],
   bool storeShipsLoaded = true,
+  bool roleLoaded = true,
   required String path,
+  Map<String, String> queryParameters = const {},
 }) {
   return businessRedirect(
     redirectState: BusinessRedirectState(
@@ -19,8 +21,9 @@ String? _redirect({
       role: role,
       storeShips: storeShips,
       storeShipsLoaded: storeShipsLoaded,
+      roleLoaded: roleLoaded,
     ),
-    path: path,
+    uri: Uri(path: path, queryParameters: queryParameters.isEmpty ? null : queryParameters),
   );
 }
 
@@ -110,7 +113,60 @@ void main() {
     });
   });
 
-  group('Layer 3 — Verified but guest (claims still propagating)', () {
+  group('Layer 3 — Role loading (roleLoaded: false)', () {
+    late FakeAppUser verified;
+    setUp(() => verified = _user(emailVerified: true));
+
+    test('/login → /loading', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          roleLoaded: false,
+          path: '/login',
+        ),
+        '/loading',
+      );
+    });
+
+    test('/stores/x/dashboard → /loading', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          roleLoaded: false,
+          path: '/stores/x/dashboard',
+        ),
+        '/loading',
+      );
+    });
+
+    test('/loading → stay', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          roleLoaded: false,
+          path: '/loading',
+        ),
+        isNull,
+      );
+    });
+
+    test('roleLoaded: true → falls through to guest layer', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          roleLoaded: true,
+          path: '/onboarding/inbound/verify-email',
+        ),
+        isNull,
+      );
+    });
+  });
+
+  group('Layer 4 — Verified guest allows inbound paths', () {
     late FakeAppUser verified;
     setUp(() => verified = _user(emailVerified: true));
 
@@ -125,12 +181,67 @@ void main() {
       );
     });
 
+    test('/onboarding/inbound/create-account → stay', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/onboarding/inbound/create-account',
+        ),
+        isNull,
+      );
+    });
+
+    test('/onboarding/inbound/review-details → stay', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/onboarding/inbound/review-details',
+        ),
+        isNull,
+      );
+    });
+
+    test('/onboarding/inbound/email → stay', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/onboarding/inbound/email',
+        ),
+        isNull,
+      );
+    });
+
     test('/stores → /onboarding/inbound/verify-email', () {
       expect(
         _redirect(
           user: verified,
           role: UserRole.guest,
           path: '/stores',
+        ),
+        '/onboarding/inbound/verify-email',
+      );
+    });
+
+    test('/login → /onboarding/inbound/verify-email', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/login',
+        ),
+        '/onboarding/inbound/verify-email',
+      );
+    });
+
+    test('/onboarding/welcome → /onboarding/inbound/verify-email', () {
+      expect(
+        _redirect(
+          user: verified,
+          role: UserRole.guest,
+          path: '/onboarding/welcome',
         ),
         '/onboarding/inbound/verify-email',
       );
@@ -392,6 +503,46 @@ void main() {
   group('Layer 1 — Unauthenticated on /loading', () {
     test('/loading → /login', () {
       expect(_redirect(path: '/loading'), '/login');
+    });
+  });
+
+  group('Admin dev menu — /dev route guard', () {
+    late FakeAppUser admin;
+    late FakeAppUser partner;
+    setUp(() {
+      admin = _user(role: UserRole.admin);
+      partner = _user(role: UserRole.partner);
+    });
+
+    test('admin at /dev → stay', () {
+      expect(
+        _redirect(user: admin, role: UserRole.admin, path: '/dev'),
+        isNull,
+      );
+    });
+
+    test('partner at /dev → /stores', () {
+      expect(
+        _redirect(
+          user: partner,
+          role: UserRole.partner,
+          storeShips: _completedShips,
+          path: '/dev',
+        ),
+        '/stores',
+      );
+    });
+
+    test('admin at onboarding with devMenu=true → stay (bypass)', () {
+      expect(
+        _redirect(
+          user: admin,
+          role: UserRole.admin,
+          path: '/onboarding/inbound/review-details',
+          queryParameters: {'devMenu': 'true'},
+        ),
+        isNull,
+      );
     });
   });
 

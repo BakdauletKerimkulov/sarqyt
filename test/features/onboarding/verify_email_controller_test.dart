@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sarqyt/src/exceptions/app_exception.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
 import 'package:sarqyt/src/features/onboarding/data/onboarding_repository.dart';
@@ -56,6 +57,9 @@ class _FakeAuthRepo implements AuthRepository {
   @override
   Future<AppUser?> createUserWithEmailAndPassword(String e, String p) async =>
       null;
+
+  @override
+  Future<void> deleteAccount() async {}
 }
 
 void main() {
@@ -131,6 +135,35 @@ void main() {
         final state = container.read(verifyEmailControllerProvider);
         expect(state.hasError, isTrue);
         expect(user.refreshTokenCalled, isFalse);
+      },
+    );
+
+    test(
+      'checkAndComplete — DraftNotFoundException → state has typed error, completed stays false',
+      () async {
+        final user = _TestAppUser(verified: true);
+        final fakeAuth = _FakeAuthRepo(user);
+        final fakeOnboarding = FakeOnboardingRepository()
+          ..failCompleteMerchantWithDraftNotFound = true;
+
+        final container = ProviderContainer(
+          overrides: [
+            authRepositoryProvider.overrideWithValue(fakeAuth),
+            onboardingRepositoryProvider.overrideWithValue(fakeOnboarding),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        final controller = container.read(
+          verifyEmailControllerProvider.notifier,
+        );
+        await controller.checkAndComplete();
+
+        final state = container.read(verifyEmailControllerProvider);
+        expect(state.hasError, isTrue);
+        expect(state.error, isA<DraftNotFoundException>());
+        expect(controller.completed, isFalse);
+        expect(controller.isDraftNotFound, isTrue);
       },
     );
 

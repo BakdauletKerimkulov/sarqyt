@@ -16,7 +16,7 @@ class ReviewRepository {
     required StoreID storeId,
     required UserID userId,
     required int storeRating,
-    required int foodRating,
+    required int offerRating,
     String? comment,
   }) async {
     final docRef = _firestore.collection('reviews').doc();
@@ -26,7 +26,7 @@ class ReviewRepository {
       'storeId': storeId,
       'userId': userId,
       'storeRating': storeRating,
-      'foodRating': foodRating,
+      'offerRating': offerRating,
       'comment': comment,
       'createdAt': FieldValue.serverTimestamp(),
     });
@@ -41,11 +41,13 @@ class ReviewRepository {
     return snap.docs.isNotEmpty;
   }
 
-  Stream<List<Review>> watchStoreReviews(StoreID storeId) {
-    return _firestore
+  Stream<List<Review>> watchStoreReviews(StoreID storeId, {int? limit}) {
+    var query = _firestore
         .collection('reviews')
         .where('storeId', isEqualTo: storeId)
-        .orderBy('createdAt', descending: true)
+        .orderBy('createdAt', descending: true);
+    if (limit != null) query = query.limit(limit);
+    return query
         .withConverter(
           fromFirestore: (doc, _) => Review.fromJson(doc.data()!),
           toFirestore: (Review r, _) => r.toJson(),

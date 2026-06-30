@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import { onCall } from "firebase-functions/v2/https";
 import { AppError, toHttpsError } from "../../../app/error";
 import { logError, logInfo } from "../../../app/logger";
@@ -7,8 +8,14 @@ import { FirestoreCollections } from "../../../shared/constants/constants";
 interface ReserveOfferRequest {
   offerId: string;
   quantity: number;
-  idempotencyKey?: string;
+  idempotencyKey: string;
 }
+
+/** Max active (confirmed/preparing/readyForPickup) orders per user. */
+const MAX_ACTIVE_ORDERS_PER_USER = 5;
+
+/** Max items a single order can reserve. */
+const MAX_QUANTITY_PER_ORDER = 5;
 
 /**
  * Idempotent: uses idempotencyKey to prevent duplicate orders.
@@ -28,13 +35,39 @@ export const reserveOffer = onCall(async (request) => {
   if (!quantity || typeof quantity !== "number" || quantity < 1) {
     throw new AppError("invalid-argument", "quantity must be >= 1");
   }
+  if (quantity > MAX_QUANTITY_PER_ORDER) {
+    throw new AppError(
+      "invalid-argument",
+      `quantity must be <= ${MAX_QUANTITY_PER_ORDER}`
+    );
+  }
+  if (!idempotencyKey || typeof idempotencyKey !== "string") {
+    throw new AppError("invalid-argument", "idempotencyKey is required");
+  }
 
-  // Deterministic order ID for idempotency
-  const orderDocId = idempotencyKey ?? `${uid}_${offerId}_${Date.now()}`;
+  // Deterministic order ID — prefixed with uid to prevent cross-user collisions
+  const orderDocId = `${uid}_${idempotencyKey}`;
 
   try {
     const offerRef = db.collection(FirestoreCollections.OFFERS).doc(offerId);
     const orderRef = db.collection(FirestoreCollections.ORDERS).doc(orderDocId);
+
+    // Check active order count BEFORE the transaction (read-only query,
+    // not part of the transaction lock set — acceptable for a soft limit).
+    const activeStatuses = ["confirmed", "preparing", "readyForPickup"];
+    const activeSnap = await db
+      .collection(FirestoreCollections.ORDERS)
+      .where("customerId", "==", uid)
+      .where("status", "in", activeStatuses)
+      .limit(MAX_ACTIVE_ORDERS_PER_USER)
+      .get();
+
+    if (activeSnap.size >= MAX_ACTIVE_ORDERS_PER_USER) {
+      throw new AppError(
+        "resource-exhausted",
+        `You already have ${MAX_ACTIVE_ORDERS_PER_USER} active orders`
+      );
+    }
 
     await db.runTransaction(async (tx) => {
       const [offerSnap, orderSnap] = await Promise.all([
@@ -54,6 +87,12 @@ export const reserveOffer = onCall(async (request) => {
         throw new AppError("failed-precondition", "Offer is not active");
       }
 
+      // R6: reject if pickup window has already closed
+      const pickupEnd = offer.pickupEndTime as Timestamp | undefined;
+      if (pickupEnd && pickupEnd.toMillis() <= Timestamp.now().toMillis()) {
+        throw new AppError("failed-precondition", "Pickup window has closed");
+      }
+
       const available = (offer.quantity as number) ?? 0;
       if (available < quantity) {
         throw new AppError(
@@ -62,7 +101,16 @@ export const reserveOffer = onCall(async (request) => {
         );
       }
 
-      tx.update(offerRef, { quantity: available - quantity });
+      const newQuantity = available - quantity;
+      // R7: mark offer as soldOut when quantity reaches 0
+      const offerUpdate: Record<string, unknown> = {
+        quantity: newQuantity,
+        updatedAt: serverTimestamp(),
+      };
+      if (newQuantity === 0) {
+        offerUpdate.status = "soldOut";
+      }
+      tx.update(offerRef, offerUpdate);
 
       const unitPrice = typeof offer.price === "number" ?
         offer.price :
@@ -83,9 +131,9 @@ export const reserveOffer = onCall(async (request) => {
         pickupStartTime: offer.pickupStartTime ?? null,
         pickupEndTime: offer.pickupEndTime ?? null,
         status: "confirmed",
-        paymentStatus: "paid",
         offerId,
         createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
     });
 
