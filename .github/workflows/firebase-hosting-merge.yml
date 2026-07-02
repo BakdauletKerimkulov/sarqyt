@@ -16,8 +16,8 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - name: Create dummy .env for envied codegen
-        run: echo 'STADIA_MAPS_API_KEY=ci-placeholder' > .env
+      - name: Create .env for envied codegen
+        run: echo 'STADIA_MAPS_API_KEY=${{ secrets.STADIA_MAPS_API_KEY }}' > .env
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter build web
       - uses: FirebaseExtended/action-hosting-deploy@v0
