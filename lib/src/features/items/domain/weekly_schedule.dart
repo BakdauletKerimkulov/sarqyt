@@ -154,6 +154,12 @@ class WeeklySchedule {
     return null;
   }
 
+  /// Returns per-day validation errors for all days (null if no error).
+  Map<int, String?> get dayErrors => {
+        for (final entry in days.entries)
+          entry.key: entry.value.validationError,
+      };
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
