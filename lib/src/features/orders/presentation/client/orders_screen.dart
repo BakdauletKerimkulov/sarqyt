@@ -9,6 +9,7 @@ import 'package:sarqyt/src/features/orders/presentation/client/widgets/active_or
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/widgets/active_order_inline.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/widgets/recent_order_card.dart';
+import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 
 class OrdersScreen extends ConsumerWidget {
