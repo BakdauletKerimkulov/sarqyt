@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_status_badge.dart';
+import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 
 /// Compact card for active orders in list mode (>1 active).
 /// Shows store name, item, status badge, pickup time, total.
@@ -50,7 +51,7 @@ class ActiveOrderCard extends StatelessWidget {
               gapH4,
               Row(
                 children: [
-                  if (order.pickupLabel != null) ...[
+                  if (order.pickupLabelLocalized(context) != null) ...[
                     Icon(
                       Icons.schedule,
                       size: 16,
@@ -59,7 +60,7 @@ class ActiveOrderCard extends StatelessWidget {
                     gapW4,
                     Expanded(
                       child: Text(
-                        order.pickupLabel!,
+                        order.pickupLabelLocalized(context)!,
                         style: theme.textTheme.bodySmall
                             ?.copyWith(color: theme.colorScheme.outline),
                       ),

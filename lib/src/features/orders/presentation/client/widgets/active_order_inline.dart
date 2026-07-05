@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/widgets/order_status_progress_line.dart';
+import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 
 /// Expanded inline view for a single active order.
 /// Shows store name, item×qty, progress line, pickup window, total.
@@ -45,7 +46,7 @@ class ActiveOrderInline extends StatelessWidget {
               gapH16,
               Row(
                 children: [
-                  if (order.pickupLabel != null) ...[
+                  if (order.pickupLabelLocalized(context) != null) ...[
                     Icon(
                       Icons.schedule,
                       size: 16,
@@ -54,7 +55,7 @@ class ActiveOrderInline extends StatelessWidget {
                     gapW4,
                     Expanded(
                       child: Text(
-                        order.pickupLabel!,
+                        order.pickupLabelLocalized(context)!,
                         style: theme.textTheme.bodySmall
                             ?.copyWith(color: theme.colorScheme.outline),
                       ),
