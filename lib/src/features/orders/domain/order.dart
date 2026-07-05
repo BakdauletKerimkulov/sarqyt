@@ -62,5 +62,16 @@ abstract class Order with _$Order {
   bool get isPickupExpired =>
       pickupEndTime != null && DateTime.now().isAfter(pickupEndTime!);
 
+  /// Formatted pickup window, e.g. "14:00 – 16:00". Null if times missing.
+  String? get pickupLabel {
+    if (pickupStartTime == null || pickupEndTime == null) return null;
+    final start = pickupStartTime!;
+    final end = pickupEndTime!;
+    final startStr =
+        '${start.hour}:${start.minute.toString().padLeft(2, '0')}';
+    final endStr = '${end.hour}:${end.minute.toString().padLeft(2, '0')}';
+    return '$startStr – $endStr';
+  }
+
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 }

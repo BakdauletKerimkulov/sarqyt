@@ -6,6 +6,7 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/orders/data/client_orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/widgets/active_order_card.dart';
+import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/widgets/active_order_inline.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/widgets/recent_order_card.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
