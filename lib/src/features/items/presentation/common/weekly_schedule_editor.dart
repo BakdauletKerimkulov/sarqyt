@@ -9,16 +9,21 @@ class WeeklyScheduleEditor extends StatelessWidget {
     super.key,
     required this.schedule,
     required this.onToggleDay,
-    required this.onPickStart,
-    required this.onPickEnd,
+    required this.onTimeChanged,
     this.enabled = true,
+    this.dayErrors,
   });
 
   final WeeklySchedule schedule;
   final bool enabled;
   final void Function(int day, bool value) onToggleDay;
-  final Future<void> Function(int day) onPickStart;
-  final Future<void> Function(int day) onPickEnd;
+
+  /// Called when any time field changes.
+  /// [day] 1–7, [field] one of startHour/startMinute/endHour/endMinute.
+  final void Function(int day, String field, int value) onTimeChanged;
+
+  /// Per-day validation errors. Key = day (1–7), value = error or null.
+  final Map<int, String?>? dayErrors;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +37,11 @@ class WeeklyScheduleEditor extends StatelessWidget {
             schedule: schedule.days[day]!,
             enabled: enabled,
             onToggle: (v) => onToggleDay(day, v),
-            onPickStart: () => onPickStart(day),
-            onPickEnd: () => onPickEnd(day),
+            onStartHourChanged: (v) => onTimeChanged(day, 'startHour', v),
+            onStartMinuteChanged: (v) => onTimeChanged(day, 'startMinute', v),
+            onEndHourChanged: (v) => onTimeChanged(day, 'endHour', v),
+            onEndMinuteChanged: (v) => onTimeChanged(day, 'endMinute', v),
+            errorText: dayErrors?[day],
           ),
           if (day < 7) const Divider(height: 1),
         ],

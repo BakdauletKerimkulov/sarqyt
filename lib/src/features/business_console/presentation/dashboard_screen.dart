@@ -64,10 +64,17 @@ class DashboardScreen extends ConsumerWidget {
               icon: const Icon(Icons.add, size: 18),
               label: Text(context.loc.createNew),
               style: TextButton.styleFrom(foregroundColor: AppColors.primary),
-              onPressed: () => context.goNamed(
-                BusinessRoute.newItem.name,
-                pathParameters: {'storeId': storeId},
-              ),
+              onPressed: () async {
+                final result = await context.pushNamed<bool>(
+                  BusinessRoute.newItem.name,
+                  pathParameters: {'storeId': storeId},
+                );
+                if (result == true && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(context.loc.itemCreated)),
+                  );
+                }
+              },
             ),
             sliver: SliverItemsGrid(storeId: storeId),
           ),

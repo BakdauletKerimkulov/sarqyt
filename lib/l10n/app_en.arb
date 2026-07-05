@@ -435,5 +435,10 @@
   "draftExpiredTitle": "Registration session expired",
   "draftExpiredMessage": "Your store details have expired. Please fill in your details again to complete registration.",
   "fillDetailsAgain": "Fill in details again",
-  "submitDetails": "Submit details"
+  "submitDetails": "Submit details",
+
+  "storingAndAllergensLabel": "Storing and allergens",
+  "storingAndAllergensHint": "e.g. Store in fridge, may contain nuts",
+  "storingAndAllergensDescription": "You can add recommendations for storing and handling food, including warnings about allergens, here, and they will be shown in the app.",
+  "descriptionHint": "Describe your product"
 }

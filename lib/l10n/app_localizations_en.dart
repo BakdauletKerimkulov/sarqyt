@@ -1052,4 +1052,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get submitDetails => 'Submit details';
+
+  @override
+  String get storingAndAllergensLabel => 'Storing and allergens';
+
+  @override
+  String get storingAndAllergensHint =>
+      'e.g. Store in fridge, may contain nuts';
+
+  @override
+  String get storingAndAllergensDescription =>
+      'You can add recommendations for storing and handling food, including warnings about allergens, here, and they will be shown in the app.';
+
+  @override
+  String get descriptionHint => 'Describe your product';
 }

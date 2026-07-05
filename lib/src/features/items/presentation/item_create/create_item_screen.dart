@@ -10,8 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/items/domain/weekly_schedule.dart';
-import 'package:sarqyt/src/features/items/presentation/common/weekly_schedule_editor.dart';
 import 'package:sarqyt/src/features/items/presentation/item_create/create_item_form_controller.dart';
+import 'package:sarqyt/src/features/items/presentation/item_create/schedule_form_section.dart';
 import 'package:sarqyt/src/features/items/presentation/item_create/create_item_validators.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
@@ -36,6 +36,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
   final _descCtl = TextEditingController();
   final _priceCtl = TextEditingController();
   final _estimatedValueCtl = TextEditingController();
+  final _storingAndAllergensCtl = TextEditingController();
 
   var _submitted = false;
 
@@ -48,6 +49,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
   late final Map<int, DaySchedule> _schedule = Map.from(
     WeeklySchedule.defaultSchedule().days,
   );
+  Map<int, String?>? _dayErrors;
 
 
   @override
@@ -56,14 +58,22 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     _descCtl.dispose();
     _priceCtl.dispose();
     _estimatedValueCtl.dispose();
+    _storingAndAllergensCtl.dispose();
     super.dispose();
   }
 
   /// Validates non-text-field parts (schedule).
+  /// Returns a top-level error string, or null. Also populates _dayErrors.
   String? _validateExtras() {
     final hasEnabled = _schedule.values.any((d) => d.enabled);
     if (!hasEnabled) return 'Enable at least one day';
-    return null;
+
+    final ws = WeeklySchedule(_schedule);
+    final errors = ws.dayErrors;
+    setState(() => _dayErrors = errors);
+
+    // Return the first per-day error as a top-level error.
+    return ws.validationError;
   }
 
   Future<void> _pickImage() async {
@@ -97,6 +107,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     final evText = _estimatedValueCtl.text;
     final estimatedValue = evText.isNotEmpty ? double.tryParse(evText) : null;
 
+    final allergensText = _storingAndAllergensCtl.text.trim();
     await ref
         .read(createItemFormControllerProvider.notifier)
         .submit(
@@ -107,20 +118,19 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
           estimatedValue: estimatedValue,
           schedule: WeeklySchedule(_schedule),
           image: _selectedImage,
+          storingAndAllergens:
+              allergensText.isNotEmpty ? allergensText : null,
         );
 
     if (!mounted) return;
     final state = ref.read(createItemFormControllerProvider);
     if (!state.hasError) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.loc.itemCreated)));
+      context.pop(true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final loc = context.loc;
     ref.listen<AsyncValue>(
       createItemFormControllerProvider,
@@ -201,9 +211,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                   enabled: !isLoading,
                   maxLines: 3,
                   textCapitalization: TextCapitalization.sentences,
-                  decoration: _inputDeco(
-                    loc.rescueSurpriseBag,
-                  ),
+                  decoration: _inputDeco(loc.descriptionHint),
                 ),
                 gapH20,
 
@@ -249,7 +257,48 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                 gapH24,
 
                 // Weekly schedule
-                _buildScheduleSection(theme, isLoading),
+                ScheduleFormSection(
+                  schedule: WeeklySchedule(_schedule),
+                  enabled: !isLoading,
+                  dayErrors: _dayErrors,
+                  onToggleDay: (day, v) => setState(() {
+                    _schedule[day] = _schedule[day]!.copyWith(enabled: v);
+                  }),
+                  onTimeChanged: (day, field, value) => setState(() {
+                    _schedule[day] = switch (field) {
+                      'startHour' =>
+                        _schedule[day]!.copyWith(startHour: value),
+                      'startMinute' =>
+                        _schedule[day]!.copyWith(startMinute: value),
+                      'endHour' =>
+                        _schedule[day]!.copyWith(endHour: value),
+                      'endMinute' =>
+                        _schedule[day]!.copyWith(endMinute: value),
+                      _ => _schedule[day]!,
+                    };
+                  }),
+                ),
+
+                gapH24,
+
+                // Storing and allergens
+                _Label(loc.storingAndAllergensLabel),
+                gapH4,
+                Text(
+                  loc.storingAndAllergensDescription,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: Colors.grey),
+                ),
+                gapH8,
+                TextField(
+                  controller: _storingAndAllergensCtl,
+                  enabled: !isLoading,
+                  maxLines: 3,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: _inputDeco(loc.storingAndAllergensHint),
+                ),
 
                 gapH32,
 
@@ -290,63 +339,12 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     );
   }
 
-  Widget _buildScheduleSection(ThemeData theme, bool isLoading) {
-    final loc = context.loc;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _Label(loc.weeklySchedule),
-        gapH4,
-        Text(
-          loc.setPickupWindowAndQuantity,
-          style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
-        ),
-        gapH16,
-        WeeklyScheduleEditor(
-          schedule: WeeklySchedule(_schedule),
-          enabled: !isLoading,
-          onToggleDay: (day, v) => setState(() {
-            _schedule[day] = _schedule[day]!.copyWith(enabled: v);
-          }),
-          onPickStart: (day) async {
-            final picked = await showTimePicker(
-              context: context,
-              initialTime: _schedule[day]!.startTime,
-            );
-            if (picked != null) {
-              setState(() {
-                _schedule[day] = _schedule[day]!.copyWith(
-                  startHour: picked.hour,
-                  startMinute: picked.minute,
-                );
-              });
-            }
-          },
-          onPickEnd: (day) async {
-            final picked = await showTimePicker(
-              context: context,
-              initialTime: _schedule[day]!.endTime,
-            );
-            if (picked != null) {
-              setState(() {
-                _schedule[day] = _schedule[day]!.copyWith(
-                  endHour: picked.hour,
-                  endMinute: picked.minute,
-                );
-              });
-            }
-          },
-        ),
-      ],
-    );
-  }
-
-
   InputDecoration _inputDeco(String hint) {
     return InputDecoration(
       filled: true,
       fillColor: Theme.of(context).scaffoldBackgroundColor,
       hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey.shade400),
       border: OutlineInputBorder(
         borderSide: BorderSide(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(Sizes.p12),

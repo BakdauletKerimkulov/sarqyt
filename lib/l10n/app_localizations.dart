@@ -2079,6 +2079,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Submit details'**
   String get submitDetails;
+
+  /// No description provided for @storingAndAllergensLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Storing and allergens'**
+  String get storingAndAllergensLabel;
+
+  /// No description provided for @storingAndAllergensHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Store in fridge, may contain nuts'**
+  String get storingAndAllergensHint;
+
+  /// No description provided for @storingAndAllergensDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add recommendations for storing and handling food, including warnings about allergens, here, and they will be shown in the app.'**
+  String get storingAndAllergensDescription;
+
+  /// No description provided for @descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your product'**
+  String get descriptionHint;
 }
 
 class _AppLocalizationsDelegate

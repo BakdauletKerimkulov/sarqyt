@@ -49,6 +49,7 @@ class ItemsRepository {
     double? estimatedValue,
     required WeeklySchedule schedule,
     String? imageUrl,
+    String? storingAndAllergens,
     bool isActive = false,
   }) async {
     final docRef = _firestore.collection(itemsPath(storeId)).doc();
@@ -60,6 +61,8 @@ class ItemsRepository {
       'price': price,
       'isActive': isActive,
       if (estimatedValue != null) 'estimatedValue': estimatedValue,
+      if (storingAndAllergens != null)
+        'storingAndAllergens': storingAndAllergens,
       'schedule': schedule.toMap(),
       'badges': <Map<String, dynamic>>[],
     });

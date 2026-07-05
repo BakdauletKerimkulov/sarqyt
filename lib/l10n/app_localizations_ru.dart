@@ -1050,4 +1050,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get submitDetails => 'Отправить данные';
+
+  @override
+  String get storingAndAllergensLabel => 'Хранение и аллергены';
+
+  @override
+  String get storingAndAllergensHint =>
+      'Напр. хранить в холодильнике, может содержать орехи';
+
+  @override
+  String get storingAndAllergensDescription =>
+      'Здесь вы можете добавить рекомендации по хранению и обращению с продуктами, включая информацию об аллергенах. Они будут показаны в приложении.';
+
+  @override
+  String get descriptionHint => 'Опишите ваш продукт';
 }
