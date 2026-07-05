@@ -211,9 +211,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                   enabled: !isLoading,
                   maxLines: 3,
                   textCapitalization: TextCapitalization.sentences,
-                  decoration: _inputDeco(
-                    loc.rescueSurpriseBag,
-                  ),
+                  decoration: _inputDeco(loc.descriptionHint),
                 ),
                 gapH20,
 
@@ -346,6 +344,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
       filled: true,
       fillColor: Theme.of(context).scaffoldBackgroundColor,
       hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey.shade400),
       border: OutlineInputBorder(
         borderSide: BorderSide(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(Sizes.p12),

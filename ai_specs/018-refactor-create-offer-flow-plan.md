@@ -53,9 +53,9 @@ Fix 4 UX issues in the create item form: ensure placeholder hints are visually d
 ### Phase 4 — Placeholder hints (R1, R2) + localization
 **Goal:** Ensure description and price fields have clearly grey, non-prefilled appearance.
 
-- [ ] `lib/src/features/items/presentation/item_create/create_item_screen.dart` — update description field hint to use `context.loc.descriptionHint` (short placeholder). Verify `hintStyle` is grey (Flutter default). Verify price field hint `'1500'` renders as grey text (confirm `_inputDeco` doesn't override `hintStyle`).
-- [ ] `lib/l10n/app_en.arb`, `lib/l10n/app_ru.arb`, `lib/l10n/app_kk.arb` — add/update localized `descriptionHint` values if not added in Phase 2.
-- [ ] Verify: `flutter analyze`
+- [x] `lib/src/features/items/presentation/item_create/create_item_screen.dart` — update description field hint to use `context.loc.descriptionHint` (short placeholder). Verify `hintStyle` is grey (Flutter default). Verify price field hint `'1500'` renders as grey text (confirm `_inputDeco` doesn't override `hintStyle`).
+- [x] `lib/l10n/app_en.arb`, `lib/l10n/app_ru.arb`, `lib/l10n/app_kk.arb` — add/update localized `descriptionHint` values if not added in Phase 2. (already implemented in Phase 2)
+- [x] Verify: `flutter analyze`
 
 ## Data layer changes
 - `ItemsRepository.createItem()` gains optional `String? storingAndAllergens` parameter → included in Firestore doc when non-null. Backward-compatible — field already exists in `Item` domain model and `Item.fromJson()`.
