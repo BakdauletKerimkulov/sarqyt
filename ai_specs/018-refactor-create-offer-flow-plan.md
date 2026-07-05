@@ -36,11 +36,11 @@ Fix 4 UX issues in the create item form: ensure placeholder hints are visually d
 ### Phase 2 — Allergen field + data layer
 **Goal:** Add storing-and-allergens field to create form and wire it through to Firestore.
 
-- [ ] `lib/src/features/items/data/items_repository.dart` — add `String? storingAndAllergens` parameter to `createItem()`. Include `'storingAndAllergens': storingAndAllergens` in the Firestore document map when non-null.
-- [ ] `lib/src/features/items/presentation/item_create/create_item_form_controller.dart` — add `String? storingAndAllergens` parameter to `submit()`, forward to `ItemsRepository.createItem()`.
-- [ ] `lib/src/features/items/presentation/item_create/create_item_screen.dart` — add `_storingAndAllergensCtl` TextEditingController. Add allergen text field after schedule section (multi-line, 3 lines, optional, with label and hint). Pass value through `_submit()`. Dispose controller.
-- [ ] `lib/l10n/app_en.arb`, `lib/l10n/app_ru.arb`, `lib/l10n/app_kk.arb` — add keys: `storingAndAllergensLabel`, `storingAndAllergensHint`, `storingAndAllergensDescription`, `descriptionHint`.
-- [ ] Verify: `flutter analyze`
+- [x] `lib/src/features/items/data/items_repository.dart` — add `String? storingAndAllergens` parameter to `createItem()`. Include `'storingAndAllergens': storingAndAllergens` in the Firestore document map when non-null.
+- [x] `lib/src/features/items/presentation/item_create/create_item_form_controller.dart` — add `String? storingAndAllergens` parameter to `submit()`, forward to `ItemsRepository.createItem()`.
+- [x] `lib/src/features/items/presentation/item_create/create_item_screen.dart` — add `_storingAndAllergensCtl` TextEditingController. Add allergen text field after schedule section (multi-line, 3 lines, optional, with label and hint). Pass value through `_submit()`. Dispose controller.
+- [x] `lib/l10n/app_en.arb`, `lib/l10n/app_ru.arb`, `lib/l10n/app_kk.arb` — add keys: `storingAndAllergensLabel`, `storingAndAllergensHint`, `storingAndAllergensDescription`, `descriptionHint`.
+- [x] Verify: `flutter analyze`
 
 ### Phase 3 — Navigation: pop with result + dashboard snackbar
 **Goal:** After successful creation, pop back to dashboard and show success snackbar there.

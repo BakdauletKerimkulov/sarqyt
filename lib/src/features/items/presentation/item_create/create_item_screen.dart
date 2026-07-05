@@ -36,6 +36,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
   final _descCtl = TextEditingController();
   final _priceCtl = TextEditingController();
   final _estimatedValueCtl = TextEditingController();
+  final _storingAndAllergensCtl = TextEditingController();
 
   var _submitted = false;
 
@@ -57,6 +58,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     _descCtl.dispose();
     _priceCtl.dispose();
     _estimatedValueCtl.dispose();
+    _storingAndAllergensCtl.dispose();
     super.dispose();
   }
 
@@ -105,6 +107,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     final evText = _estimatedValueCtl.text;
     final estimatedValue = evText.isNotEmpty ? double.tryParse(evText) : null;
 
+    final allergensText = _storingAndAllergensCtl.text.trim();
     await ref
         .read(createItemFormControllerProvider.notifier)
         .submit(
@@ -115,6 +118,8 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
           estimatedValue: estimatedValue,
           schedule: WeeklySchedule(_schedule),
           image: _selectedImage,
+          storingAndAllergens:
+              allergensText.isNotEmpty ? allergensText : null,
         );
 
     if (!mounted) return;
@@ -276,6 +281,27 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                       _ => _schedule[day]!,
                     };
                   }),
+                ),
+
+                gapH24,
+
+                // Storing and allergens
+                _Label(loc.storingAndAllergensLabel),
+                gapH4,
+                Text(
+                  loc.storingAndAllergensDescription,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.copyWith(color: Colors.grey),
+                ),
+                gapH8,
+                TextField(
+                  controller: _storingAndAllergensCtl,
+                  enabled: !isLoading,
+                  maxLines: 3,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: _inputDeco(loc.storingAndAllergensHint),
                 ),
 
                 gapH32,

@@ -1047,4 +1047,18 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get submitDetails => 'Деректерді жіберу';
+
+  @override
+  String get storingAndAllergensLabel => 'Сақтау және аллергендер';
+
+  @override
+  String get storingAndAllergensHint =>
+      'Мыс. тоңазытқышта сақтаңыз, жаңғақ болуы мүмкін';
+
+  @override
+  String get storingAndAllergensDescription =>
+      'Мұнда тамақ сақтау және пайдалану бойынша ұсыныстарды, соның ішінде аллергендер туралы ескертулерді қосуға болады. Олар қолданбада көрсетіледі.';
+
+  @override
+  String get descriptionHint => 'Өніміңізді сипаттаңыз';
 }

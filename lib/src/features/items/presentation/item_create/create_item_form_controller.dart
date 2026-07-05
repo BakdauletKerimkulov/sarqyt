@@ -29,6 +29,7 @@ class CreateItemFormController extends _$CreateItemFormController {
     required double? estimatedValue,
     required WeeklySchedule schedule,
     Either<File, Uint8List>? image,
+    String? storingAndAllergens,
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
@@ -58,6 +59,7 @@ class CreateItemFormController extends _$CreateItemFormController {
               estimatedValue: estimatedValue,
               schedule: schedule,
               imageUrl: imageUrl,
+              storingAndAllergens: storingAndAllergens,
             );
       } catch (e) {
         // Best-effort cleanup of uploaded image if createItem fails.
