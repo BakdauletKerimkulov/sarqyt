@@ -1061,4 +1061,25 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get descriptionHint => 'Өніміңізді сипаттаңыз';
+
+  @override
+  String get orderHistory => 'Тапсырыстар тарихы';
+
+  @override
+  String get recentOrders => 'Соңғы тапсырыстар';
+
+  @override
+  String get noActiveOrders => 'Белсенді тапсырыстар жоқ';
+
+  @override
+  String get statusConfirmed => 'Расталды';
+
+  @override
+  String get statusPreparing => 'Дайындалуда';
+
+  @override
+  String get statusReady => 'Алуға дайын';
+
+  @override
+  String get statusCompleted => 'Аяқталды';
 }

@@ -16,6 +16,7 @@ import 'package:sarqyt/src/features/offers/presentation/offer_screen/store_info.
 import 'package:sarqyt/src/features/orders/presentation/client/order_detail_screen.dart';
 import 'package:sarqyt/src/features/auth/presentation/edit_profile/edit_profile_screen.dart';
 import 'package:sarqyt/src/features/auth/presentation/settings/app_settings_screen.dart';
+import 'package:sarqyt/src/features/orders/presentation/client/order_history_screen.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/orders_screen.dart';
 import 'package:sarqyt/src/features/review/presentation/review_screen.dart';
 import 'package:sarqyt/src/features/review/presentation/store_reviews_screen.dart';
@@ -38,6 +39,7 @@ enum ClientRoute {
   store,
   checkout,
   orders,
+  orderHistory,
   orderDetail,
   review,
   profile,
@@ -197,6 +199,12 @@ GoRouter clientRouter(Ref ref) {
                 name: ClientRoute.orders.name,
                 builder: (context, state) => const OrdersScreen(),
                 routes: [
+                  GoRoute(
+                    path: 'history',
+                    name: ClientRoute.orderHistory.name,
+                    builder: (context, state) =>
+                        const OrderHistoryScreen(),
+                  ),
                   GoRoute(
                     path: ':orderId',
                     name: ClientRoute.orderDetail.name,

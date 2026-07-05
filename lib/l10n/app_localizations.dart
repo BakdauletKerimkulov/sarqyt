@@ -2103,6 +2103,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Describe your product'**
   String get descriptionHint;
+
+  /// No description provided for @orderHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Order history'**
+  String get orderHistory;
+
+  /// No description provided for @recentOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent orders'**
+  String get recentOrders;
+
+  /// No description provided for @noActiveOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'No active orders'**
+  String get noActiveOrders;
+
+  /// No description provided for @statusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get statusConfirmed;
+
+  /// No description provided for @statusPreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing'**
+  String get statusPreparing;
+
+  /// No description provided for @statusReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get statusReady;
+
+  /// No description provided for @statusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get statusCompleted;
 }
 
 class _AppLocalizationsDelegate

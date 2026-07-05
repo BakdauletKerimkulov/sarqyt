@@ -10,6 +10,7 @@ import 'package:sarqyt/src/features/orders/data/client_orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/order_status_badge.dart';
 import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
+import 'package:sarqyt/src/features/orders/presentation/client/widgets/order_status_progress_line.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
@@ -53,7 +54,13 @@ class _OrderDetailContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Status
-          Center(child: OrderStatusBadge(status: order.status)),
+          if (order.status == OrderStatus.confirmed ||
+              order.status == OrderStatus.preparing ||
+              order.status == OrderStatus.readyForPickup ||
+              order.status == OrderStatus.completed)
+            OrderStatusProgressLine(status: order.status)
+          else
+            Center(child: OrderStatusBadge(status: order.status)),
           gapH24,
 
           // Store info

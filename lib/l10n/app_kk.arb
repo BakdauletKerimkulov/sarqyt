@@ -361,5 +361,13 @@
   "storingAndAllergensLabel": "Сақтау және аллергендер",
   "storingAndAllergensHint": "Мыс. тоңазытқышта сақтаңыз, жаңғақ болуы мүмкін",
   "storingAndAllergensDescription": "Мұнда тамақ сақтау және пайдалану бойынша ұсыныстарды, соның ішінде аллергендер туралы ескертулерді қосуға болады. Олар қолданбада көрсетіледі.",
-  "descriptionHint": "Өніміңізді сипаттаңыз"
+  "descriptionHint": "Өніміңізді сипаттаңыз",
+
+  "orderHistory": "Тапсырыстар тарихы",
+  "recentOrders": "Соңғы тапсырыстар",
+  "noActiveOrders": "Белсенді тапсырыстар жоқ",
+  "statusConfirmed": "Расталды",
+  "statusPreparing": "Дайындалуда",
+  "statusReady": "Алуға дайын",
+  "statusCompleted": "Аяқталды"
 }

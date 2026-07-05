@@ -1064,4 +1064,25 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get descriptionHint => 'Опишите ваш продукт';
+
+  @override
+  String get orderHistory => 'История заказов';
+
+  @override
+  String get recentOrders => 'Недавние заказы';
+
+  @override
+  String get noActiveOrders => 'Нет активных заказов';
+
+  @override
+  String get statusConfirmed => 'Подтверждён';
+
+  @override
+  String get statusPreparing => 'Готовится';
+
+  @override
+  String get statusReady => 'Готов к выдаче';
+
+  @override
+  String get statusCompleted => 'Завершён';
 }
