@@ -1,7 +1,13 @@
+---
+title: Not Ready Features
+status: draft
+date: 2026-05-12
+type: feature
+---
+
 # Plan: Launch Readiness — Closed Beta
 
 Source: ai_specs/002-not-ready-features-spec.md
-Created: 2026-05-12
 
 ## Overview
 

@@ -1,7 +1,12 @@
+---
+title: Not Ready Features
+status: refined
+date: 2026-05-12
+type: feature
+---
+
 # Spec: Launch Readiness — Closed Beta
 
-Created: 2026-05-12
-Status: refined
 
 ## Goal
 

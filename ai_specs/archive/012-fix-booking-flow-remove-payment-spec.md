@@ -1,8 +1,9 @@
 ---
-title: Refactor Booking Flow
-status: in-progress
+title: Fix Booking Flow Remove Payment
+status: done
 date: 2026-06-14
-type: refactor
+type: fix
+note: superseded by 012-refactor-booking-flow
 ---
 
 # Spec: Fix Booking Flow & Remove Online Payment
@@ -24,18 +25,18 @@ Source request: Проанализировать флоу бронировани
 
 ### Project context (текущее поведение)
 Активный путь бронирования — резерв без оплаты, Stripe-флоу закомментирован:
-- Клиент: `PaymentPage` (`lib/src/features/checkout/presentation/payment_page.dart`) → `CheckoutController.pay()` (`checkout_service.dart:43-62`) → `PaymentRepository.reserveOffer()` (`payment_repository.dart:27-42`) → callable `reserveOffer`.
+- Клиент: `PaymentPage` (`lib/src/features/checkout/presentation/payment_page.dart`) → `CheckoutController.pay()` (`checkout_service.dart:46-66`) → `PaymentRepository.reserveOffer()` (`payment_repository.dart:31-46`) → callable `reserveOffer`.
 - Сервер `reserveOffer` (`functions/src/features/payments/functions/reserve-offer.ts`): в транзакции проверяет оффер, декрементит `offer.quantity`, создаёт `orders/{uid}_{idempotencyKey}` со `status: "confirmed"`, `paymentStatus: "paid"`.
 - Магазин ведёт статусы через `updateOrderStatus` (`functions/.../update-order-status.ts`), переходы `confirmed → preparing → readyForPickup → completed`.
 - Отмена `cancelOrder` (`functions/.../cancel-order.ts`): отмена для `confirmed`/`preparing`, восстановление `quantity`, рефанд Stripe с ретраями и статусами `refund_pending/refunded/refund_failed`.
 - Истечение `expireOrders` (`functions/.../expire-orders.ts`): каждые 5 минут переводит просроченные (по `pickupEndTime`) активные заказы в `expired`, восстанавливает `quantity`.
-- Stripe-флоу (выключен): `createPayment` + `stripeWebhook` (`functions/src/features/payments/functions/*`), `stripe-client.ts`, flutter `payment_sheet_repository.dart`, `app_bootstrap_stripe.dart`, закомментированный `payWithStripe` (`checkout_service.dart:64-114`), deps `flutter_stripe`/`flutter_stripe_web` (`pubspec.yaml:82-83`), env `STRIPE_PUBLISHABLE_KEY` (`lib/env.dart:7-8`), секрет `STRIPE_WEBHOOK_SECRET`/`stripeSecretKey`.
+- Stripe-флоу (выключен): `createPayment` + `stripeWebhook` (`functions/src/features/payments/functions/*`), `stripe-client.ts`, flutter `payment_sheet_repository.dart`, `app_bootstrap_stripe.dart`, закомментированный `payWithStripe` (`checkout_service.dart:68-110`), deps `flutter_stripe`/`flutter_stripe_web` (`pubspec.yaml:82-83`), env `STRIPE_PUBLISHABLE_KEY` (`lib/env.dart:7-8`), секрет `STRIPE_WEBHOOK_SECRET`/`stripeSecretKey`.
 
 ### Найденные дефекты (что чиним)
-1. **#1 Идемпотентность сломана.** `PaymentRepository.reserveOffer` генерирует `idempotencyKey: const Uuid().v4()` на **каждый** вызов (`payment_repository.dart:38`). ID заказа `${uid}_${idempotencyKey}` каждый раз новый → при таймауте (30с) или ретрае, когда функция уже отработала, создаётся **второй заказ и повторно списывается `quantity`**.
+1. **#1 Идемпотентность сломана.** `PaymentRepository.reserveOffer` генерирует `idempotencyKey: const Uuid().v4()` на **каждый** вызов (`payment_repository.dart:42`). ID заказа `${uid}_${idempotencyKey}` каждый раз новый → при таймауте (30с) или ретрае, когда функция уже отработала, создаётся **второй заказ и повторно списывается `quantity`**.
 2. **#2 Дыра в security rules.** `firestore.rules:172-175` разрешает магазину прямую запись с `affectedKeys().hasOnly(['status','updatedAt'])`, но не валидирует значение/легальность перехода. Магазин может выставить `cancelled` без восстановления `quantity`, сделать недопустимый переход или произвольную строку статуса в обход `updateOrderStatus`/`cancelOrder`.
 3. **#3 Нет отмены магазином в UI.** Бэкенд `cancelOrder` поддерживает отмену со стороны магазина (`assertStoreAccess`), но `business_orders_screen.dart` показывает только кнопку следующего статуса.
-4. **#4 Нельзя отменить `readyForPickup`.** `cancelOrder` разрешает только `confirmed`/`preparing` (`cancel-order.ts:66-70`), клиентская кнопка — тоже (`order_detail_screen.dart:200-204`). Если магазин преждевременно пометил «готов», нет пути отмены.
+4. **#4 Нельзя отменить `readyForPickup`.** `cancelOrder` разрешает только `confirmed`/`preparing` (`cancel-order.ts:70-75`), клиентская кнопка — тоже (`order_detail_screen.dart:200-204`). Если магазин преждевременно пометил «готов», нет пути отмены.
 5. **#5 `reserveOffer` не валидирует окно выдачи.** Проверяются только `status==active` и `quantity`, но не `pickupEndTime > now` — можно зарезервировать оффер с уже прошедшим окном, он сразу попадёт под `expireOrders`.
 6. **#6 Оффер не «распродан» при `quantity==0`.** `reserveOffer` оставляет `status: active`; листинги фильтруют по `status==active` (`client_offer_repository.dart:46,81,109`), поэтому распроданный оффер показывается с «0 доступно».
 
@@ -54,7 +55,7 @@ Source request: Проанализировать флоу бронировани
 
 ### Alternative flows
 - **Отмена клиентом.** В `OrderDetailScreen` для `confirmed`/`preparing`/`readyForPickup` есть кнопка «Отменить заказ» → подтверждение → `cancelOrder` → `status: cancelled`, `quantity` восстановлен, оффер возвращён в `active` (если окно ещё открыто).
-- **Отмена магазином.** В `business_orders_screen` для `confirmed`/`preparing`/`readyForPickup` есть кнопка «Отменить заказ» → диалог с обязательной причиной → `cancelOrder({orderId, reason})`. Заказ `cancelled`, на нём сохраняются `cancellationReason` и `cancelledBy: "store"`. Клиент в `OrderDetailScreen` видит причину отмены. Если клиент просматривает заказ в момент отмены, экран обновляется реактивно (существующий stream); пуш-уведомление (N2) — отдельное улучшение.
+- **Отмена магазином.** В `business_orders_screen` для `confirmed`/`preparing`/`readyForPickup` есть кнопка «Отменить заказ» → диалог с обязательной причиной → `cancelOrder({orderId, reason})`. Заказ `cancelled`, на нём сохраняются `cancellationReason` и `cancelledBy: "store"`. Клиент в `OrderDetailScreen` видит причину отмены.
 - **Истечение окна.** `expireOrders` каждые 5 минут переводит непросроченные-но-истёкшие активные заказы в `expired`, восстанавливает `quantity`.
 
 ### Error & recovery flows
@@ -78,17 +79,17 @@ Source request: Проанализировать флоу бронировани
 Functional decisions. Каждое требование — одно проверяемое поведение.
 
 ### Must Have
-- [ ] **R1 (#1):** `idempotencyKey` генерируется **один раз при первом нажатии «Забронировать»** и переиспользуется при ретраях. Ключ хранится в `CheckoutController` и **инвалидируется при изменении `quantity`** (при смене количества генерируется новый ключ, чтобы избежать ситуации, когда сервер возвращает старый заказ с другим количеством — `reserve-offer.ts:77-78` делает `if (orderSnap.exists) return` без проверки совпадения `quantity`). Ключ передаётся в `pay()` → `reserveOffer`. Verifiable: два последовательных вызова `pay()` для одной попытки используют один ключ → создаётся один документ `orders/{uid}_{key}`, `offer.quantity` уменьшается один раз; смена количества и повторный тап создаёт новый заказ (unit-тест контроллера + ручной ретрай).
+- [ ] **R1 (#1):** `idempotencyKey` генерируется **один раз на попытку checkout** и переиспользуется при ретраях. Ключ создаётся на входе в reserve-экран (`PaymentPage`/контроллер) и передаётся в `pay()` → `reserveOffer`. Verifiable: два последовательных вызова `pay()` для одной попытки используют один ключ → создаётся один документ `orders/{uid}_{key}`, `offer.quantity` уменьшается один раз (unit-тест репозитория + ручной ретрай).
 - [ ] **R2 (#2):** Прямая клиентская запись `orders.status` запрещена. `firestore.rules` для `match /orders/{id}`: `allow update: if isAdmin()` (все переходы — через Cloud Functions с admin SDK, которые обходят правила). Verifiable: эмулятор — попытка магазина обновить `status` клиентским SDK получает `PERMISSION_DENIED`; `updateOrderStatus`/`cancelOrder` продолжают работать.
 - [ ] **R3 (#3):** В `business_orders_screen.dart` добавлена кнопка «Отменить заказ» для статусов `confirmed`/`preparing`/`readyForPickup`. Нажатие открывает диалог с **обязательным** полем причины. Подтверждение вызывает `StoreOrdersRepository.cancelOrder(orderId, reason)`. Verifiable: widget-тест — кнопка видна только для активных статусов; пустая причина не даёт подтвердить; вызывается callable `cancelOrder` с `reason`.
 - [ ] **R4 (#3):** `cancelOrder` принимает опциональные `reason: string` и фиксирует `cancelledBy: "customer" | "store"` (по тому, customer это или store-доступ). Поля `cancellationReason`/`cancelledBy` пишутся на заказ. Клиентский `OrderDetailScreen` показывает причину, если `status == cancelled && cancelledBy == "store"`. Verifiable: после отмены магазином документ заказа содержит оба поля; на экране клиента отображается текст причины.
 - [ ] **R5 (#4):** `cancelOrder` разрешает отмену из `readyForPickup` (в дополнение к `confirmed`/`preparing`) для клиента и магазина (`cancel-order.ts:70-75` — расширить список). Клиентская кнопка отмены в `OrderDetailScreen` показывается и для `readyForPickup` (`order_detail_screen.dart:200-204`). Verifiable: отмена заказа в `readyForPickup` обеими сторонами проходит, `quantity` восстанавливается.
 - [ ] **R6 (#5):** `reserveOffer` отклоняет бронирование, если `offer.pickupEndTime <= now` (`failed-precondition`, «Pickup window has closed»). Проверка в транзакции после проверки `status`. Verifiable: unit/эмулятор — оффер с прошедшим окном не бронируется.
-- [ ] **R7 (#6):** В `OfferStatus` добавлен `soldOut`. `reserveOffer` при достижении `quantity == 0` пишет `status: "soldOut"`. `cancelOrder` и `expireOrders` при восстановлении `quantity` заменяют текущий `FieldValue.increment` на `tx.get(offerRef)` + условное обновление: возвращают оффер в `active`, **если** текущий статус `soldOut` **и** окно выдачи ещё открыто (`pickupEndTime > now`), иначе оставляют статус как есть (паттерн уже используется в `expire-orders.ts:47-56`). Verifiable: бронирование последней единицы → `soldOut`; отмена до конца окна → снова `active` и оффер виден в листинге.
+- [ ] **R7 (#6):** В `OfferStatus` добавлен `soldOut`. `reserveOffer` при достижении `quantity == 0` пишет `status: "soldOut"`. `cancelOrder` и `expireOrders` при восстановлении `quantity` возвращают оффер в `active`, **если** окно выдачи ещё открыто (`pickupEndTime > now`), иначе оставляют как есть. Verifiable: бронирование последней единицы → `soldOut`; отмена до конца окна → снова `active` и оффер виден в листинге.
 - [ ] **R8 (Stripe removal — functions):** Удалить `create-payment.ts`, `stripe-webhook.ts`, `shared/helpers/stripe-client.ts`; убрать их экспорты из `functions/src/index.ts:19-21` (оставить `reserveOffer`); удалить определения секретов `STRIPE_WEBHOOK_SECRET`/`stripeSecretKey`. Verifiable: `npm run build` в `functions/` проходит без ссылок на Stripe; `grep -ri stripe functions/src` пуст.
-- [ ] **R9 (Stripe removal — cancel-order):** Из `cancel-order.ts` убрать всю Stripe-логику (рефанд, ретраи, секрет, обновление `paymentStatus`). **Убрать `{ secrets: [stripeSecretKey] }` из опций `onCall`** (`:22-23`) и импорт `stripe-client` (`:8`), иначе деплой сломается после удаления `stripe-client.ts`. Остаётся: проверка доступа, транзакция (смена статуса + восстановление `quantity` + возврат оффера в `active`), запись `reason`/`cancelledBy`. Verifiable: функция не импортирует Stripe; `npm run build` проходит; отмена восстанавливает `quantity` без обращений к платёжке.
+- [ ] **R9 (Stripe removal — cancel-order):** Из `cancel-order.ts` убрать всю Stripe-логику (рефанд, ретраи, секрет, обновление `paymentStatus`). Остаётся: проверка доступа, транзакция (смена статуса + восстановление `quantity` + возврат оффера в `active`), запись `reason`/`cancelledBy`. Verifiable: функция не импортирует Stripe; отмена восстанавливает `quantity` без обращений к платёжке.
 - [ ] **R10 (Stripe removal — flutter):** Удалить `lib/src/features/checkout/data/payment_sheet_repository.dart` (+`.g.dart`), `lib/src/app_bootstrap_stripe.dart`; из `payment_repository.dart` удалить `createPayment`/`CreatePaymentResult` (оставить `reserveOffer`); из `checkout_service.dart` удалить закомментированный `payWithStripe` (`:68-110`); из `main_client.dart` убрать импорт и вызов `setupStripe()` (`:6,14`); из `lib/env.dart` убрать `stripePublishableKey` (`:7-8`); из `pubspec.yaml` убрать `flutter_stripe`/`flutter_stripe_web` (`:82-83`). Verifiable: `flutter pub get` + `flutter analyze` без ошибок; `grep -ri stripe lib` пуст; приложение собирается и бронирование работает.
-- [ ] **R11 (payment status):** `PaymentStatus`-флоу убран из активной модели. Поле `Order.paymentStatus` делается опциональным (`PaymentStatus?`, nullable) и больше не пишется при создании заказа; refund-статусы (`refundPending/refundFailed/refunded`) не используются. `OrderDetailScreen` вместо строки статуса оплаты показывает статичный текст «Оплата при получении». `reserveOffer` перестаёт писать `paymentStatus`. **Все потребители `order.paymentStatus` обновляются для обработки null** (в т.ч. `order_detail_screen.dart`, `business_orders_screen.dart` и любые другие экраны/виджеты, отображающие статус оплаты). Verifiable: новые заказы не содержат `paymentStatus`; экран показывает «Оплата при получении»; codegen для `Order` пересобран; `flutter analyze` проходит без ошибок. Существующие старые заказы с `paymentStatus` читаются без ошибок (backward-compatible).
+- [ ] **R11 (payment status):** `PaymentStatus`-флоу убран из активной модели. Поле `Order.paymentStatus` делается опциональным (nullable) и больше не пишется при создании заказа; refund-статусы (`refundPending/refundFailed/refunded`) не используются. `OrderDetailScreen` вместо строки статуса оплаты показывает статичный текст «Оплата при получении». `reserveOffer` перестаёт писать `paymentStatus`. Verifiable: новые заказы не содержат `paymentStatus`; экран показывает «Оплата при получении»; codegen для `Order` пересобран. Существующие старые заказы с `paymentStatus` читаются без ошибок (backward-compatible).
 
 ### Nice to Have
 - [ ] **N1:** Пресет-причины отмены для магазина (например, «нет товара», «закрылись раньше») + опциональный комментарий, вместо свободного текста.
@@ -109,7 +110,7 @@ Functional decisions. Каждое требование — одно прове�
 - `lib/src/features/checkout/data/payment_repository.dart` — стабильный `idempotencyKey` (параметр метода `reserveOffer`), удалить `createPayment`/`CreatePaymentResult`.
 - `lib/src/features/checkout/application/checkout_service.dart` — пробросить `idempotencyKey` из `pay()`; удалить закомментированный `payWithStripe`.
 - `lib/src/features/checkout/presentation/payment_page.dart` — генерация/хранение `idempotencyKey` на попытку; текст «Оплата при получении».
-- `functions/src/features/payments/functions/reserve-offer.ts` — валидация `pickupEndTime > now`; `soldOut` при `quantity==0`; прекратить писать `paymentStatus`; добавить `updatedAt: serverTimestamp()` в создание заказа (сейчас отсутствует, нарушает `ai_toolkit/firebase.md`).
+- `functions/src/features/payments/functions/reserve-offer.ts` — валидация `pickupEndTime > now`; `soldOut` при `quantity==0`; прекратить писать `paymentStatus`.
 - `functions/src/features/orders/functions/cancel-order.ts` — убрать Stripe/рефанд; добавить `reason`/`cancelledBy`; разрешить `readyForPickup`; возврат оффера в `active` при восстановлении `quantity`.
 - `functions/src/features/orders/functions/expire-orders.ts` — возврат оффера в `active` при восстановлении `quantity` (если окно открыто); иначе без изменений.
 - `functions/src/index.ts` — убрать экспорты `createPayment`, `stripeWebhook`.
@@ -117,7 +118,7 @@ Functional decisions. Каждое требование — одно прове�
 - `lib/src/features/orders/data/orders_repository.dart` — `updateOrderStatus` без изменений; `cancelOrder(orderId, reason)` (новый метод для магазина).
 - `lib/src/features/orders/presentation/business/business_orders_screen.dart` — кнопка «Отменить заказ» + диалог причины.
 - `lib/src/features/orders/presentation/client/order_detail_screen.dart` — кнопка отмены для `readyForPickup`; показ причины отмены; «Оплата при получении».
-- `lib/src/features/orders/domain/order.dart` — `paymentStatus` → nullable (`PaymentStatus?`); добавить `String? cancellationReason` и `CancelledBy? cancelledBy` (новый `enum CancelledBy { customer, store }`).
+- `lib/src/features/orders/domain/order.dart` — `paymentStatus` → nullable/deprecated; добавить опциональные `cancellationReason`/`cancelledBy`.
 - `lib/src/features/offers/domain/offer.dart` — `OfferStatus.soldOut` + парсинг.
 - `lib/main_client.dart`, `lib/env.dart`, `pubspec.yaml` — удаление Stripe (R10).
 - `firestore.rules` — `orders` update → `isAdmin()`.
@@ -142,7 +143,7 @@ Functional decisions. Каждое требование — одно прове�
 - Не плодить вторую кнопку отмены — переиспользовать стиль/диалог, где возможно.
 
 **Data layer changes:**
-- `orders`: новые опциональные поля `cancellationReason: string`, `cancelledBy: "customer" | "store"` (в Dart: `enum CancelledBy { customer, store }`); `paymentStatus` становится опциональным и больше не пишется (backward-compatible, без миграции старых документов).
+- `orders`: новые опциональные поля `cancellationReason`, `cancelledBy`; `paymentStatus` становится опциональным и больше не пишется (backward-compatible, без миграции старых документов).
 - `offers`: новое допустимое значение `status: "soldOut"`.
 - `firestore.rules`: `orders` update — только admin (CF).
 - Секреты Cloud Functions: удалить `STRIPE_WEBHOOK_SECRET`, `stripeSecretKey`.
