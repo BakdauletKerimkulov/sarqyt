@@ -1,8 +1,13 @@
+---
+title: Refactor Booking Flow
+status: in-progress
+date: 2026-06-14
+type: refactor
+---
+
 # Plan: Fix Booking Flow & Remove Online Payment
 
 Source: `ai_specs/012-refactor-booking-flow-spec.md`
-Created: 2026-06-14
-Status: complete
 
 ## Overview
 Fix 6 critical booking-flow defects (broken idempotency, security rules hole, missing store cancellation, no cancel from readyForPickup, no pickup window validation, no soldOut status) and fully remove Stripe integration. Approach: backend-first — fix functions + rules, then Flutter domain/data, then UI. Stripe removal woven into each layer.
