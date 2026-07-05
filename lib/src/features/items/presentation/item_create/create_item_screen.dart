@@ -125,9 +125,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
     if (!mounted) return;
     final state = ref.read(createItemFormControllerProvider);
     if (!state.hasError) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.loc.itemCreated)));
+      context.pop(true);
     }
   }
 

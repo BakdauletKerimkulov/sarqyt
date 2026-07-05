@@ -45,10 +45,10 @@ Fix 4 UX issues in the create item form: ensure placeholder hints are visually d
 ### Phase 3 — Navigation: pop with result + dashboard snackbar
 **Goal:** After successful creation, pop back to dashboard and show success snackbar there.
 
-- [ ] `lib/src/features/business_console/presentation/dashboard_screen.dart` — change `context.goNamed(BusinessRoute.newItem.name, ...)` to `context.pushNamed(...)`. Await the push result; if `true`, show `itemCreated` snackbar. Convert to `ConsumerStatefulWidget` if needed for async navigation, or use a helper method.
-- [ ] `lib/src/features/items/presentation/item_create/create_item_screen.dart` — in `_submit()`, after successful submit, replace snackbar with `context.pop(true)`. Remove the local snackbar code.
-- [ ] `lib/src/features/onboarding/presentation/welcome/welcome_screen.dart` — review `CreateItemFormScreen` usage in bottom sheet. This is a modal — `pop(true)` should work. Verify no changes needed (bottom sheet already pops on close).
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] `lib/src/features/business_console/presentation/dashboard_screen.dart` — change `context.goNamed(BusinessRoute.newItem.name, ...)` to `context.pushNamed(...)`. Await the push result; if `true`, show `itemCreated` snackbar. Convert to `ConsumerStatefulWidget` if needed for async navigation, or use a helper method.
+- [x] `lib/src/features/items/presentation/item_create/create_item_screen.dart` — in `_submit()`, after successful submit, replace snackbar with `context.pop(true)`. Remove the local snackbar code.
+- [x] `lib/src/features/onboarding/presentation/welcome/welcome_screen.dart` — review `CreateItemFormScreen` usage in bottom sheet. This is a modal — `pop(true)` should work. Verify no changes needed (bottom sheet already pops on close). (no changes needed)
+- [x] Verify: `flutter analyze && flutter test`
 
 ### Phase 4 — Placeholder hints (R1, R2) + localization
 **Goal:** Ensure description and price fields have clearly grey, non-prefilled appearance.
