@@ -49,7 +49,7 @@ final class ItemsRepositoryProvider
   }
 }
 
-String _$itemsRepositoryHash() => r'46d1cff0ec5fc02c5e003b6d93b54cad35ecaac1';
+String _$itemsRepositoryHash() => r'06d513883fdef71f7212fb0ee6d6c1105d45b241';
 
 @ProviderFor(itemsListStream)
 const itemsListStreamProvider = ItemsListStreamFamily._();

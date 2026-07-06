@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
@@ -70,10 +69,9 @@ class SettingsContentController extends _$SettingsContentController {
     required ItemID itemId,
   }) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final callable =
-          FirebaseFunctions.instance.httpsCallable('deleteItem');
-      await callable.call({'storeId': storeId, 'itemId': itemId});
+    state = await AsyncValue.guard(() {
+      final repo = ref.read(itemsRepositoryProvider);
+      return repo.deleteItem(storeId, id: itemId);
     });
   }
 }
