@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/items/domain/weekly_schedule.dart';
@@ -7,8 +8,9 @@ import 'package:sarqyt/src/features/store/domain/store.dart';
 part 'items_repository.g.dart';
 
 class ItemsRepository {
-  const ItemsRepository(this._firestore);
+  const ItemsRepository(this._firestore, this._functions);
   final FirebaseFirestore _firestore;
+  final FirebaseFunctions _functions;
 
   static String itemsPath(StoreID storeId) => 'stores/$storeId/items';
   static String itemPath(StoreID storeId, ItemID itemId) =>
@@ -81,8 +83,10 @@ class ItemsRepository {
     return _firestore.doc(itemPath(storeId, id)).update({'isActive': isActive});
   }
 
-  Future<void> deleteItem(StoreID storeId, {required ItemID id}) {
-    return _firestore.doc(itemPath(storeId, id)).delete();
+  Future<void> deleteItem(StoreID storeId, {required ItemID id}) async {
+    await _functions
+        .httpsCallable('deleteItem')
+        .call({'storeId': storeId, 'itemId': id});
   }
 
   DocumentReference<Item> _itemRef(StoreID storeId, ItemID id) => _firestore
@@ -103,7 +107,7 @@ class ItemsRepository {
 
 @Riverpod(keepAlive: true)
 ItemsRepository itemsRepository(Ref ref) {
-  return ItemsRepository(FirebaseFirestore.instance);
+  return ItemsRepository(FirebaseFirestore.instance, FirebaseFunctions.instance);
 }
 
 @riverpod

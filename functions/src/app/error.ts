@@ -20,5 +20,6 @@ export function toHttpsError(error: unknown): HttpsError {
     return new HttpsError(error.code, error.message, error.details);
   }
 
-  return new HttpsError("internal", "Unexpected server error");
+  const message = error instanceof Error ? error.message : String(error);
+  return new HttpsError("internal", message);
 }

@@ -41,6 +41,23 @@ Non-obvious choices around external services, regions, and environment configura
 
 ---
 
+## Firebase API Keys: Public by Design
+
+**Decision:** Firebase API keys in `firebase_options.dart` (`AIza...`) are committed to the repo and shipped in every app binary. This is normal and intended.
+
+**Why:** A Firebase API key is a project identifier, not an access credential. It grants no data access — data protection comes from Firestore/Storage security rules. The key is trivially extractable from any APK/IPA, so "hiding" it in `.env` or rewriting git history provides zero security and breaks `flutterfire configure` regeneration.
+
+**Actual protection layers:**
+1. Key restrictions in Google Cloud Console → Credentials: application restrictions (iOS bundle ID / Android package + SHA-1 / web referrers) + API restrictions (Firebase APIs only)
+2. App Check — verifies requests come from the real app
+3. Security rules (`firestore.rules`, `storage.rules`) — the only real data protection
+
+GitHub secret-scanning alerts on these keys are pattern-based false positives: restrict the key, then close the alert as "used in client app".
+
+> **AI warning:** Do NOT suggest moving Firebase API keys to `.env`/envied, rotating them on a leak alert, or scrubbing them from git history. They are public by design. Real secrets (Stripe secret key, etc.) follow the rules in the sections above.
+
+---
+
 ## Firebase Cloud Functions: Region Split
 
 **Decision:** There is no `setGlobalOptions({ region: ... })`. Functions use two different regions.
