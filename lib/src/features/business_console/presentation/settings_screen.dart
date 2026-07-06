@@ -4,7 +4,10 @@ import 'package:sarqyt/src/common_widgets/async_value_widget.dart';
 import 'package:sarqyt/src/common_widgets/outlined_section_widget.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/features/business_console/presentation/team/invite_member_dialog.dart';
 import 'package:sarqyt/src/features/store/data/store_repository.dart';
+import 'package:sarqyt/src/features/store/data/store_ship_repository.dart';
+import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -119,11 +122,12 @@ class StoreSettingsContent extends ConsumerWidget {
     final storeShip = ref.watch(currentStoreShipProvider);
     final storeAsync = ref.watch(storeStreamProvider(storeShip.storeId));
 
-    return Padding(
-      padding: const EdgeInsets.all(Sizes.p32),
-      child: OutlinedSectionWidgetWithHeader(
-        header: 'Store information',
-        child: AsyncValueWidget(
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(Sizes.p32),
+        child: OutlinedSectionWidgetWithHeader(
+          header: 'Store information',
+          child: AsyncValueWidget(
           value: storeAsync,
           data: (store) {
             if (store == null) {
@@ -167,6 +171,7 @@ class StoreSettingsContent extends ConsumerWidget {
               ],
             );
           },
+          ),
         ),
       ),
     );
@@ -196,25 +201,101 @@ class AccountSettingsContent extends StatelessWidget {
   }
 }
 
-class TeamSettingsContent extends StatelessWidget {
+class TeamSettingsContent extends ConsumerWidget {
   const TeamSettingsContent({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.group_outlined, size: 48, color: Colors.grey),
-          SizedBox(height: 12),
-          Text(
-            'Team management',
-            style: TextStyle(fontWeight: FontWeight.w600),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final storeShip = ref.watch(currentStoreShipProvider);
+    final shipsAsync = ref.watch(storeShipsByStoreIdProvider(storeShip.storeId));
+    final textTheme = Theme.of(context).textTheme;
+
+    return AsyncValueWidget(
+      value: shipsAsync,
+      data: (ships) {
+        if (ships.isEmpty) {
+          return const Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.group_outlined, size: 48, color: Colors.grey),
+                SizedBox(height: 12),
+                Text(
+                  'No team members yet',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.all(Sizes.p32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Team members',
+                    style: textTheme.titleMedium,
+                  ),
+                  TextButton.icon(
+                    onPressed: () => showDialog<void>(
+                      context: context,
+                      builder: (_) =>
+                          InviteMemberDialog(storeId: storeShip.storeId),
+                    ),
+                    icon: const Icon(Icons.person_add),
+                    label: const Text('Invite'),
+                  ),
+                ],
+              ),
+              gapH16,
+              Expanded(
+                child: ListView.separated(
+                  itemCount: ships.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (context, index) {
+                    final member = ships[index];
+                    return _TeamMemberTile(member: member);
+                  },
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 4),
-          Text('Coming soon', style: TextStyle(color: Colors.grey)),
-        ],
+        );
+      },
+    );
+  }
+}
+
+class _TeamMemberTile extends StatelessWidget {
+  const _TeamMemberTile({required this.member});
+
+  final StoreShip member;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return ListTile(
+      leading: CircleAvatar(
+        child: Text(
+          member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
+        ),
       ),
+      title: Text(member.name),
+      subtitle: Text(member.role.name),
+      trailing: member.permissions.isNotEmpty
+          ? Chip(
+              label: Text(
+                '${member.permissions.length} permissions',
+                style: textTheme.labelSmall,
+              ),
+            )
+          : null,
     );
   }
 }
