@@ -63,13 +63,6 @@ const sideMenuSections = [
         allowedRoles: {StoreRole.owner},
       ),
       SideMenuItem(
-        icon: Icons.people,
-        title: 'Team',
-        branchIndex: 0,
-        pathSuffix: 'team',
-        allowedRoles: {StoreRole.owner, StoreRole.operator},
-      ),
-      SideMenuItem(
         icon: Icons.settings,
         title: 'Settings',
         branchIndex: 3,

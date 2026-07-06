@@ -11,6 +11,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 012 | Refactor booking flow | refactor | in-progress (4 tasks blocked: no test infra) | 2026-06-14 | spec, plan |
 | 019 | Delete offer | feature | draft | 2026-05-23 | request |
 | 020 | Admin page navigation | feature | draft | 2026-07-05 | request |
+| 021 | Wire team list into settings tab | refactor | done | 2026-07-06 | spec |
+| 022 | Fix store settings border stretch | fix | done | 2026-07-06 | spec |
 
 ## Archived (`archive/`)
 
@@ -33,6 +35,6 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 017 | Send changes to Firebase | feature | done | 2026-06-28 | request, spec, plan |
 | 018 | Refactor create offer flow | refactor | done | 2026-07-04 | request, spec, plan |
 
-Next number: **021**.
+Next number: **023**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
