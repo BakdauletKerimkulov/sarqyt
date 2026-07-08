@@ -69,9 +69,19 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
 
   @override
   Widget build(BuildContext context) {
-    final itemValue = ref.watch(
-      itemStreamProvider(id: widget.itemId, storeId: widget.storeId),
-    );
+    final itemProvider =
+        itemStreamProvider(id: widget.itemId, storeId: widget.storeId);
+
+    // Pop when item is deleted (stream emits null after having data)
+    ref.listen(itemProvider, (prev, next) {
+      final hadItem = prev != null && prev.hasValue && prev.value != null;
+      final itemGone = next.hasValue && next.value == null;
+      if (hadItem && itemGone) {
+        context.pop();
+      }
+    });
+
+    final itemValue = ref.watch(itemProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(Sizes.p32),

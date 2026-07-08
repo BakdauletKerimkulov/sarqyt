@@ -132,12 +132,8 @@ class _DeleteItemButtonState extends ConsumerState<_DeleteItemButton> {
         storeId: widget.storeId,
         itemId: widget.item.id,
       );
-
-      if (!mounted) return;
-      final state = ref.read(settingsContentControllerProvider);
-      if (!state.hasError) {
-        context.pop();
-      }
+      // Navigation is handled by ItemScreen's ref.listen on the item stream.
+      // When the item is deleted, the stream emits null → ItemScreen pops.
     } finally {
       if (mounted) setState(() => _isDeleting = false);
     }
