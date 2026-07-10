@@ -23,10 +23,11 @@ class SettingsContentController extends _$SettingsContentController {
     required Item updatedItem,
   }) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() {
+    final result = await AsyncValue.guard(() {
       final repo = ref.read(itemsRepositoryProvider);
       return repo.updateItem(storeId, item: updatedItem);
     });
+    if (_mounted) state = result;
   }
 
   Future<void> updateItemImage({
@@ -35,7 +36,7 @@ class SettingsContentController extends _$SettingsContentController {
     required Either<File, Uint8List> image,
   }) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+    final result = await AsyncValue.guard(() async {
       final imageRepo = ref.read(imageUploadRepositoryProvider);
       final itemsRepo = ref.read(itemsRepositoryProvider);
 
@@ -55,6 +56,7 @@ class SettingsContentController extends _$SettingsContentController {
       final updatedItem = item.copyWith(imageUrl: imageUrl);
       await itemsRepo.updateItem(storeId, item: updatedItem);
     });
+    if (_mounted) state = result;
   }
 
   /// Returns `true` if the item has active orders (confirmed/preparing/readyForPickup).
@@ -69,9 +71,20 @@ class SettingsContentController extends _$SettingsContentController {
     required ItemID itemId,
   }) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() {
+    final result = await AsyncValue.guard(() {
       final repo = ref.read(itemsRepositoryProvider);
       return repo.deleteItem(storeId, id: itemId);
     });
+    if (_mounted) state = result;
+  }
+
+  /// Check if this auto-dispose controller is still alive after awaits.
+  bool get _mounted {
+    try {
+      state;
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 }

@@ -16,6 +16,7 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 023 | Fix delete item error | fix | done | 2026-07-06 | spec, plan |
 | 024 | Fix flickering reservations list | fix | done | 2026-07-07 | spec |
 | 025 | Fix item delete navigation | fix | done | 2026-07-08 | spec |
+| 026 | Fix disposed Ref in SettingsContentController | fix | done | 2026-07-10 | spec |
 
 ## Archived (`archive/`)
 
@@ -38,6 +39,6 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 017 | Send changes to Firebase | feature | done | 2026-06-28 | request, spec, plan |
 | 018 | Refactor create offer flow | refactor | done | 2026-07-04 | request, spec, plan |
 
-Next number: **026**.
+Next number: **027**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
