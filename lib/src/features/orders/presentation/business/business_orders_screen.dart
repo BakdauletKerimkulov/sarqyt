@@ -354,15 +354,17 @@ class _SliverBusinessOrdersState extends ConsumerState<SliverBusinessOrders> {
             final filtered = _applyFilter(orders);
 
             if (filtered.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(Sizes.p32),
-                  child: Text(
-                    _filter == _OrderFilter.all
-                        ? context.loc.noOrdersDescription
-                        : context.loc.noOrdersWithStatus,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge,
+              return SliverToBoxAdapter(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(Sizes.p32),
+                    child: Text(
+                      _filter == _OrderFilter.all
+                          ? context.loc.noOrdersDescription
+                          : context.loc.noOrdersWithStatus,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   ),
                 ),
               );
