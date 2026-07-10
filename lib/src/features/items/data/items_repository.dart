@@ -84,9 +84,10 @@ class ItemsRepository {
   }
 
   Future<void> deleteItem(StoreID storeId, {required ItemID id}) async {
-    await _functions
-        .httpsCallable('deleteItem')
-        .call({'storeId': storeId, 'itemId': id});
+    await _functions.httpsCallable('deleteItem').call({
+      'storeId': storeId,
+      'itemId': id,
+    });
   }
 
   DocumentReference<Item> _itemRef(StoreID storeId, ItemID id) => _firestore
@@ -107,7 +108,10 @@ class ItemsRepository {
 
 @Riverpod(keepAlive: true)
 ItemsRepository itemsRepository(Ref ref) {
-  return ItemsRepository(FirebaseFirestore.instance, FirebaseFunctions.instance);
+  return ItemsRepository(
+    FirebaseFirestore.instance,
+    FirebaseFunctions.instance,
+  );
 }
 
 @riverpod

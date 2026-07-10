@@ -26,7 +26,7 @@ final class OrdersRepositoryProvider
         argument: null,
         retry: null,
         name: r'ordersRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -54,7 +54,7 @@ final class OrdersRepositoryProvider
   }
 }
 
-String _$ordersRepositoryHash() => r'e094903046b80108bb5c14eac0e286337dd6bfaf';
+String _$ordersRepositoryHash() => r'1a697d203c67332bce6850c828a53f90adf13afd';
 
 @ProviderFor(ordersListStream)
 const ordersListStreamProvider = OrdersListStreamFamily._();

@@ -80,7 +80,7 @@ class StoreOrdersRepository {
       );
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 StoreOrdersRepository ordersRepository(Ref ref) {
   return StoreOrdersRepository(
     FirebaseFirestore.instance,
