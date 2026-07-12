@@ -111,7 +111,7 @@ final class OrdersListStreamProvider
   }
 }
 
-String _$ordersListStreamHash() => r'08b6504cabd6027a4d623b4935d52fe2646c5958';
+String _$ordersListStreamHash() => r'2ff53b70b9e89e0a5ba66ff3ffe1ad0e325553ed';
 
 final class OrdersListStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Order>>, StoreID> {
@@ -188,7 +188,7 @@ final class OrdersListForItemStreamProvider
 }
 
 String _$ordersListForItemStreamHash() =>
-    r'd1f96b5c052dcda330536b7533210b2c1ee47699';
+    r'90d302c70906a6f60d7bf5941ced8716e26d2c97';
 
 final class OrdersListForItemStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Order>>, (StoreID, ItemID)> {

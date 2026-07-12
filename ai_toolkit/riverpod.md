@@ -193,6 +193,31 @@ Stream<List<Order>> activeOrders(Ref ref) {
 - Use `keepAlive: true` only for streams that must stay open app-wide (auth state)
 - Never manually manage `StreamSubscription` in providers — Riverpod handles it
 
+### Timed keepAlive for family stream providers
+
+When a family stream provider is viewed repeatedly (e.g. tab switches unmount/remount the watching widget), pure auto-dispose causes a fresh Firestore subscription on every re-mount → visible loading flicker. Use `ref.keepAlive()` + `Timer` to cache the provider state for a window after the last watcher leaves:
+
+```dart
+@riverpod
+Stream<List<Order>> ordersListForItemStream(
+    Ref ref, StoreID storeId, ItemID itemId) {
+  final link = ref.keepAlive();
+  final timer = Timer(const Duration(seconds: 30), link.close);
+  ref.onDispose(timer.cancel);
+  final repo = ref.watch(ordersRepositoryProvider);
+  return repo.watchOrdersListForItem(storeId, itemId);
+}
+```
+
+**When to use:**
+- Family providers parameterized by ID that are watched on screens the user navigates to/from frequently (tab content, detail screens)
+- The stream data doesn't change fast enough to justify a permanent subscription
+
+**Anti-pattern — do NOT use permanent `keepAlive: true` on family providers:**
+- Each unique parameter set creates a separate provider instance
+- Permanent retention leaks memory for every item/store the user has viewed
+- The timed pattern cleans up after inactivity (default: 30 s)
+
 ---
 
 ## ref.watch vs ref.read vs ref.listen
