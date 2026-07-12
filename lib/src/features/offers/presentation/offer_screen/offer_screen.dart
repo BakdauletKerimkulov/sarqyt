@@ -60,6 +60,11 @@ class OfferScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(offerStreamProvider(offerId), (prev, next) {
+      if (prev?.value != null && next.value == null && !next.isLoading) {
+        context.goNamed(ClientRoute.home.name);
+      }
+    });
     final offerValue = ref.watch(offerStreamProvider(offerId));
     final favIds = ref.watch(favoriteStoreIdsProvider).value ?? const {};
 
