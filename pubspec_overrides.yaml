@@ -1,0 +1,2 @@
+dependency_overrides:
+  riverpod_lint: 3.0.3

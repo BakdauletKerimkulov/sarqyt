@@ -11,6 +11,7 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 012 | Refactor booking flow | refactor | in-progress (4 tasks blocked: no test infra) | 2026-06-14 | spec, plan |
 | 019 | Delete offer | feature | draft | 2026-05-23 | request |
 | 020 | Admin page navigation | feature | draft | 2026-07-05 | request |
+| 031 | Toolkit compliance refactoring | refactor | in-progress | 2026-07-12 | request, spec, plan |
 
 ## Archived (`archive/`)
 
