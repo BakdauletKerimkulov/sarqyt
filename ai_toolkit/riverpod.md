@@ -64,34 +64,48 @@ Data → Who needs it?
 
 ## Controller Patterns
 
+### NotifierMounted mixin
+
+Auto-dispose controllers must not set `state` after they've been disposed (screen closed mid-await). Use the shared mixin from `lib/src/utils/notifier_mounted.dart` — never copy-paste per-controller `_mounted` hacks:
+
+```dart
+/// lib/src/utils/notifier_mounted.dart
+mixin NotifierMounted {
+  bool _mounted = true;
+  void setUnmounted() => _mounted = false;
+  bool get mounted => _mounted;
+}
+```
+
+Wire it up in `build()` with `ref.onDispose(setUnmounted)` — see patterns below.
+
+### AsyncValue.guard vs try/catch
+
+- **Default:** `state = await AsyncValue.guard(() => ...)` — catches any exception into `AsyncError`, no boilerplate
+- **Use try/catch** only when the controller must branch on a specific exception type or map to a sealed result — not for plain error → `AsyncError` forwarding
+
 ### Pattern 1: AsyncNotifier (fire-and-forget actions)
 
 For operations that return success/failure to the widget (sign in, submit form, create order):
 
 ```dart
 @riverpod
-class SignInController extends _$SignInController {
+class SignInController extends _$SignInController with NotifierMounted {
   @override
-  FutureOr<void> build() => null;
+  FutureOr<void> build() {
+    ref.onDispose(setUnmounted);
+  }
 
   Future<bool> signIn({required String email, required String password}) async {
     state = const AsyncLoading();
-    try {
-      await ref.read(authRepositoryProvider).signInWithEmailAndPassword(
+    final newState = await AsyncValue.guard(
+      () => ref.read(authRepositoryProvider).signInWithEmailAndPassword(
         email: email,
         password: password,
-      );
-      if (_mounted) state = const AsyncData(null);
-      return true;
-    } on AppException catch (e, st) {
-      if (_mounted) state = AsyncError(e, st);
-      return false;
-    }
-  }
-
-  /// Check if this auto-dispose controller is still alive after awaits.
-  bool get _mounted {
-    try { state; return true; } catch (_) { return false; }
+      ),
+    );
+    if (mounted) state = newState;
+    return !newState.hasError;
   }
 }
 ```
@@ -102,9 +116,12 @@ For screens with complex UI state (multiple fields, loading substates):
 
 ```dart
 @riverpod
-class OrderListController extends _$OrderListController {
+class OrderListController extends _$OrderListController with NotifierMounted {
   @override
-  OrderListState build() => const OrderListState();
+  OrderListState build() {
+    ref.onDispose(setUnmounted);
+    return const OrderListState();
+  }
 
   void setFilter(OrderFilter filter) {
     state = state.copyWith(activeFilter: filter);
@@ -113,15 +130,11 @@ class OrderListController extends _$OrderListController {
   Future<void> cancelOrder(String orderId) async {
     state = state.copyWith(cancellingOrderId: orderId);
     final result = await ref.read(ordersRepositoryProvider).cancel(orderId);
-    if (!_mounted) return;
+    if (!mounted) return;
     switch (result) {
       Success() => state = state.copyWith(cancellingOrderId: null),
       Failure(:final error) => state = state.copyWith(error: error),
     }
-  }
-
-  bool get _mounted {
-    try { state; return true; } catch (_) { return false; }
   }
 }
 ```
@@ -323,6 +336,55 @@ sealed class AppException implements Exception {
 }
 ```
 
+### AsyncErrorLogger (ProviderObserver)
+
+Controllers set `AsyncError` states silently — without an observer, errors that no widget listens to vanish. Register a `ProviderObserver` on the root container (in `app_bootstrap`) that logs every `AsyncError` any provider transitions into:
+
+```dart
+class AsyncErrorLogger extends ProviderObserver {
+  @override
+  void didUpdateProvider(ProviderBase provider, Object? previousValue,
+      Object? newValue, ProviderContainer container) {
+    if (newValue is AsyncError) {
+      final logger = container.read(errorLoggerProvider);
+      final error = newValue.error;
+      error is AppException
+          ? logger.logAppException(error)      // known — message only
+          : logger.logError(error, newValue.stackTrace); // unknown — full stack
+    }
+  }
+}
+
+// app_bootstrap
+final container = ProviderContainer(observers: [AsyncErrorLogger()]);
+```
+
+**Rules:**
+- One observer, registered once at bootstrap — never per-screen error logging
+- `AppException` logs message only; unexpected errors log full stack (→ Crashlytics in release)
+
+---
+
+## Injectable Clock
+
+Never call `DateTime.now()` directly in domain logic, controllers, or repositories — it makes time-dependent behavior (offer expiry, pickup windows) untestable. Inject the clock as a provider:
+
+```dart
+@riverpod
+DateTime Function() currentDateBuilder(Ref ref) => DateTime.now;
+
+// Usage in controller / provider
+final now = ref.read(currentDateBuilderProvider)();
+final isExpired = offer.pickupEnd.isBefore(now);
+
+// In tests — freeze time
+final container = ProviderContainer(overrides: [
+  currentDateBuilderProvider.overrideWithValue(() => DateTime(2026, 7, 12, 18)),
+]);
+```
+
+`DateTime.now()` is acceptable only in the presentation layer for pure display (e.g. "updated X min ago" tickers) and in the `currentDateBuilder` provider itself.
+
 ---
 
 ## Lifecycle & Cleanup
@@ -451,7 +513,10 @@ This creates N Firestore listeners — acceptable for small sets (<30 items). Fo
 | Using `ChangeNotifier`, `BLoC`, or raw `setState` for business logic | Riverpod `@riverpod` only |
 | Creating monolithic state classes with 10+ fields | Split into focused providers |
 | Using `ref.watch` inside async methods | Use `ref.read` in methods |
-| Forgetting `_mounted` check after await in auto-dispose controllers | Always check before setting state |
+| Setting state after await without a mounted check | `with NotifierMounted` + `ref.onDispose(setUnmounted)` + `if (mounted)` |
+| Copy-pasting per-controller `_mounted` try/catch hacks | Shared `NotifierMounted` mixin from `utils/` |
+| try/catch → `AsyncError` boilerplate in controllers | `state = await AsyncValue.guard(...)` |
+| `DateTime.now()` in controllers/domain logic | `ref.read(currentDateBuilderProvider)()` |
 | Putting business logic directly in widgets | Delegate to controller methods |
 | Using legacy `StateProvider` / `StateNotifierProvider` | Use `@riverpod` code generation |
 | Creating a provider for every piece of state | Use local widget state for UI-only concerns |

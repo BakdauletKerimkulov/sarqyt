@@ -24,7 +24,7 @@ lib/
 │       └── feature_name/
 │           ├── domain/           — Models (freezed), enums, value objects
 │           ├── data/             — Repositories (Firestore/API/local), DTOs
-│           ├── application/      — Controllers (AsyncNotifier), providers
+│           ├── application/      — Controllers (AsyncNotifier), services, providers
 │           └── presentation/     — Screens, widgets (no business logic)
 │               └── widgets/      — Extracted sub-widgets
 ```
@@ -180,6 +180,77 @@ abstract class Order with _$Order {
 - DTO has `toDomain()` method. If you need to write back, add `static OrderDto fromDomain(Order order)`
 - Domain model has computed getters for business logic (`isActive`, `canCancel`)
 - Domain model never imports `cloud_firestore`, `json_annotation`, or any external package
+
+---
+
+## Application Services
+
+The `application/` layer holds two kinds of classes:
+
+| Kind | When | Example |
+|------|------|---------|
+| **Controller** (`AsyncNotifier`) | State owned by one screen; widget triggers actions | `SignInController`, `OrderListController` |
+| **Service** (plain class with `Ref`) | Logic spanning multiple repositories or reacting to app-wide events; no screen owns it | `CheckoutService`, `CartSyncService` |
+
+### Service pattern — orchestrating repositories
+
+A service coordinates multiple repositories behind one method the controller calls:
+
+```dart
+class CheckoutService {
+  const CheckoutService(this.ref);
+  final Ref ref;
+
+  Future<OrderID?> placeOrder() async {
+    final cart = await ref.read(cartRepositoryProvider).fetchCart();
+    final order = await ref.read(ordersRepositoryProvider).create(cart);
+    await ref.read(cartRepositoryProvider).clear();
+    return order.id;
+  }
+}
+
+@riverpod
+CheckoutService checkoutService(Ref ref) => CheckoutService(ref);
+```
+
+### Reactive listener service
+
+A `keepAlive` service that reacts to app-wide state changes (auth, connectivity) with `ref.listen`. It has no public methods — it's initialized once at bootstrap so its listener is active for the whole session:
+
+```dart
+class CartSyncService {
+  CartSyncService(this.ref) {
+    ref.listen<AsyncValue<AppUser?>>(authStateChangesProvider, (previous, next) {
+      final previousUser = previous?.value;
+      final user = next.value;
+      if (previousUser == null && user != null) {
+        _moveItemsToRemoteCart(user.uid); // local cart → remote on sign-in
+      }
+    });
+  }
+  final Ref ref;
+
+  Future<void> _moveItemsToRemoteCart(UserID uid) async {
+    try {
+      // read local cart, merge into remote, clear local
+    } catch (e, st) {
+      ref.read(errorLoggerProvider).logError(e, st); // never rethrow — background work
+    }
+  }
+}
+
+@Riverpod(keepAlive: true)
+CartSyncService cartSyncService(Ref ref) => CartSyncService(ref);
+
+// app_bootstrap — initialize so the listener starts
+container.read(cartSyncServiceProvider);
+```
+
+**Rules:**
+- Services never import Flutter widgets or `BuildContext` — same restriction as controllers
+- Reactive services are `keepAlive: true` and read once in `app_bootstrap` — otherwise the listener never starts
+- Background work catches its own errors and logs them — an unawaited throw crashes nothing visibly and vanishes
+- Controller = screen-owned state + actions; Service = cross-cutting orchestration. A controller may call a service; a service never touches a controller
 
 ---
 
@@ -396,6 +467,30 @@ class AppStartupWidget extends ConsumerWidget {
 
 ---
 
+## Environment Config (envied)
+
+Use `envied` for compile-time, type-safe environment variables instead of parsing `.env` at runtime — typos fail the build, not production, and values are obfuscated in the binary:
+
+```dart
+// lib/src/core/env/env.dart
+import 'package:envied/envied.dart';
+
+part 'env.g.dart';
+
+@Envied(path: '.env', obfuscate: true)
+abstract class Env {
+  @EnviedField(varName: 'STRIPE_PUBLISHABLE_KEY')
+  static final String stripePublishableKey = _Env.stripePublishableKey;
+}
+```
+
+**Rules:**
+- `.env` stays in `.gitignore`; commit a `.env.example` with empty values
+- `obfuscate: true` for anything secret-ish (still not truly secret on client — real secrets live in Cloud Functions)
+- After changing `.env` or `env.dart`, rerun build_runner
+
+---
+
 ## Platform Guards
 
 Always wrap platform-specific APIs with `kIsWeb` checks:
@@ -473,13 +568,11 @@ class FirebaseErrorMapper {
 
 ```dart
 state = const AsyncLoading();
-try {
-  await repo.doSomething();
-  if (_mounted) state = const AsyncData(null);
-} on AppException catch (e, st) {
-  if (_mounted) state = AsyncError(e, st);
-}
+final newState = await AsyncValue.guard(() => repo.doSomething());
+if (mounted) state = newState;  // `mounted` from NotifierMounted mixin — see riverpod.md
 ```
+
+Use try/catch on `AppException` only when the controller must branch on the exception type.
 
 ---
 
@@ -546,8 +639,8 @@ test/
 - Test domain models: defaults, copyWith, equality, computed getters
 - Test controllers: state transitions, edge cases
 - Test pure functions in core/ (business logic, validation, computation)
-- Mock repositories for controller tests (never hit real Firestore in tests)
-- No widget tests required unless UI is complex/critical
+- Mock repositories for controller tests with `mocktail` (never hit real Firestore in tests)
+- Widget tests for critical user flows use the **Robot pattern** (below) — skip widget tests for trivial screens
 
 ```dart
 void main() {
@@ -566,12 +659,110 @@ void main() {
 }
 ```
 
+### Robot pattern (widget & integration tests)
+
+Encapsulate widget-test interactions in per-feature **robot** classes so the same steps drive both widget tests and `integration_test/` E2E flows. Robots express tests in user language (`tapAddToCart`, `expectOrderVisible`) instead of raw finders:
+
+```
+test/src/
+├── robot.dart                        — composite Robot (pumps the app with fakes)
+├── mocks.dart                        — shared mocktail mocks
+└── features/
+    └── orders/orders_robot.dart      — per-feature robot
+```
+
+```dart
+// test/src/features/orders/orders_robot.dart
+class OrdersRobot {
+  OrdersRobot(this.tester);
+  final WidgetTester tester;
+
+  Future<void> openOrdersScreen() async {
+    await tester.tap(find.byKey(const Key('menuOrders')));
+    await tester.pumpAndSettle();
+  }
+
+  void expectOrderVisible(String storeName) {
+    expect(find.text(storeName), findsOneWidget);
+  }
+}
+
+// test/src/robot.dart — composite: one entry point, sub-robots per feature
+class Robot {
+  Robot(this.tester)
+      : auth = AuthRobot(tester),
+        orders = OrdersRobot(tester);
+  final WidgetTester tester;
+  final AuthRobot auth;
+  final OrdersRobot orders;
+
+  Future<void> pumpMyAppWithFakes() async {
+    final container = await createFakesProviderContainer(addDelay: false);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(container: container, child: const MyApp()),
+    );
+    await tester.pumpAndSettle();
+  }
+}
+```
+
+```dart
+// Widget test and integration test share the same robot API
+testWidgets('reserve and pick up order', (tester) async {
+  final r = Robot(tester);
+  await r.pumpMyAppWithFakes();
+  await r.auth.signInAsTestUser();
+  await r.orders.openOrdersScreen();
+  r.orders.expectOrderVisible('Test Store');
+});
+```
+
+**Rules:**
+- Robots live in `test/src/`, mirroring `features/`; `integration_test/` imports them from there
+- The composite `Robot` pumps the app via the fakes container (`addDelay: false`) — E2E flows run without Firebase
+- Assertions (`expectX`) live in robots too — tests read as scenarios, not finder soup
+
+### Golden tests
+
+Screenshot-diff tests for key screens at multiple window sizes (this is also how responsive breakpoints get verified). Tag them so they can be run/excluded separately:
+
+```yaml
+# dart_test.yaml
+tags:
+  golden:
+```
+
+```dart
+@Tags(['golden'])
+library;
+
+testWidgets('products list — phone and tablet', (tester) async {
+  final r = Robot(tester);
+  await r.golden.loadFonts();
+  for (final size in const [Size(390, 844), Size(834, 1194)]) {
+    await r.golden.setSurfaceSize(size);
+    await r.pumpMyAppWithFakes();
+    await expectLater(find.byType(MyApp),
+        matchesGoldenFile('products_list_${size.width.toInt()}.png'));
+  }
+});
+```
+
+```bash
+flutter test --update-goldens --tags golden   # regenerate baselines
+flutter test --tags golden                    # run only goldens
+flutter test --exclude-tags golden            # everything else (default CI lane)
+```
+
+Golden baselines are platform-sensitive — regenerate on the same OS that CI uses, or keep goldens out of CI.
+
 ### Running tests
 
 ```bash
 flutter test                          # all tests
 flutter test test/path_test.dart      # single file
 flutter test --name "specific test"   # by name
+dart run custom_lint                  # riverpod_lint checks (see code-style.md)
 ```
 
 ---
