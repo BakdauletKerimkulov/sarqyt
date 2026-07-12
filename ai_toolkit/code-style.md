@@ -105,6 +105,58 @@ Padding(padding: const EdgeInsets.all(Sizes.p16))
 Padding(padding: const EdgeInsets.all(16))
 ```
 
+## Responsive / Adaptive Design
+
+- **Never hardcode layouts for a specific screen size** — no `if (width == 375)`, no pixel-perfect positioning tuned to one device
+- Use **Material 3 window size classes** as the single source of breakpoints:
+
+| Class | Width | Typical device | Layout |
+|-------|-------|----------------|--------|
+| `compact` | < 600 | phone | single column, bottom nav |
+| `medium` | 600–839 | tablet portrait, foldable | two columns / nav rail |
+| `expanded` | ≥ 840 | tablet landscape, desktop, web | multi-column, permanent drawer |
+
+- Define breakpoints once as constants — never scatter raw `600` / `840` through widgets:
+
+```dart
+abstract final class Breakpoints {
+  static const double compact = 600;
+  static const double expanded = 840;
+}
+
+enum WindowSize {
+  compact,
+  medium,
+  expanded;
+
+  static WindowSize fromWidth(double width) => switch (width) {
+    < Breakpoints.compact => WindowSize.compact,
+    < Breakpoints.expanded => WindowSize.medium,
+    _ => WindowSize.expanded,
+  };
+}
+```
+
+- Branch on window size class, not raw pixels — switch the widget type, don't scale one layout:
+
+```dart
+// Good — different widget per size class
+Widget build(BuildContext context) {
+  final size = WindowSize.fromWidth(MediaQuery.sizeOf(context).width);
+  return switch (size) {
+    WindowSize.compact => const OfferListView(),
+    WindowSize.medium || WindowSize.expanded => const OfferGridView(),
+  };
+}
+
+// Bad — pixel-tuned magic numbers inline
+if (MediaQuery.sizeOf(context).width < 412) { ... }
+```
+
+- Use `MediaQuery.sizeOf(context)` (not `MediaQuery.of(context).size`) — rebuilds only on size changes
+- Use `LayoutBuilder` when a widget adapts to its **parent's** constraints rather than the screen (e.g. a card that lives in both a list and a sidebar)
+- Content widths: constrain long text/forms with `ConstrainedBox(maxWidth: ...)` on expanded layouts instead of stretching full-width
+
 ## State Classes
 
 Hand-written immutable state when freezed is overkill (simple state with 2–4 fields):
@@ -257,6 +309,7 @@ Future<void> onSubmit() async {
 | Raw numbers for spacing | `Sizes.pX`, `gapHX`, `gapWX` |
 | Hardcoded `TextStyle` | `Theme.of(context).textTheme` |
 | Hardcoded color values | `AppColors.xxx` |
+| Raw breakpoint numbers / pixel-tuned layouts | `WindowSize.fromWidth()` + `Breakpoints` constants |
 | `var` for public API | Explicit type annotations |
 
 ## Comments
