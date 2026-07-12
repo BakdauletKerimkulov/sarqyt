@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -90,6 +92,9 @@ StoreOrdersRepository ordersRepository(Ref ref) {
 
 @riverpod
 Stream<List<Order>> ordersListStream(Ref ref, StoreID id) {
+  final link = ref.keepAlive();
+  final timer = Timer(const Duration(seconds: 30), link.close);
+  ref.onDispose(timer.cancel);
   final repo = ref.watch(ordersRepositoryProvider);
   return repo.watchOrdersListForStore(id);
 }
@@ -97,6 +102,9 @@ Stream<List<Order>> ordersListStream(Ref ref, StoreID id) {
 @riverpod
 Stream<List<Order>> ordersListForItemStream(
     Ref ref, StoreID storeId, ItemID itemId) {
+  final link = ref.keepAlive();
+  final timer = Timer(const Duration(seconds: 30), link.close);
+  ref.onDispose(timer.cancel);
   final repo = ref.watch(ordersRepositoryProvider);
   return repo.watchOrdersListForItem(storeId, itemId);
 }

@@ -11,13 +11,7 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 012 | Refactor booking flow | refactor | in-progress (4 tasks blocked: no test infra) | 2026-06-14 | spec, plan |
 | 019 | Delete offer | feature | draft | 2026-05-23 | request |
 | 020 | Admin page navigation | feature | draft | 2026-07-05 | request |
-| 021 | Wire team list into settings tab | refactor | done | 2026-07-06 | spec |
-| 022 | Fix store settings border stretch | fix | done | 2026-07-06 | spec |
-| 023 | Fix delete item error | fix | done | 2026-07-06 | spec, plan |
-| 024 | Fix flickering reservations list | fix | done | 2026-07-07 | spec |
-| 025 | Fix item delete navigation | fix | done | 2026-07-08 | spec |
-| 026 | Fix disposed Ref in SettingsContentController | fix | done | 2026-07-10 | spec |
-| 027 | Fix SliverBusinessOrders empty-state crash | fix | done | 2026-07-10 | spec |
+| 028 | Fix item screen reservations flickering | fix | done | 2026-07-11 | request, spec, plan |
 
 ## Archived (`archive/`)
 
@@ -39,7 +33,14 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 016 | Order payment status fix | fix | done | 2026-06-28 | spec |
 | 017 | Send changes to Firebase | feature | done | 2026-06-28 | request, spec, plan |
 | 018 | Refactor create offer flow | refactor | done | 2026-07-04 | request, spec, plan |
+| 021 | Wire team list into settings tab | refactor | done | 2026-07-06 | spec |
+| 022 | Fix store settings border stretch | fix | done | 2026-07-06 | spec |
+| 023 | Fix delete item error | fix | done | 2026-07-06 | spec, plan |
+| 024 | Fix flickering reservations list | fix | done | 2026-07-07 | spec |
+| 025 | Fix item delete navigation | fix | done | 2026-07-08 | spec |
+| 026 | Fix disposed Ref in SettingsContentController | fix | done | 2026-07-10 | spec |
+| 027 | Fix SliverBusinessOrders empty-state crash | fix | done | 2026-07-10 | spec |
 
-Next number: **028**.
+Next number: **029**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.

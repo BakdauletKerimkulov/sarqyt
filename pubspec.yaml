@@ -97,6 +97,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  fake_async: ^1.3.3
 
   riverpod_generator: ^3.0.3
   # безопасная версия build_runner
