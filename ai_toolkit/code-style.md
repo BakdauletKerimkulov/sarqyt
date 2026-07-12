@@ -4,6 +4,36 @@ Universal rules for all Flutter projects. Project-specific conventions belong in
 
 ---
 
+## Linting & Static Analysis
+
+Every project uses `flutter_lints` + `riverpod_lint` (via `custom_lint`). The default stock `analysis_options.yaml` is not enough — riverpod_lint catches provider mistakes (ref.watch in methods, missing dependencies, wrong provider types) automatically instead of relying on code review.
+
+```yaml
+# analysis_options.yaml
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  plugins:
+    - custom_lint
+  exclude:
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
+```
+
+```yaml
+# pubspec.yaml (dev_dependencies)
+custom_lint: ^0.7.0
+riverpod_lint: ^2.6.0
+mocktail: ^1.0.0   # mocking in tests — no codegen needed
+```
+
+**Rules:**
+- Run `dart run custom_lint` in addition to `dart analyze` — IDE shows both, CI must run both
+- Never disable a riverpod_lint rule project-wide without a comment explaining why
+- Generated files (`.g.dart`, `.freezed.dart`) are always excluded from analysis
+
+---
+
 ## Naming
 
 | Element | Convention | Example |
@@ -104,6 +134,58 @@ Padding(padding: const EdgeInsets.all(Sizes.p16))
 // Bad
 Padding(padding: const EdgeInsets.all(16))
 ```
+
+## Responsive / Adaptive Design
+
+- **Never hardcode layouts for a specific screen size** — no `if (width == 375)`, no pixel-perfect positioning tuned to one device
+- Use **Material 3 window size classes** as the single source of breakpoints:
+
+| Class | Width | Typical device | Layout |
+|-------|-------|----------------|--------|
+| `compact` | < 600 | phone | single column, bottom nav |
+| `medium` | 600–839 | tablet portrait, foldable | two columns / nav rail |
+| `expanded` | ≥ 840 | tablet landscape, desktop, web | multi-column, permanent drawer |
+
+- Define breakpoints once as constants — never scatter raw `600` / `840` through widgets:
+
+```dart
+abstract final class Breakpoints {
+  static const double compact = 600;
+  static const double expanded = 840;
+}
+
+enum WindowSize {
+  compact,
+  medium,
+  expanded;
+
+  static WindowSize fromWidth(double width) => switch (width) {
+    < Breakpoints.compact => WindowSize.compact,
+    < Breakpoints.expanded => WindowSize.medium,
+    _ => WindowSize.expanded,
+  };
+}
+```
+
+- Branch on window size class, not raw pixels — switch the widget type, don't scale one layout:
+
+```dart
+// Good — different widget per size class
+Widget build(BuildContext context) {
+  final size = WindowSize.fromWidth(MediaQuery.sizeOf(context).width);
+  return switch (size) {
+    WindowSize.compact => const OfferListView(),
+    WindowSize.medium || WindowSize.expanded => const OfferGridView(),
+  };
+}
+
+// Bad — pixel-tuned magic numbers inline
+if (MediaQuery.sizeOf(context).width < 412) { ... }
+```
+
+- Use `MediaQuery.sizeOf(context)` (not `MediaQuery.of(context).size`) — rebuilds only on size changes
+- Use `LayoutBuilder` when a widget adapts to its **parent's** constraints rather than the screen (e.g. a card that lives in both a list and a sidebar)
+- Content widths: use the shared `ResponsiveCenter` widget (max content width + centering) instead of ad-hoc `ConstrainedBox` — and `ResponsiveSliverCenter` inside `CustomScrollView`. Its `maxContentWidth` default comes from the same `Breakpoints` class — never a separate constant
 
 ## State Classes
 
@@ -257,6 +339,7 @@ Future<void> onSubmit() async {
 | Raw numbers for spacing | `Sizes.pX`, `gapHX`, `gapWX` |
 | Hardcoded `TextStyle` | `Theme.of(context).textTheme` |
 | Hardcoded color values | `AppColors.xxx` |
+| Raw breakpoint numbers / pixel-tuned layouts | `WindowSize.fromWidth()` + `Breakpoints` constants |
 | `var` for public API | Explicit type annotations |
 
 ## Comments

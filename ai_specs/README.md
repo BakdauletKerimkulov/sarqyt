@@ -41,6 +41,9 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 027 | Fix SliverBusinessOrders empty-state crash | fix | done | 2026-07-10 | spec |
 | 028 | Fix item screen reservations flickering | fix | done | 2026-07-11 | request, spec, plan |
 
-Next number: **029**.
+| 029 | Fix offer screen reservations flickering | fix | done | 2026-07-11 | spec |
+| 030 | Redirect to home when offer deleted | fix | done | 2026-07-12 | spec |
+
+Next number: **031**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
