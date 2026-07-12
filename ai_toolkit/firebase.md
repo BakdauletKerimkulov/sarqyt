@@ -441,6 +441,43 @@ await batch.commit();
 
 ---
 
+## Composite Indexes
+
+Every compound query — two or more `where` clauses on different fields, or `where` + `orderBy` on a different field — requires a composite index in `firestore.indexes.json`.
+
+```dart
+// This query needs a composite index (storeId ASC, itemId ASC, createdAt DESC):
+firestore
+    .collection('orders')
+    .where('storeId', isEqualTo: storeId)
+    .where('itemId', isEqualTo: itemId)
+    .orderBy('createdAt', descending: true)
+    .snapshots();
+```
+
+```json
+{
+  "collectionGroup": "orders",
+  "queryScope": "COLLECTION",
+  "fields": [
+    { "fieldPath": "storeId", "order": "ASCENDING" },
+    { "fieldPath": "itemId", "order": "ASCENDING" },
+    { "fieldPath": "createdAt", "order": "DESCENDING" }
+  ]
+}
+```
+
+Deploy with `firebase deploy --only firestore:indexes` (building takes minutes on large collections).
+
+### Rules
+
+- **New or changed compound query → index entry in the same PR.** Adding a `where` clause to an already-indexed query invalidates the old index coverage — the query now needs its own index.
+- **The emulator does NOT enforce composite indexes.** Compound queries always work locally and fail only against production with `failed-precondition`. A green emulator run proves nothing about index coverage — audit `firestore.indexes.json` against the repository code.
+- **Know the symptom.** A missing index rejects the query server-side with `failed-precondition` ("The query requires an index. You can create it here: <link>"). With Riverpod 3's default automatic retry, a failing stream provider resubscribes with exponential backoff; the SDK emits cached results before each server rejection, so the UI shows a loading ↔ data flicker (~1s cycle) before settling on the error. If you see this pattern, check the raw error for an index link before debugging provider lifetimes.
+- **An existing similar index is not enough.** `(storeId, createdAt)` does not cover `(storeId, itemId, createdAt)` — every distinct field combination + sort order is its own index.
+
+---
+
 ## Firestore Protection Checklist
 
 Before deploying any collection, verify:

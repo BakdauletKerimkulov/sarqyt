@@ -30,8 +30,7 @@ class StoreOrdersRepository {
         .map((snap) => snap.docs.map((doc) => doc.data()).toList());
   }
 
-  Stream<List<Order>> watchOrdersListForItem(
-      StoreID storeId, ItemID itemId) {
+  Stream<List<Order>> watchOrdersListForItem(StoreID storeId, ItemID itemId) {
     return _firestore
         .collection(ordersPath())
         .where('storeId', isEqualTo: storeId)
@@ -101,7 +100,10 @@ Stream<List<Order>> ordersListStream(Ref ref, StoreID id) {
 
 @riverpod
 Stream<List<Order>> ordersListForItemStream(
-    Ref ref, StoreID storeId, ItemID itemId) {
+  Ref ref,
+  StoreID storeId,
+  ItemID itemId,
+) {
   final link = ref.keepAlive();
   final timer = Timer(const Duration(seconds: 30), link.close);
   ref.onDispose(timer.cancel);

@@ -55,9 +55,7 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
     super.didUpdateWidget(oldWidget);
     if (widget.initialTab != oldWidget.initialTab) {
       final newIndex = _filteredTabs.indexOf(widget.initialTab);
-      _tabController.animateTo(
-        newIndex.clamp(0, _filteredTabs.length - 1),
-      );
+      _tabController.animateTo(newIndex.clamp(0, _filteredTabs.length - 1));
     }
   }
 
@@ -69,8 +67,10 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
 
   @override
   Widget build(BuildContext context) {
-    final itemProvider =
-        itemStreamProvider(id: widget.itemId, storeId: widget.storeId);
+    final itemProvider = itemStreamProvider(
+      id: widget.itemId,
+      storeId: widget.storeId,
+    );
 
     // Pop when item is deleted (stream emits null after having data)
     ref.listen(itemProvider, (prev, next) {
@@ -111,7 +111,11 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
                 height: Sizes.p40,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: [Icon(tab.icon), gapW4, Text(tab.label(context.loc))],
+                  children: [
+                    Icon(tab.icon),
+                    gapW4,
+                    Text(tab.label(context.loc)),
+                  ],
                 ),
               );
             }).toList(),
@@ -140,25 +144,6 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
   }
 }
 
-class OrdersAlignedGrid extends StatelessWidget {
-  const OrdersAlignedGrid({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.receipt_long, size: 48, color: Colors.grey),
-          SizedBox(height: 8),
-          Text('Orders', style: TextStyle(color: Colors.grey)),
-          Text('Coming soon', style: TextStyle(color: Colors.grey, fontSize: 12)),
-        ],
-      ),
-    );
-  }
-}
-
 class CalendarContent extends StatelessWidget {
   const CalendarContent({super.key});
 
@@ -171,7 +156,10 @@ class CalendarContent extends StatelessWidget {
           Icon(Icons.calendar_month, size: 48, color: Colors.grey),
           SizedBox(height: 8),
           Text('Calendar', style: TextStyle(color: Colors.grey)),
-          Text('Coming soon', style: TextStyle(color: Colors.grey, fontSize: 12)),
+          Text(
+            'Coming soon',
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
         ],
       ),
     );
