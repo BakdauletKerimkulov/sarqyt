@@ -53,14 +53,14 @@ abstract class Order with _$Order {
       '${(unitPrice * itemQuantity).round()} $currencySymbol';
 
   /// Remaining time until pickup window closes. Null if no pickupEndTime.
-  Duration? get timeUntilPickupEnd {
+  Duration? timeUntilPickupEnd(DateTime now) {
     if (pickupEndTime == null) return null;
-    final remaining = pickupEndTime!.difference(DateTime.now());
+    final remaining = pickupEndTime!.difference(now);
     return remaining.isNegative ? Duration.zero : remaining;
   }
 
-  bool get isPickupExpired =>
-      pickupEndTime != null && DateTime.now().isAfter(pickupEndTime!);
+  bool isPickupExpired(DateTime now) =>
+      pickupEndTime != null && now.isAfter(pickupEndTime!);
 
   /// Formatted pickup window, e.g. "14:00 – 16:00". Null if times missing.
   String? get pickupLabel {

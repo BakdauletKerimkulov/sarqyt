@@ -55,16 +55,16 @@ Align codebase with `ai_toolkit/` conventions in six phases: linting infra → N
 
 **Goal:** `currentDateBuilderProvider` replaces `DateTime.now()` in domain/data/application layer; presentation-layer calls stay.
 
-- [ ] `lib/src/utils/current_date_builder.dart` — create `currentDateBuilderProvider` returning `DateTime Function()` with `DateTime.now` default, per `riverpod.md` lines 370–386
-- [ ] Run `dart run build_runner build --delete-conflicting-outputs` for codegen
-- [ ] `lib/src/features/offers/data/client_offer_repository.dart` — inject `DateTime Function() currentDateBuilder` via constructor, replace 4 `DateTime.now()` calls; update repository provider to pass `ref.read(currentDateBuilderProvider)`
-- [ ] `lib/src/features/offers/data/fake_client_offer_repository.dart` — inject clock, replace `DateTime.now()`
-- [ ] `lib/src/features/orders/domain/order.dart` — convert `timeUntilPickupEnd` and `isPickupExpired` from getters to methods accepting `DateTime now` parameter
-- [ ] `lib/src/features/orders/presentation/client/order_detail_screen.dart` — update `order.isPickupExpired` → `order.isPickupExpired(DateTime.now())`, update `order.timeUntilPickupEnd` → `order.timeUntilPickupEnd(DateTime.now())`
-- [ ] `lib/src/features/offers/application/discover_filter.dart` — add `DateTime now` parameter to `applyFilter`; update `filteredOffers` provider to read `currentDateBuilderProvider` and pass `now()` to `applyFilter`
-- [ ] `lib/src/testing/test_offer.dart` — replace `DateTime.now()` with parameter or injected clock
-- [ ] Grep all other call sites of `timeUntilPickupEnd` / `isPickupExpired` — update each to pass `DateTime.now()` (presentation) or injected clock (non-presentation)
-- [ ] Verify: `flutter analyze && flutter test` — confirm `grep -r "DateTime.now()" lib/src/` shows only presentation-layer hits
+- [x] `lib/src/utils/current_date_builder.dart` — create `currentDateBuilderProvider` returning `DateTime Function()` with `DateTime.now` default, per `riverpod.md` lines 370–386
+- [x] Run `dart run build_runner build --delete-conflicting-outputs` for codegen
+- [x] `lib/src/features/offers/data/client_offer_repository.dart` — inject `DateTime Function() currentDateBuilder` via constructor, replace 4 `DateTime.now()` calls; update repository provider to pass `ref.read(currentDateBuilderProvider)`
+- [x] `lib/src/features/offers/data/fake_client_offer_repository.dart` — inject clock, replace `DateTime.now()`
+- [x] `lib/src/features/orders/domain/order.dart` — convert `timeUntilPickupEnd` and `isPickupExpired` from getters to methods accepting `DateTime now` parameter
+- [x] `lib/src/features/orders/presentation/client/order_detail_screen.dart` — update `order.isPickupExpired` → `order.isPickupExpired(DateTime.now())`, update `order.timeUntilPickupEnd` → `order.timeUntilPickupEnd(DateTime.now())`
+- [x] `lib/src/features/offers/application/discover_filter.dart` — add `DateTime now` parameter to `applyFilter`; update `filteredOffers` provider to read `currentDateBuilderProvider` and pass `now()` to `applyFilter`
+- [x] `lib/src/testing/test_offer.dart` — replace `DateTime.now()` with parameter or injected clock
+- [x] Grep all other call sites of `timeUntilPickupEnd` / `isPickupExpired` — update each to pass `DateTime.now()` (presentation) or injected clock (non-presentation)
+- [x] Verify: `flutter analyze && flutter test` — confirm `grep -r "DateTime.now()" lib/src/` shows only presentation-layer hits
 
 ### Phase 4 — M3 breakpoints (R11, R12)
 

@@ -4,7 +4,8 @@ import 'package:sarqyt/src/features/offers/domain/offer.dart';
 import 'package:sarqyt/src/testing/test_items.dart';
 import 'package:sarqyt/src/testing/test_store.dart';
 
-final _now = DateTime.now();
+/// Fixed reference time for test data — avoids flaky expiry-based filtering.
+final _now = DateTime(2026, 7, 12, 12);
 
 final kTestOffers = [
   Offer(

@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/offers/application/offers_with_distance.dart';
+import 'package:sarqyt/src/utils/current_date_builder.dart';
 
 part 'discover_filter.g.dart';
 
@@ -65,6 +66,7 @@ List<OfferWithDistance> applyFilter(
   List<OfferWithDistance> offers,
   DiscoverFilter filter,
   Set<String> favoriteStoreIds,
+  DateTime now,
 ) {
   var result = List<OfferWithDistance>.from(offers);
 
@@ -76,7 +78,6 @@ List<OfferWithDistance> applyFilter(
   }
 
   // Pickup time
-  final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
   final tomorrow = today.add(const Duration(days: 1));
 
@@ -120,5 +121,6 @@ List<OfferWithDistance> filteredOffers(
   DiscoverFilter filter,
   Set<String> favoriteStoreIds,
 ) {
-  return applyFilter(offers, filter, favoriteStoreIds);
+  final now = ref.read(currentDateBuilderProvider)();
+  return applyFilter(offers, filter, favoriteStoreIds, now);
 }
