@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sarqyt/src/common_widgets/custom_image.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
-import 'package:sarqyt/src/constants/breakpoints.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/items/presentation/item_screen/item_settings_shared.dart';
 
@@ -88,7 +87,7 @@ class StoreHeaderCard extends StatelessWidget {
         final imageHeight = width / 2;
 
         final double avatarSize =
-            constraints.maxWidth > Breakpoint.mobile ? 100 : 60;
+            constraints.maxWidth > 300 ? 100 : 60;
 
         final avatarTop = imageHeight - avatarSize / 2;
         final stackHeight = imageHeight + avatarSize / 2;

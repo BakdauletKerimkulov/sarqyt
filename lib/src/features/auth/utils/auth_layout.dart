@@ -10,7 +10,7 @@ class AuthLayout extends StatelessWidget {
     super.key,
     required this.child,
     this.startChild,
-    this.breakpoint = Breakpoint.desktop,
+    this.breakpoint = Breakpoints.expanded,
     this.startFlex = 1,
     this.endFlex = 1,
     this.startBackColor = AppColors.primary,

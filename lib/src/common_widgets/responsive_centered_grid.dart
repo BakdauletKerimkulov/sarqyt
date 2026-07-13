@@ -27,7 +27,7 @@ class ResponsiveCenteredGrid extends StatelessWidget {
 
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: Breakpoint.desktop),
+        constraints: const BoxConstraints(maxWidth: Breakpoints.expanded),
         child: LayoutBuilder(
           builder: (context, constraints) {
             // Ширина карточки не будет превышать 300 пикселей.
@@ -82,15 +82,15 @@ class ResponsiveSliverAlignedGrid extends StatelessWidget {
         // width of the screen
         final width = constraints.crossAxisExtent;
         // max width allowed for the sliver
-        final maxWidth = min(width, Breakpoint.desktop);
+        final maxWidth = min(width, Breakpoints.expanded);
         // use 1 column for width < 500px
         // then add one more column for each 250px
         final crossAxisCount = max(1, maxWidth ~/ 250);
         // calculate a "responsive" padding that increases
         // when the width is greater than the desktop breakpoint
         // this is used to center the content horizontally on large screens
-        final padding = width > Breakpoint.desktop + Sizes.p32
-            ? (width - Breakpoint.desktop) / 2
+        final padding = width > Breakpoints.expanded + Sizes.p32
+            ? (width - Breakpoints.expanded) / 2
             : Sizes.p16;
         return SliverPadding(
           padding: EdgeInsets.symmetric(

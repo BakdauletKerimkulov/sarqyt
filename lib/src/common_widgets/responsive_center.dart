@@ -12,7 +12,7 @@ import 'package:sarqyt/src/constants/breakpoints.dart';
 class ResponsiveCenter extends StatelessWidget {
   const ResponsiveCenter({
     super.key,
-    this.maxContentWidth = Breakpoint.desktop,
+    this.maxContentWidth = Breakpoints.expanded,
     this.padding = const EdgeInsets.all(Sizes.p16),
     required this.child,
   });
@@ -40,7 +40,7 @@ class ResponsiveCenter extends StatelessWidget {
 class ResponsiveSliverCenter extends StatelessWidget {
   const ResponsiveSliverCenter({
     super.key,
-    this.maxContentWidth = Breakpoint.desktop,
+    this.maxContentWidth = Breakpoints.expanded,
     this.padding = EdgeInsets.zero,
     required this.child,
   });

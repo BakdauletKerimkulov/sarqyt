@@ -70,10 +70,10 @@ Align codebase with `ai_toolkit/` conventions in six phases: linting infra → N
 
 **Goal:** `Breakpoint` class → `Breakpoints` (M3 values) + `WindowSize` enum; all usages updated.
 
-- [ ] `lib/src/constants/breakpoints.dart` — rename class `Breakpoint` → `abstract final class Breakpoints`, values to `compact = 600`, `expanded = 840`; add `WindowSize` enum with `fromWidth` factory per `code-style.md` lines 148–183
-- [ ] `lib/src/common_widgets/responsive_center.dart` — update `Breakpoint.desktop` → `Breakpoints.expanded` (both `ResponsiveCenter` and `ResponsiveSliverCenter`)
-- [ ] Update remaining 6 files importing old `Breakpoint`: `responsive_centered_grid.dart`, `forbidden_page.dart`, `schedule_content.dart`, `item_details.dart`, `auth_layout.dart`, `responsive_scrollable_card.dart` — rename references to `Breakpoints.*`
-- [ ] Verify: `flutter analyze` — `grep -r "Breakpoint\." lib/src/` returns zero hits for old class
+- [x] `lib/src/constants/breakpoints.dart` — rename class `Breakpoint` → `abstract final class Breakpoints`, values to `compact = 600`, `expanded = 840`; add `WindowSize` enum with `fromWidth` factory per `code-style.md` lines 148–183
+- [x] `lib/src/common_widgets/responsive_center.dart` — update `Breakpoint.desktop` → `Breakpoints.expanded` (both `ResponsiveCenter` and `ResponsiveSliverCenter`)
+- [x] Update remaining 6 files importing old `Breakpoint`: `responsive_centered_grid.dart`, `forbidden_page.dart`, `schedule_content.dart`, `item_details.dart`, `auth_layout.dart`, `responsive_scrollable_card.dart` — rename references to `Breakpoints.*`
+- [x] Verify: `flutter analyze` — `grep -r "Breakpoint\." lib/src/` returns zero hits for old class
 
 ### Phase 5 — Robot test infrastructure (R13, R14, R15, R16)
 

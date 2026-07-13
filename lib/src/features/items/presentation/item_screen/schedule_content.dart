@@ -73,7 +73,7 @@ class _ScheduleContentState extends ConsumerState<ScheduleContent> {
 
     return LayoutBuilder(
       builder: (context, constraints) =>
-          constraints.maxWidth >= Breakpoint.desktop
+          constraints.maxWidth >= Breakpoints.expanded
           ? Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
