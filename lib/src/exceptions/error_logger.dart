@@ -11,7 +11,7 @@ class ErrorLogger {
     log('$error, $stackTrace');
   }
 
-  void logAppExcaption(AppException exception) {
+  void logAppException(AppException exception) {
     // * This can be replaced with a call to a crash reporting tool of choice
     log('$exception');
   }

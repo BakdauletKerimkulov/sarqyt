@@ -44,12 +44,12 @@ Align codebase with `ai_toolkit/` conventions in six phases: linting infra → N
 
 **Goal:** Shared `NotifierMounted` mixin replaces ad-hoc mounted hacks in two controllers; `CreateAccountController` uses `AsyncValue.guard`.
 
-- [ ] `lib/src/utils/notifier_mounted.dart` — create `NotifierMounted` mixin (3 members: `_mounted`, `setUnmounted()`, `mounted` getter) per `riverpod.md` lines 68–78
-- [ ] `lib/src/features/items/presentation/item_screen/settings_content_controller.dart` — add `with NotifierMounted`, add `ref.onDispose(setUnmounted)` in `build()`, remove manual `_mounted` getter (lines 82–89), update `if (_mounted)` → `if (mounted)`
-- [ ] `lib/src/features/onboarding/presentation/inbound/create_account_controller.dart` — add `with NotifierMounted`, add `ref.onDispose(setUnmounted)` in `build()`, replace try/catch with `AsyncValue.guard` + `if (mounted) state = newState`, keep pre-async `ref.read` capture
-- [ ] `lib/src/exceptions/error_logger.dart` — rename `logAppExcaption` → `logAppException` (N1)
-- [ ] `lib/src/exceptions/async_error_logger.dart` — update call site `logAppExcaption` → `logAppException` (N1)
-- [ ] Verify: `flutter analyze && flutter test`
+- [x] `lib/src/utils/notifier_mounted.dart` — create `NotifierMounted` mixin (3 members: `_mounted`, `setUnmounted()`, `mounted` getter) per `riverpod.md` lines 68–78
+- [x] `lib/src/features/items/presentation/item_screen/settings_content_controller.dart` — add `with NotifierMounted`, add `ref.onDispose(setUnmounted)` in `build()`, remove manual `_mounted` getter (lines 82–89), update `if (_mounted)` → `if (mounted)`
+- [x] `lib/src/features/onboarding/presentation/inbound/create_account_controller.dart` — add `with NotifierMounted`, add `ref.onDispose(setUnmounted)` in `build()`, replace try/catch with `AsyncValue.guard` + `if (mounted) state = newState`, keep pre-async `ref.read` capture
+- [x] `lib/src/exceptions/error_logger.dart` — rename `logAppExcaption` → `logAppException` (N1)
+- [x] `lib/src/exceptions/async_error_logger.dart` — update call site `logAppExcaption` → `logAppException` (N1)
+- [x] Verify: `flutter analyze && flutter test`
 
 ### Phase 3 — Injectable clock (R8, R9, R10)
 
