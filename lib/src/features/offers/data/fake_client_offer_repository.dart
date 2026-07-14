@@ -49,7 +49,7 @@ class FakeClientOfferRepository implements ClientOfferRepository {
   @override
   Future<Offer?> getOfferById(String id) async {
     return _offers.value.cast<Offer?>().firstWhere(
-          (o) => o?.productId == id,
+          (o) => o?.id == id,
           orElse: () => null,
         );
   }
@@ -58,7 +58,7 @@ class FakeClientOfferRepository implements ClientOfferRepository {
   Stream<Offer?> watchOfferByIdStream(String id) {
     return _offers.stream.map(
       (offers) => offers.cast<Offer?>().firstWhere(
-            (o) => o?.productId == id,
+            (o) => o?.id == id,
             orElse: () => null,
           ),
     );

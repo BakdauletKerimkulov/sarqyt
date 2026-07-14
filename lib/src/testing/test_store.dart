@@ -21,8 +21,8 @@ final kTestStores = [
       timezone: 'Asia/Almaty',
     ),
     phoneNumber: '+777523523423',
-    logoUrl: 'assets/stores/cafeteria.jpg',
-    coverUrl: 'assets/stores/cafeteria.jpg',
+    logoUrl: null,
+    coverUrl: null,
   ),
   Store(
     id: 'store2',
