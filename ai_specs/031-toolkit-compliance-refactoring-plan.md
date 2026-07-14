@@ -79,21 +79,21 @@ Align codebase with `ai_toolkit/` conventions in six phases: linting infra → N
 
 **Goal:** Composite Robot, shared mocks, one feature robot, one passing widget test for reserve-offer flow.
 
-- [ ] `test/src/mocks.dart` — create shared mocktail mocks for key repositories (auth, offers, orders)
-- [ ] `test/src/robot.dart` — create composite Robot class that pumps app with fakes `ProviderContainer` per `architecture.md` lines 690–706
-- [ ] `test/src/features/offers/offers_robot.dart` — create offers robot with methods for discover → reserve flow
-- [ ] TDD: client opens offer → reserves → sees order in list — write widget test using robot API
-- [ ] `test/src/features/offers/reserve_offer_test.dart` — implement the robot-driven widget test (R16)
-- [ ] Verify: `flutter test test/src/`
+- [x] `test/src/mocks.dart` — create shared mocktail mocks for key repositories (auth, offers, orders)
+- [x] `test/src/robot.dart` — create composite Robot class that pumps app with fakes `ProviderContainer` per `architecture.md` lines 690–706
+- [x] `test/src/features/offers/offers_robot.dart` — create offers robot with methods for discover → reserve flow
+- [x] TDD: client opens offer → reserves → sees order in list — write widget test using robot API
+- [x] `test/src/features/offers/reserve_offer_test.dart` — implement the robot-driven widget test (R16)
+- [x] Verify: `flutter test test/src/`
 
 ### Phase 6 — Golden tests + dart_test.yaml (R17, R18)
 
 **Goal:** Golden test infrastructure; one golden test for discover screen at two sizes.
 
-- [ ] `dart_test.yaml` — create at project root with `golden` tag defined
-- [ ] `test/src/features/offers/discover_golden_test.dart` — golden test for discover screen at phone (390×844) and tablet (834×1194) per `architecture.md` lines 727–757
-- [ ] Run `flutter test --update-goldens --tags golden` — generate baseline PNGs
-- [ ] Verify: `flutter test --tags golden` passes against baselines
+- [x] `dart_test.yaml` — create at project root with `golden` tag defined
+- [x] `test/src/features/offers/discover_golden_test.dart` — golden test for discover screen at phone (390×844) and tablet (834×1194) per `architecture.md` lines 727–757
+- [x] Run `flutter test --update-goldens --tags golden` — generate baseline PNGs
+- [x] Verify: `flutter test --tags golden` passes against baselines
 
 ## Data layer changes
 
