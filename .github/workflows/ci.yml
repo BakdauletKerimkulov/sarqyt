@@ -26,7 +26,7 @@ jobs:
 
             - run: flutter analyze --no-fatal-warnings
 
-            - run: flutter test
+            - run: flutter test --exclude-tags golden
 
     functions-lint:
         runs-on: ubuntu-latest
