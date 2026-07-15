@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/items/data/image_upload_repository.dart';
+import 'package:sarqyt/src/utils/notifier_mounted.dart';
 import 'package:sarqyt/src/features/items/data/items_repository.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/orders/data/orders_repository.dart';
@@ -14,9 +15,12 @@ import 'package:uuid/uuid.dart';
 part 'settings_content_controller.g.dart';
 
 @riverpod
-class SettingsContentController extends _$SettingsContentController {
+class SettingsContentController extends _$SettingsContentController
+    with NotifierMounted {
   @override
-  FutureOr<void> build() {}
+  FutureOr<void> build() {
+    ref.onDispose(setUnmounted);
+  }
 
   Future<void> updateItem({
     required StoreID storeId,
@@ -27,7 +31,7 @@ class SettingsContentController extends _$SettingsContentController {
       final repo = ref.read(itemsRepositoryProvider);
       return repo.updateItem(storeId, item: updatedItem);
     });
-    if (_mounted) state = result;
+    if (mounted) state = result;
   }
 
   Future<void> updateItemImage({
@@ -56,7 +60,7 @@ class SettingsContentController extends _$SettingsContentController {
       final updatedItem = item.copyWith(imageUrl: imageUrl);
       await itemsRepo.updateItem(storeId, item: updatedItem);
     });
-    if (_mounted) state = result;
+    if (mounted) state = result;
   }
 
   /// Returns `true` if the item has active orders (confirmed/preparing/readyForPickup).
@@ -75,16 +79,7 @@ class SettingsContentController extends _$SettingsContentController {
       final repo = ref.read(itemsRepositoryProvider);
       return repo.deleteItem(storeId, id: itemId);
     });
-    if (_mounted) state = result;
+    if (mounted) state = result;
   }
 
-  /// Check if this auto-dispose controller is still alive after awaits.
-  bool get _mounted {
-    try {
-      state;
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
 }

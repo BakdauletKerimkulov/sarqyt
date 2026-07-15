@@ -13,7 +13,7 @@ base class AsyncErrorLogger extends ProviderObserver {
     final error = _findError(newValue);
     if (error != null) {
       if (error.error is AppException) {
-        errorLogger.logAppExcaption(error.error as AppException);
+        errorLogger.logAppException(error.error as AppException);
       } else {
         errorLogger.logError(error.error, error.stackTrace);
       }

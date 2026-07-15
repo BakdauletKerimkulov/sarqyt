@@ -4,13 +4,15 @@ import 'package:sarqyt/src/features/offers/application/discover_filter.dart';
 import 'package:sarqyt/src/features/offers/application/offers_with_distance.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
 
+final _testNow = DateTime(2026, 7, 12, 12);
+
 OfferWithDistance _makeOWD({
   required String storeId,
   double price = 1500,
   double? distanceKm,
   DateTime? pickupStart,
 }) {
-  final now = DateTime.now();
+  final now = _testNow;
   return OfferWithDistance(
     offer: Offer(
       id: 'offer_$storeId',
@@ -35,7 +37,7 @@ OfferWithDistance _makeOWD({
 
 void main() {
   group('DiscoverFilter', () {
-    final today = DateTime.now();
+    final today = _testNow;
     final tomorrow = today.add(const Duration(days: 1));
 
     final offers = [
@@ -61,20 +63,20 @@ void main() {
 
     test('no filter returns all', () {
       const filter = DiscoverFilter();
-      final result = applyFilter(offers, filter, {});
+      final result = applyFilter(offers, filter, {}, today);
       expect(result.length, 3);
     });
 
     test('favorites only filters by storeId', () {
       const filter = DiscoverFilter(favoritesOnly: true);
-      final result = applyFilter(offers, filter, {'s1', 's3'});
+      final result = applyFilter(offers, filter, {'s1', 's3'}, today);
       expect(result.length, 2);
       expect(result.map((o) => o.offer.storeId), containsAll(['s1', 's3']));
     });
 
     test('today filter shows only today', () {
       const filter = DiscoverFilter(pickupTime: PickupTimeFilter.today);
-      final result = applyFilter(offers, filter, {});
+      final result = applyFilter(offers, filter, {}, today);
       for (final o in result) {
         final d = o.offer.pickupStartTime;
         expect(DateTime(d.year, d.month, d.day),
@@ -84,7 +86,7 @@ void main() {
 
     test('tomorrow filter shows only tomorrow', () {
       const filter = DiscoverFilter(pickupTime: PickupTimeFilter.tomorrow);
-      final result = applyFilter(offers, filter, {});
+      final result = applyFilter(offers, filter, {}, today);
       for (final o in result) {
         final d = o.offer.pickupStartTime;
         expect(DateTime(d.year, d.month, d.day),
@@ -94,7 +96,7 @@ void main() {
 
     test('sort by price', () {
       const filter = DiscoverFilter(sortBy: SortBy.price);
-      final result = applyFilter(offers, filter, {});
+      final result = applyFilter(offers, filter, {}, today);
       expect(result[0].offer.price, 1000);
       expect(result[1].offer.price, 2000);
       expect(result[2].offer.price, 3000);
@@ -102,7 +104,7 @@ void main() {
 
     test('sort by distance', () {
       const filter = DiscoverFilter(sortBy: SortBy.distance);
-      final result = applyFilter(offers, filter, {});
+      final result = applyFilter(offers, filter, {}, today);
       expect(result[0].distanceKm, 0.5);
       expect(result[1].distanceKm, 1.5);
       expect(result[2].distanceKm, 3.0);
@@ -110,7 +112,7 @@ void main() {
 
     test('maxPrice filters correctly', () {
       const filter = DiscoverFilter(maxPrice: 2000);
-      final result = applyFilter(offers, filter, {});
+      final result = applyFilter(offers, filter, {}, today);
       expect(result.length, 2);
       for (final o in result) {
         expect(o.offer.price <= 2000, true);

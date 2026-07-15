@@ -30,7 +30,8 @@ extension AppBootstrapFirebase on AppBootstrap {
   Future<ProviderContainer> createFirebaseProviderContainer({
     bool addDelay = true,
   }) async {
-    final offeRepo = ClientOfferRepository(FirebaseFirestore.instance);
+    final offeRepo =
+        ClientOfferRepository(FirebaseFirestore.instance, DateTime.now);
     final container = ProviderContainer(
       overrides: [offerRepositoryProvider.overrideWithValue(offeRepo)],
       observers: [AsyncErrorLogger()],

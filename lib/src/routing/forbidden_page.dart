@@ -11,7 +11,7 @@ class ForbiddenPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ResponsiveCenter(
-        maxContentWidth: Breakpoint.tablet,
+        maxContentWidth: Breakpoints.compact,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

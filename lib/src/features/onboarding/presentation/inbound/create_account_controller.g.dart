@@ -34,7 +34,7 @@ final class CreateAccountControllerProvider
 }
 
 String _$createAccountControllerHash() =>
-    r'6d8a84ed9a13494dbf29c949472769f266f02ea1';
+    r'b554f450eba55f8be0ab226a23423bdff0b21b64';
 
 abstract class _$CreateAccountController extends $AsyncNotifier<void> {
   FutureOr<void> build();

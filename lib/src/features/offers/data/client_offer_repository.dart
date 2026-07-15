@@ -13,8 +13,9 @@ part 'client_offer_repository.g.dart';
 const _defaultGeohashPrecision = 4;
 
 class ClientOfferRepository {
-  const ClientOfferRepository(this._firestore);
+  const ClientOfferRepository(this._firestore, this._currentDateBuilder);
   final FirebaseFirestore _firestore;
+  final DateTime Function() _currentDateBuilder;
 
   static String offersPath() => 'offers';
   static String offerPath(String id) => 'offers/$id';
@@ -49,7 +50,7 @@ class ClientOfferRepository {
           .endAt(['$prefix\uf8ff'])
           .snapshots()
           .map((snap) {
-        final now = DateTime.now();
+        final now = _currentDateBuilder();
         return snap.docs
             .map((d) => Offer.fromJson(d.data()))
             .where((o) => o.pickupEndTime.isAfter(now))
@@ -73,7 +74,7 @@ class ClientOfferRepository {
     ).geohash.substring(0, precision);
 
     final prefixes = [centerHash, ...neighborGeohashesOf(geohash: centerHash)];
-    final now = DateTime.now();
+    final now = _currentDateBuilder();
 
     final futures = prefixes.map((prefix) {
       return _firestore
@@ -100,7 +101,7 @@ class ClientOfferRepository {
   // ---------------------------------------------------------------------------
 
   Stream<List<Offer>> watchAllOffers() {
-    final nowTs = Timestamp.fromDate(DateTime.now());
+    final nowTs = Timestamp.fromDate(_currentDateBuilder());
 
     // Server-side filter is pinned to subscription time — can't refresh it.
     // Client-side .map() re-evaluates now on each snapshot to drop expired.
@@ -111,7 +112,7 @@ class ClientOfferRepository {
         .orderBy('pickupEndTime')
         .snapshots()
         .map((snap) {
-      final now = DateTime.now();
+      final now = _currentDateBuilder();
       return snap.docs
           .map((d) => Offer.fromJson(d.data()))
           .where((o) => o.pickupEndTime.isAfter(now))

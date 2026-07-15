@@ -5,6 +5,7 @@ import 'package:sarqyt/src/common_widgets/outlined_section_widget.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/constants/breakpoints.dart';
 import 'package:sarqyt/src/features/items/domain/weekly_schedule.dart';
 import 'package:sarqyt/src/features/items/presentation/item_screen/sales_window.dart';
 
@@ -75,50 +76,73 @@ class DayRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final isCompact =
+        MediaQuery.sizeOf(context).width < Breakpoints.compact;
+
+    final salesWindow = SalesWindow(
+      start: schedule.startTime,
+      end: schedule.endTime,
+      onChanged: (start, end) => onChanged(
+        schedule.copyWith(
+          startHour: start.hour,
+          startMinute: start.minute,
+          endHour: end.hour,
+          endMinute: end.minute,
+        ),
+      ),
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: Sizes.p16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 90,
-            child: Text(
-              dayName,
-              style: textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          gapW16,
-          CollectionToggle(
-            enabled: schedule.enabled,
-            onChanged: (enabled) => onChanged(schedule.copyWith(
-              enabled: enabled,
-              quantity: enabled && schedule.quantity == 0 ? 1 : schedule.quantity,
-            )),
-          ),
-          gapW16,
-          QuantityBox(
-            quantity: schedule.quantity,
-            onChanged: (q) => onChanged(schedule.copyWith(quantity: q)),
-          ),
-          gapW16,
-          SizedBox(
-            width: _salesWindowWidth,
-            child: SalesWindow(
-              start: schedule.startTime,
-              end: schedule.endTime,
-              onChanged: (start, end) => onChanged(
-                schedule.copyWith(
-                  startHour: start.hour,
-                  startMinute: start.minute,
-                  endHour: end.hour,
-                  endMinute: end.minute,
+          Row(
+            children: [
+              SizedBox(
+                width: 90,
+                child: Text(
+                  dayName,
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
+              gapW16,
+              CollectionToggle(
+                enabled: schedule.enabled,
+                onChanged: (enabled) => onChanged(schedule.copyWith(
+                  enabled: enabled,
+                  quantity:
+                      enabled && schedule.quantity == 0 ? 1 : schedule.quantity,
+                )),
+              ),
+              gapW16,
+              if (isCompact)
+                Expanded(
+                  child: QuantityBox(
+                    quantity: schedule.quantity,
+                    onChanged: (q) =>
+                        onChanged(schedule.copyWith(quantity: q)),
+                  ),
+                )
+              else ...[
+                QuantityBox(
+                  quantity: schedule.quantity,
+                  onChanged: (q) =>
+                      onChanged(schedule.copyWith(quantity: q)),
+                ),
+              ],
+              if (!isCompact) ...[
+                gapW16,
+                SizedBox(width: _salesWindowWidth, child: salesWindow),
+              ],
+            ],
           ),
+          if (isCompact) ...[
+            gapH8,
+            salesWindow,
+          ],
         ],
       ),
     );

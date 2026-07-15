@@ -235,7 +235,7 @@ class _PickupWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isExpired = order.isPickupExpired;
+    final isExpired = order.isPickupExpired(DateTime.now());
 
     return Container(
       width: double.infinity,

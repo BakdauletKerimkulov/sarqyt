@@ -50,21 +50,24 @@ void main() {
   group('Order.timeUntilPickupEnd', () {
     test('null when pickupEndTime is null', () {
       final order = _makeOrder();
-      expect(order.timeUntilPickupEnd, isNull);
+      final now = DateTime(2026, 7, 12, 12);
+      expect(order.timeUntilPickupEnd(now), isNull);
     });
 
     test('zero when pickup already ended', () {
+      final now = DateTime(2026, 7, 12, 12);
       final order = _makeOrder(
-        pickupEndTime: DateTime.now().subtract(const Duration(hours: 1)),
+        pickupEndTime: now.subtract(const Duration(hours: 1)),
       );
-      expect(order.timeUntilPickupEnd, Duration.zero);
+      expect(order.timeUntilPickupEnd(now), Duration.zero);
     });
 
     test('positive when pickup not ended yet', () {
+      final now = DateTime(2026, 7, 12, 12);
       final order = _makeOrder(
-        pickupEndTime: DateTime.now().add(const Duration(hours: 2)),
+        pickupEndTime: now.add(const Duration(hours: 2)),
       );
-      final remaining = order.timeUntilPickupEnd!;
+      final remaining = order.timeUntilPickupEnd(now)!;
       expect(remaining.inMinutes, greaterThan(100));
     });
   });
@@ -72,21 +75,24 @@ void main() {
   group('Order.isPickupExpired', () {
     test('false when pickupEndTime is null', () {
       final order = _makeOrder();
-      expect(order.isPickupExpired, false);
+      final now = DateTime(2026, 7, 12, 12);
+      expect(order.isPickupExpired(now), false);
     });
 
     test('true when past pickupEndTime', () {
+      final now = DateTime(2026, 7, 12, 12);
       final order = _makeOrder(
-        pickupEndTime: DateTime.now().subtract(const Duration(minutes: 1)),
+        pickupEndTime: now.subtract(const Duration(minutes: 1)),
       );
-      expect(order.isPickupExpired, true);
+      expect(order.isPickupExpired(now), true);
     });
 
     test('false when before pickupEndTime', () {
+      final now = DateTime(2026, 7, 12, 12);
       final order = _makeOrder(
-        pickupEndTime: DateTime.now().add(const Duration(hours: 1)),
+        pickupEndTime: now.add(const Duration(hours: 1)),
       );
-      expect(order.isPickupExpired, false);
+      expect(order.isPickupExpired(now), false);
     });
   });
 
