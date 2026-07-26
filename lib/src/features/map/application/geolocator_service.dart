@@ -39,7 +39,7 @@ class GeolocatorService {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 GeolocatorService geolocatorService(Ref ref) {
   return GeolocatorService();
 }

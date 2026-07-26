@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:sarqyt/firebase_options.dart';
@@ -19,11 +20,11 @@ void main() async {
 
   // create a container configured with all the Firebase repositories
   final container = await appBootStrap.createFirebaseProviderContainer();
-  // use the container above to create the root widget
-  final root = appBootStrap.createRootWidget(
-    container: container,
-    app: const MyAppClient(),
-  );
+  // initialize services before starting the app
+  appBootStrap.initializeServices(container);
   // start the app
-  runApp(root);
+  runApp(UncontrolledProviderScope(
+    container: container,
+    child: const MyAppClient(),
+  ));
 }

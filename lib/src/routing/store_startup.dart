@@ -39,14 +39,14 @@ Future<StoreStartupData> storeStartup(Ref ref, String storeId) async {
 }
 
 /// Scoped provider for the current [Business]. Only valid inside [StoreStartupWidget].
-final currentBusinessProvider = Provider<Business>((ref) {
+final currentBusinessProvider = Provider<Business>(dependencies: [], (ref) {
   throw UnimplementedError(
     'currentBusinessProvider must be overridden in StoreStartupWidget scope',
   );
 });
 
 /// Scoped stream provider for live [Business] updates. Only valid inside [StoreStartupWidget].
-final currentBusinessStreamProvider = StreamProvider<Business>((ref) {
+final currentBusinessStreamProvider = StreamProvider<Business>(dependencies: [], (ref) {
   throw UnimplementedError(
     'currentBusinessStreamProvider must be overridden in StoreStartupWidget scope',
   );
@@ -85,8 +85,8 @@ class StoreStartupWidget extends ConsumerWidget {
       ),
       data: (data) => ProviderScope(
         overrides: [
-          currentStoreShipProvider.overrideWithValue(data.storeShip),
-          currentBusinessProvider.overrideWithValue(data.business),
+          currentStoreShipProvider.overrideWith((_) => data.storeShip),
+          currentBusinessProvider.overrideWith((_) => data.business),
           currentBusinessStreamProvider.overrideWith((ref) {
             final repo = ref.read(businessRepositoryProvider);
             return repo

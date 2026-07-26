@@ -13,6 +13,7 @@ import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 import 'package:sarqyt/src/routing/store_startup.dart';
 
+// ignore: provider_dependencies
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 

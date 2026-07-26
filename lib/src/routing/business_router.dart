@@ -38,7 +38,7 @@ final _financialsNavigatorKey = GlobalKey<NavigatorState>();
 final _settingsNavigatorKey = GlobalKey<NavigatorState>();
 final _helpNavigatorKey = GlobalKey<NavigatorState>();
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, dependencies: [])
 StoreShip currentStoreShip(Ref ref) => throw UnimplementedError(
   'Error: current store ship accessed outside of Store Shell'.hardcoded,
 );
