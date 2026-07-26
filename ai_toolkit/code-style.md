@@ -1,5 +1,7 @@
 # Code Style Guidelines
 
+_Часть общей базы agentic-coding-toolkit. Правь в базе, не в проекте — локальные правки затрёт sync._
+
 Universal rules for all Flutter projects. Project-specific conventions belong in `ai_docs/`.
 
 ---
@@ -53,6 +55,7 @@ Project structure and feature layers are defined in `architecture.md`. This sect
 - Screens: `{feature}_screen.dart`
 - Controllers: `{feature}_controller.dart`
 - Repositories: `{feature}_repository.dart`
+- Services: `{what_it_does}_service.dart` / `WhatItDoesService`, located in `{feature}/application/` (e.g., cart service in a shop app → `cart_service.dart` / `CartService`)
 - DTOs: `{model}_dto.dart`
 - Domain models: `{model_name}.dart`
 - Enums: `{enum_name}.dart`
@@ -226,6 +229,8 @@ For domain models with JSON serialization — use **freezed + json_serializable*
 
 ## Enums
 
+Dart enums have built-in `index`, `name`, and `values` properties. Never declare a field with these names in an enum — use `dbValue`, `label`, `displayName`, etc. instead. Declaring `index` causes `illegal_concrete_enum_member`.
+
 Enums carry UI data via extensions — no switching on raw strings:
 
 ```dart
@@ -284,7 +289,7 @@ switch (result) {
 ## Error Handling
 
 - **Never swallow exceptions** with empty catch blocks
-- Exception hierarchy, Firebase error mapping, and AsyncValue patterns are defined in `architecture.md`
+- Exception hierarchy, backend error mapping, and AsyncValue patterns are defined in `architecture.md`
 - One rule here: log errors with `debugPrint()` or `log()` from `dart:developer`, never `print()`
 
 ## Null Safety

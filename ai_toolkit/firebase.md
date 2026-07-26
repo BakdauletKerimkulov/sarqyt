@@ -634,3 +634,132 @@ Never remove a field from a shared interface in the same stage that creates it �
 ## Security Rules for Team/Membership Collections
 
 When a collection like `storeShips` represents team membership, the read rule should allow any member of the same team to read other members — not just the owner. Use `hasAccess(parentId)` (exists check on the caller's own membership) rather than `isOwner(parentId)` for read rules. Otherwise, team list queries will fail for non-owner roles.
+---
+
+## Repository Pattern (Firestore + Cloud Functions)
+
+Firebase-specific form of the repository described in `core/architecture.md`. Repositories live in `data/` and are the only layer that touches Firebase. They accept and return **domain models**, never raw maps or DTOs.
+
+```dart
+// data/orders_repository.dart
+class OrdersRepository {
+  const OrdersRepository({
+    required this.uid,
+    required this.firestore,
+    required this.functions,
+  });
+
+  final String uid;
+  final FirebaseFirestore firestore;
+  final FirebaseFunctions functions;
+
+  /// Watch active orders for current user (real-time stream)
+  Stream<List<Order>> watchActiveOrders() {
+    return firestore
+        .collection('orders')
+        .where('customerId', isEqualTo: uid)
+        .where('status', whereIn: ['reserved', 'ready'])
+        .orderBy('reservedAt', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((doc) => OrderDto.fromJson(doc.data()).toDomain())
+            .toList());
+  }
+
+  /// Create order via Cloud Function (not direct Firestore write)
+  Future<Order> createOrder({
+    required String offerId,
+    required int quantity,
+  }) async {
+    final result = await functions.httpsCallable('createOrder').call({
+      'offerId': offerId,
+      'quantity': quantity,
+    });
+    return OrderDto.fromJson(result.data as Map<String, dynamic>).toDomain();
+  }
+}
+```
+
+**Rules:**
+- Constructor injection for Firebase instances (testable via mocks)
+- Stream methods for real-time data (`watchX`), Future methods for one-shot reads (`fetchX`) and writes
+- All Firestore → domain mapping happens inside the repository
+- Never expose `DocumentSnapshot`, `QuerySnapshot`, or `Map<String, dynamic>` to application layer
+
+---
+
+## TimestampConverter (Firestore Timestamps)
+
+Firestore stores dates as `Timestamp`. Convert them on the DTO, never on the domain model:
+
+```dart
+class TimestampConverter implements JsonConverter<DateTime, Timestamp> {
+  const TimestampConverter();
+
+  @override
+  DateTime fromJson(Timestamp ts) => ts.toDate();
+
+  @override
+  Timestamp toJson(DateTime dt) => Timestamp.fromDate(dt);
+}
+
+// Usage in DTO (not domain model)
+@TimestampConverter() required DateTime createdAt,
+```
+
+`TimestampConverter` belongs on DTOs, not domain models.
+
+---
+
+## Firebase Error Mapping
+
+Map Firebase errors to the typed `AppException` hierarchy (`core/architecture.md` → Error Handling) in the data layer:
+
+```dart
+class FirebaseErrorMapper {
+  static AppException map(Object error) => switch (error) {
+    FirebaseAuthException(code: 'user-not-found') =>
+      const NotFoundException('User not found'),
+    FirebaseAuthException(code: 'wrong-password') =>
+      const ValidationException('Wrong password'),
+    FirebaseFunctionsException(:final code, :final message) =>
+      ServerException(message ?? code),
+    _ => NetworkException('Unknown error: $error'),
+  };
+}
+```
+
+---
+
+## App Bootstrap (Firebase)
+
+Firebase-specific part of the bootstrap sequence in `core/architecture.md` → App Bootstrap:
+
+```dart
+void main() async {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // 1. Firebase core
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+    // 2. Crashlytics (platform-guarded)
+    if (!kIsWeb) {
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    }
+
+    // 3. Emulator config (if enabled)
+    if (useEmulators) await connectToEmulators();
+
+    // 4. Create ProviderContainer
+    final container = ProviderContainer(observers: [...]);
+
+    // 5. Run app with UncontrolledProviderScope
+    runApp(UncontrolledProviderScope(container: container, child: const App()));
+  }, (error, stack) {
+    // Top-level error handler
+  });
+}
+```
+
+Crash reporting specifics: see the Crashlytics section above.

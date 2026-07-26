@@ -1,5 +1,7 @@
 # Riverpod Guidelines
 
+_Часть общей базы agentic-coding-toolkit. Правь в базе, не в проекте — локальные правки затрёт sync._
+
 Universal Riverpod patterns for all Flutter projects. Use code generation (`@riverpod`) exclusively — never legacy `StateProvider`, `StateNotifierProvider`, or `ChangeNotifierProvider`.
 
 ---
@@ -21,7 +23,7 @@ Universal Riverpod patterns for all Flutter projects. Use code generation (`@riv
 ## When to Create a Provider (and When NOT to)
 
 **Create a provider for:**
-- Data from backend (Firestore streams, API calls)
+- Data from backend (remote streams, API calls)
 - Shared state across multiple widgets
 - Business logic with side effects (auth, payments, orders)
 - Computed/derived data from other providers
@@ -165,7 +167,7 @@ class OnboardingFlow extends _$OnboardingFlow {
 
 ## Repository Providers
 
-Repositories are functional providers with `keepAlive: true`. They encapsulate all data access (Firestore, APIs, local storage).
+Repositories are functional providers with `keepAlive: true`. They encapsulate all data access (remote backend, APIs, local storage).
 
 ```dart
 @Riverpod(keepAlive: true)
@@ -175,23 +177,22 @@ OrdersRepository ordersRepository(Ref ref) {
 
   return OrdersRepository(
     uid: user.uid,
-    firestore: FirebaseFirestore.instance,
-    functions: FirebaseFunctions.instanceFor(region: kCloudFunctionsRegion),
+    dataSource: ref.watch(ordersDataSourceProvider), // backend SDK client
   );
 }
 ```
 
 **Key rules:**
-- Constructor injection for Firebase instances (testable)
+- Constructor injection for backend SDK clients (testable)
 - Throw loudly if auth prerequisite is missing — no silent fallback, no returning null
-- Cloud Functions region is a constant defined in project config (not hardcoded in ai_toolkit)
+- Backend configuration (region, URL, keys) is a constant defined in project config (not hardcoded in ai_toolkit); see `backends/*.md`
 - Repository watches `authStateChanges` — automatically invalidates when user signs out
 
 ---
 
 ## Stream Providers
 
-For real-time Firestore data:
+For real-time backend data:
 
 ```dart
 @riverpod
@@ -208,7 +209,7 @@ Stream<List<Order>> activeOrders(Ref ref) {
 
 ### Timed keepAlive for family stream providers
 
-When a family stream provider is viewed repeatedly (e.g. tab switches unmount/remount the watching widget), pure auto-dispose causes a fresh Firestore subscription on every re-mount → visible loading flicker. Use `ref.keepAlive()` + `Timer` to cache the provider state for a window after the last watcher leaves:
+When a family stream provider is viewed repeatedly (e.g. tab switches unmount/remount the watching widget), pure auto-dispose causes a fresh backend subscription on every re-mount → visible loading flicker. Use `ref.keepAlive()` + `Timer` to cache the provider state for a window after the last watcher leaves:
 
 ```dart
 @riverpod
@@ -361,7 +362,7 @@ final container = ProviderContainer(observers: [AsyncErrorLogger()]);
 
 **Rules:**
 - One observer, registered once at bootstrap — never per-screen error logging
-- `AppException` logs message only; unexpected errors log full stack (→ Crashlytics in release)
+- `AppException` logs message only; unexpected errors log full stack (→ crash reporting in release)
 
 ---
 
@@ -406,9 +407,9 @@ SomeState build() {
 
 ## Server State Sync
 
-- **Do not** manually call `ref.invalidate()` after every mutation — prefer Firestore streams that auto-propagate changes
+- **Do not** manually call `ref.invalidate()` after every mutation — prefer backend streams that auto-propagate changes
 - Use `ref.invalidate(provider)` only when there is no stream (e.g. one-shot API calls that need refreshing)
-- After a write operation, the Firestore stream listener will automatically emit the updated data
+- After a write operation, the backend stream listener will automatically emit the updated data
 
 ---
 
@@ -479,6 +480,23 @@ switch (result) {
 
 ---
 
+## Cache-first with Async Refresh (Sync Notifier)
+
+When a Notifier needs network data but you want to avoid `AsyncNotifier` (and `AsyncValue` in widgets):
+
+```dart
+@override
+MyState build() {
+  final cached = _repository.loadCached();
+  _refreshFromServer(); // fire-and-forget
+  return MyState(data: cached);
+}
+```
+
+This shows cached data instantly and updates state when the server responds. Use when migrating from local-only to server-backed state without changing widget code. The trade-off: widgets don't see a "loading" state for the initial fetch — they see stale cache until refresh completes.
+
+---
+
 ## Composing N async providers into one list
 
 When you need to watch a dynamic set of stream providers and combine them into a single list, use a sync `@riverpod` function returning `AsyncValue<T>`:
@@ -502,7 +520,7 @@ AsyncValue<List<Store>> favoriteStores(Ref ref) {
 }
 ```
 
-This creates N Firestore listeners — acceptable for small sets (<30 items). For large sets, use a single batched query instead.
+This creates N backend listeners — acceptable for small sets (<30 items). For large sets, use a single batched query instead.
 
 ---
 
@@ -521,4 +539,4 @@ This creates N Firestore listeners — acceptable for small sets (<30 items). Fo
 | Using legacy `StateProvider` / `StateNotifierProvider` | Use `@riverpod` code generation |
 | Creating a provider for every piece of state | Use local widget state for UI-only concerns |
 | Manually managing `StreamSubscription` in providers | Let Riverpod handle stream lifecycle |
-| Hardcoding Firebase region in provider | Use a project constant from config |
+| Hardcoding backend region/URL in provider | Use a project constant from config |

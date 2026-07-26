@@ -22,8 +22,8 @@ final class CurrentStoreShipProvider
         retry: null,
         name: r'currentStoreShipProvider',
         isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
+        dependencies: const <ProviderOrFamily>[],
+        $allTransitiveDependencies: const <ProviderOrFamily>[],
       );
 
   @override
@@ -48,7 +48,7 @@ final class CurrentStoreShipProvider
   }
 }
 
-String _$currentStoreShipHash() => r'd427ce1af8703ee638961bfd12f3cce2ac6530a9';
+String _$currentStoreShipHash() => r'4c104af177d1dbed9765b8301008a55dc0d907a1';
 
 @ProviderFor(businessRouter)
 const businessRouterProvider = BusinessRouterProvider._();
