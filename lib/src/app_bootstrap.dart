@@ -9,10 +9,12 @@ import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 /// Helper class to initialize services and configure the error handlers
 class AppBootstrap {
-  Widget createRootWidget({
-    required ProviderContainer container,
-    required Widget app,
-  }) {
+  /// Initialize services that must start at app launch.
+  ///
+  /// Call before [runApp]. The caller wraps the app in
+  /// [UncontrolledProviderScope] so that `riverpod_lint` can verify
+  /// the scope is present at the widget-tree root.
+  void initializeServices(ProviderContainer container) {
     // * Initialize user token refresh service (forces ID token refresh
     // * when server updates custom claims via refreshTime in users/{uid})
     container.read(userTokenRefreshServiceProvider);
@@ -21,8 +23,6 @@ class AppBootstrap {
     container.listen(initPushNotificationsProvider, (_, __) {});
     final errorLogger = container.read(errorLoggerProvider);
     registerErrorHandler(errorLogger);
-
-    return UncontrolledProviderScope(container: container, child: app);
   }
 
   void registerErrorHandler(ErrorLogger errorLogger) {

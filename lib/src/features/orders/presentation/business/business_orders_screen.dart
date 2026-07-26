@@ -12,6 +12,7 @@ import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 
+// ignore: provider_dependencies
 class BusinessOrdersScreen extends ConsumerWidget {
   const BusinessOrdersScreen({super.key});
 

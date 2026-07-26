@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/app_bootstrap.dart';
 import 'package:sarqyt/src/app_bootstrap_fakes.dart';
 import 'package:sarqyt/src/app_client.dart';
@@ -9,9 +10,9 @@ void main() async {
   final appBootStrap = AppBootstrap();
   final container = await appBootStrap.createsFakeProviderContainer();
 
-  final root = appBootStrap.createRootWidget(
+  appBootStrap.initializeServices(container);
+  runApp(UncontrolledProviderScope(
     container: container,
-    app: const MyAppClient(),
-  );
-  runApp(root);
+    child: const MyAppClient(),
+  ));
 }

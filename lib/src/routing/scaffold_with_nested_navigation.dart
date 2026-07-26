@@ -183,6 +183,7 @@ class _GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
+// ignore: provider_dependencies
 class _SidebarContent extends ConsumerWidget {
   const _SidebarContent({
     required this.currentBranch,

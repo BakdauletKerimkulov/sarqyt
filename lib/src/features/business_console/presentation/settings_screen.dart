@@ -114,6 +114,7 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_TabBarDelegate oldDelegate) => false;
 }
 
+// ignore: provider_dependencies
 class StoreSettingsContent extends ConsumerWidget {
   const StoreSettingsContent({super.key});
 
@@ -201,6 +202,7 @@ class AccountSettingsContent extends StatelessWidget {
   }
 }
 
+// ignore: provider_dependencies
 class TeamSettingsContent extends ConsumerWidget {
   const TeamSettingsContent({super.key});
 

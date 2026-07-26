@@ -45,6 +45,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 029 | Fix offer screen reservations flickering | fix | done | 2026-07-11 | spec |
 | 030 | Redirect to home when offer deleted | fix | done | 2026-07-12 | spec |
 
-Next number: **031**.
+| 032 | Fix riverpod_lint warnings | chore | done | 2026-07-26 | spec |
+
+Next number: **033**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
