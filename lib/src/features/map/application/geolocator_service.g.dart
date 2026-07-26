@@ -26,7 +26,7 @@ final class GeolocatorServiceProvider
         argument: null,
         retry: null,
         name: r'geolocatorServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -54,7 +54,7 @@ final class GeolocatorServiceProvider
   }
 }
 
-String _$geolocatorServiceHash() => r'801847611a108a8b27206e7063040184726e64ee';
+String _$geolocatorServiceHash() => r'adc1688a1653533436d880462bbcd903140f667e';
 
 /// Cached user position. keepAlive prevents repeated GPS requests.
 
