@@ -48,7 +48,7 @@ Push-уведомления на весь жизненный цикл заказ
 - [x] `functions/src/features/notifications/helpers/recipients.ts` — `getCustomerToken(uid)` + `getStoreTeamTokens(storeId)`; использует `db` из `app/firebase.ts` и `FirestoreCollections`
 - [x] `functions/src/features/triggers/orders.ts` — после коммита транзакции нумерации отправить push команде магазина, `orderNumber` берётся из возврата транзакции (`nextNumber`), не из снапшота; заменить `console.error` (строка 15) на `logError`; `retry` не включать
 - [x] `lib/src/features/notifications/data/push_notification_service.dart` — параметр «аудитория приложения» в конструкторе/`initialize`; `_saveToken` пишет `fcmTokenClient` **или** `fcmTokenBusiness` **и** legacy `fcmToken` (R15); `lib/main.dart` → business, `lib/main_client.dart` → client (прокинуть через `app_bootstrap.dart`)
-- [ ] Verify: `cd functions && npm run lint && npm test` + `flutter analyze && flutter test --exclude-tags golden && dart run custom_lint` + ручной QA-1 и QA-9 _blocked: автоматика зелёная (`npm run lint`, vitest 13/13 по notifications, `flutter analyze`, `flutter test --exclude-tags golden`, `dart run custom_lint`); ручные QA-1 и QA-9 требуют устройства и не выполнялись._
+- [ ] Verify: `cd functions && npm run lint && npm test` + `flutter analyze && flutter test --exclude-tags golden && dart run custom_lint` + ручной QA-1 и QA-9 _blocked: полный `./scripts/gate.sh` зелёный на всех тирах (format, analyze, custom_lint, 215 Flutter-тестов, `functions:lint`, `functions:build`, `rules+functions:test` через `firebase emulators:exec`); ручные QA-1 и QA-9 требуют физического устройства и не выполнялись._
 
 ### Phase 2 — Русские тексты и парные уведомления на переходах статусов
 
