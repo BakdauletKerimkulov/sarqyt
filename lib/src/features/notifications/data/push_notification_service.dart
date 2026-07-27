@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
+import 'package:sarqyt/src/features/notifications/domain/push_audience.dart';
 
 part 'push_notification_service.g.dart';
 
@@ -19,8 +20,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class PushNotificationService {
   final FirebaseMessaging _messaging;
   final FirebaseFirestore _firestore;
+  final PushAudience _audience;
 
-  PushNotificationService(this._messaging, this._firestore);
+  PushNotificationService(this._messaging, this._firestore, this._audience);
 
   Future<void> initialize(String? uid) async {
     final settings = await _messaging.requestPermission(
@@ -62,12 +64,22 @@ class PushNotificationService {
     }
   }
 
+  /// Writes the token to this app's own field plus the legacy shared one.
+  ///
+  /// The legacy `fcmToken` keeps builds that predate the split working; it is
+  /// dropped once both apps have rolled out.
   Future<void> _saveToken(String uid, String token) {
     return _firestore.collection('users').doc(uid).set(
-      {'fcmToken': token},
+      {_audience.tokenField: token, 'fcmToken': token},
       SetOptions(merge: true),
     );
   }
+}
+
+/// Which app this build is. Overridden per entry point in `main*.dart`.
+@Riverpod(keepAlive: true)
+PushAudience pushAudience(Ref ref) {
+  throw UnimplementedError('pushAudienceProvider must be overridden');
 }
 
 @Riverpod(keepAlive: true)
@@ -76,6 +88,7 @@ PushNotificationService pushNotificationService(Ref ref) {
   return PushNotificationService(
     FirebaseMessaging.instance,
     FirebaseFirestore.instance,
+    ref.watch(pushAudienceProvider),
   );
 }
 

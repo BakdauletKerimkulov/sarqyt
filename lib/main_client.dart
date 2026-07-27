@@ -7,6 +7,7 @@ import 'package:sarqyt/firebase_options.dart';
 import 'package:sarqyt/src/app_bootstrap.dart';
 import 'package:sarqyt/src/app_bootstrap_firebase.dart';
 import 'package:sarqyt/src/app_client.dart';
+import 'package:sarqyt/src/features/notifications/domain/push_audience.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,9 @@ void main() async {
   //await appBootStrap.setupEmulators();
 
   // create a container configured with all the Firebase repositories
-  final container = await appBootStrap.createFirebaseProviderContainer();
+  final container = await appBootStrap.createFirebaseProviderContainer(
+    pushAudience: PushAudience.client,
+  );
   // initialize services before starting the app
   appBootStrap.initializeServices(container);
   // start the app

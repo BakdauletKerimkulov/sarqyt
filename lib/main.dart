@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/app_bootstrap.dart';
 import 'package:sarqyt/src/app_bootstrap_firebase.dart';
 import 'package:sarqyt/src/app_business.dart';
+import 'package:sarqyt/src/features/notifications/domain/push_audience.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,9 @@ void main() async {
   final appBootStrap = AppBootstrap();
   //! Uncomment this to connect to the Firebase emulators
   //await appBootStrap.setupEmulators();
-  final container = await appBootStrap.createFirebaseProviderContainer();
+  final container = await appBootStrap.createFirebaseProviderContainer(
+    pushAudience: PushAudience.business,
+  );
   appBootStrap.initializeServices(container);
 
   runApp(UncontrolledProviderScope(
