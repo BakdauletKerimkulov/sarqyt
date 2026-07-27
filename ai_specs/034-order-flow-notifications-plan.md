@@ -54,12 +54,12 @@ Push-уведомления на весь жизненный цикл заказ
 
 **Goal:** Ни один переход не теряет уведомление; `completed`/`cancelled`/`expired` уведомляют вторую сторону (R2, R3, R3b, R4, R8, R9-payload).
 
-- [ ] TDD: `functions/src/features/notifications/core/messages.test.ts` — регрессия: для каждого статуса из старого `statusLabels` (`confirmed`, `preparing`, `readyForPickup`, `completed`, `cancelled`, `expired`) существует функция текста; каждая даёт непустые RU `title`/`body` → затем реализовать
-- [ ] `functions/src/features/notifications/core/messages.ts` — добавить `orderAcceptedMessage`, `orderReadyMessage`, `orderCompletedCustomerMessage`, `orderCompletedStoreMessage`, `orderCancelledMessage`, `orderExpiredMessage`
-- [ ] `functions/src/features/orders/functions/on-order-status-changed.ts` — удалить англоязычный `statusLabels`; отправка только через `send-push.ts`; ветки аудитории: клиент на `preparing`/`readyForPickup`, обе стороны на `completed` и `expired`, `cancelled` по `cancelledBy` (store → клиент, customer → команда магазина)
-- [ ] `functions/src/features/orders/functions/on-order-status-changed.ts` — `data`-payload по R9: `type`, `orderId`, `storeId`, `storeName`; поле пути **не** передавать
-- [ ] `functions/src/features/orders/functions/update-order-status.ts` — при переходе в `completed` дописать `completedAt: serverTimestamp()` в той же транзакции (строка ~73)
-- [ ] Verify: `cd functions && npm run lint && npm test` + ручной QA-2, QA-2b, QA-4, QA-6, QA-7
+- [x] TDD: `functions/src/features/notifications/core/messages.test.ts` — регрессия: для каждого статуса из старого `statusLabels` (`confirmed`, `preparing`, `readyForPickup`, `completed`, `cancelled`, `expired`) существует функция текста; каждая даёт непустые RU `title`/`body` → затем реализовать
+- [x] `functions/src/features/notifications/core/messages.ts` — добавить `orderAcceptedMessage`, `orderReadyMessage`, `orderCompletedCustomerMessage`, `orderCompletedStoreMessage`, `orderCancelledMessage`, `orderExpiredMessage`
+- [x] `functions/src/features/orders/functions/on-order-status-changed.ts` — удалить англоязычный `statusLabels`; отправка только через `send-push.ts`; ветки аудитории: клиент на `preparing`/`readyForPickup`, обе стороны на `completed` и `expired`, `cancelled` по `cancelledBy` (store → клиент, customer → команда магазина)
+- [x] `functions/src/features/orders/functions/on-order-status-changed.ts` — `data`-payload по R9: `type`, `orderId`, `storeId`, `storeName`; поле пути **не** передавать
+- [x] `functions/src/features/orders/functions/update-order-status.ts` — при переходе в `completed` дописать `completedAt: serverTimestamp()` в той же транзакции (строка ~73)
+- [ ] Verify: `cd functions && npm run lint && npm test` + ручной QA-2, QA-2b, QA-4, QA-6, QA-7 _blocked: автоматика зелёная (`npm run lint` чисто, vitest 27/27 в `src`, полный `npm test` — 58 passed при одном предсуществующем падении `test/firestore-rules.test.ts`); ручные QA-2, QA-2b, QA-4, QA-6, QA-7 требуют устройства и не выполнялись._
 
 ### Phase 3 — Планировщик напоминаний по окну забора
 

@@ -12,6 +12,9 @@ export interface NotificationMessage {
   body: string;
 }
 
+/** Which side of the order a text is written for. */
+export type MessageAudience = "customer" | "store";
+
 /** Input for {@link newOrderMessage}. */
 export interface NewOrderInput {
   itemName: string;
@@ -30,5 +33,140 @@ export function newOrderMessage(input: NewOrderInput): NotificationMessage {
   return {
     title: "Новый заказ",
     body: `${itemName} ×${itemQuantity} — заказ №${orderNumber}`,
+  };
+}
+
+/** Input for {@link orderAcceptedMessage}. */
+export interface OrderAcceptedInput {
+  storeName: string;
+}
+
+/**
+ * Text sent to the customer when the store starts preparing the order.
+ *
+ * @param {OrderAcceptedInput} input Store details.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function orderAcceptedMessage(
+  input: OrderAcceptedInput,
+): NotificationMessage {
+  return {
+    title: input.storeName,
+    body: "Заведение приняло ваш заказ и готовит его",
+  };
+}
+
+/** Input for {@link orderReadyMessage}. */
+export interface OrderReadyInput {
+  storeName: string;
+  orderNumber: number;
+}
+
+/**
+ * Text sent to the customer when the order is ready for pickup.
+ *
+ * @param {OrderReadyInput} input Store and order details.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function orderReadyMessage(
+  input: OrderReadyInput,
+): NotificationMessage {
+  return {
+    title: input.storeName,
+    body: `Заказ №${input.orderNumber} готов к выдаче`,
+  };
+}
+
+/** Input for the messages that only need the order number. */
+export interface OrderNumberInput {
+  orderNumber: number;
+}
+
+/**
+ * Text sent to the customer once the order has been handed over.
+ *
+ * @param {OrderNumberInput} input Order details.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function orderCompletedCustomerMessage(
+  input: OrderNumberInput,
+): NotificationMessage {
+  return {
+    title: "Приятного аппетита!",
+    body: `Заказ №${input.orderNumber} получен. Спасибо, что спасаете еду`,
+  };
+}
+
+/**
+ * Text sent to the store team once the order has been handed over.
+ *
+ * @param {OrderNumberInput} input Order details.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function orderCompletedStoreMessage(
+  input: OrderNumberInput,
+): NotificationMessage {
+  return {
+    title: "Заказ передан",
+    body: `Заказ №${input.orderNumber} благополучно передан клиенту`,
+  };
+}
+
+/** Input for {@link orderCancelledMessage}. */
+export interface OrderCancelledInput {
+  orderNumber: number;
+  audience: MessageAudience;
+  reason?: string;
+}
+
+/**
+ * Text sent to whichever side did not cancel the order.
+ *
+ * @param {OrderCancelledInput} input Order, audience and optional reason.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function orderCancelledMessage(
+  input: OrderCancelledInput,
+): NotificationMessage {
+  const { orderNumber, audience, reason } = input;
+  if (audience === "store") {
+    return {
+      title: "Заказ отменён",
+      body: `Заказ №${orderNumber} отменён клиентом`,
+    };
+  }
+  return {
+    title: "Заказ отменён",
+    body: reason ?
+      `Заказ №${orderNumber} отменён заведением: ${reason}` :
+      `Заказ №${orderNumber} отменён заведением`,
+  };
+}
+
+/** Input for {@link orderExpiredMessage}. */
+export interface OrderExpiredInput {
+  orderNumber: number;
+  audience: MessageAudience;
+}
+
+/**
+ * Text sent to both sides when the pickup window closed unused.
+ *
+ * @param {OrderExpiredInput} input Order and audience.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function orderExpiredMessage(
+  input: OrderExpiredInput,
+): NotificationMessage {
+  const { orderNumber, audience } = input;
+  if (audience === "store") {
+    return {
+      title: "Заказ не забрали",
+      body: `Заказ №${orderNumber} не забрали до конца окна выдачи`,
+    };
+  }
+  return {
+    title: "Окно забора закрылось",
+    body: `Заказ №${orderNumber} не был получен`,
   };
 }
