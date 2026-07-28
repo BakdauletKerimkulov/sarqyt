@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dueReminders, ReminderOrder } from "./reminders.js";
+import { dueReminders, isReviewPromptDue, ReminderOrder } from "./reminders.js";
 
 const kMinute = 60 * 1000;
 const kHour = 60 * kMinute;
@@ -97,5 +97,34 @@ describe("dueReminders", () => {
     expect(order.remindersSent).toBeUndefined();
     const start = order.pickupStartTime.getTime();
     expect(dueReminders(order, new Date(start - 5 * kMinute))).toEqual(["beforeStart"]);
+  });
+});
+
+describe("isReviewPromptDue", () => {
+  it("is due 2 hours after completedAt for a completed order", () => {
+    const completedAt = new Date("2026-07-27T12:00:00Z");
+    const order = { status: "completed", completedAt };
+
+    expect(isReviewPromptDue(order, new Date("2026-07-27T13:59:00Z"))).toBe(false);
+    expect(isReviewPromptDue(order, new Date("2026-07-27T14:00:00Z"))).toBe(true);
+  });
+
+  it("is not due without completedAt", () => {
+    const order = { status: "completed" };
+    expect(isReviewPromptDue(order, new Date("2026-07-27T14:00:00Z"))).toBe(false);
+  });
+
+  it("is not due for a non-completed order", () => {
+    const order = { status: "confirmed", completedAt: new Date("2026-07-27T12:00:00Z") };
+    expect(isReviewPromptDue(order, new Date("2026-07-27T14:00:00Z"))).toBe(false);
+  });
+
+  it("is not due once the reviewPrompt flag is already set", () => {
+    const order = {
+      status: "completed",
+      completedAt: new Date("2026-07-27T12:00:00Z"),
+      remindersSent: { reviewPrompt: true },
+    };
+    expect(isReviewPromptDue(order, new Date("2026-07-27T14:00:00Z"))).toBe(false);
   });
 });

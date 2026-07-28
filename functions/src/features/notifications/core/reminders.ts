@@ -23,6 +23,17 @@ export interface ReminderFlags {
   beforeStart?: boolean;
   midWindow?: boolean;
   beforeEnd?: boolean;
+  reviewPrompt?: boolean;
+}
+
+/** How long after `completedAt` the review prompt fires (R7). */
+const kReviewPromptDelayMs = 2 * 60 * 60 * 1000;
+
+/** Order fields {@link isReviewPromptDue} needs. */
+export interface ReviewPromptOrder {
+  status: string;
+  completedAt?: Date;
+  remindersSent?: ReminderFlags;
 }
 
 /** Order fields {@link dueReminders} needs. */
@@ -74,4 +85,19 @@ export function dueReminders(order: ReminderOrder, now: Date): ReminderKind[] {
     .sort((a, b) => b.triggerAt - a.triggerAt);
 
   return due.length > 0 ? [due[0].kind] : [];
+}
+
+/**
+ * Whether a delayed review-request push should fire for this order (R7).
+ *
+ * @param {ReviewPromptOrder} order Order fields the check is computed from.
+ * @param {Date} now Current time, injected so this stays pure and testable.
+ * @return {boolean} `true` once 2 hours have passed since `completedAt`.
+ */
+export function isReviewPromptDue(order: ReviewPromptOrder, now: Date): boolean {
+  if (order.status !== "completed") return false;
+  if (!order.completedAt) return false;
+  if (order.remindersSent?.reviewPrompt) return false;
+
+  return now.getTime() - order.completedAt.getTime() >= kReviewPromptDelayMs;
 }

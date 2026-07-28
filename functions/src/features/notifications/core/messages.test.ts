@@ -11,6 +11,7 @@ import {
   orderReadyMessage,
   pickupEndingMessage,
   pickupSoonMessage,
+  reviewPromptMessage,
 } from "./messages.js";
 
 describe("newOrderMessage", () => {
@@ -150,5 +151,17 @@ describe("pickup-window reminder messages", () => {
 
     expect(message.body).toContain("17");
     expect(message.body).toContain("18:30");
+  });
+});
+
+describe("reviewPromptMessage", () => {
+  it("substitutes the store name and item name", () => {
+    const message = reviewPromptMessage({
+      storeName: "Пекарня",
+      itemName: "Комбо-бокс",
+    });
+
+    expect(message.body).toContain("Пекарня");
+    expect(message.body).toContain("Комбо-бокс");
   });
 });

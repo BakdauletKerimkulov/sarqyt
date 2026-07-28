@@ -78,11 +78,11 @@ Push-уведомления на весь жизненный цикл заказ
 
 **Goal:** Через 2 часа после `completedAt`, если отзыва нет (R7).
 
-- [ ] TDD: `functions/src/features/notifications/core/reminders.test.ts` — `reviewPrompt` возвращается только при `status == completed`, `completedAt <= now - 2h` и незаполненном флаге; ничего при отсутствующем `completedAt` → затем реализовать в `reminders.ts`
-- [ ] TDD: `functions/src/features/notifications/core/messages.test.ts` — `reviewPromptMessage` подставляет `storeName` и `itemName` → затем реализовать в `messages.ts`
-- [ ] `functions/src/features/notifications/functions/send-order-reminders.ts` — второй запрос: `status == "completed"` + `completedAt <= now - 2h` + `completedAt >= now - 24h`, `limit(500)`; проверка `reviews.where('orderId','==',id).limit(1)` перед отправкой; флаг `remindersSent.reviewPrompt` в транзакции
-- [ ] `firestore.indexes.json` — новый композитный индекс `orders (status ASC, completedAt ASC)`
-- [ ] Verify: `cd functions && npm run lint && npm test`; `firebase deploy --only firestore:indexes`; ручной QA-5 (с оговоркой G4)
+- [x] TDD: `functions/src/features/notifications/core/reminders.test.ts` — `reviewPrompt` возвращается только при `status == completed`, `completedAt <= now - 2h` и незаполненном флаге; ничего при отсутствующем `completedAt` → затем реализовать в `reminders.ts`
+- [x] TDD: `functions/src/features/notifications/core/messages.test.ts` — `reviewPromptMessage` подставляет `storeName` и `itemName` → затем реализовать в `messages.ts`
+- [x] `functions/src/features/notifications/functions/send-order-reminders.ts` — второй запрос: `status == "completed"` + `completedAt <= now - 2h` + `completedAt >= now - 24h`, `limit(500)`; проверка `reviews.where('orderId','==',id).limit(1)` перед отправкой; флаг `remindersSent.reviewPrompt` в транзакции
+- [x] `firestore.indexes.json` — новый композитный индекс `orders (status ASC, completedAt ASC)`
+- [ ] Verify: `cd functions && npm run lint && npm test`; `firebase deploy --only firestore:indexes`; ручной QA-5 (с оговоркой G4) _blocked: код провалидирован (`npm run lint`, полный `./scripts/gate.sh` зелёный на всех тирах, 42 теста в `notifications`); `firebase deploy --only firestore:indexes` — деплой в реальный проект, не выполняется автоматически без явного разрешения; ручной QA-5 требует устройства и уже отдельно блокируется предсуществующим багом `firestore.rules` ↔ `submitReview` (G4)._
 
 ### Phase 5 — Клиент: тап по push открывает нужный экран
 

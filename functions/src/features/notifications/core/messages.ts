@@ -230,3 +230,24 @@ export function pickupEndingMessage(
     body: `Успейте забрать заказ №${input.orderNumber} до ${input.endTime}`,
   };
 }
+
+/** Input for {@link reviewPromptMessage}. */
+export interface ReviewPromptInput {
+  storeName: string;
+  itemName: string;
+}
+
+/**
+ * Text sent 2 hours after pickup, asking for a review (R7).
+ *
+ * @param {ReviewPromptInput} input Store and item details.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function reviewPromptMessage(
+  input: ReviewPromptInput,
+): NotificationMessage {
+  return {
+    title: "Как всё прошло?",
+    body: `Оцените ${input.storeName} и ${input.itemName}`,
+  };
+}
