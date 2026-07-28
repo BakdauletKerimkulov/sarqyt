@@ -34,6 +34,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Time-sensitive push notifications (spec 034, R13) are sent with
+             this channel id; FCM creates the channel itself on first delivery. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="order_updates" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

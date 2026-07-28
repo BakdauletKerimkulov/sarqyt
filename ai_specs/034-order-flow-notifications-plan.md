@@ -65,14 +65,14 @@ Push-уведомления на весь жизненный цикл заказ
 
 **Goal:** До трёх напоминаний клиенту на заказ, ровно по одному разу (R5, R6, R12, R13).
 
-- [ ] TDD: `functions/src/features/notifications/core/reminders.test.ts` — `dueReminders(order, now)`: `beforeStart` в `[start-15м, start)`; `midWindow` после середины; `beforeEnd` в `[end-15м, end)`; пусто без `pickupStartTime`/`pickupEndTime` (E1); максимум одно напоминание за прогон, остальные подавляются (E2); ничего задним числом (E4); ничего для `completed | cancelled | expired`; документ без `remindersSent` == все `false` (R12) → затем реализовать
-- [ ] `functions/src/features/notifications/core/reminders.ts` — чистая `dueReminders`, тип `ReminderKind`, константа `kReminderLookaheadHours = 12`. Без импортов Firestore
-- [ ] TDD: `functions/src/features/notifications/core/messages.test.ts` — `pickupSoonMessage`, `midWindowMessage`, `pickupEndingMessage` подставляют время в формате `HH:mm` → затем реализовать в `messages.ts`
-- [ ] `functions/src/features/notifications/helpers/send-push.ts` — блоки `android` (`priority: high`, `ttl: 3_600_000`, `channelId: order_updates`) и `apns` (`apns-priority: 10`, `apns-expiration: now+3600`) для чувствительных ко времени уведомлений (R13, см. G1)
-- [ ] `functions/src/features/notifications/functions/send-order-reminders.ts` — `onSchedule({ schedule: "every 5 minutes", region: "asia-south1" })`; запрос `status in [confirmed, preparing, readyForPickup]` + `pickupEndTime >= now` + `pickupEndTime <= now + 12h`, `limit(500)`; пер-заказная транзакция с повторной проверкой флага перед `remindersSent.{kind} = true` (образец `expire-orders.ts`); отправка после коммита
-- [ ] `android/app/src/main/AndroidManifest.xml` — meta-data `default_notification_channel_id = order_updates` (G1)
-- [ ] `functions/src/index.ts` — экспорт `sendOrderReminders`
-- [ ] Verify: `cd functions && npm run lint && npm test` + ручной QA-3 на физическом Android-устройстве в режиме ожидания
+- [x] TDD: `functions/src/features/notifications/core/reminders.test.ts` — `dueReminders(order, now)`: `beforeStart` в `[start-15м, start)`; `midWindow` после середины; `beforeEnd` в `[end-15м, end)`; пусто без `pickupStartTime`/`pickupEndTime` (E1); максимум одно напоминание за прогон, остальные подавляются (E2); ничего задним числом (E4); ничего для `completed | cancelled | expired`; документ без `remindersSent` == все `false` (R12) → затем реализовать
+- [x] `functions/src/features/notifications/core/reminders.ts` — чистая `dueReminders`, тип `ReminderKind`, константа `kReminderLookaheadHours = 12`. Без импортов Firestore
+- [x] TDD: `functions/src/features/notifications/core/messages.test.ts` — `pickupSoonMessage`, `midWindowMessage`, `pickupEndingMessage` подставляют время в формате `HH:mm` → затем реализовать в `messages.ts`
+- [x] `functions/src/features/notifications/helpers/send-push.ts` — блоки `android` (`priority: high`, `ttl: 3_600_000`, `channelId: order_updates`) и `apns` (`apns-priority: 10`, `apns-expiration: now+3600`) для чувствительных ко времени уведомлений (R13, см. G1)
+- [x] `functions/src/features/notifications/functions/send-order-reminders.ts` — `onSchedule({ schedule: "every 5 minutes", region: "asia-south1" })`; запрос `status in [confirmed, preparing, readyForPickup]` + `pickupEndTime >= now` + `pickupEndTime <= now + 12h`, `limit(500)`; пер-заказная транзакция с повторной проверкой флага перед `remindersSent.{kind} = true` (образец `expire-orders.ts`); отправка после коммита. Время в текстах форматируется по таймзоне магазина (`stores/{storeId}.location.geo.timezone`), с fallback `Asia/Almaty`, если поле не задано — решение подтверждено пользователем (Kazakhstan охватывает несколько таймзон)
+- [x] `android/app/src/main/AndroidManifest.xml` — meta-data `default_notification_channel_id = order_updates` (G1)
+- [x] `functions/src/index.ts` — экспорт `sendOrderReminders`
+- [ ] Verify: `cd functions && npm run lint && npm test` + ручной QA-3 на физическом Android-устройстве в режиме ожидания _blocked: полный `./scripts/gate.sh` зелёный на всех тирах (format, analyze, custom_lint, flutter test, `functions:lint`, `functions:build`, `rules+functions:test`); ручной QA-3 требует физического Android-устройства в режиме ожидания и не выполнялся._
 
 ### Phase 4 — Отложенный запрос отзыва
 

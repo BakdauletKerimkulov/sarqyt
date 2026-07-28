@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   NotificationMessage,
+  midWindowMessage,
   newOrderMessage,
   orderAcceptedMessage,
   orderCancelledMessage,
@@ -8,6 +9,8 @@ import {
   orderCompletedStoreMessage,
   orderExpiredMessage,
   orderReadyMessage,
+  pickupEndingMessage,
+  pickupSoonMessage,
 } from "./messages.js";
 
 describe("newOrderMessage", () => {
@@ -119,5 +122,33 @@ describe("audience-dependent messages", () => {
     const toStore = orderExpiredMessage({ orderNumber: 17, audience: "store" });
 
     expect(toCustomer.body).not.toEqual(toStore.body);
+  });
+});
+
+describe("pickup-window reminder messages", () => {
+  it("substitutes the pickup window bounds in HH:mm format", () => {
+    const message = pickupSoonMessage({
+      storeName: "Пекарня",
+      startTime: "18:00",
+      endTime: "18:30",
+    });
+
+    expect(message.body).toContain("18:00");
+    expect(message.body).toContain("18:30");
+    expect(message.body).toContain("Пекарня");
+  });
+
+  it("substitutes the order number and end time in the mid-window nudge", () => {
+    const message = midWindowMessage({ orderNumber: 17, endTime: "18:30" });
+
+    expect(message.body).toContain("17");
+    expect(message.body).toContain("18:30");
+  });
+
+  it("substitutes the order number and end time in the closing-soon reminder", () => {
+    const message = pickupEndingMessage({ orderNumber: 17, endTime: "18:30" });
+
+    expect(message.body).toContain("17");
+    expect(message.body).toContain("18:30");
   });
 });

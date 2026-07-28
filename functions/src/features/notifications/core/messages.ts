@@ -170,3 +170,63 @@ export function orderExpiredMessage(
     body: `Заказ №${orderNumber} не был получен`,
   };
 }
+
+/** Input for {@link pickupSoonMessage}. */
+export interface PickupSoonInput {
+  storeName: string;
+  /** Pickup window start, pre-formatted as `HH:mm` by the caller. */
+  startTime: string;
+  /** Pickup window end, pre-formatted as `HH:mm` by the caller. */
+  endTime: string;
+}
+
+/**
+ * Text sent 15 minutes before the pickup window opens.
+ *
+ * @param {PickupSoonInput} input Store and window bounds.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function pickupSoonMessage(input: PickupSoonInput): NotificationMessage {
+  const { storeName, startTime, endTime } = input;
+  return {
+    title: "Скоро можно забрать",
+    body: `Забор в ${startTime}–${endTime} в ${storeName}`,
+  };
+}
+
+/** Input for {@link midWindowMessage} and {@link pickupEndingMessage}. */
+export interface OrderPickupReminderInput {
+  orderNumber: number;
+  /** Pickup window end, pre-formatted as `HH:mm` by the caller. */
+  endTime: string;
+}
+
+/**
+ * Text sent halfway through the pickup window as a nudge.
+ *
+ * @param {OrderPickupReminderInput} input Order number and window end.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function midWindowMessage(
+  input: OrderPickupReminderInput,
+): NotificationMessage {
+  return {
+    title: "Не забыли про заказ?",
+    body: `Заказ №${input.orderNumber} ждёт вас до ${input.endTime}`,
+  };
+}
+
+/**
+ * Text sent 15 minutes before the pickup window closes.
+ *
+ * @param {OrderPickupReminderInput} input Order number and window end.
+ * @return {NotificationMessage} Title and body for the push.
+ */
+export function pickupEndingMessage(
+  input: OrderPickupReminderInput,
+): NotificationMessage {
+  return {
+    title: "Осталось 15 минут",
+    body: `Успейте забрать заказ №${input.orderNumber} до ${input.endTime}`,
+  };
+}

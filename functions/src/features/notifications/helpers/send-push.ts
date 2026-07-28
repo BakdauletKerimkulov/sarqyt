@@ -25,6 +25,41 @@ export interface PushPayload {
   title: string;
   body: string;
   data: Record<string, string>;
+  /**
+   * Marks a push as time-sensitive (spec 034, R13): pickup-window reminders
+   * lose all value once the window has passed, so they get high priority
+   * and a 1-hour TTL/expiration instead of the platform defaults.
+   */
+  timeSensitive?: boolean;
+}
+
+/** Android channel time-sensitive notifications are delivered on (G1). */
+const kAndroidChannelId = "order_updates";
+
+/** How long a time-sensitive push stays worth delivering, in seconds. */
+const kTimeSensitiveTtlSeconds = 3_600;
+
+/**
+ * Delivery hints that make a push survive Doze/App Standby and expire
+ * once it is no longer useful, instead of arriving late (spec 034, R13, E9).
+ *
+ * @return {object} `android`/`apns` blocks to merge into the FCM message.
+ */
+function timeSensitiveOptions() {
+  const apnsExpiration = Math.floor(Date.now() / 1000) + kTimeSensitiveTtlSeconds;
+  return {
+    android: {
+      priority: "high" as const,
+      ttl: kTimeSensitiveTtlSeconds * 1000,
+      notification: { channelId: kAndroidChannelId },
+    },
+    apns: {
+      headers: {
+        "apns-priority": "10",
+        "apns-expiration": String(apnsExpiration),
+      },
+    },
+  };
 }
 
 /** FCM error codes that mean the token is gone for good. */
@@ -51,6 +86,7 @@ export async function sendToTokens(
       tokens: tokens.map((recipient) => recipient.token),
       notification: { title: payload.title, body: payload.body },
       data: payload.data,
+      ...(payload.timeSensitive ? timeSensitiveOptions() : {}),
     });
 
     logInfo("Push sent", {

@@ -82,4 +82,43 @@ describe("sendToTokens", () => {
       ),
     ).resolves.toBeUndefined();
   });
+
+  it("adds android/apns delivery hints only when marked time-sensitive (R13)", async () => {
+    sendEachForMulticast.mockResolvedValue({
+      successCount: 1,
+      failureCount: 0,
+      responses: [{ success: true }],
+    });
+
+    await sendToTokens(
+      [{ uid: "user-1", token: "good-token", field: "fcmTokenClient" }],
+      { ...payload, timeSensitive: true },
+    );
+
+    const request = sendEachForMulticast.mock.calls[0][0];
+    expect(request.android).toEqual({
+      priority: "high",
+      ttl: 3_600_000,
+      notification: { channelId: "order_updates" },
+    });
+    expect(request.apns.headers["apns-priority"]).toBe("10");
+    expect(Number(request.apns.headers["apns-expiration"])).toBeGreaterThan(0);
+  });
+
+  it("omits android/apns delivery hints for a regular push", async () => {
+    sendEachForMulticast.mockResolvedValue({
+      successCount: 1,
+      failureCount: 0,
+      responses: [{ success: true }],
+    });
+
+    await sendToTokens(
+      [{ uid: "user-1", token: "good-token", field: "fcmTokenClient" }],
+      payload,
+    );
+
+    const request = sendEachForMulticast.mock.calls[0][0];
+    expect(request.android).toBeUndefined();
+    expect(request.apns).toBeUndefined();
+  });
 });
