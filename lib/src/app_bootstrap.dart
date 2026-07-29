@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/exceptions/error_logger.dart';
 import 'package:sarqyt/src/features/auth/application/user_token_refresh_service.dart';
-import 'package:sarqyt/src/features/notifications/data/push_notification_service.dart';
+import 'package:sarqyt/src/features/notifications/application/push_notification_bootstrap.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 
 /// Helper class to initialize services and configure the error handlers

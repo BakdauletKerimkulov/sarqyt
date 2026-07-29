@@ -54,8 +54,22 @@ final class PushAudienceProvider
 
 String _$pushAudienceHash() => r'815a6f0ab111f6db29557192a477c4441d49b2cd';
 
+/// Registers the FCM background handler and constructs the service.
+///
+/// One-time message-listener registration (R14) lives in
+/// `application/push_notification_bootstrap.dart`, which depends on this
+/// service — keeping that dependency out of `data/` (architecture.md: `data/`
+/// must not import `application/`).
+
 @ProviderFor(pushNotificationService)
 const pushNotificationServiceProvider = PushNotificationServiceProvider._();
+
+/// Registers the FCM background handler and constructs the service.
+///
+/// One-time message-listener registration (R14) lives in
+/// `application/push_notification_bootstrap.dart`, which depends on this
+/// service — keeping that dependency out of `data/` (architecture.md: `data/`
+/// must not import `application/`).
 
 final class PushNotificationServiceProvider
     extends
@@ -65,6 +79,12 @@ final class PushNotificationServiceProvider
           PushNotificationService
         >
     with $Provider<PushNotificationService> {
+  /// Registers the FCM background handler and constructs the service.
+  ///
+  /// One-time message-listener registration (R14) lives in
+  /// `application/push_notification_bootstrap.dart`, which depends on this
+  /// service — keeping that dependency out of `data/` (architecture.md: `data/`
+  /// must not import `application/`).
   const PushNotificationServiceProvider._()
     : super(
         from: null,
@@ -101,42 +121,3 @@ final class PushNotificationServiceProvider
 
 String _$pushNotificationServiceHash() =>
     r'e8e3710f4f52ccec73338b5c7d008fe7bcd63ec9';
-
-/// Initialize push notifications when user is signed in.
-
-@ProviderFor(initPushNotifications)
-const initPushNotificationsProvider = InitPushNotificationsProvider._();
-
-/// Initialize push notifications when user is signed in.
-
-final class InitPushNotificationsProvider
-    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
-    with $FutureModifier<void>, $FutureProvider<void> {
-  /// Initialize push notifications when user is signed in.
-  const InitPushNotificationsProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'initPushNotificationsProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$initPushNotificationsHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<void> create(Ref ref) {
-    return initPushNotifications(ref);
-  }
-}
-
-String _$initPushNotificationsHash() =>
-    r'abc9f55a072663518c8099e159bd3805cb775b40';

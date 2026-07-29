@@ -6,7 +6,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/notifications/domain/push_audience.dart';
 
 part 'push_notification_service.g.dart';
@@ -49,19 +48,6 @@ class PushNotificationService {
     _messaging.onTokenRefresh.listen((newToken) {
       if (uid != null) _saveToken(uid, newToken);
     });
-
-    FirebaseMessaging.onMessage.listen((message) {
-      log('FCM foreground: ${message.notification?.title}');
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      log('FCM opened from background: ${message.data}');
-    });
-
-    final initialMessage = await _messaging.getInitialMessage();
-    if (initialMessage != null) {
-      log('FCM opened from terminated: ${initialMessage.data}');
-    }
   }
 
   /// Writes the token to this app's own field plus the legacy shared one.
@@ -69,10 +55,10 @@ class PushNotificationService {
   /// The legacy `fcmToken` keeps builds that predate the split working; it is
   /// dropped once both apps have rolled out.
   Future<void> _saveToken(String uid, String token) {
-    return _firestore.collection('users').doc(uid).set(
-      {_audience.tokenField: token, 'fcmToken': token},
-      SetOptions(merge: true),
-    );
+    return _firestore.collection('users').doc(uid).set({
+      _audience.tokenField: token,
+      'fcmToken': token,
+    }, SetOptions(merge: true));
   }
 }
 
@@ -82,6 +68,12 @@ PushAudience pushAudience(Ref ref) {
   throw UnimplementedError('pushAudienceProvider must be overridden');
 }
 
+/// Registers the FCM background handler and constructs the service.
+///
+/// One-time message-listener registration (R14) lives in
+/// `application/push_notification_bootstrap.dart`, which depends on this
+/// service — keeping that dependency out of `data/` (architecture.md: `data/`
+/// must not import `application/`).
 @Riverpod(keepAlive: true)
 PushNotificationService pushNotificationService(Ref ref) {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -90,12 +82,4 @@ PushNotificationService pushNotificationService(Ref ref) {
     FirebaseFirestore.instance,
     ref.watch(pushAudienceProvider),
   );
-}
-
-/// Initialize push notifications when user is signed in.
-@Riverpod(keepAlive: true)
-Future<void> initPushNotifications(Ref ref) async {
-  final user = ref.watch(authStateChangesProvider).value;
-  if (user == null) return;
-  await ref.read(pushNotificationServiceProvider).initialize(user.uid);
 }
