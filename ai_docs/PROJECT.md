@@ -55,10 +55,11 @@ Located in `functions/src/features/`:
 
 | Module | Key Functions |
 |---|---|
-| `payments` | `create-payment`, `reserve-offer`, `stripe-webhook` |
+| `payments` | `reserve-offer` (no separate payment-confirmation function exists) |
 | `orders` | `cancel-order`, `expire-orders`, `update-order-status`, `on-order-status-changed` |
 | `offers` | `daily-sync-offers` (generates offers from active items) |
 | `merchant-onboarding` | Business verification and store creation |
+| `notifications` | Push notifications for the order lifecycle: `on-order-created`/`on-order-status-changed` triggers (via `triggers/`) send FCM pushes through `helpers/send-push.ts`; `sendOrderReminders` (`onSchedule`, every 5 minutes) sends up to three pickup-window reminders plus a delayed review request. Texts live in `core/messages.ts`, scheduling logic in `core/reminders.ts` — both pure and unit-tested |
 | `triggers` | Firestore triggers for side-effects |
 
 ## Firestore Collections
@@ -68,7 +69,7 @@ Located in `functions/src/features/`:
 | `stores/{storeId}` | Store profiles |
 | `stores/{storeId}/items/{itemId}` | Items (products) belonging to a store |
 | `offers/{offerId}` | Published offers (public read, admin-only write via Cloud Functions) |
-| `orders/{orderId}` | Orders (created by Cloud Functions only) |
+| `orders/{orderId}` | Orders (created by Cloud Functions only). `completedAt: Timestamp?` set on transition to `completed`; `remindersSent: { beforeStart, midWindow, beforeEnd, reviewPrompt }` (all optional booleans, absence == `false`) tracks which notifications the scheduler already sent |
 | `payments/{paymentId}` | Payment records (Cloud Functions only) |
 | `users/{uid}` | User profiles |
 | `users/{uid}/favorites/{storeId}` | Favorited stores |
@@ -99,8 +100,7 @@ Partners can create stores if `canCreateStore` custom claim is `true`.
 ## Order & Payment Flow
 
 1. Customer selects offer and quantity
-2. `reserve-offer` Cloud Function reserves quantity (decrement) and creates payment intent
-3. `create-payment` processes Stripe payment
-4. `stripe-webhook` confirms payment, creates Order document
-5. Store owner/staff moves order through statuses: preparing -> readyForPickup -> completed
-6. `expire-orders` handles timeout for uncollected orders
+2. `reserve-offer` Cloud Function reserves quantity (decrement) and creates the `orders/{orderId}` document directly (status `confirmed`) — there is no separate payment-confirmation step or `stripe-webhook` function
+3. `triggers/onOrderCreated` assigns `orderNumber` and pushes the new order to the store team
+4. Store owner/staff moves order through statuses: preparing -> readyForPickup -> completed, each transition notified via `on-order-status-changed`
+5. `expire-orders` handles timeout for uncollected orders; `sendOrderReminders` sends pickup-window reminders and, 2h after `completedAt`, a review request if none was left

@@ -99,11 +99,11 @@ Push-уведомления на весь жизненный цикл заказ
 
 **Goal:** Доки не расходятся с кодом; DoD закрыт.
 
-- [ ] `ai_docs/PROJECT.md` — добавить `sendOrderReminders` и модуль `notifications` в раздел Cloud Functions; поля `orders.remindersSent` и `orders.completedAt`; исправить устаревшую строку про `stripe-webhook` (строка ~104) и раздел Order & Payment Flow — заказ создаёт `reserveOffer`
-- [ ] `ai_docs/EXTERNAL_SERVICES.md` — раздел «FCM Push Notifications: Token in Firestore»: разделение `fcmTokenClient` / `fcmTokenBusiness`, legacy-fallback, срок удаления legacy-поля
-- [ ] `firestore.rules` — подтвердить (без правок), что `orders` остаётся server-only на запись (`firestore.rules:169-172`), клиент не может писать `remindersSent`/`completedAt`
-- [ ] Прогнать QA-1…QA-9 на сборках обоих приложений; расхождения — в отдельные `/fix`
-- [ ] Verify: `cd functions && npm run lint && npm test` + `flutter analyze && flutter test --exclude-tags golden && dart run custom_lint`
+- [x] `ai_docs/PROJECT.md` — добавить `sendOrderReminders` и модуль `notifications` в раздел Cloud Functions; поля `orders.remindersSent` и `orders.completedAt`; исправить устаревшую строку про `stripe-webhook` (строка ~104) и раздел Order & Payment Flow — заказ создаёт `reserveOffer`. Заодно исправлена соседняя строка `payments | create-payment, reserve-offer` в той же таблице — `create-payment` тоже не существует в `functions/src/index.ts`, оставлять её рядом с только что исправленной ложью о `stripe-webhook` было бы половинчато
+- [x] `ai_docs/EXTERNAL_SERVICES.md` — раздел «FCM Push Notifications: Token in Firestore»: разделение `fcmTokenClient` / `fcmTokenBusiness`, legacy-fallback, срок удаления legacy-поля
+- [x] `firestore.rules` — подтвердить (без правок), что `orders` остаётся server-only на запись (`firestore.rules:169-172`), клиент не может писать `remindersSent`/`completedAt`. Подтверждено: `allow create: if false`, `allow update: if isAdmin()` — без изменений
+- [ ] Прогнать QA-1…QA-9 на сборках обоих приложений; расхождения — в отдельные `/fix` _blocked: требует физических Android/iOS устройств; не выполнялось ни разу за все 5 фаз (QA-1, QA-9 в Phase 1; QA-2/2b/4/6/7 в Phase 2; QA-3 в Phase 3; QA-5 в Phase 4, дополнительно блокируется предсуществующим багом G4; QA-8 в Phase 5)._
+- [x] Verify: `cd functions && npm run lint && npm test` + `flutter analyze && flutter test --exclude-tags golden && dart run custom_lint`
 
 ## Data layer changes
 

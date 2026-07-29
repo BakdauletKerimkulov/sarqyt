@@ -98,10 +98,11 @@ GitHub secret-scanning alerts on these keys are pattern-based false positives: r
 **Decision:** FCM device token stored as a field on the user document, not in a subcollection.
 
 **How it works:**
-- Token stored at `users/{uid}` with field `fcmToken` via `set(merge: true)`
+- Token stored at `users/{uid}`, one field per app: `fcmTokenClient` (client app) / `fcmTokenBusiness` (business app), via `set(merge: true)` — split because a partner can be signed in to both apps on one device, and a single shared `fcmToken` field would let the last app to register overwrite the other's token (spec 034, E10)
+- Legacy field `fcmToken` is still written alongside the new field on every save, and read as a fallback wherever a token is resolved (`getCustomerToken`, `getStoreTeamTokens` in `functions/src/features/notifications/helpers/recipients.ts`) — keeps pre-split app builds receiving notifications. Remove the legacy write/fallback once both apps have rolled out past the split (no fixed date set)
 - Refreshed automatically via `onTokenRefresh` listener
 - iOS: requests APNs token before FCM token (required)
-- Handles foreground (`onMessage`), background tap (`onMessageOpenedApp`), and cold launch (`getInitialMessage`)
+- Message listeners (`onMessage`, `onMessageOpenedApp`, `getInitialMessage`) are registered once per app session in `PushNotificationBootstrap` (`application/push_notification_bootstrap.dart`, `keepAlive`) — not inside `initialize()`, which re-runs on every `authStateChanges` emission. A tapped/opened message maps to a deep link via `mapPushToDeepLink` and is applied once the router is ready (`DeepLinkApplier`, up to a 30s retry window)
 - Background handler registered via `FirebaseMessaging.onBackgroundMessage`
 
 **Why merge-set on user doc:** Simpler than a subcollection for single-device-per-user. If multi-device support is needed later, this should move to `users/{uid}/devices/{tokenId}`.
