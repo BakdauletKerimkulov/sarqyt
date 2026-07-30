@@ -39,39 +39,42 @@ export const expireOrders = onSchedule("every 5 minutes", async () => {
           return; // Already changed by another process
         }
 
+        // All reads must happen before any writes in a Firestore transaction.
+        const shouldRestoreOffer = Boolean(offerId && qty);
+        const offerRef = shouldRestoreOffer ?
+          db.collection(FirestoreCollections.OFFERS).doc(offerId!) :
+          undefined;
+        const offerSnap = offerRef ? await tx.get(offerRef) : undefined;
+
         tx.update(doc.ref, {
           status: "expired",
           updatedAt: serverTimestamp(),
         });
 
-        if (offerId && qty) {
-          const offerRef = db
-            .collection(FirestoreCollections.OFFERS)
-            .doc(offerId);
-          const offerSnap = await tx.get(offerRef);
+        if (!offerRef) return;
 
-          if (offerSnap.exists) {
-            const offerData = offerSnap.data()!;
-            const currentQty = (offerData.quantity as number) ?? 0;
-            const offerUpdate: Record<string, unknown> = {
-              quantity: currentQty + qty,
-              updatedAt: serverTimestamp(),
-            };
-            // R7: reactivate soldOut offer only if pickup window is still open
-            if (offerData.status === "soldOut") {
-              const pickupEnd = offerData.pickupEndTime as Timestamp | undefined;
-              if (pickupEnd && pickupEnd.toMillis() > now.toMillis()) {
-                offerUpdate.status = "active";
-              }
-            }
-            tx.update(offerRef, offerUpdate);
-          } else {
-            logWarn("Offer not found during expiry, skipping quantity restore", {
-              orderId: doc.id,
-              offerId,
-            });
+        if (!offerSnap!.exists) {
+          logWarn("Offer not found during expiry, skipping quantity restore", {
+            orderId: doc.id,
+            offerId,
+          });
+          return;
+        }
+
+        const offerData = offerSnap!.data()!;
+        const currentQty = (offerData.quantity as number) ?? 0;
+        const offerUpdate: Record<string, unknown> = {
+          quantity: currentQty + qty!,
+          updatedAt: serverTimestamp(),
+        };
+        // R7: reactivate soldOut offer only if pickup window is still open
+        if (offerData.status === "soldOut") {
+          const pickupEnd = offerData.pickupEndTime as Timestamp | undefined;
+          if (pickupEnd && pickupEnd.toMillis() > now.toMillis()) {
+            offerUpdate.status = "active";
           }
         }
+        tx.update(offerRef, offerUpdate);
       });
 
       totalExpired++;
