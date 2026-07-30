@@ -12,6 +12,7 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 019 | Delete offer | feature | draft | 2026-05-23 | request |
 | 020 | Admin page navigation | feature | draft | 2026-07-05 | request |
 | 031 | Toolkit compliance refactoring | refactor | in-progress | 2026-07-12 | request, spec, plan |
+| 034 | Order flow notifications | feature | in-progress | 2026-07-27 | request, spec, plan |
 
 ## Archived (`archive/`)
 
@@ -49,6 +50,6 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 033 | Fix keepAlive lint on geolocatorService | chore | done | 2026-07-26 | spec |
 
-Next number: **034**.
+Next number: **035**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
