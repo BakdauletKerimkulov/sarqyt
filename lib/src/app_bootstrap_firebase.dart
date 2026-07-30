@@ -6,6 +6,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/app_bootstrap.dart';
 import 'package:sarqyt/src/exceptions/async_error_logger.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
+import 'package:sarqyt/src/features/notifications/data/push_notification_service.dart';
+import 'package:sarqyt/src/features/notifications/domain/push_audience.dart';
 import 'package:sarqyt/src/features/onboarding/data/client_onboarding_repository.dart';
 
 extension AppBootstrapFirebase on AppBootstrap {
@@ -28,12 +30,18 @@ extension AppBootstrapFirebase on AppBootstrap {
   /// - create and configure the repositories as desired
   /// - override the default implementations with a list of "overrides"
   Future<ProviderContainer> createFirebaseProviderContainer({
+    required PushAudience pushAudience,
     bool addDelay = true,
   }) async {
-    final offeRepo =
-        ClientOfferRepository(FirebaseFirestore.instance, DateTime.now);
+    final offeRepo = ClientOfferRepository(
+      FirebaseFirestore.instance,
+      DateTime.now,
+    );
     final container = ProviderContainer(
-      overrides: [offerRepositoryProvider.overrideWithValue(offeRepo)],
+      overrides: [
+        offerRepositoryProvider.overrideWithValue(offeRepo),
+        pushAudienceProvider.overrideWithValue(pushAudience),
+      ],
       observers: [AsyncErrorLogger()],
     );
     // Pre-load onboarding repository so redirect can read it synchronously

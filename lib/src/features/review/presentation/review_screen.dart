@@ -107,7 +107,8 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
             PrimaryButton(
               text: context.loc.submitReview,
               isLoading: state.isLoading,
-              onPressed: state.isLoading || _storeRating == 0 || _offerRating == 0
+              onPressed:
+                  state.isLoading || _storeRating == 0 || _offerRating == 0
                   ? null
                   : _submit,
             ),

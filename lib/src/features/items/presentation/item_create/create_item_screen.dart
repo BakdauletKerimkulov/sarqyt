@@ -51,7 +51,6 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
   );
   Map<int, String?>? _dayErrors;
 
-
   @override
   void dispose() {
     _nameCtl.dispose();
@@ -118,8 +117,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
           estimatedValue: estimatedValue,
           schedule: WeeklySchedule(_schedule),
           image: _selectedImage,
-          storingAndAllergens:
-              allergensText.isNotEmpty ? allergensText : null,
+          storingAndAllergens: allergensText.isNotEmpty ? allergensText : null,
         );
 
     if (!mounted) return;
@@ -167,10 +165,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: _imagePreviewBytes != null
-                        ? Image.memory(
-                            _imagePreviewBytes!,
-                            fit: BoxFit.cover,
-                          )
+                        ? Image.memory(_imagePreviewBytes!, fit: BoxFit.cover)
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -199,7 +194,8 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                   textCapitalization: TextCapitalization.sentences,
                   decoration: _inputDeco(loc.surpriseBag),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (v) => !_submitted ? null : nameErrorText(v ?? '', loc),
+                  validator: (v) =>
+                      !_submitted ? null : nameErrorText(v ?? '', loc),
                 ),
                 gapH20,
 
@@ -223,9 +219,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                   enabled: !isLoading,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: _inputDeco(
-                    '1500',
-                  ).copyWith(suffixText: '₸'),
+                  decoration: _inputDeco('1500').copyWith(suffixText: '₸'),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (v) =>
                       !_submitted ? null : priceErrorText(v ?? '', loc),
@@ -244,9 +238,7 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                   enabled: !isLoading,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: _inputDeco(
-                    '5000',
-                  ).copyWith(suffixText: '₸'),
+                  decoration: _inputDeco('5000').copyWith(suffixText: '₸'),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (v) => !_submitted
                       ? null
@@ -266,14 +258,12 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                   }),
                   onTimeChanged: (day, field, value) => setState(() {
                     _schedule[day] = switch (field) {
-                      'startHour' =>
-                        _schedule[day]!.copyWith(startHour: value),
-                      'startMinute' =>
-                        _schedule[day]!.copyWith(startMinute: value),
-                      'endHour' =>
-                        _schedule[day]!.copyWith(endHour: value),
-                      'endMinute' =>
-                        _schedule[day]!.copyWith(endMinute: value),
+                      'startHour' => _schedule[day]!.copyWith(startHour: value),
+                      'startMinute' => _schedule[day]!.copyWith(
+                        startMinute: value,
+                      ),
+                      'endHour' => _schedule[day]!.copyWith(endHour: value),
+                      'endMinute' => _schedule[day]!.copyWith(endMinute: value),
                       _ => _schedule[day]!,
                     };
                   }),
@@ -286,10 +276,9 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
                 gapH4,
                 Text(
                   loc.storingAndAllergensDescription,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.grey),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                 ),
                 gapH8,
                 TextField(
@@ -359,7 +348,6 @@ class _CreateItemFormScreenState extends ConsumerState<CreateItemFormScreen>
       ),
     );
   }
-
 }
 
 class _Label extends StatelessWidget {
@@ -376,4 +364,3 @@ class _Label extends StatelessWidget {
     );
   }
 }
-

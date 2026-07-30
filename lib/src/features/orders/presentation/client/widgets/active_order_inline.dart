@@ -7,11 +7,7 @@ import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 /// Expanded inline view for a single active order.
 /// Shows store name, item×qty, progress line, pickup window, total.
 class ActiveOrderInline extends StatelessWidget {
-  const ActiveOrderInline({
-    super.key,
-    required this.order,
-    this.onTap,
-  });
+  const ActiveOrderInline({super.key, required this.order, this.onTap});
 
   final Order order;
   final VoidCallback? onTap;
@@ -31,8 +27,9 @@ class ActiveOrderInline extends StatelessWidget {
             children: [
               Text(
                 order.storeName,
-                style: theme.textTheme.titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -56,16 +53,18 @@ class ActiveOrderInline extends StatelessWidget {
                     Expanded(
                       child: Text(
                         order.pickupLabelLocalized(context)!,
-                        style: theme.textTheme.bodySmall
-                            ?.copyWith(color: theme.colorScheme.outline),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.outline,
+                        ),
                       ),
                     ),
                   ] else
                     const Spacer(),
                   Text(
                     order.totalFormatted,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

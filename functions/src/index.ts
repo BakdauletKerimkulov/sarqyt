@@ -24,6 +24,9 @@ export { cancelOrder } from "./features/orders/functions/cancel-order";
 export { updateOrderStatus } from "./features/orders/functions/update-order-status";
 export { onOrderStatusChanged } from "./features/orders/functions/on-order-status-changed";
 
+// Notifications
+export { sendOrderReminders } from "./features/notifications/functions/send-order-reminders";
+
 // Items
 export { deleteItem } from "./features/items/functions/delete-item";
 

@@ -29,7 +29,10 @@ void main() {
     test('merged: notifies when either stream emits', () async {
       final ctrl1 = StreamController<String>();
       final ctrl2 = StreamController<String>();
-      final refresh = GoRouterRefreshStream.merged([ctrl1.stream, ctrl2.stream]);
+      final refresh = GoRouterRefreshStream.merged([
+        ctrl1.stream,
+        ctrl2.stream,
+      ]);
 
       int notifyCount = 0;
       refresh.addListener(() => notifyCount++);
@@ -55,7 +58,10 @@ void main() {
     test('merged: dispose cancels all subscriptions', () async {
       final ctrl1 = StreamController<int>();
       final ctrl2 = StreamController<int>();
-      final refresh = GoRouterRefreshStream.merged([ctrl1.stream, ctrl2.stream]);
+      final refresh = GoRouterRefreshStream.merged([
+        ctrl1.stream,
+        ctrl2.stream,
+      ]);
 
       int notifyCount = 0;
       refresh.addListener(() => notifyCount++);
@@ -67,7 +73,11 @@ void main() {
       ctrl2.add(1);
       await Future.microtask(() {});
 
-      expect(notifyCount, 0, reason: 'After dispose, no notifications expected');
+      expect(
+        notifyCount,
+        0,
+        reason: 'After dispose, no notifications expected',
+      );
 
       await ctrl1.close();
       await ctrl2.close();

@@ -23,7 +23,8 @@ class UserProfileRepository {
         .map((snap) => snap.data());
   }
 
-  Future<void> updateProfile(UserID uid, {
+  Future<void> updateProfile(
+    UserID uid, {
     String? displayName,
     String? phoneNumber,
   }) async {
@@ -32,10 +33,10 @@ class UserProfileRepository {
     if (phoneNumber != null) updates['phoneNumber'] = phoneNumber;
     if (updates.isEmpty) return;
 
-    await _firestore.collection('users').doc(uid).set(
-      updates,
-      SetOptions(merge: true),
-    );
+    await _firestore
+        .collection('users')
+        .doc(uid)
+        .set(updates, SetOptions(merge: true));
 
     // Also update Firebase Auth displayName
     if (displayName != null) {

@@ -24,7 +24,10 @@ class AppSettingsScreen extends ConsumerWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
-                    Sizes.p16, Sizes.p16, Sizes.p16, Sizes.p8,
+                    Sizes.p16,
+                    Sizes.p16,
+                    Sizes.p16,
+                    Sizes.p8,
                   ),
                   child: Text(
                     context.loc.account,
@@ -63,7 +66,10 @@ class AppSettingsScreen extends ConsumerWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
-                    Sizes.p16, Sizes.p16, Sizes.p16, Sizes.p8,
+                    Sizes.p16,
+                    Sizes.p16,
+                    Sizes.p16,
+                    Sizes.p8,
                   ),
                   child: Text(
                     context.loc.notifications,
@@ -89,7 +95,10 @@ class AppSettingsScreen extends ConsumerWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
-                    Sizes.p16, Sizes.p16, Sizes.p16, Sizes.p8,
+                    Sizes.p16,
+                    Sizes.p16,
+                    Sizes.p16,
+                    Sizes.p8,
                   ),
                   child: Text(
                     context.loc.about,
@@ -101,7 +110,9 @@ class AppSettingsScreen extends ConsumerWidget {
                   title: Text(context.loc.termsOfService),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => launchUrl(
-                    Uri.parse('https://sarqyt-1ab95.web.app/terms-of-service.html'),
+                    Uri.parse(
+                      'https://sarqyt-1ab95.web.app/terms-of-service.html',
+                    ),
                     mode: LaunchMode.externalApplication,
                   ),
                 ),
@@ -111,7 +122,9 @@ class AppSettingsScreen extends ConsumerWidget {
                   title: Text(context.loc.privacyPolicy),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => launchUrl(
-                    Uri.parse('https://sarqyt-1ab95.web.app/privacy-policy.html'),
+                    Uri.parse(
+                      'https://sarqyt-1ab95.web.app/privacy-policy.html',
+                    ),
                     mode: LaunchMode.externalApplication,
                   ),
                 ),
@@ -180,20 +193,22 @@ class AppSettingsScreen extends ConsumerWidget {
 
     if (confirmed == true && context.mounted) {
       try {
-        await ref.read(userProfileRepositoryProvider).updatePassword(
+        await ref
+            .read(userProfileRepositoryProvider)
+            .updatePassword(
               currentPassword: currentCtrl.text,
               newPassword: newCtrl.text,
             );
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.loc.passwordUpdated)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(context.loc.passwordUpdated)));
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(humanReadableError(e))),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(humanReadableError(e))));
         }
       }
     }

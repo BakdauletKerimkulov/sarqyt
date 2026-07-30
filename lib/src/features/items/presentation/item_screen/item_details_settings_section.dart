@@ -75,8 +75,9 @@ class _ItemDetailsSettingsSectionState
   void _syncFromItem(Item item) {
     _descriptionCtl.text = item.description ?? '';
     _priceCtl.text = item.price.round().toString();
-    _estimatedValueCtl.text =
-        item.estimatedValue != null ? item.estimatedValue!.round().toString() : '';
+    _estimatedValueCtl.text = item.estimatedValue != null
+        ? item.estimatedValue!.round().toString()
+        : '';
     _category = item.category;
     _dietaryType = item.dietaryType;
   }
@@ -87,7 +88,9 @@ class _ItemDetailsSettingsSectionState
     final evText = _estimatedValueCtl.text;
     if (evText.isNotEmpty) {
       final ev = double.tryParse(evText);
-      if (ev == null || ev <= 0) return 'Estimated value must be greater than 0';
+      if (ev == null || ev <= 0) {
+        return 'Estimated value must be greater than 0';
+      }
       if (ev <= price) return 'Estimated value must be greater than price';
     }
     return null;

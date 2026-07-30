@@ -44,11 +44,7 @@ class SettingsContent extends ConsumerWidget {
           isLoading: isLoading,
         ),
         gapH24,
-        _DeleteItemButton(
-          item: item,
-          storeId: storeId,
-          isLoading: isLoading,
-        ),
+        _DeleteItemButton(item: item, storeId: storeId, isLoading: isLoading),
       ],
     );
   }
@@ -76,9 +72,11 @@ class _DeleteItemButtonState extends ConsumerState<_DeleteItemButton> {
     setState(() => _isDeleting = true);
 
     try {
-      final controller =
-          ref.read(settingsContentControllerProvider.notifier);
-      final hasActive = await controller.hasActiveOrders(widget.storeId, widget.item.id);
+      final controller = ref.read(settingsContentControllerProvider.notifier);
+      final hasActive = await controller.hasActiveOrders(
+        widget.storeId,
+        widget.item.id,
+      );
 
       if (!mounted) return;
 
@@ -92,10 +90,7 @@ class _DeleteItemButtonState extends ConsumerState<_DeleteItemButton> {
                   .hardcoded,
             ),
             actions: [
-              TextButton(
-                onPressed: () => ctx.pop(),
-                child: const Text('OK'),
-              ),
+              TextButton(onPressed: () => ctx.pop(), child: const Text('OK')),
             ],
           ),
         );

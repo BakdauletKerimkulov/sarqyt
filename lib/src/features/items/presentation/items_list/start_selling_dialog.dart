@@ -23,8 +23,13 @@ class StartSellingDialog extends ConsumerWidget {
   final StoreID storeId;
 
   static const _dayNames = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-    'Friday', 'Saturday', 'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
   ];
 
   @override
@@ -49,15 +54,19 @@ class StartSellingDialog extends ConsumerWidget {
             // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                Sizes.p24, Sizes.p20, Sizes.p8, Sizes.p8,
+                Sizes.p24,
+                Sizes.p20,
+                Sizes.p8,
+                Sizes.p8,
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       loc.confirmAndStartSelling,
-                      style: theme.textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   IconButton(
@@ -77,13 +86,17 @@ class StartSellingDialog extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Start date section
-                    Icon(Icons.rocket_launch_outlined,
-                        color: AppColors.primary, size: 32),
+                    Icon(
+                      Icons.rocket_launch_outlined,
+                      color: AppColors.primary,
+                      size: 32,
+                    ),
                     gapH12,
                     Text(
                       loc.startDate,
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     gapH8,
                     Container(
@@ -100,27 +113,29 @@ class StartSellingDialog extends ConsumerWidget {
                     gapH8,
                     Text(
                       'On this date, customers will be able to see your store and your available Surprise Bags in the Sarqyt app.',
-                      style: theme.textTheme.bodyMedium
-                          ?.copyWith(color: Colors.grey.shade600),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                     gapH24,
                     const Divider(),
                     gapH24,
 
                     // Surprise bag details
-                    Icon(Icons.shopping_bag_outlined,
-                        color: AppColors.primary, size: 32),
+                    Icon(
+                      Icons.shopping_bag_outlined,
+                      color: AppColors.primary,
+                      size: 32,
+                    ),
                     gapH12,
                     Text(
                       loc.surpriseBagDetails,
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     gapH16,
-                    _DetailRow(
-                      label: loc.name,
-                      value: item.name,
-                    ),
+                    _DetailRow(label: loc.name, value: item.name),
                     if (item.description != null) ...[
                       gapH12,
                       _DetailRow(
@@ -145,19 +160,24 @@ class StartSellingDialog extends ConsumerWidget {
                     gapH24,
 
                     // Schedule section
-                    Icon(Icons.calendar_month_outlined,
-                        color: AppColors.primary, size: 32),
+                    Icon(
+                      Icons.calendar_month_outlined,
+                      color: AppColors.primary,
+                      size: 32,
+                    ),
                     gapH12,
                     Text(
                       loc.schedule,
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     gapH4,
                     Text(
                       loc.surpriseBagsPerDay,
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: Colors.grey),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey,
+                      ),
                     ),
                     gapH4,
                     Text(
@@ -167,8 +187,9 @@ class StartSellingDialog extends ConsumerWidget {
                     gapH16,
                     Text(
                       loc.collectionTimes,
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: Colors.grey),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey,
+                      ),
                     ),
                     gapH8,
                     // Schedule table
@@ -204,10 +225,10 @@ class StartSellingDialog extends ConsumerWidget {
                       ? null
                       : () async {
                           final success = await ref
-                              .read(startSellingDialogControllerProvider
-                                  .notifier)
-                              .startSelling(
-                                  itemId: item.id, storeId: storeId);
+                              .read(
+                                startSellingDialogControllerProvider.notifier,
+                              )
+                              .startSelling(itemId: item.id, storeId: storeId);
                           if (context.mounted && success) {
                             Navigator.of(context).pop(true);
                           }
@@ -245,10 +266,9 @@ class _DetailRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
-              ?.copyWith(color: Colors.grey),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: Colors.grey),
         ),
         Text(value, style: Theme.of(context).textTheme.bodyMedium),
       ],
@@ -266,8 +286,8 @@ class _ScheduleRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final time = schedule.enabled
         ? '${schedule.startHour.toString().padLeft(2, '0')}:${schedule.startMinute.toString().padLeft(2, '0')}'
-            ' - '
-            '${schedule.endHour.toString().padLeft(2, '0')}:${schedule.endMinute.toString().padLeft(2, '0')}'
+              ' - '
+              '${schedule.endHour.toString().padLeft(2, '0')}:${schedule.endMinute.toString().padLeft(2, '0')}'
         : 'Closed';
 
     return Padding(
@@ -278,16 +298,16 @@ class _ScheduleRow extends StatelessWidget {
             width: 120,
             child: Text(
               dayName,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
           Text(
             time,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: schedule.enabled ? null : Colors.grey,
-                ),
+              color: schedule.enabled ? null : Colors.grey,
+            ),
           ),
         ],
       ),

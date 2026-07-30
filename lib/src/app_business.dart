@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/l10n/app_localizations.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
+import 'package:sarqyt/src/features/notifications/presentation/deep_link_applier.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
 
 class MyAppBusiness extends ConsumerWidget {
@@ -10,43 +11,47 @@ class MyAppBusiness extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(businessRouterProvider);
-    return MaterialApp.router(
-      routerConfig: router,
-      debugShowCheckedModeBanner: false,
-      restorationScopeId: 'appBusiness',
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      onGenerateTitle: (context) => AppLocalizations.of(context).appTitleBusiness,
-      theme: ThemeData(
-        textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: WidgetStatePropertyAll(AppColors.primary),
-          ),
-        ),
-        checkboxTheme: CheckboxThemeData(
-          fillColor: WidgetStateProperty.resolveWith((state) {
-            if (state.contains(WidgetState.selected)) {
-              return AppColors.primary;
-            }
-
-            return null;
-          }),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: WidgetStatePropertyAll(Colors.white),
-            backgroundColor: WidgetStatePropertyAll(AppColors.primary),
-          ),
-        ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: ButtonStyle(
-            side: WidgetStatePropertyAll(
-              BorderSide(color: AppColors.primary, width: 2.0),
+    return DeepLinkApplier(
+      router: router,
+      child: MaterialApp.router(
+        routerConfig: router,
+        debugShowCheckedModeBanner: false,
+        restorationScopeId: 'appBusiness',
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        onGenerateTitle: (context) =>
+            AppLocalizations.of(context).appTitleBusiness,
+        theme: ThemeData(
+          textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
+              foregroundColor: WidgetStatePropertyAll(AppColors.primary),
             ),
-            foregroundColor: WidgetStatePropertyAll(AppColors.primary),
           ),
+          checkboxTheme: CheckboxThemeData(
+            fillColor: WidgetStateProperty.resolveWith((state) {
+              if (state.contains(WidgetState.selected)) {
+                return AppColors.primary;
+              }
+
+              return null;
+            }),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              foregroundColor: WidgetStatePropertyAll(Colors.white),
+              backgroundColor: WidgetStatePropertyAll(AppColors.primary),
+            ),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: ButtonStyle(
+              side: WidgetStatePropertyAll(
+                BorderSide(color: AppColors.primary, width: 2.0),
+              ),
+              foregroundColor: WidgetStatePropertyAll(AppColors.primary),
+            ),
+          ),
+          appBarTheme: AppBarThemeData(backgroundColor: Colors.transparent),
         ),
-        appBarTheme: AppBarThemeData(backgroundColor: Colors.transparent),
       ),
     );
   }

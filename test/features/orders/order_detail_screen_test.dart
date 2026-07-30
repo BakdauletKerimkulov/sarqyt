@@ -33,9 +33,9 @@ Order _makeOrder({
 Widget _buildScreen(Order order) {
   return ProviderScope(
     overrides: [
-      customerOrderStreamProvider(order.id).overrideWith(
-        (_) => Stream.value(order),
-      ),
+      customerOrderStreamProvider(
+        order.id,
+      ).overrideWith((_) => Stream.value(order)),
     ],
     child: MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -82,23 +82,29 @@ void main() {
   group('OrderDetailScreen cancellation reason', () {
     testWidgets('shows store cancellation reason', (tester) async {
       await tester.pumpWidget(
-        _buildScreen(_makeOrder(
-          status: OrderStatus.cancelled,
-          cancelledBy: CancelledBy.store,
-          cancellationReason: 'Store closed early',
-        )),
+        _buildScreen(
+          _makeOrder(
+            status: OrderStatus.cancelled,
+            cancelledBy: CancelledBy.store,
+            cancellationReason: 'Store closed early',
+          ),
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.text('Cancelled by store'), findsOneWidget);
       expect(find.text('Store closed early'), findsOneWidget);
     });
 
-    testWidgets('hides cancellation banner for customer cancel', (tester) async {
+    testWidgets('hides cancellation banner for customer cancel', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        _buildScreen(_makeOrder(
-          status: OrderStatus.cancelled,
-          cancelledBy: CancelledBy.customer,
-        )),
+        _buildScreen(
+          _makeOrder(
+            status: OrderStatus.cancelled,
+            cancelledBy: CancelledBy.customer,
+          ),
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.text('Cancelled by store'), findsNothing);

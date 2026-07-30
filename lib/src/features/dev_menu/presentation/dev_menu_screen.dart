@@ -37,34 +37,32 @@ const _routePaths = <BusinessRoute, String>{
 enum _RouteCategory { onboarding, store, settings, other }
 
 _RouteCategory _categorize(BusinessRoute route) => switch (route) {
-      BusinessRoute.createAccount ||
-      BusinessRoute.reviewDetails ||
-      BusinessRoute.email ||
-      BusinessRoute.verifyEmail ||
-      BusinessRoute.welcome ||
-      BusinessRoute.onboarding ||
-      BusinessRoute.inbound =>
-        _RouteCategory.onboarding,
-      BusinessRoute.dashboard ||
-      BusinessRoute.newItem ||
-      BusinessRoute.item ||
-      BusinessRoute.team ||
-      BusinessRoute.performance ||
-      BusinessRoute.financials ||
-      BusinessRoute.stores ||
-      BusinessRoute.addStore ||
-      BusinessRoute.helpCentre =>
-        _RouteCategory.store,
-      BusinessRoute.settings => _RouteCategory.settings,
-      _ => _RouteCategory.other,
-    };
+  BusinessRoute.createAccount ||
+  BusinessRoute.reviewDetails ||
+  BusinessRoute.email ||
+  BusinessRoute.verifyEmail ||
+  BusinessRoute.welcome ||
+  BusinessRoute.onboarding ||
+  BusinessRoute.inbound => _RouteCategory.onboarding,
+  BusinessRoute.dashboard ||
+  BusinessRoute.newItem ||
+  BusinessRoute.item ||
+  BusinessRoute.team ||
+  BusinessRoute.performance ||
+  BusinessRoute.financials ||
+  BusinessRoute.stores ||
+  BusinessRoute.addStore ||
+  BusinessRoute.helpCentre => _RouteCategory.store,
+  BusinessRoute.settings => _RouteCategory.settings,
+  _ => _RouteCategory.other,
+};
 
 String _categoryLabel(_RouteCategory cat) => switch (cat) {
-      _RouteCategory.onboarding => 'Onboarding',
-      _RouteCategory.store => 'Store / Dashboard',
-      _RouteCategory.settings => 'Settings',
-      _RouteCategory.other => 'Other',
-    };
+  _RouteCategory.onboarding => 'Onboarding',
+  _RouteCategory.store => 'Store / Dashboard',
+  _RouteCategory.settings => 'Settings',
+  _RouteCategory.other => 'Other',
+};
 
 /// Extracts param names like `:storeId` from a path pattern.
 List<String> _extractParams(String path) {
@@ -96,8 +94,7 @@ class _DevMenuScreenState extends ConsumerState<DevMenuScreen> {
     super.initState();
     // Pre-fill storeId from the first completed storeShip, if any.
     final redirectState = ref.read(businessRedirectStateProvider);
-    final completed =
-        redirectState.storeShips.where((s) => s.welcomeCompleted);
+    final completed = redirectState.storeShips.where((s) => s.welcomeCompleted);
     if (completed.isNotEmpty) {
       _defaultStoreId = completed.first.storeId;
     }
@@ -259,17 +256,20 @@ class _RouteItem extends StatelessWidget {
             icon: const Icon(Icons.copy, size: Sizes.p16),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: resolvedPath));
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Copied: $resolvedPath'),
-                duration: const Duration(seconds: 1),
-              ));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Copied: $resolvedPath'),
+                  duration: const Duration(seconds: 1),
+                ),
+              );
             },
           ),
         ),
         if (params.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Sizes.p16)
-                .copyWith(bottom: Sizes.p8),
+            padding: const EdgeInsets.symmetric(
+              horizontal: Sizes.p16,
+            ).copyWith(bottom: Sizes.p8),
             child: Wrap(
               spacing: Sizes.p8,
               runSpacing: Sizes.p4,
@@ -284,7 +284,8 @@ class _RouteItem extends StatelessWidget {
                         border: const OutlineInputBorder(),
                       ),
                       controller: TextEditingController(
-                        text: paramValues['${route.name}:$param'] ??
+                        text:
+                            paramValues['${route.name}:$param'] ??
                             (param == 'storeId' ? defaultStoreId : null),
                       ),
                       onChanged: (v) =>

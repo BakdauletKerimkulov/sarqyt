@@ -38,7 +38,8 @@ class OfferScreen extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text(context.loc.removedFromFavorites(storeName))),
+              content: Text(context.loc.removedFromFavorites(storeName)),
+            ),
           );
         }
       } else {
@@ -91,7 +92,11 @@ class OfferScreen extends ConsumerWidget {
                 offer,
                 isFavorite: isFav,
                 onFavoriteToggle: () => _toggleFavorite(
-                  context, ref, offer.storeId, offer.storeName, isFav,
+                  context,
+                  ref,
+                  offer.storeId,
+                  offer.storeName,
+                  isFav,
                 ),
               ),
               OfferSliverContent(offer: offer),
@@ -144,7 +149,9 @@ class OfferSliverContent extends StatelessWidget {
                       children: [
                         _TitleRow(offer.name),
                         gapH8,
-                        _CollectRow('Collect: ${offer.pickupLabelLocalized(context)}'),
+                        _CollectRow(
+                          'Collect: ${offer.pickupLabelLocalized(context)}',
+                        ),
                       ],
                     ),
                   ),

@@ -4,8 +4,7 @@ import 'package:flutter/foundation.dart';
 
 /// Listens to one or more streams and notifies GoRouter to re-run redirect.
 class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<dynamic> stream)
-      : this.merged([stream]);
+  GoRouterRefreshStream(Stream<dynamic> stream) : this.merged([stream]);
 
   GoRouterRefreshStream.merged(List<Stream<dynamic>> streams) {
     notifyListeners();

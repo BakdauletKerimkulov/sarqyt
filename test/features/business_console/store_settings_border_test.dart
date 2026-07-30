@@ -25,8 +25,9 @@ void main() {
         ProviderScope(
           overrides: [
             currentStoreShipProvider.overrideWithValue(_testShip),
-            storeStreamProvider('store-1')
-                .overrideWith((_) => const Stream.empty()),
+            storeStreamProvider(
+              'store-1',
+            ).overrideWith((_) => const Stream.empty()),
           ],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,

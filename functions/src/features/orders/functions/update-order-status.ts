@@ -70,10 +70,15 @@ export const updateOrderStatus = onCall(async (req) => {
         );
       }
 
-      tx.update(orderRef, {
+      const orderUpdate: Record<string, unknown> = {
         status,
         updatedAt: serverTimestamp(),
-      });
+      };
+      // completedAt anchors the delayed review prompt (spec 034, R7).
+      if (status === "completed") {
+        orderUpdate.completedAt = serverTimestamp();
+      }
+      tx.update(orderRef, orderUpdate);
     });
 
     logInfo("updateOrderStatus done", { orderId, to: status });

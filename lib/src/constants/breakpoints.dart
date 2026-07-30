@@ -10,8 +10,8 @@ enum WindowSize {
   expanded;
 
   static WindowSize fromWidth(double width) => switch (width) {
-        < Breakpoints.compact => WindowSize.compact,
-        < Breakpoints.expanded => WindowSize.medium,
-        _ => WindowSize.expanded,
-      };
+    < Breakpoints.compact => WindowSize.compact,
+    < Breakpoints.expanded => WindowSize.medium,
+    _ => WindowSize.expanded,
+  };
 }

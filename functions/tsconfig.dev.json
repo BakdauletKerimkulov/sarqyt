@@ -1,7 +1,9 @@
 {
   "include": [
     ".eslintrc.js",
-    "test"
+    "vitest.config.ts",
+    "test",
+    "src/**/*.test.ts"
   ],
   "compilerOptions": {
     "module": "NodeNext",

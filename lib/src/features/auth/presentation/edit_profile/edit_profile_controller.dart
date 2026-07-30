@@ -18,7 +18,9 @@ class EditProfileController extends _$EditProfileController {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(userProfileRepositoryProvider).updateProfile(
+      await ref
+          .read(userProfileRepositoryProvider)
+          .updateProfile(
             user.uid,
             displayName: displayName.isNotEmpty ? displayName : null,
             phoneNumber: phoneNumber.isNotEmpty ? phoneNumber : null,

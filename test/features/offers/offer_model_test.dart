@@ -54,10 +54,7 @@ void main() {
     // that requires BuildContext — tested in widget tests, not here.
 
     test('discountPercent calculates correctly', () {
-      final offer = _makeOffer().copyWith(
-        price: 1500,
-        estimatedValue: 5000,
-      );
+      final offer = _makeOffer().copyWith(price: 1500, estimatedValue: 5000);
       // (1 - 1500/5000) * 100 = 70%
       expect(offer.discountPercent, 70);
     });
@@ -73,22 +70,22 @@ void main() {
 
   group('Offer._readStatus via fromJson', () {
     Map<String, dynamic> baseOfferJson() => {
-          'id': 'offer1',
-          'storeId': 'store1',
-          'productId': 'item1',
-          'quantity': 5,
-          'name': 'Surprise Bag',
-          'price': 1500,
-          'currencyCode': 'KZT',
-          'currencySymbol': '₸',
-          'storeName': 'Test Store',
-          'geopoint': const GeoPoint(43.25, 76.94),
-          'pickupStartTime': Timestamp.fromDate(DateTime(2026, 7, 1, 10)),
-          'pickupEndTime': Timestamp.fromDate(DateTime(2026, 7, 1, 14)),
-          'createdAt': Timestamp.fromDate(DateTime(2026, 6, 1)),
-          'createdBy': 'uid1',
-          'status': 'active',
-        };
+      'id': 'offer1',
+      'storeId': 'store1',
+      'productId': 'item1',
+      'quantity': 5,
+      'name': 'Surprise Bag',
+      'price': 1500,
+      'currencyCode': 'KZT',
+      'currencySymbol': '₸',
+      'storeName': 'Test Store',
+      'geopoint': const GeoPoint(43.25, 76.94),
+      'pickupStartTime': Timestamp.fromDate(DateTime(2026, 7, 1, 10)),
+      'pickupEndTime': Timestamp.fromDate(DateTime(2026, 7, 1, 14)),
+      'createdAt': Timestamp.fromDate(DateTime(2026, 6, 1)),
+      'createdBy': 'uid1',
+      'status': 'active',
+    };
 
     test('parses "soldOut" status', () {
       final json = baseOfferJson()..['status'] = 'soldOut';

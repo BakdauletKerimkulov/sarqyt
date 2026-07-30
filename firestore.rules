@@ -7,7 +7,11 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && request.auth.token.role == 'admin';
+      // get() с дефолтом: прямое обращение к отсутствующему claim `role`
+      // не возвращает false, а роняет вычисление условия. Итог тот же —
+      // отказ, но в логах эмулятора это выглядит как ошибка правил, а не
+      // как штатный deny, и мешает читать вывод rules-тестов.
+      return isSignedIn() && request.auth.token.get('role', '') == 'admin';
     }
 
     function isPartner() {

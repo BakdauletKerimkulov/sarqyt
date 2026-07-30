@@ -49,9 +49,7 @@ class _ScheduleDayRowState extends State<ScheduleDayRow> {
     _startMinuteCtl = TextEditingController(
       text: _pad(widget.schedule.startMinute),
     );
-    _endHourCtl = TextEditingController(
-      text: _pad(widget.schedule.endHour),
-    );
+    _endHourCtl = TextEditingController(text: _pad(widget.schedule.endHour));
     _endMinuteCtl = TextEditingController(
       text: _pad(widget.schedule.endMinute),
     );
@@ -120,11 +118,8 @@ class _ScheduleDayRowState extends State<ScheduleDayRow> {
                   enabled: widget.enabled,
                   semanticLabel: '${widget.dayName} start hour',
                   max: 23,
-                  onChanged: (v) => _onChanged(
-                    _startHourCtl,
-                    23,
-                    widget.onStartHourChanged,
-                  ),
+                  onChanged: (v) =>
+                      _onChanged(_startHourCtl, 23, widget.onStartHourChanged),
                 ),
                 Text(' : ', style: textTheme.bodyMedium),
                 _TimeField(
@@ -147,11 +142,8 @@ class _ScheduleDayRowState extends State<ScheduleDayRow> {
                   enabled: widget.enabled,
                   semanticLabel: '${widget.dayName} end hour',
                   max: 23,
-                  onChanged: (v) => _onChanged(
-                    _endHourCtl,
-                    23,
-                    widget.onEndHourChanged,
-                  ),
+                  onChanged: (v) =>
+                      _onChanged(_endHourCtl, 23, widget.onEndHourChanged),
                 ),
                 Text(' : ', style: textTheme.bodyMedium),
                 _TimeField(
@@ -159,11 +151,8 @@ class _ScheduleDayRowState extends State<ScheduleDayRow> {
                   enabled: widget.enabled,
                   semanticLabel: '${widget.dayName} end minute',
                   max: 59,
-                  onChanged: (v) => _onChanged(
-                    _endMinuteCtl,
-                    59,
-                    widget.onEndMinuteChanged,
-                  ),
+                  onChanged: (v) =>
+                      _onChanged(_endMinuteCtl, 59, widget.onEndMinuteChanged),
                 ),
               ],
             ],

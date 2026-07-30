@@ -34,8 +34,9 @@ void main() {
         final container = ProviderContainer(
           overrides: [
             // Provide storeShips via the keepAlive stream (already loaded by redirect).
-            currentPartnerStoreShipsProvider
-                .overrideWith((_) => Stream.value([_testShip])),
+            currentPartnerStoreShipsProvider.overrideWith(
+              (_) => Stream.value([_testShip]),
+            ),
             // Provide a fake business repo that returns test business.
             businessRepositoryProvider.overrideWith(
               (_) => _FakeBusinessRepository(),
@@ -49,18 +50,14 @@ void main() {
 
         // Listen to keep the auto-dispose provider alive during the test.
         final completer = Completer<StoreStartupData>();
-        container.listen(
-          storeStartupProvider('store-1'),
-          (_, next) {
-            if (next is AsyncData<StoreStartupData> && !completer.isCompleted) {
-              completer.complete(next.value);
-            }
-            if (next is AsyncError && !completer.isCompleted) {
-              completer.completeError(next.error!, next.stackTrace);
-            }
-          },
-          fireImmediately: true,
-        );
+        container.listen(storeStartupProvider('store-1'), (_, next) {
+          if (next is AsyncData<StoreStartupData> && !completer.isCompleted) {
+            completer.complete(next.value);
+          }
+          if (next is AsyncError && !completer.isCompleted) {
+            completer.completeError(next.error!, next.stackTrace);
+          }
+        }, fireImmediately: true);
 
         final result = await completer.future;
 
@@ -78,7 +75,6 @@ class _FakeBusinessRepository implements BusinessRepository {
   Future<Business?> fetchBusinessInfo(BusinessID id) async => _testBusiness;
 
   @override
-  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError(
-    'Unexpected call: ${invocation.memberName}',
-  );
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw UnimplementedError('Unexpected call: ${invocation.memberName}');
 }

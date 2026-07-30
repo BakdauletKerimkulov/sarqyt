@@ -38,11 +38,7 @@ void main() {
     });
 
     test('returns single word if name has one word', () {
-      final store = Store(
-        id: 's1',
-        name: 'Bakery',
-        location: _makeLocation(),
-      );
+      final store = Store(id: 's1', name: 'Bakery', location: _makeLocation());
       expect(store.firstTwoWords, 'Bakery');
     });
 
@@ -72,10 +68,7 @@ void main() {
   });
 
   group('Store.fromMap reviewCount', () {
-    Map<String, dynamic> makeStoreMap({
-      double? avgRating,
-      int? reviewCount,
-    }) =>
+    Map<String, dynamic> makeStoreMap({double? avgRating, int? reviewCount}) =>
         {
           'id': 's1',
           'name': 'Test',

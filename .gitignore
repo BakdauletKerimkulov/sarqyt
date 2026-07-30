@@ -60,3 +60,6 @@ lib/env.g.dart
 # VS Code
 .vscode/
 plan.txt
+
+# состояние agentic-цикла (допуск gate, логи ретраев, вердикты ревью)
+.gate/

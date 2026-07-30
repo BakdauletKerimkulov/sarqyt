@@ -46,12 +46,14 @@ class _AddStoreFormState extends ConsumerState<_AddStoreForm> {
     try {
       final location = draft.location;
       final geohash = location != null
-          ? GeoFirePoint(GeoPoint(location.latitude, location.longitude))
-                .geohash
+          ? GeoFirePoint(
+              GeoPoint(location.latitude, location.longitude),
+            ).geohash
           : '';
 
-      final callable =
-          FirebaseFunctions.instance.httpsCallable('createAdditionalStore');
+      final callable = FirebaseFunctions.instance.httpsCallable(
+        'createAdditionalStore',
+      );
       final result = await callable.call<dynamic>({
         'name': draft.name,
         'storeType': draft.storeType?.name ?? '',
@@ -83,7 +85,9 @@ class _AddStoreFormState extends ConsumerState<_AddStoreForm> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Failed to create store'.hardcoded)),
+          SnackBar(
+            content: Text(e.message ?? 'Failed to create store'.hardcoded),
+          ),
         );
       }
     }

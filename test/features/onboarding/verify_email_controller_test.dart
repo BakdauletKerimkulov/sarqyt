@@ -139,7 +139,7 @@ void main() {
     );
 
     test(
-      'checkAndComplete — DraftNotFoundException → state has typed error, completed stays false',
+      'checkAndComplete — DraftNotFoundException → typed error, onboarding not completed',
       () async {
         final user = _TestAppUser(verified: true);
         final fakeAuth = _FakeAuthRepo(user);
@@ -162,8 +162,9 @@ void main() {
         final state = container.read(verifyEmailControllerProvider);
         expect(state.hasError, isTrue);
         expect(state.error, isA<DraftNotFoundException>());
-        expect(controller.completed, isFalse);
-        expect(controller.isDraftNotFound, isTrue);
+        // Наблюдаемый эквивалент прежнего `completed == false`:
+        // онбординг не должен считаться завершённым.
+        expect(fakeOnboarding.completeMerchantCalled, isFalse);
       },
     );
 

@@ -51,7 +51,13 @@ void main() {
         storeId: 's2',
         price: 1000,
         distanceKm: 0.5,
-        pickupStart: DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 18, 0),
+        pickupStart: DateTime(
+          tomorrow.year,
+          tomorrow.month,
+          tomorrow.day,
+          18,
+          0,
+        ),
       ),
       _makeOWD(
         storeId: 's3',
@@ -79,8 +85,10 @@ void main() {
       final result = applyFilter(offers, filter, {}, today);
       for (final o in result) {
         final d = o.offer.pickupStartTime;
-        expect(DateTime(d.year, d.month, d.day),
-            DateTime(today.year, today.month, today.day));
+        expect(
+          DateTime(d.year, d.month, d.day),
+          DateTime(today.year, today.month, today.day),
+        );
       }
     });
 
@@ -89,8 +97,10 @@ void main() {
       final result = applyFilter(offers, filter, {}, today);
       for (final o in result) {
         final d = o.offer.pickupStartTime;
-        expect(DateTime(d.year, d.month, d.day),
-            DateTime(tomorrow.year, tomorrow.month, tomorrow.day));
+        expect(
+          DateTime(d.year, d.month, d.day),
+          DateTime(tomorrow.year, tomorrow.month, tomorrow.day),
+        );
       }
     });
 

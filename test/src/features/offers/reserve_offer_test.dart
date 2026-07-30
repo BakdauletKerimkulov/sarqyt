@@ -31,11 +31,13 @@ void main() {
       final r = Robot(tester);
 
       // Stub payment repository to return a fake order ID.
-      when(() => r.mockPaymentRepo.reserveOffer(
-            offerId: any(named: 'offerId'),
-            quantity: any(named: 'quantity'),
-            idempotencyKey: any(named: 'idempotencyKey'),
-          )).thenAnswer((_) async => 'fake-order-id');
+      when(
+        () => r.mockPaymentRepo.reserveOffer(
+          offerId: any(named: 'offerId'),
+          quantity: any(named: 'quantity'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+        ),
+      ).thenAnswer((_) async => 'fake-order-id');
 
       await r.pumpClientApp();
 

@@ -34,8 +34,9 @@ Offer _makeOffer() {
 
 void main() {
   group('OfferScreen redirect on null', () {
-    testWidgets('navigates to home when offer stream emits null',
-        (tester) async {
+    testWidgets('navigates to home when offer stream emits null', (
+      tester,
+    ) async {
       final controller = StreamController<Offer?>();
       addTearDown(controller.close);
 
@@ -67,10 +68,12 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            offerStreamProvider('offer1')
-                .overrideWith((_) => controller.stream),
-            favoriteStoreIdsProvider
-                .overrideWith((_) => Stream.value(const <String>{})),
+            offerStreamProvider(
+              'offer1',
+            ).overrideWith((_) => controller.stream),
+            favoriteStoreIdsProvider.overrideWith(
+              (_) => Stream.value(const <String>{}),
+            ),
           ],
           child: MaterialApp.router(
             routerConfig: router,

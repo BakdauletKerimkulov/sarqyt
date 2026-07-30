@@ -62,8 +62,7 @@ class CreateAccountContent extends ConsumerWidget {
         final updatedDraft = ref.read(storeDraftControllerProvider);
         if (updatedDraft.canGoToStep2) {
           context.pushNamed(BusinessRoute.reviewDetails.name);
-        } else {
-        }
+        } else {}
       },
       submitText: 'Continue',
     );

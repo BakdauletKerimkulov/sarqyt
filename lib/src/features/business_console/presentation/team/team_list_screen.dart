@@ -89,8 +89,8 @@ class _TeamMemberTile extends StatelessWidget {
 
 extension _StoreRoleLabelX on StoreRole {
   String get label => switch (this) {
-        StoreRole.owner => 'Owner',
-        StoreRole.operator => 'Operator',
-        StoreRole.employer => 'Employee',
-      };
+    StoreRole.owner => 'Owner',
+    StoreRole.operator => 'Operator',
+    StoreRole.employer => 'Employee',
+  };
 }

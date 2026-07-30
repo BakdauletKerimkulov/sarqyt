@@ -23,7 +23,9 @@ class ReviewController extends _$ReviewController {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(reviewRepositoryProvider).submitReview(
+      await ref
+          .read(reviewRepositoryProvider)
+          .submitReview(
             orderId: orderId,
             storeId: storeId,
             userId: user.uid,

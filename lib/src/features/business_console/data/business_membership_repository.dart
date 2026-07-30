@@ -16,9 +16,7 @@ class BusinessMembershipRepository {
     String userId,
   ) {
     final compositeId = '${businessId}_$userId';
-    return _membershipRef(compositeId)
-        .snapshots()
-        .map((snap) => snap.data());
+    return _membershipRef(compositeId).snapshots().map((snap) => snap.data());
   }
 
   /// Watch all members of a business.

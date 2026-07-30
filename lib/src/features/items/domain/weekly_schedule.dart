@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class DaySchedule {
   const DaySchedule({
     required this.enabled,
@@ -69,8 +70,13 @@ class DaySchedule {
 
   @override
   int get hashCode => Object.hash(
-        enabled, startHour, startMinute, endHour, endMinute, quantity,
-      );
+    enabled,
+    startHour,
+    startMinute,
+    endHour,
+    endMinute,
+    quantity,
+  );
 
   Map<String, dynamic> toMap() => {
     'enabled': enabled,
@@ -156,9 +162,8 @@ class WeeklySchedule {
 
   /// Returns per-day validation errors for all days (null if no error).
   Map<int, String?> get dayErrors => {
-        for (final entry in days.entries)
-          entry.key: entry.value.validationError,
-      };
+    for (final entry in days.entries) entry.key: entry.value.validationError,
+  };
 
   @override
   bool operator ==(Object other) =>
@@ -168,13 +173,11 @@ class WeeklySchedule {
           days.entries.every((e) => other.days[e.key] == e.value);
 
   @override
-  int get hashCode => Object.hashAll(
-        days.entries.map((e) => Object.hash(e.key, e.value)),
-      );
+  int get hashCode =>
+      Object.hashAll(days.entries.map((e) => Object.hash(e.key, e.value)));
 
   Map<String, dynamic> toMap() => {
-    for (final entry in days.entries)
-      entry.key.toString(): entry.value.toMap(),
+    for (final entry in days.entries) entry.key.toString(): entry.value.toMap(),
   };
 
   factory WeeklySchedule.fromMap(Map<String, dynamic> map) {

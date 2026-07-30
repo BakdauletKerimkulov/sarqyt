@@ -20,8 +20,9 @@ final _testItem = Item(
 
 void main() {
   group('ItemScreen delete navigation', () {
-    testWidgets('calls context.pop when item stream emits null after data',
-        (tester) async {
+    testWidgets('calls context.pop when item stream emits null after data', (
+      tester,
+    ) async {
       // Start stream with the item already available (avoids Lottie loading)
       final streamController = StreamController<Item?>.broadcast();
 
@@ -50,12 +51,12 @@ void main() {
         ProviderScope(
           overrides: [
             // Use Stream.value for immediate data to skip loading state
-            itemStreamProvider(id: 'item-1', storeId: 'store-1')
-                .overrideWith((_) => Stream.value(_testItem)
-                    .asyncExpand((item) async* {
-                  yield item;
-                  yield* streamController.stream;
-                })),
+            itemStreamProvider(id: 'item-1', storeId: 'store-1').overrideWith(
+              (_) => Stream.value(_testItem).asyncExpand((item) async* {
+                yield item;
+                yield* streamController.stream;
+              }),
+            ),
           ],
           child: MaterialApp.router(
             localizationsDelegates: AppLocalizations.localizationsDelegates,

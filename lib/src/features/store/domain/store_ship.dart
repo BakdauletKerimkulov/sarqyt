@@ -38,8 +38,9 @@ Object? _readRole(Map map, String key) {
 extension StoreShipListX on List<StoreShip> {
   /// First owner storeShip whose welcome flow hasn't been completed yet, or null.
   /// Non-owner roles (employee, operator) skip the welcome flow entirely.
-  StoreShip? get pendingWelcome =>
-      where((s) => s.role == StoreRole.owner && !s.welcomeCompleted).firstOrNull;
+  StoreShip? get pendingWelcome => where(
+    (s) => s.role == StoreRole.owner && !s.welcomeCompleted,
+  ).firstOrNull;
 
   /// Default storeId to navigate to (first welcome-completed store).
   String? get defaultStoreId =>

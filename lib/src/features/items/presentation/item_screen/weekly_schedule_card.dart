@@ -76,8 +76,7 @@ class DayRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final isCompact =
-        MediaQuery.sizeOf(context).width < Breakpoints.compact;
+    final isCompact = MediaQuery.sizeOf(context).width < Breakpoints.compact;
 
     final salesWindow = SalesWindow(
       start: schedule.startTime,
@@ -111,26 +110,27 @@ class DayRow extends StatelessWidget {
               gapW16,
               CollectionToggle(
                 enabled: schedule.enabled,
-                onChanged: (enabled) => onChanged(schedule.copyWith(
-                  enabled: enabled,
-                  quantity:
-                      enabled && schedule.quantity == 0 ? 1 : schedule.quantity,
-                )),
+                onChanged: (enabled) => onChanged(
+                  schedule.copyWith(
+                    enabled: enabled,
+                    quantity: enabled && schedule.quantity == 0
+                        ? 1
+                        : schedule.quantity,
+                  ),
+                ),
               ),
               gapW16,
               if (isCompact)
                 Expanded(
                   child: QuantityBox(
                     quantity: schedule.quantity,
-                    onChanged: (q) =>
-                        onChanged(schedule.copyWith(quantity: q)),
+                    onChanged: (q) => onChanged(schedule.copyWith(quantity: q)),
                   ),
                 )
               else ...[
                 QuantityBox(
                   quantity: schedule.quantity,
-                  onChanged: (q) =>
-                      onChanged(schedule.copyWith(quantity: q)),
+                  onChanged: (q) => onChanged(schedule.copyWith(quantity: q)),
                 ),
               ],
               if (!isCompact) ...[
@@ -139,10 +139,7 @@ class DayRow extends StatelessWidget {
               ],
             ],
           ),
-          if (isCompact) ...[
-            gapH8,
-            salesWindow,
-          ],
+          if (isCompact) ...[gapH8, salesWindow],
         ],
       ),
     );

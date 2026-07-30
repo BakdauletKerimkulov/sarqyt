@@ -76,8 +76,9 @@ class _OrderDetailContent extends StatelessWidget {
                   gapH4,
                   Text(
                     context.loc.orderNumber(order.orderNumber!.toString()),
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(color: Colors.grey),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ],
@@ -112,23 +113,22 @@ class _OrderDetailContent extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      order.itemName,
-                      style: theme.textTheme.titleMedium,
-                    ),
+                    Text(order.itemName, style: theme.textTheme.titleMedium),
                     gapH4,
                     Text(
                       context.loc.itemQuantityPrefix(order.itemQuantity),
-                      style: theme.textTheme.bodyMedium
-                          ?.copyWith(color: Colors.grey),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey,
+                      ),
                     ),
                   ],
                 ),
               ),
               Text(
                 order.totalFormatted,
-                style: theme.textTheme.titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -138,16 +138,16 @@ class _OrderDetailContent extends StatelessWidget {
 
           // Pickup window
           if (order.pickupLabelLocalized(context) != null) ...[
-            Text(
-              context.loc.pickupWindow,
-              style: theme.textTheme.titleSmall,
-            ),
+            Text(context.loc.pickupWindow, style: theme.textTheme.titleSmall),
             gapH8,
             Row(
               children: [
                 const Icon(Icons.schedule, size: 20, color: Colors.grey),
                 gapW8,
-                Text(order.pickupLabelLocalized(context)!, style: theme.textTheme.bodyLarge),
+                Text(
+                  order.pickupLabelLocalized(context)!,
+                  style: theme.textTheme.bodyLarge,
+                ),
               ],
             ),
             gapH16,
@@ -156,15 +156,9 @@ class _OrderDetailContent extends StatelessWidget {
           ],
 
           // Payment info
-          _InfoRow(
-            label: context.loc.payment,
-            value: context.loc.payOnPickup,
-          ),
+          _InfoRow(label: context.loc.payment, value: context.loc.payOnPickup),
           gapH8,
-          _InfoRow(
-            label: context.loc.total,
-            value: order.totalFormatted,
-          ),
+          _InfoRow(label: context.loc.total, value: order.totalFormatted),
 
           // Cancellation reason (when cancelled by store)
           if (order.status == OrderStatus.cancelled &&
@@ -263,9 +257,9 @@ class _PickupWindow extends StatelessWidget {
           gapH4,
           Text(
             order.pickupLabelLocalized(context) ?? '',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -278,8 +272,7 @@ class _CancelOrderButton extends ConsumerStatefulWidget {
   final OrderID orderId;
 
   @override
-  ConsumerState<_CancelOrderButton> createState() =>
-      _CancelOrderButtonState();
+  ConsumerState<_CancelOrderButton> createState() => _CancelOrderButtonState();
 }
 
 class _CancelOrderButtonState extends ConsumerState<_CancelOrderButton> {
@@ -302,9 +295,9 @@ class _CancelOrderButtonState extends ConsumerState<_CancelOrderButton> {
           .cancelOrder(widget.orderId);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(humanReadableError(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(humanReadableError(e))));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -345,10 +338,9 @@ class _InfoRow extends StatelessWidget {
         Text(label, style: Theme.of(context).textTheme.bodyMedium),
         Text(
           value,
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
       ],
     );

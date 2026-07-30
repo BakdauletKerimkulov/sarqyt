@@ -21,20 +21,13 @@ class FirstStep extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          loc.whyTaxInfo,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text(loc.whyTaxInfo, style: Theme.of(context).textTheme.titleLarge),
         gapH16,
-        Text(
-          loc.whyTaxInfoReason1,
-        ),
+        Text(loc.whyTaxInfoReason1),
         gapH24,
         Text('What to expect', style: Theme.of(context).textTheme.titleLarge),
         gapH16,
-        Text(
-          loc.whyTaxInfoReason2,
-        ),
+        Text(loc.whyTaxInfoReason2),
         gapH24,
         Text(
           loc.selectBusinessType,

@@ -305,7 +305,11 @@ describe("orders", () => {
     await assertFails(getDoc(doc(db, "orders", "o1")));
   });
 
-  it("allows store staff to update only status + updatedAt", async () => {
+  // Все изменения заказа идут через Cloud Functions (updateOrderStatus,
+  // cancelOrder) с admin SDK — см. orders_repository.dart. Клиент в orders
+  // не пишет вообще, поэтому персонал магазина не должен мочь ничего,
+  // включая безобидный на вид status.
+  it("denies store staff updating order status directly", async () => {
     await testEnv.withSecurityRulesDisabled(async (ctx) => {
       const fs = ctx.firestore();
       await setDoc(doc(fs, "orders", "o1"), orderData);
@@ -316,7 +320,7 @@ describe("orders", () => {
       });
     });
     const db = authedDb("staff1");
-    await assertSucceeds(
+    await assertFails(
       updateDoc(doc(db, "orders", "o1"), { status: "preparing", updatedAt: new Date() })
     );
   });
@@ -334,6 +338,16 @@ describe("orders", () => {
     const db = authedDb("staff1");
     await assertFails(
       updateDoc(doc(db, "orders", "o1"), { itemQuantity: 100 })
+    );
+  });
+
+  it("allows admin to update an order", async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "orders", "o1"), orderData);
+    });
+    const db = authedDb("admin1", { role: "admin" });
+    await assertSucceeds(
+      updateDoc(doc(db, "orders", "o1"), { status: "preparing", updatedAt: new Date() })
     );
   });
 });

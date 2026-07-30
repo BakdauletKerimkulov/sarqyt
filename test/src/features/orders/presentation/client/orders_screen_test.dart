@@ -10,29 +10,24 @@ import 'package:sarqyt/src/features/orders/presentation/client/widgets/active_or
 import 'package:sarqyt/src/features/orders/presentation/client/widgets/active_order_inline.dart';
 import 'package:sarqyt/src/features/orders/presentation/client/widgets/recent_order_card.dart';
 
-Order _makeOrder({
-  required String id,
-  required OrderStatus status,
-}) =>
-    Order(
-      id: id,
-      itemId: 'item-1',
-      storeId: 'store-1',
-      customerId: 'user-1',
-      itemName: 'Surprise Bag',
-      storeName: 'Test Store',
-      unitPrice: 1500,
-      itemQuantity: 1,
-      status: status,
-      paymentStatus: PaymentStatus.paid,
-      createdAt: DateTime(2026, 1, 1),
-    );
+Order _makeOrder({required String id, required OrderStatus status}) => Order(
+  id: id,
+  itemId: 'item-1',
+  storeId: 'store-1',
+  customerId: 'user-1',
+  itemName: 'Surprise Bag',
+  storeName: 'Test Store',
+  unitPrice: 1500,
+  itemQuantity: 1,
+  status: status,
+  paymentStatus: PaymentStatus.paid,
+  createdAt: DateTime(2026, 1, 1),
+);
 
 Widget _buildSubject(List<Order> orders) {
   return ProviderScope(
     overrides: [
-      customerOrdersStreamProvider
-          .overrideWith((_) => Stream.value(orders)),
+      customerOrdersStreamProvider.overrideWith((_) => Stream.value(orders)),
     ],
     child: MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -54,9 +49,7 @@ void main() {
     });
 
     testWidgets('1 active order shows inline view', (tester) async {
-      final orders = [
-        _makeOrder(id: 'o1', status: OrderStatus.preparing),
-      ];
+      final orders = [_makeOrder(id: 'o1', status: OrderStatus.preparing)];
       await tester.pumpWidget(_buildSubject(orders));
       await tester.pumpAndSettle();
 
@@ -76,9 +69,9 @@ void main() {
       expect(find.byType(ActiveOrderInline), findsNothing);
     });
 
-    testWidgets(
-        '0 active + 5 past shows empty state + max 3 recent cards',
-        (tester) async {
+    testWidgets('0 active + 5 past shows empty state + max 3 recent cards', (
+      tester,
+    ) async {
       final orders = [
         for (int i = 0; i < 5; i++)
           _makeOrder(id: 'p$i', status: OrderStatus.completed),

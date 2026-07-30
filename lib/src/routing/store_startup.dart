@@ -46,7 +46,9 @@ final currentBusinessProvider = Provider<Business>(dependencies: [], (ref) {
 });
 
 /// Scoped stream provider for live [Business] updates. Only valid inside [StoreStartupWidget].
-final currentBusinessStreamProvider = StreamProvider<Business>(dependencies: [], (ref) {
+final currentBusinessStreamProvider = StreamProvider<Business>(dependencies: [], (
+  ref,
+) {
   throw UnimplementedError(
     'currentBusinessStreamProvider must be overridden in StoreStartupWidget scope',
   );

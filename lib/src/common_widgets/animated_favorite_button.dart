@@ -34,18 +34,9 @@ class _AnimatedFavoriteButtonState extends State<AnimatedFavoriteButton>
       vsync: this,
     );
     _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.2),
-        weight: 50,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 1.0),
-        weight: 50,
-      ),
-    ]).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.2), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.2, end: 1.0), weight: 50),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -70,9 +61,7 @@ class _AnimatedFavoriteButtonState extends State<AnimatedFavoriteButton>
           widget.isFavorite ? Icons.favorite : Icons.favorite_border,
           color: widget.isFavorite ? Colors.red : Colors.white,
           size: 28,
-          shadows: const [
-            Shadow(blurRadius: 4, color: Colors.black45),
-          ],
+          shadows: const [Shadow(blurRadius: 4, color: Colors.black45)],
           semanticLabel: widget.isFavorite
               ? 'Remove from favorites'
               : 'Add to favorites',

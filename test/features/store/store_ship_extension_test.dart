@@ -1,10 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 
-StoreShip _ship({
-  required StoreRole role,
-  bool welcomeCompleted = false,
-}) {
+StoreShip _ship({required StoreRole role, bool welcomeCompleted = false}) {
   return StoreShip(
     storeId: 'store-1',
     businessId: 'biz-1',

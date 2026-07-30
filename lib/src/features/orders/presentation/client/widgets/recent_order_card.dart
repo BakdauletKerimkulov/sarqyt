@@ -7,11 +7,7 @@ import 'package:sarqyt/src/features/orders/presentation/client/order_status_badg
 /// Compact card for recent/past orders.
 /// Shows store name, item, status badge, date, total.
 class RecentOrderCard extends StatelessWidget {
-  const RecentOrderCard({
-    super.key,
-    required this.order,
-    this.onTap,
-  });
+  const RecentOrderCard({super.key, required this.order, this.onTap});
 
   final Order order;
   final VoidCallback? onTap;
@@ -35,8 +31,9 @@ class RecentOrderCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       order.storeName,
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -61,14 +58,16 @@ class RecentOrderCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       dateStr,
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: theme.colorScheme.outline),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.outline,
+                      ),
                     ),
                   ),
                   Text(
                     order.totalFormatted,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

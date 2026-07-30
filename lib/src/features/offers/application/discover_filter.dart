@@ -5,6 +5,7 @@ import 'package:sarqyt/src/utils/current_date_builder.dart';
 part 'discover_filter.g.dart';
 
 enum PickupTimeFilter { all, today, tomorrow }
+
 enum SortBy { distance, price, time }
 
 class DiscoverFilter {
@@ -35,10 +36,10 @@ class DiscoverFilter {
   }
 
   DiscoverFilter clearMaxPrice() => DiscoverFilter(
-        pickupTime: pickupTime,
-        sortBy: sortBy,
-        favoritesOnly: favoritesOnly,
-      );
+    pickupTime: pickupTime,
+    sortBy: sortBy,
+    favoritesOnly: favoritesOnly,
+  );
 }
 
 @riverpod
@@ -101,14 +102,17 @@ List<OfferWithDistance> applyFilter(
   // Sort
   switch (filter.sortBy) {
     case SortBy.distance:
-      result.sort((a, b) =>
-          (a.distanceKm ?? double.infinity)
-              .compareTo(b.distanceKm ?? double.infinity));
+      result.sort(
+        (a, b) => (a.distanceKm ?? double.infinity).compareTo(
+          b.distanceKm ?? double.infinity,
+        ),
+      );
     case SortBy.price:
       result.sort((a, b) => a.offer.price.compareTo(b.offer.price));
     case SortBy.time:
-      result.sort((a, b) =>
-          a.offer.pickupStartTime.compareTo(b.offer.pickupStartTime));
+      result.sort(
+        (a, b) => a.offer.pickupStartTime.compareTo(b.offer.pickupStartTime),
+      );
   }
 
   return result;

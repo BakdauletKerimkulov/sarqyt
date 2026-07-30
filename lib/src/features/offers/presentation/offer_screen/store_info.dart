@@ -54,8 +54,11 @@ class StoreInfo extends ConsumerWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.location_on_outlined,
-                          size: 20, color: Colors.grey),
+                      const Icon(
+                        Icons.location_on_outlined,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
                       gapW8,
                       Expanded(
                         child: Column(
@@ -101,8 +104,11 @@ class StoreInfo extends ConsumerWidget {
                 // Available
                 Row(
                   children: [
-                    const Icon(Icons.shopping_bag_outlined,
-                        size: 20, color: Colors.grey),
+                    const Icon(
+                      Icons.shopping_bag_outlined,
+                      size: 20,
+                      color: Colors.grey,
+                    ),
                     gapW8,
                     Text(
                       context.loc.available,

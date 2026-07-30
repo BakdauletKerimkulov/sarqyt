@@ -42,90 +42,116 @@ void main() {
       expect(fakeOnboarding.createDraftCalled, isTrue);
     });
 
-    test('if createStoreDraft fails: exception propagates without secondary errors', () async {
-      fakeOnboarding.failCreateDraft = true;
+    test(
+      'if createStoreDraft fails: exception propagates without secondary errors',
+      () async {
+        fakeOnboarding.failCreateDraft = true;
 
-      // The original exception must propagate to the caller
-      await expectLater(
-        () => service.register(email: email, password: password, draft: draft),
-        throwsA(isA<Exception>()),
-      );
+        // The original exception must propagate to the caller
+        await expectLater(
+          () =>
+              service.register(email: email, password: password, draft: draft),
+          throwsA(isA<Exception>()),
+        );
 
-      // Verify rollback ran without throwing a secondary exception.
-      // FakeAppUser.delete() is a no-op; the real Firebase user would be deleted.
-      // The key fix here: previously delete() threw UnimplementedError which
-      // would swallow the original exception. Now it completes cleanly.
-    });
+        // Verify rollback ran without throwing a secondary exception.
+        // FakeAppUser.delete() is a no-op; the real Firebase user would be deleted.
+        // The key fix here: previously delete() threw UnimplementedError which
+        // would swallow the original exception. Now it completes cleanly.
+      },
+    );
 
-    test('if createUserWithEmailAndPassword fails: does not call createStoreDraft', () async {
-      // Register same email twice to trigger EmailAlreadyInUseException
-      await service.register(email: email, password: password, draft: draft);
-      fakeOnboarding.createDraftCalled = false; // reset
-      await fakeAuth.signOut(); // sign out so the second call attempts user creation
+    test(
+      'if createUserWithEmailAndPassword fails: does not call createStoreDraft',
+      () async {
+        // Register same email twice to trigger EmailAlreadyInUseException
+        await service.register(email: email, password: password, draft: draft);
+        fakeOnboarding.createDraftCalled = false; // reset
+        await fakeAuth
+            .signOut(); // sign out so the second call attempts user creation
 
-      await expectLater(
-        () => service.register(email: email, password: password, draft: draft),
-        throwsA(isA<Exception>()),
-      );
+        await expectLater(
+          () =>
+              service.register(email: email, password: password, draft: draft),
+          throwsA(isA<Exception>()),
+        );
 
-      expect(fakeOnboarding.createDraftCalled, isFalse,
-          reason: 'createStoreDraft must not be called if registration failed');
-    });
+        expect(
+          fakeOnboarding.createDraftCalled,
+          isFalse,
+          reason: 'createStoreDraft must not be called if registration failed',
+        );
+      },
+    );
 
-    test('if createStoreDraft fails: deleteAccount is called (rollback)', () async {
-      fakeOnboarding.failCreateDraft = true;
+    test(
+      'if createStoreDraft fails: deleteAccount is called (rollback)',
+      () async {
+        fakeOnboarding.failCreateDraft = true;
 
-      await expectLater(
-        () => service.register(email: email, password: password, draft: draft),
-        throwsA(isA<Exception>()),
-      );
+        await expectLater(
+          () =>
+              service.register(email: email, password: password, draft: draft),
+          throwsA(isA<Exception>()),
+        );
 
-      expect(fakeAuth.deleteAccountCalled, isTrue);
-      expect(fakeAuth.currentUser, isNull);
-    });
+        expect(fakeAuth.deleteAccountCalled, isTrue);
+        expect(fakeAuth.currentUser, isNull);
+      },
+    );
 
-    test('if deleteAccount fails during rollback: falls back to signOut', () async {
-      fakeOnboarding.failCreateDraft = true;
-      fakeAuth.failDeleteAccount = true;
+    test(
+      'if deleteAccount fails during rollback: falls back to signOut',
+      () async {
+        fakeOnboarding.failCreateDraft = true;
+        fakeAuth.failDeleteAccount = true;
 
-      await expectLater(
-        () => service.register(email: email, password: password, draft: draft),
-        throwsA(isA<Exception>()),
-      );
+        await expectLater(
+          () =>
+              service.register(email: email, password: password, draft: draft),
+          throwsA(isA<Exception>()),
+        );
 
-      expect(fakeAuth.deleteAccountCalled, isTrue);
-      expect(fakeAuth.signOutCalled, isTrue);
-    });
+        expect(fakeAuth.deleteAccountCalled, isTrue);
+        expect(fakeAuth.signOutCalled, isTrue);
+      },
+    );
 
-    test('rollback rethrows the original error, not the delete/signOut error', () async {
-      fakeOnboarding.failCreateDraft = true;
+    test(
+      'rollback rethrows the original error, not the delete/signOut error',
+      () async {
+        fakeOnboarding.failCreateDraft = true;
 
-      await expectLater(
-        () => service.register(email: email, password: password, draft: draft),
-        throwsA(
-          isA<Exception>().having(
-            (e) => e.toString(),
-            'message',
-            contains('startMerchantOnboarding CF failed'),
+        await expectLater(
+          () =>
+              service.register(email: email, password: password, draft: draft),
+          throwsA(
+            isA<Exception>().having(
+              (e) => e.toString(),
+              'message',
+              contains('startMerchantOnboarding CF failed'),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
-    test('already-signed-in user: skips createUser, calls createStoreDraft only',
-        () async {
-      // Pre-register a user so currentUser is non-null
-      await fakeAuth.createUserWithEmailAndPassword(email, password);
-      fakeOnboarding.createDraftCalled = false; // reset from first call
+    test(
+      'already-signed-in user: skips createUser, calls createStoreDraft only',
+      () async {
+        // Pre-register a user so currentUser is non-null
+        await fakeAuth.createUserWithEmailAndPassword(email, password);
+        fakeOnboarding.createDraftCalled = false; // reset from first call
 
-      // Create a fresh service instance — user is already signed in
-      final s = MerchantOnboardingService(fakeAuth, fakeOnboarding);
-      await s.register(email: email, password: password, draft: draft);
+        // Create a fresh service instance — user is already signed in
+        final s = MerchantOnboardingService(fakeAuth, fakeOnboarding);
+        await s.register(email: email, password: password, draft: draft);
 
-      expect(fakeOnboarding.createDraftCalled, isTrue);
-      // If the service tried to create the user again, it would throw
-      // EmailAlreadyInUseException — test passing proves it skipped creation.
-    });
+        expect(fakeOnboarding.createDraftCalled, isTrue);
+        // If the service tried to create the user again, it would throw
+        // EmailAlreadyInUseException — test passing proves it skipped creation.
+      },
+    );
 
     test('draft data is passed to createStoreDraft', () async {
       Map<String, dynamic>? capturedData;

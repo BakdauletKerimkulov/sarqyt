@@ -3,10 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sarqyt/src/common_widgets/animated_favorite_button.dart';
 
 void main() {
-  Widget buildTestWidget({
-    required bool isFavorite,
-    VoidCallback? onToggle,
-  }) {
+  Widget buildTestWidget({required bool isFavorite, VoidCallback? onToggle}) {
     return MaterialApp(
       home: Scaffold(
         body: AnimatedFavoriteButton(

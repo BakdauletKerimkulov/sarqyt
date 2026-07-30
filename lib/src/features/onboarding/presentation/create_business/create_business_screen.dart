@@ -32,10 +32,9 @@ Future<void> _skipOnboarding(BuildContext context, WidgetRef ref) async {
   final uid = ref.read(authRepositoryProvider).currentUser?.uid;
   if (uid == null) return;
 
-  await ref.read(storeShipRepositoryProvider).markWelcomeCompleted(
-    storeId: storeId,
-    uid: uid,
-  );
+  await ref
+      .read(storeShipRepositoryProvider)
+      .markWelcomeCompleted(storeId: storeId, uid: uid);
   ref.invalidate(currentPartnerStoreShipsProvider);
 }
 

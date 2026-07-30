@@ -25,7 +25,7 @@ void main() {
       expect(item.discountPercent, 0);
     });
 
-test('default isActive is false', () {
+    test('default isActive is false', () {
       final item = Item(
         id: 'i1',
         name: 'Bag',
@@ -53,20 +53,29 @@ test('default isActive is false', () {
     test('maxDayQuantity returns highest enabled quantity', () {
       final schedule = WeeklySchedule({
         1: const DaySchedule(
-            enabled: true,
-            startHour: 18, startMinute: 0,
-            endHour: 20, endMinute: 0,
-            quantity: 5),
+          enabled: true,
+          startHour: 18,
+          startMinute: 0,
+          endHour: 20,
+          endMinute: 0,
+          quantity: 5,
+        ),
         2: const DaySchedule(
-            enabled: true,
-            startHour: 18, startMinute: 0,
-            endHour: 20, endMinute: 0,
-            quantity: 10),
+          enabled: true,
+          startHour: 18,
+          startMinute: 0,
+          endHour: 20,
+          endMinute: 0,
+          quantity: 10,
+        ),
         3: const DaySchedule(
-            enabled: false,
-            startHour: 18, startMinute: 0,
-            endHour: 20, endMinute: 0,
-            quantity: 20),
+          enabled: false,
+          startHour: 18,
+          startMinute: 0,
+          endHour: 20,
+          endMinute: 0,
+          quantity: 20,
+        ),
       });
       expect(schedule.maxDayQuantity, 10);
     });
@@ -79,8 +88,10 @@ test('default isActive is false', () {
     test('DaySchedule validationError when start >= end', () {
       const day = DaySchedule(
         enabled: true,
-        startHour: 20, startMinute: 0,
-        endHour: 18, endMinute: 0,
+        startHour: 20,
+        startMinute: 0,
+        endHour: 18,
+        endMinute: 0,
         quantity: 5,
       );
       expect(day.validationError, isNotNull);
@@ -89,8 +100,10 @@ test('default isActive is false', () {
     test('DaySchedule validationError null when disabled', () {
       const day = DaySchedule(
         enabled: false,
-        startHour: 20, startMinute: 0,
-        endHour: 18, endMinute: 0,
+        startHour: 20,
+        startMinute: 0,
+        endHour: 18,
+        endMinute: 0,
         quantity: 5,
       );
       expect(day.validationError, isNull);

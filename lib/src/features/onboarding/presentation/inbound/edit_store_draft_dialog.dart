@@ -56,10 +56,7 @@ class _EditStoreDraftDialogState extends ConsumerState<EditStoreDraftDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: Text('Cancel'.hardcoded),
         ),
-        FilledButton(
-          onPressed: _save,
-          child: Text('Save'.hardcoded),
-        ),
+        FilledButton(onPressed: _save, child: Text('Save'.hardcoded)),
       ],
     );
   }

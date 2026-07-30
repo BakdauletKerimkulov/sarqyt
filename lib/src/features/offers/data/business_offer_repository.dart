@@ -44,11 +44,11 @@ class BusinessOfferRepository {
         .limit(1)
         .snapshots()
         .map((snap) {
-      if (snap.docs.isEmpty) return null;
-      final data = Map<String, dynamic>.from(snap.docs.first.data());
-      data['id'] = snap.docs.first.id;
-      return Offer.fromJson(data);
-    });
+          if (snap.docs.isEmpty) return null;
+          final data = Map<String, dynamic>.from(snap.docs.first.data());
+          data['id'] = snap.docs.first.id;
+          return Offer.fromJson(data);
+        });
   }
 
   /// Create a one-time offer for a specific date and time window.
@@ -104,11 +104,7 @@ BusinessOfferRepository businessOfferRepository(Ref ref) {
 
 /// Stream of current offer for an item (today's active).
 @riverpod
-Stream<Offer?> currentOfferForItem(
-  Ref ref,
-  String storeId,
-  String itemId,
-) {
+Stream<Offer?> currentOfferForItem(Ref ref, String storeId, String itemId) {
   final repo = ref.watch(businessOfferRepositoryProvider);
   return repo.watchCurrentOfferForItem(storeId, itemId);
 }

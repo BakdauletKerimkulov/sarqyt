@@ -62,8 +62,10 @@ class ClientShellScaffold extends StatelessWidget {
         backgroundColor: Colors.white,
         indicatorColor: AppColors.primary.withAlpha(30),
         selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) =>
-            navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
+        onDestinationSelected: (index) => navigationShell.goBranch(
+          index,
+          initialLocation: index == navigationShell.currentIndex,
+        ),
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.explore_outlined),
@@ -97,8 +99,9 @@ GoRouter clientRouter(Ref ref) {
       final path = state.uri.path;
 
       // Show welcome screen for first-time users (sync via .requireValue)
-      final onboardingRepo =
-          ref.read(clientOnboardingRepositoryProvider).requireValue;
+      final onboardingRepo = ref
+          .read(clientOnboardingRepositoryProvider)
+          .requireValue;
       if (!onboardingRepo.isOnboardingComplete()) {
         if (path != '/welcome') return '/welcome';
         return null;
@@ -117,9 +120,8 @@ GoRouter clientRouter(Ref ref) {
         path: '/welcome',
         name: ClientRoute.welcome.name,
         parentNavigatorKey: _rootNavigatorKey,
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: WelcomeScreen(),
-        ),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: WelcomeScreen()),
       ),
       GoRoute(
         path: '/signIn',
@@ -147,8 +149,8 @@ GoRouter clientRouter(Ref ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final storeId = state.pathParameters['storeId']!;
-          final storeName = state.uri.queryParameters['storeName'] ??
-              context.loc.allReviews;
+          final storeName =
+              state.uri.queryParameters['storeName'] ?? context.loc.allReviews;
           return StoreReviewsScreen(storeId: storeId, storeName: storeName);
         },
       ),
@@ -202,8 +204,7 @@ GoRouter clientRouter(Ref ref) {
                   GoRoute(
                     path: 'history',
                     name: ClientRoute.orderHistory.name,
-                    builder: (context, state) =>
-                        const OrderHistoryScreen(),
+                    builder: (context, state) => const OrderHistoryScreen(),
                   ),
                   GoRoute(
                     path: ':orderId',
@@ -218,8 +219,10 @@ GoRouter clientRouter(Ref ref) {
                         name: ClientRoute.review.name,
                         builder: (context, state) {
                           final orderId = state.pathParameters['orderId']!;
-                          final storeId = state.uri.queryParameters['storeId'] ?? '';
-                          final storeName = state.uri.queryParameters['storeName'] ?? '';
+                          final storeId =
+                              state.uri.queryParameters['storeId'] ?? '';
+                          final storeName =
+                              state.uri.queryParameters['storeName'] ?? '';
                           return ReviewScreen(
                             orderId: orderId,
                             storeId: storeId,

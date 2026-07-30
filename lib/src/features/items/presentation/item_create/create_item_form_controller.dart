@@ -44,14 +44,13 @@ class CreateItemFormController extends _$CreateItemFormController {
         final ext = extensionFromMime(mimeType ?? 'image/jpeg');
         final fileName = '${const Uuid().v4()}.$ext';
         final path = 'stores/$storeId/items/$fileName';
-        imageUrl = await imageRepo.uploadProductImage(
-          data: image,
-          path: path,
-        );
+        imageUrl = await imageRepo.uploadProductImage(data: image, path: path);
       }
 
       try {
-        await ref.read(itemsRepositoryProvider).createItem(
+        await ref
+            .read(itemsRepositoryProvider)
+            .createItem(
               storeId,
               name: name,
               description: description,
@@ -79,8 +78,7 @@ class CreateItemFormController extends _$CreateItemFormController {
       // screen / dashboard checklist updates immediately. Only fires once.
       final user = ref.read(authRepositoryProvider).currentUser;
       if (user != null) {
-        final ships =
-            ref.read(currentPartnerStoreShipsProvider).value ?? [];
+        final ships = ref.read(currentPartnerStoreShipsProvider).value ?? [];
         final ship = ships.where((s) => s.storeId == storeId).firstOrNull;
         if (ship != null && !ship.hasFirstItem) {
           try {

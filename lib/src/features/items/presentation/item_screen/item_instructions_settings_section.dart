@@ -67,7 +67,8 @@ class _ItemInstructionsSettingsSectionState
   bool get _haveChanges {
     final item = widget.item;
     return _packagingType != item.packagingType ||
-        _collectionInstructionsCtl.text != (item.collectionInstructions ?? '') ||
+        _collectionInstructionsCtl.text !=
+            (item.collectionInstructions ?? '') ||
         _isBuffetFood != item.isBuffetFood ||
         _storingAndAllergensCtl.text != (item.storingAndAllergens ?? '');
   }

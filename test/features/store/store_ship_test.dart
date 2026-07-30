@@ -52,9 +52,7 @@ void main() {
     });
 
     test('defaultStoreId null when none completed', () {
-      final list = [
-        _makeStoreShip(storeId: 's1', welcomeCompleted: false),
-      ];
+      final list = [_makeStoreShip(storeId: 's1', welcomeCompleted: false)];
       expect(list.defaultStoreId, isNull);
     });
 
@@ -67,9 +65,7 @@ void main() {
     });
 
     test('hasActiveStores false when none completed', () {
-      final list = [
-        _makeStoreShip(storeId: 's1', welcomeCompleted: false),
-      ];
+      final list = [_makeStoreShip(storeId: 's1', welcomeCompleted: false)];
       expect(list.hasActiveStores, false);
     });
 

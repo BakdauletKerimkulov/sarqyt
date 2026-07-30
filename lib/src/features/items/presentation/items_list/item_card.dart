@@ -69,19 +69,13 @@ class _ItemCardState extends State<ItemCard> {
                     Positioned(
                       top: Sizes.p8,
                       left: Sizes.p8,
-                      child: _Badge(
-                        text: loc.sellingNow,
-                        color: Colors.green,
-                      ),
+                      child: _Badge(text: loc.sellingNow, color: Colors.green),
                     )
                   else if (_isScheduled)
                     Positioned(
                       top: Sizes.p8,
                       left: Sizes.p8,
-                      child: _Badge(
-                        text: loc.scheduled,
-                        color: Colors.grey,
-                      ),
+                      child: _Badge(text: loc.scheduled, color: Colors.grey),
                     ),
                 ],
               ),
@@ -93,15 +87,13 @@ class _ItemCardState extends State<ItemCard> {
                   children: [
                     Text(
                       item.name,
-                      style:
-                          Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                decoration: _isHovered
-                                    ? TextDecoration.underline
-                                    : null,
-                                color:
-                                    _isHovered ? AppColors.primary : null,
-                              ),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        decoration: _isHovered
+                            ? TextDecoration.underline
+                            : null,
+                        color: _isHovered ? AppColors.primary : null,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -111,9 +103,7 @@ class _ItemCardState extends State<ItemCard> {
                       gapH4,
                       Text(
                         loc.quantityAvailable(offer!.quantity),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       Text(
                         offer!.pickupLabelLocalized(context),

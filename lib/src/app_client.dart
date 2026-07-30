@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/l10n/app_localizations.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/features/notifications/presentation/deep_link_applier.dart';
 import 'package:sarqyt/src/routing/client_router.dart';
 
 class MyAppClient extends ConsumerWidget {
@@ -12,43 +13,46 @@ class MyAppClient extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(clientRouterProvider);
-    return MaterialApp.router(
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.background,
-        cardTheme: CardThemeData(
-          color: Colors.white,
-          surfaceTintColor: Colors.transparent,
-        ),
-        appBarTheme: const AppBarTheme(
-          foregroundColor: Colors.white,
-          backgroundColor: AppColors.primary,
-          elevation: 0,
-        ),
-        tabBarTheme: TabBarThemeData(
-          unselectedLabelColor: AppColors.primary,
-          labelColor: Colors.white,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(AppColors.primary),
-            foregroundColor: WidgetStatePropertyAll(Colors.white),
-            surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
-            shape: WidgetStatePropertyAll(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(Sizes.p24),
+    return DeepLinkApplier(
+      router: router,
+      child: MaterialApp.router(
+        theme: ThemeData(
+          useMaterial3: true,
+          scaffoldBackgroundColor: AppColors.background,
+          cardTheme: CardThemeData(
+            color: Colors.white,
+            surfaceTintColor: Colors.transparent,
+          ),
+          appBarTheme: const AppBarTheme(
+            foregroundColor: Colors.white,
+            backgroundColor: AppColors.primary,
+            elevation: 0,
+          ),
+          tabBarTheme: TabBarThemeData(
+            unselectedLabelColor: AppColors.primary,
+            labelColor: Colors.white,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(AppColors.primary),
+              foregroundColor: WidgetStatePropertyAll(Colors.white),
+              surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(Sizes.p24),
+                ),
               ),
             ),
           ),
+          listTileTheme: ListTileThemeData(iconColor: AppColors.primary),
         ),
-        listTileTheme: ListTileThemeData(iconColor: AppColors.primary),
+        routerConfig: router,
+        debugShowCheckedModeBanner: false,
+        restorationScopeId: 'appClient',
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       ),
-      routerConfig: router,
-      debugShowCheckedModeBanner: false,
-      restorationScopeId: 'appClient',
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
     );
   }
 }

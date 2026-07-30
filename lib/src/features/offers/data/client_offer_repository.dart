@@ -50,13 +50,15 @@ class ClientOfferRepository {
           .endAt(['$prefix\uf8ff'])
           .snapshots()
           .map((snap) {
-        final now = _currentDateBuilder();
-        return snap.docs
-            .map((d) => Offer.fromJson(d.data()))
-            .where((o) => o.pickupEndTime.isAfter(now))
-            .where((o) => o.visibleFrom == null || !o.visibleFrom!.isAfter(now))
-            .toList();
-      });
+            final now = _currentDateBuilder();
+            return snap.docs
+                .map((d) => Offer.fromJson(d.data()))
+                .where((o) => o.pickupEndTime.isAfter(now))
+                .where(
+                  (o) => o.visibleFrom == null || !o.visibleFrom!.isAfter(now),
+                )
+                .toList();
+          });
     });
 
     // Merge all tile streams, deduplicate by offer id.
@@ -84,12 +86,15 @@ class ClientOfferRepository {
           .startAt([prefix])
           .endAt(['$prefix\uf8ff'])
           .get()
-          .then((snap) => snap.docs
-              .map((d) => Offer.fromJson(d.data()))
-              .where((o) => o.pickupEndTime.isAfter(now))
-              .where(
-                  (o) => o.visibleFrom == null || !o.visibleFrom!.isAfter(now))
-              .toList());
+          .then(
+            (snap) => snap.docs
+                .map((d) => Offer.fromJson(d.data()))
+                .where((o) => o.pickupEndTime.isAfter(now))
+                .where(
+                  (o) => o.visibleFrom == null || !o.visibleFrom!.isAfter(now),
+                )
+                .toList(),
+          );
     });
 
     final results = await Future.wait(futures);
@@ -112,12 +117,12 @@ class ClientOfferRepository {
         .orderBy('pickupEndTime')
         .snapshots()
         .map((snap) {
-      final now = _currentDateBuilder();
-      return snap.docs
-          .map((d) => Offer.fromJson(d.data()))
-          .where((o) => o.pickupEndTime.isAfter(now))
-          .toList();
-    });
+          final now = _currentDateBuilder();
+          return snap.docs
+              .map((d) => Offer.fromJson(d.data()))
+              .where((o) => o.pickupEndTime.isAfter(now))
+              .toList();
+        });
   }
 
   // ---------------------------------------------------------------------------
@@ -149,11 +154,10 @@ class ClientOfferRepository {
   /// Merges N streams into one, deduplicating offers by id.
   /// CombineLatestStream cancels all inner subscriptions on outer cancel,
   /// and waits for every tile to emit before the first event (no partial UI).
-  static Stream<List<Offer>> _mergeStreams(
-    List<Stream<List<Offer>>> streams,
-  ) =>
-      CombineLatestStream.list(streams)
-          .map((lists) => _dedup(lists.expand((l) => l).toList()));
+  static Stream<List<Offer>> _mergeStreams(List<Stream<List<Offer>>> streams) =>
+      CombineLatestStream.list(
+        streams,
+      ).map((lists) => _dedup(lists.expand((l) => l).toList()));
 
   static List<Offer> _dedup(List<Offer> offers) {
     final seen = <String>{};

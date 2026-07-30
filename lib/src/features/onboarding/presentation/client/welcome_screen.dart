@@ -118,11 +118,11 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
                   onPressed: state.isLoading
                       ? null
                       : _currentPage == _pages.length - 1
-                          ? _complete
-                          : () => _controller.nextPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              ),
+                      ? _complete
+                      : () => _controller.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        ),
                   child: state.isLoading
                       ? const SizedBox(
                           width: 20,
@@ -171,18 +171,17 @@ class _WelcomePage extends StatelessWidget {
           gapH32,
           Text(
             title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           gapH16,
           Text(
             subtitle,
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge
-                ?.copyWith(color: Colors.grey),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],

@@ -1,5 +1,7 @@
 # Firebase Guidelines
 
+_Часть общей базы agentic-coding-toolkit. Правь в базе, не в проекте — локальные правки затрёт sync._
+
 Universal Firebase patterns for all Flutter projects. Project-specific collections, fields, regions, and functions belong in `ai_docs/FIRESTORE_SCHEMA.md` and `ai_docs/CLOUD_FUNCTIONS.md`.
 
 ---

@@ -13,7 +13,14 @@ part 'order.g.dart';
 
 typedef OrderID = String;
 
-enum OrderStatus { confirmed, preparing, readyForPickup, completed, cancelled, expired }
+enum OrderStatus {
+  confirmed,
+  preparing,
+  readyForPickup,
+  completed,
+  cancelled,
+  expired,
+}
 
 enum PaymentStatus { paid, refunded, refundPending, refundFailed }
 
@@ -67,8 +74,7 @@ abstract class Order with _$Order {
     if (pickupStartTime == null || pickupEndTime == null) return null;
     final start = pickupStartTime!;
     final end = pickupEndTime!;
-    final startStr =
-        '${start.hour}:${start.minute.toString().padLeft(2, '0')}';
+    final startStr = '${start.hour}:${start.minute.toString().padLeft(2, '0')}';
     final endStr = '${end.hour}:${end.minute.toString().padLeft(2, '0')}';
     return '$startStr – $endStr';
   }

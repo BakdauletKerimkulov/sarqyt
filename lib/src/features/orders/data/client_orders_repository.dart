@@ -34,19 +34,17 @@ class ClientOrdersRepository {
   }
 
   /// Watch for an order created from a specific payment intent.
-  Stream<Order?> watchOrderByPaymentIntent(
-    String paymentIntentId,
-    UserID uid,
-  ) {
+  Stream<Order?> watchOrderByPaymentIntent(String paymentIntentId, UserID uid) {
     return _firestore
         .collection('orders')
         .where('customerId', isEqualTo: uid)
         .where('paymentIntentId', isEqualTo: paymentIntentId)
         .limit(1)
         .snapshots()
-        .map((snap) => snap.docs.isEmpty
-            ? null
-            : Order.fromJson(snap.docs.first.data()));
+        .map(
+          (snap) =>
+              snap.docs.isEmpty ? null : Order.fromJson(snap.docs.first.data()),
+        );
   }
 
   Stream<Order?> watchOrder(OrderID id) {
@@ -73,7 +71,9 @@ ClientOrdersRepository clientOrdersRepository(Ref ref) {
 Stream<List<Order>> customerOrdersStream(Ref ref) {
   final user = ref.watch(authStateChangesProvider).value;
   if (user == null) return const Stream.empty();
-  return ref.watch(clientOrdersRepositoryProvider).watchOrdersForCustomer(user.uid);
+  return ref
+      .watch(clientOrdersRepositoryProvider)
+      .watchOrdersForCustomer(user.uid);
 }
 
 @riverpod
