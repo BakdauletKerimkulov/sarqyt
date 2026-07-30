@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:latlong2/latlong.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:sarqyt/src/features/map/application/geolocator_service.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart';
@@ -46,12 +47,20 @@ Stream<List<OfferWithDistance>> offersWithDistanceStream(Ref ref) {
 
   if (position != null) {
     final userLatLng = LatLng(position.latitude, position.longitude);
+    // Nothing nearby — fall back to all offers rather than showing empty.
     return repo
         .watchNearbyOffers(
           latitude: position.latitude,
           longitude: position.longitude,
         )
-        .map((offers) => _mapWithDistance(offers, userLatLng));
+        .switchMap((nearby) {
+          if (nearby.isNotEmpty) {
+            return Stream.value(_mapWithDistance(nearby, userLatLng));
+          }
+          return repo.watchAllOffers().map(
+            (offers) => _mapWithDistance(offers, null),
+          );
+        });
   }
 
   // No location — fall back to all offers, no distance info.
