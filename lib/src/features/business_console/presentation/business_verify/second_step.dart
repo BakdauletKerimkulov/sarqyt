@@ -174,10 +174,7 @@ class _SecondStepForIndividualState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            loc.individual,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text(loc.individual, style: Theme.of(context).textTheme.titleLarge),
           gapH24,
           Row(
             children: [
@@ -238,10 +235,7 @@ class _SecondStepForIndividualState
             autovalidateMode: AutovalidateMode.onUserInteraction,
           ),
           gapH16,
-          Text(
-            loc.address,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text(loc.address, style: Theme.of(context).textTheme.titleLarge),
           gapH16,
           Text(loc.addressLine1),
           gapH4,
@@ -391,10 +385,7 @@ class _SecondStepForCompanyState extends ConsumerState<SecondStepForCompany> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            loc.company,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text(loc.company, style: Theme.of(context).textTheme.titleLarge),
           gapH24,
           Row(
             children: [

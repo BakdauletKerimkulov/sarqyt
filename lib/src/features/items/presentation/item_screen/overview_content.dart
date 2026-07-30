@@ -19,8 +19,9 @@ class OverviewContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ordersValue =
-        ref.watch(ordersListForItemStreamProvider(storeId, item.id));
+    final ordersValue = ref.watch(
+      ordersListForItemStreamProvider(storeId, item.id),
+    );
     final storeName = ref.watch(storeStreamProvider(storeId)).value?.name;
 
     return Column(

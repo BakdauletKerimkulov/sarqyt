@@ -10,9 +10,7 @@ void main() {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('en'),
-      home: Scaffold(
-        body: OrderStatusProgressLine(status: status),
-      ),
+      home: Scaffold(body: OrderStatusProgressLine(status: status)),
     );
   }
 
@@ -28,8 +26,9 @@ void main() {
       expect(find.text('Completed'), findsOneWidget);
     });
 
-    testWidgets('for preparing status, dots 1-2 filled, dots 3-4 unfilled',
-        (tester) async {
+    testWidgets('for preparing status, dots 1-2 filled, dots 3-4 unfilled', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildWidget(OrderStatus.preparing));
       await tester.pumpAndSettle();
 

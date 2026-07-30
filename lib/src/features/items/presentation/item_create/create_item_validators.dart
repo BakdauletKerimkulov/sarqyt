@@ -30,7 +30,11 @@ mixin CreateItemValidators {
     return null;
   }
 
-  String? estimatedValueErrorText(String estimatedValue, String price, AppLocalizations loc) {
+  String? estimatedValueErrorText(
+    String estimatedValue,
+    String price,
+    AppLocalizations loc,
+  ) {
     if (estimatedValue.isEmpty) return null;
     final ev = double.tryParse(estimatedValue);
     if (ev == null || ev <= 0) {

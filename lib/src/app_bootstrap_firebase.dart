@@ -33,8 +33,10 @@ extension AppBootstrapFirebase on AppBootstrap {
     required PushAudience pushAudience,
     bool addDelay = true,
   }) async {
-    final offeRepo =
-        ClientOfferRepository(FirebaseFirestore.instance, DateTime.now);
+    final offeRepo = ClientOfferRepository(
+      FirebaseFirestore.instance,
+      DateTime.now,
+    );
     final container = ProviderContainer(
       overrides: [
         offerRepositoryProvider.overrideWithValue(offeRepo),

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
-import 'package:sarqyt/src/features/items/presentation/item_tab.dart' show ItemTab, ItemTabX;
+import 'package:sarqyt/src/features/items/presentation/item_tab.dart'
+    show ItemTab, ItemTabX;
 import 'package:sarqyt/src/features/store/domain/store.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';

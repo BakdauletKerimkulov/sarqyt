@@ -60,12 +60,14 @@ class _ReviewDetailsContentState extends ConsumerState<ReviewDetailsContent> {
     }
     if (!draft.hasEnoughDataForCoordinates) return;
 
-    ref.read(storeLocationProvider.notifier).getCoordinates(
-      address: draft.address!,
-      locality: draft.locality!,
-      isoCode: draft.country!.isoCode,
-      postalCode: draft.postalCode!,
-    );
+    ref
+        .read(storeLocationProvider.notifier)
+        .getCoordinates(
+          address: draft.address!,
+          locality: draft.locality!,
+          isoCode: draft.country!.isoCode,
+          postalCode: draft.postalCode!,
+        );
   }
 
   @override

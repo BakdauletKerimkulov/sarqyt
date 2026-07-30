@@ -68,9 +68,9 @@ class _VerifyDialogState extends ConsumerState<VerifyDialog> {
   Future<void> _submit() async {
     final draft = ref.read(businessDraftControllerProvider);
     if (!draft.hasCompletedRequiredFields) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.loc.fillAllFields)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.loc.fillAllFields)));
       return;
     }
 
@@ -84,19 +84,15 @@ class _VerifyDialogState extends ConsumerState<VerifyDialog> {
       if (mounted) {
         context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              context.loc.verificationSubmitted,
-            ),
-          ),
+          SnackBar(content: Text(context.loc.verificationSubmitted)),
         );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSubmitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Submission failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
       }
     }
   }
@@ -195,7 +191,9 @@ class _VerifyDialogState extends ConsumerState<VerifyDialog> {
                             ? const SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               )
                             : Text(isLastStep ? 'Submit' : 'Next'),
                       ),

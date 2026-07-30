@@ -101,17 +101,17 @@ void main() {
 
   group('Order.fromJson backward compatibility', () {
     Map<String, dynamic> baseJson() => {
-          'id': 'o1',
-          'itemId': 'i1',
-          'storeId': 's1',
-          'customerId': 'u1',
-          'itemName': 'Surprise bag',
-          'storeName': 'Test Store',
-          'unitPrice': 1500,
-          'itemQuantity': 2,
-          'status': 'confirmed',
-          'createdAt': Timestamp.fromDate(DateTime(2026, 1, 1)),
-        };
+      'id': 'o1',
+      'itemId': 'i1',
+      'storeId': 's1',
+      'customerId': 'u1',
+      'itemName': 'Surprise bag',
+      'storeName': 'Test Store',
+      'unitPrice': 1500,
+      'itemQuantity': 2,
+      'status': 'confirmed',
+      'createdAt': Timestamp.fromDate(DateTime(2026, 1, 1)),
+    };
 
     test('handles null paymentStatus (new orders)', () {
       final json = baseJson(); // no paymentStatus key

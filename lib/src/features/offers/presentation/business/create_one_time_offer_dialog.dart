@@ -52,7 +52,8 @@ class _CreateOneTimeOfferDialogState
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final isToday = _selectedDate.year == today.year &&
+    final isToday =
+        _selectedDate.year == today.year &&
         _selectedDate.month == today.month &&
         _selectedDate.day == today.day;
     if (isToday && endMinutes <= now.hour * 60 + now.minute) {
@@ -65,8 +66,9 @@ class _CreateOneTimeOfferDialogState
   Future<void> _submit() async {
     final error = _validate();
     if (error != null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(error)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error)));
       return;
     }
 
@@ -114,18 +116,19 @@ class _CreateOneTimeOfferDialogState
               gapH4,
               Text(
                 loc.createOneTimeOffer,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: Colors.grey),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
               ),
               gapH16,
               const Divider(),
               gapH16,
 
               // Name
-              Text(loc.offerName,
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                loc.offerName,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               gapH8,
               TextField(
                 controller: _nameController,
@@ -144,8 +147,7 @@ class _CreateOneTimeOfferDialogState
               gapH16,
 
               // Price
-              Text(loc.price,
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text(loc.price, style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               TextField(
                 controller: _priceController,
@@ -165,8 +167,7 @@ class _CreateOneTimeOfferDialogState
               gapH16,
 
               // Date
-              Text(loc.date,
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text(loc.date, style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               InkWell(
                 onTap: isLoading ? null : _pickDate,
@@ -183,8 +184,10 @@ class _CreateOneTimeOfferDialogState
               gapH16,
 
               // Time
-              Text(loc.pickupWindow,
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                loc.pickupWindow,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               gapH8,
               Row(
                 children: [
@@ -197,8 +200,10 @@ class _CreateOneTimeOfferDialogState
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(Sizes.p8),
                         ),
-                        child: Text(_formatTime(_startTime),
-                            textAlign: TextAlign.center),
+                        child: Text(
+                          _formatTime(_startTime),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
@@ -215,8 +220,10 @@ class _CreateOneTimeOfferDialogState
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(Sizes.p8),
                         ),
-                        child: Text(_formatTime(_endTime),
-                            textAlign: TextAlign.center),
+                        child: Text(
+                          _formatTime(_endTime),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
@@ -225,8 +232,7 @@ class _CreateOneTimeOfferDialogState
               gapH16,
 
               // Quantity
-              Text(loc.quantity,
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text(loc.quantity, style: Theme.of(context).textTheme.titleSmall),
               gapH8,
               Row(
                 children: [
@@ -277,14 +283,18 @@ class _CreateOneTimeOfferDialogState
   }
 
   Future<void> _pickStartTime() async {
-    final picked =
-        await showTimePicker(context: context, initialTime: _startTime);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _startTime,
+    );
     if (picked != null) setState(() => _startTime = picked);
   }
 
   Future<void> _pickEndTime() async {
-    final picked =
-        await showTimePicker(context: context, initialTime: _endTime);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _endTime,
+    );
     if (picked != null) setState(() => _endTime = picked);
   }
 }

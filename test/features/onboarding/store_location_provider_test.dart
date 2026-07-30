@@ -50,7 +50,9 @@ void main() {
       final fakeMapRepo = FakeMapRepository();
       final container = createContainer(fakeMapRepo: fakeMapRepo);
 
-      await container.read(storeLocationProvider.notifier).getCoordinates(
+      await container
+          .read(storeLocationProvider.notifier)
+          .getCoordinates(
             address: 'Проспект Гагарина 124',
             locality: 'Алматы',
             isoCode: 'KAZ',
@@ -68,7 +70,9 @@ void main() {
       final fakeMapRepo = FakeMapRepository();
       final container = createContainer(fakeMapRepo: fakeMapRepo);
 
-      await container.read(storeLocationProvider.notifier).getCoordinates(
+      await container
+          .read(storeLocationProvider.notifier)
+          .getCoordinates(
             address: 'Проспект Гагарина 124',
             locality: 'Алматы',
             isoCode: 'KAZ',
@@ -76,7 +80,9 @@ void main() {
           );
 
       // Тот же query — не должен вызвать повторный запрос
-      await container.read(storeLocationProvider.notifier).getCoordinates(
+      await container
+          .read(storeLocationProvider.notifier)
+          .getCoordinates(
             address: 'Проспект Гагарина 124',
             locality: 'Алматы',
             isoCode: 'KAZ',
@@ -90,7 +96,9 @@ void main() {
       final fakeMapRepo = FakeMapRepository();
       final container = createContainer(fakeMapRepo: fakeMapRepo);
 
-      await container.read(storeLocationProvider.notifier).getCoordinates(
+      await container
+          .read(storeLocationProvider.notifier)
+          .getCoordinates(
             address: 'Проспект Гагарина 124',
             locality: 'Алматы',
             isoCode: 'KAZ',
@@ -100,7 +108,9 @@ void main() {
       final result1 = await container.read(storeLocationProvider.future);
       expect(result1, const LatLng(43.2380, 76.9450));
 
-      await container.read(storeLocationProvider.notifier).getCoordinates(
+      await container
+          .read(storeLocationProvider.notifier)
+          .getCoordinates(
             address: 'Улица Кенесары 40',
             locality: 'Астана',
             isoCode: 'KAZ',
@@ -162,9 +172,7 @@ void main() {
       // Simulate re-entering ReviewDetailsScreen when draft already has coords:
       // the provider was auto-disposed and recreated → build() returns null.
       // setLocation should seed it with the known value.
-      container
-          .read(storeLocationProvider.notifier)
-          .setLocation(knownLocation);
+      container.read(storeLocationProvider.notifier).setLocation(knownLocation);
 
       final result = await container.read(storeLocationProvider.future);
 

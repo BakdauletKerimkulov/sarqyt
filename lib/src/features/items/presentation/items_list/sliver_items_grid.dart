@@ -39,10 +39,7 @@ class SliverItemsGrid extends ConsumerWidget {
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
-            return _ItemCardWithOffer(
-              item: item,
-              storeId: storeId,
-            );
+            return _ItemCardWithOffer(item: item, storeId: storeId);
           },
         );
       },
@@ -52,18 +49,14 @@ class SliverItemsGrid extends ConsumerWidget {
 
 /// Wraps ItemCard with offer stream to show current state.
 class _ItemCardWithOffer extends ConsumerWidget {
-  const _ItemCardWithOffer({
-    required this.item,
-    required this.storeId,
-  });
+  const _ItemCardWithOffer({required this.item, required this.storeId});
 
   final Item item;
   final String storeId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final offerAsync =
-        ref.watch(currentOfferForItemProvider(storeId, item.id));
+    final offerAsync = ref.watch(currentOfferForItemProvider(storeId, item.id));
     final currentOffer = offerAsync.value;
 
     return ItemCard(
@@ -72,10 +65,7 @@ class _ItemCardWithOffer extends ConsumerWidget {
       onStartSelling: () async {
         final result = await showDialog<bool>(
           context: context,
-          builder: (_) => StartSellingDialog(
-            item: item,
-            storeId: storeId,
-          ),
+          builder: (_) => StartSellingDialog(item: item, storeId: storeId),
         );
         if (result == true) {
           ref.invalidate(itemsListStreamProvider(storeId));
@@ -101,10 +91,7 @@ class _ItemCardWithOffer extends ConsumerWidget {
         } else {
           showDialog(
             context: context,
-            builder: (_) => ItemActionDialog(
-              item: item,
-              storeId: storeId,
-            ),
+            builder: (_) => ItemActionDialog(item: item, storeId: storeId),
           );
         }
       },

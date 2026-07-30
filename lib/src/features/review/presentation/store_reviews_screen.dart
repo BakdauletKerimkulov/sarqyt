@@ -32,9 +32,9 @@ class StoreReviewsScreen extends ConsumerWidget {
             return Center(
               child: Text(
                 context.loc.noReviewsYet,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
               ),
             );
           }

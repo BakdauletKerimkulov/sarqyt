@@ -45,16 +45,17 @@ void main() {
 
       expect(find.byIcon(Icons.favorite_border), findsOneWidget);
       // ARB uses '' as ICU escape for apostrophe
-      expect(find.text("You don''t have any favorite restaurants yet"),
-          findsOneWidget);
+      expect(
+        find.text("You don''t have any favorite restaurants yet"),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows store list when favorites present', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            favoriteStoresProvider
-                .overrideWith((_) => AsyncData([_testStore])),
+            favoriteStoresProvider.overrideWith((_) => AsyncData([_testStore])),
           ],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,

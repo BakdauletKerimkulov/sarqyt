@@ -50,7 +50,9 @@ class _WelcomeContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final businessAsync = ref.watch(businessStreamProvider(storeShip.businessId));
+    final businessAsync = ref.watch(
+      businessStreamProvider(storeShip.businessId),
+    );
     final theme = Theme.of(context);
 
     return Column(
@@ -158,17 +160,16 @@ class _WelcomeContent extends ConsumerWidget {
     final user = ref.read(authRepositoryProvider).currentUser;
     if (user == null) return;
     try {
-      await ref.read(storeShipRepositoryProvider).markWelcomeCompleted(
-            storeId: storeShip.storeId,
-            uid: user.uid,
-          );
+      await ref
+          .read(storeShipRepositoryProvider)
+          .markWelcomeCompleted(storeId: storeShip.storeId, uid: user.uid);
       // Redirect listens to currentPartnerStoreShips and will navigate
       // to /stores once welcomeCompleted == true.
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to continue: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to continue: $e')));
       }
     }
   }

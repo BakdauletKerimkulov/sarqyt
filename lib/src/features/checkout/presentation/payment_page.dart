@@ -124,11 +124,7 @@ class PaymentPage extends ConsumerWidget {
   ) async {
     final orderId = await ref
         .read(checkoutControllerProvider.notifier)
-        .pay(
-          offerId: offer.id,
-          quantity: quantity,
-          storeName: offer.storeName,
-        );
+        .pay(offerId: offer.id, quantity: quantity, storeName: offer.storeName);
     if (!context.mounted) return;
 
     if (orderId != null) {

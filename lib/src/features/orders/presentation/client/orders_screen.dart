@@ -38,10 +38,12 @@ class OrdersScreen extends ConsumerWidget {
       body: AsyncValueWidget(
         value: ordersAsync,
         data: (orders) {
-          final active =
-              orders.where((o) => _activeStatuses.contains(o.status)).toList();
-          final past =
-              orders.where((o) => !_activeStatuses.contains(o.status)).toList();
+          final active = orders
+              .where((o) => _activeStatuses.contains(o.status))
+              .toList();
+          final past = orders
+              .where((o) => !_activeStatuses.contains(o.status))
+              .toList();
 
           if (orders.isEmpty) {
             return Center(child: Text(context.loc.noOrdersYet));
@@ -85,10 +87,9 @@ class _ActiveOrdersSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: Sizes.p24),
           child: Text(
             context.loc.noActiveOrders,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: Theme.of(context).colorScheme.outline),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
         ),
       );

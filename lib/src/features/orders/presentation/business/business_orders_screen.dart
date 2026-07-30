@@ -310,7 +310,13 @@ class _SliverBusinessOrdersState extends ConsumerState<SliverBusinessOrders> {
       _OrderFilter.active =>
         orders.where((o) => _activeStatuses.contains(o.status)).toList(),
       _OrderFilter.completed =>
-        orders.where((o) => o.status == OrderStatus.completed || o.status == OrderStatus.expired).toList(),
+        orders
+            .where(
+              (o) =>
+                  o.status == OrderStatus.completed ||
+                  o.status == OrderStatus.expired,
+            )
+            .toList(),
       _OrderFilter.cancelled =>
         orders.where((o) => o.status == OrderStatus.cancelled).toList(),
     };

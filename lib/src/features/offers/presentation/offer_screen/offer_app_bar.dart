@@ -38,7 +38,8 @@ class OfferSliverAppBar extends ConsumerWidget {
           icon: const Icon(Icons.share),
           onPressed: () => SharePlus.instance.share(
             ShareParams(
-              text: '${offer.storeName} — ${offer.name}\n'
+              text:
+                  '${offer.storeName} — ${offer.name}\n'
                   '${offer.price.round()} ${offer.currencySymbol}\n'
                   'https://sarqyt.com/offer/${offer.id}',
             ),
@@ -104,10 +105,7 @@ class OfferSliverAppBar extends ConsumerWidget {
                                 fontSize: Sizes.p20,
                                 fontWeight: FontWeight.w600,
                                 shadows: [
-                                  Shadow(
-                                    offset: Offset(0, 2),
-                                    blurRadius: 2,
-                                  ),
+                                  Shadow(offset: Offset(0, 2), blurRadius: 2),
                                 ],
                               ),
                             ),

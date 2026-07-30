@@ -23,7 +23,10 @@ String? _redirect({
       storeShipsLoaded: storeShipsLoaded,
       roleLoaded: roleLoaded,
     ),
-    uri: Uri(path: path, queryParameters: queryParameters.isEmpty ? null : queryParameters),
+    uri: Uri(
+      path: path,
+      queryParameters: queryParameters.isEmpty ? null : queryParameters,
+    ),
   );
 }
 
@@ -71,10 +74,7 @@ void main() {
     });
 
     test('/onboarding/inbound/create-account → stay', () {
-      expect(
-        _redirect(path: '/onboarding/inbound/create-account'),
-        isNull,
-      );
+      expect(_redirect(path: '/onboarding/inbound/create-account'), isNull);
     });
 
     test('/stores → /login', () {
@@ -103,11 +103,7 @@ void main() {
 
     test('/stores → /onboarding/inbound/verify-email', () {
       expect(
-        _redirect(
-          user: unverified,
-          role: UserRole.partner,
-          path: '/stores',
-        ),
+        _redirect(user: unverified, role: UserRole.partner, path: '/stores'),
         '/onboarding/inbound/verify-email',
       );
     });
@@ -216,22 +212,14 @@ void main() {
 
     test('/stores → /onboarding/inbound/verify-email', () {
       expect(
-        _redirect(
-          user: verified,
-          role: UserRole.guest,
-          path: '/stores',
-        ),
+        _redirect(user: verified, role: UserRole.guest, path: '/stores'),
         '/onboarding/inbound/verify-email',
       );
     });
 
     test('/login → /onboarding/inbound/verify-email', () {
       expect(
-        _redirect(
-          user: verified,
-          role: UserRole.guest,
-          path: '/login',
-        ),
+        _redirect(user: verified, role: UserRole.guest, path: '/login'),
         '/onboarding/inbound/verify-email',
       );
     });
@@ -254,33 +242,21 @@ void main() {
 
     test('/forbidden → stay', () {
       expect(
-        _redirect(
-          user: customer,
-          role: UserRole.customer,
-          path: '/forbidden',
-        ),
+        _redirect(user: customer, role: UserRole.customer, path: '/forbidden'),
         isNull,
       );
     });
 
     test('/stores → /forbidden', () {
       expect(
-        _redirect(
-          user: customer,
-          role: UserRole.customer,
-          path: '/stores',
-        ),
+        _redirect(user: customer, role: UserRole.customer, path: '/stores'),
         '/forbidden',
       );
     });
 
     test('/login → /forbidden', () {
       expect(
-        _redirect(
-          user: customer,
-          role: UserRole.customer,
-          path: '/login',
-        ),
+        _redirect(user: customer, role: UserRole.customer, path: '/login'),
         '/forbidden',
       );
     });
@@ -555,22 +531,14 @@ void main() {
       // but no storeShip was created yet. Treat as "done": the /stores
       // screen will show an empty list.
       expect(
-        _redirect(
-          user: partner,
-          role: UserRole.partner,
-          path: '/stores',
-        ),
+        _redirect(user: partner, role: UserRole.partner, path: '/stores'),
         isNull,
       );
     });
 
     test('/login → /stores', () {
       expect(
-        _redirect(
-          user: partner,
-          role: UserRole.partner,
-          path: '/login',
-        ),
+        _redirect(user: partner, role: UserRole.partner, path: '/login'),
         '/stores',
       );
     });

@@ -209,9 +209,7 @@ class _EmailContent extends ConsumerState<EmailContent>
           gapH16,
 
           PrimaryWebButton(
-            text: _isSignedIn
-                ? context.loc.submitDetails
-                : 'Continue',
+            text: _isSignedIn ? context.loc.submitDetails : 'Continue',
             isLoading: isLoading,
             onPressed: _submit,
           ),

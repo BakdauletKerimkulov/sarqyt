@@ -31,7 +31,10 @@ void main() {
       notifier.saveLocation(testLocation);
 
       // Verify location is set
-      expect(container.read(storeDraftControllerProvider).location, testLocation);
+      expect(
+        container.read(storeDraftControllerProvider).location,
+        testLocation,
+      );
 
       // Change address field
       notifier.saveStepOne(

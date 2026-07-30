@@ -67,7 +67,9 @@ class StoreShipRepository {
           toFirestore: (StoreShip st, _) => st.toJson(),
         )
         .where('storeId', isEqualTo: storeId);
-    return ref.snapshots().map((snap) => snap.docs.map((d) => d.data()).toList());
+    return ref.snapshots().map(
+      (snap) => snap.docs.map((d) => d.data()).toList(),
+    );
   }
 
   DocumentReference<StoreShip> _storeStaffRef(String storeShipId) => _firestore

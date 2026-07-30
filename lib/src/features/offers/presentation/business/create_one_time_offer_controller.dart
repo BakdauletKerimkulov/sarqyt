@@ -23,7 +23,9 @@ class CreateOneTimeOfferController extends _$CreateOneTimeOfferController {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final dateStr = DateFormat('yyyy-MM-dd').format(date);
-      await ref.read(businessOfferRepositoryProvider).createOneTimeOffer(
+      await ref
+          .read(businessOfferRepositoryProvider)
+          .createOneTimeOffer(
             storeId: storeId,
             name: name,
             price: price,

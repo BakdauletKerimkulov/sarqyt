@@ -30,7 +30,6 @@ class OnboardingRepository {
       rethrow;
     }
   }
-
 }
 
 @riverpod

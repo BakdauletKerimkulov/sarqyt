@@ -94,18 +94,15 @@ class _ProgressDot extends StatelessWidget {
           Container(
             width: Sizes.p12,
             height: Sizes.p12,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           gapH4,
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: color,
-                  fontWeight: isFilled ? FontWeight.w600 : FontWeight.w400,
-                ),
+              color: color,
+              fontWeight: isFilled ? FontWeight.w600 : FontWeight.w400,
+            ),
           ),
         ],
       ),

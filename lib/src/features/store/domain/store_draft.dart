@@ -46,8 +46,9 @@ extension StoreDraftX on StoreDraft {
       'postalCode': postalCode!,
       'country': {'isoCode': country!.isoCode, 'name': country!.name},
       'location': [location!.latitude, location!.longitude],
-      'geohash': GeoFirePoint(GeoPoint(location!.latitude, location!.longitude))
-          .geohash,
+      'geohash': GeoFirePoint(
+        GeoPoint(location!.latitude, location!.longitude),
+      ).geohash,
     };
   }
 }

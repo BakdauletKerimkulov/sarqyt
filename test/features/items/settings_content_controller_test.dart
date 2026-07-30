@@ -14,9 +14,7 @@ void main() {
         final fakeRepo = _FakeItemsRepository(deleteCompleter);
 
         final container = ProviderContainer(
-          overrides: [
-            itemsRepositoryProvider.overrideWithValue(fakeRepo),
-          ],
+          overrides: [itemsRepositoryProvider.overrideWithValue(fakeRepo)],
         );
 
         // Read the notifier to initialize it.

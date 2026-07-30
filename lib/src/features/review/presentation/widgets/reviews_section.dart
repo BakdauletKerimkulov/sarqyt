@@ -87,9 +87,9 @@ class _EmptyReviewsState extends StatelessWidget {
       child: Center(
         child: Text(
           context.loc.noReviewsYet,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
         ),
       ),
     );
@@ -118,9 +118,9 @@ class _RatingHeader extends StatelessWidget {
         gapW8,
         Text(
           '($reviewCount)',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
         ),
       ],
     );

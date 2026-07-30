@@ -12,6 +12,7 @@ abstract class Store with _$Store {
     required StoreID id,
     required String name,
     required Location location,
+
     /// Null for legacy documents where businessId == storeId.
     String? businessId,
     String? phoneNumber,

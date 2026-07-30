@@ -34,8 +34,9 @@ void main() {
         ProviderScope(
           overrides: [
             currentStoreShipProvider.overrideWithValue(_testShip),
-            storeShipsByStoreIdProvider('store-1')
-                .overrideWith((_) => Stream.value([_testShip, _testShip2])),
+            storeShipsByStoreIdProvider(
+              'store-1',
+            ).overrideWith((_) => Stream.value([_testShip, _testShip2])),
           ],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -56,8 +57,9 @@ void main() {
         ProviderScope(
           overrides: [
             currentStoreShipProvider.overrideWithValue(_testShip),
-            storeShipsByStoreIdProvider('store-1')
-                .overrideWith((_) => Stream.value(<StoreShip>[])),
+            storeShipsByStoreIdProvider(
+              'store-1',
+            ).overrideWith((_) => Stream.value(<StoreShip>[])),
           ],
           child: MaterialApp(
             localizationsDelegates: AppLocalizations.localizationsDelegates,

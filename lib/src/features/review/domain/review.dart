@@ -33,6 +33,5 @@ abstract class Review with _$Review {
 
   double get averageRating => (storeRating + offerRating) / 2;
 
-  factory Review.fromJson(Map<String, dynamic> json) =>
-      _$ReviewFromJson(json);
+  factory Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);
 }

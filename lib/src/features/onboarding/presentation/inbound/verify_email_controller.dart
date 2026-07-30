@@ -15,11 +15,6 @@ class VerifyEmailController extends _$VerifyEmailController {
   @override
   FutureOr<void> build() {}
 
-  bool get completed => _completed;
-
-  /// True when the CF returned not-found (draft expired / missing).
-  bool get isDraftNotFound => state.error is DraftNotFoundException;
-
   /// Called when the app resumes or by the polling timer.
   /// Reloads user, checks emailVerified, then completes onboarding.
   Future<void> checkAndComplete() async {

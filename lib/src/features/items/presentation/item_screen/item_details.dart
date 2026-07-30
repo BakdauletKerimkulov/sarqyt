@@ -17,10 +17,7 @@ class ItemDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        StoreHeaderCard(
-          imageUrl: item.imageUrl,
-          storeName: storeName,
-        ),
+        StoreHeaderCard(imageUrl: item.imageUrl, storeName: storeName),
         gapH16,
         DetailRow(
           label: 'Name',
@@ -29,8 +26,10 @@ class ItemDetails extends StatelessWidget {
         gapH16,
         DetailRow(
           label: 'Description',
-          child: Text(item.description ?? 'No description',
-              style: textTheme.bodyMedium),
+          child: Text(
+            item.description ?? 'No description',
+            style: textTheme.bodyMedium,
+          ),
         ),
         gapH16,
         DetailRow(
@@ -40,16 +39,12 @@ class ItemDetails extends StatelessWidget {
         gapH16,
         DetailRow(
           label: 'Dietary type',
-          child:
-              Text(item.dietaryType.label, style: textTheme.bodyMedium),
+          child: Text(item.dietaryType.label, style: textTheme.bodyMedium),
         ),
         gapH16,
         DetailRow(
           label: 'Price',
-          child: Text(
-            '${item.price.round()}',
-            style: textTheme.bodyMedium,
-          ),
+          child: Text('${item.price.round()}', style: textTheme.bodyMedium),
         ),
         if (item.estimatedValue != null) ...[
           gapH16,
@@ -76,6 +71,7 @@ class StoreHeaderCard extends StatelessWidget {
 
   final String? imageUrl;
   final String? storeName;
+
   /// Receives the [BuildContext] of the edit button for menu positioning.
   final void Function(BuildContext buttonContext)? onEditPressed;
 
@@ -86,8 +82,7 @@ class StoreHeaderCard extends StatelessWidget {
         final width = constraints.maxWidth;
         final imageHeight = width / 2;
 
-        final double avatarSize =
-            constraints.maxWidth > 300 ? 100 : 60;
+        final double avatarSize = constraints.maxWidth > 300 ? 100 : 60;
 
         final avatarTop = imageHeight - avatarSize / 2;
         final stackHeight = imageHeight + avatarSize / 2;
@@ -108,8 +103,9 @@ class StoreHeaderCard extends StatelessWidget {
                   child: Builder(
                     builder: (buttonContext) => IconButton.filled(
                       style: const ButtonStyle(
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppColors.primary),
+                        backgroundColor: WidgetStatePropertyAll(
+                          AppColors.primary,
+                        ),
                       ),
                       onPressed: () => onEditPressed!(buttonContext),
                       icon: const Icon(Icons.edit_outlined),

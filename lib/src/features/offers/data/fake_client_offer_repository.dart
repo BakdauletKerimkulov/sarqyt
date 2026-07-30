@@ -40,8 +40,10 @@ class FakeClientOfferRepository implements ClientOfferRepository {
     return _offers.stream.map((offers) {
       final now = _currentDateBuilder();
       return offers
-          .where((o) =>
-              o.status == OfferStatus.active && o.pickupEndTime.isAfter(now))
+          .where(
+            (o) =>
+                o.status == OfferStatus.active && o.pickupEndTime.isAfter(now),
+          )
           .toList();
     });
   }
@@ -49,18 +51,18 @@ class FakeClientOfferRepository implements ClientOfferRepository {
   @override
   Future<Offer?> getOfferById(String id) async {
     return _offers.value.cast<Offer?>().firstWhere(
-          (o) => o?.id == id,
-          orElse: () => null,
-        );
+      (o) => o?.id == id,
+      orElse: () => null,
+    );
   }
 
   @override
   Stream<Offer?> watchOfferByIdStream(String id) {
     return _offers.stream.map(
       (offers) => offers.cast<Offer?>().firstWhere(
-            (o) => o?.id == id,
-            orElse: () => null,
-          ),
+        (o) => o?.id == id,
+        orElse: () => null,
+      ),
     );
   }
 }

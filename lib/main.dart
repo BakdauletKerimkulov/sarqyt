@@ -19,8 +19,10 @@ void main() async {
   );
   appBootStrap.initializeServices(container);
 
-  runApp(UncontrolledProviderScope(
-    container: container,
-    child: const MyAppBusiness(),
-  ));
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: const MyAppBusiness(),
+    ),
+  );
 }

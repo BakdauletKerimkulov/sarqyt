@@ -32,10 +32,7 @@ class _CompanyReview extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          loc.company,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text(loc.company, style: Theme.of(context).textTheme.titleLarge),
         gapH24,
         _ReviewField(
           label: loc.areYouVatRegistered,
@@ -65,10 +62,7 @@ class _IndividualReview extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          loc.individual,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text(loc.individual, style: Theme.of(context).textTheme.titleLarge),
         gapH24,
         _ReviewField(
           label: loc.areYouVatRegistered,
@@ -79,34 +73,19 @@ class _IndividualReview extends StatelessWidget {
           _ReviewField(label: loc.vatId, value: draft.vatId),
         ],
         gapH24,
-        _ReviewField(
-          label: loc.iin,
-          value: draft.iin,
-        ),
+        _ReviewField(label: loc.iin, value: draft.iin),
         gapH16,
-        _ReviewField(
-          label: loc.dateOfBirth,
-          value: draft.dateOfBirth,
-        ),
+        _ReviewField(label: loc.dateOfBirth, value: draft.dateOfBirth),
         gapH16,
         _ReviewField(label: loc.firstName, value: draft.firstName),
         gapH16,
         _ReviewField(label: loc.lastName, value: draft.lastName),
         gapH16,
-        Text(
-          loc.address,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text(loc.address, style: Theme.of(context).textTheme.titleLarge),
         gapH16,
-        _ReviewField(
-          label: loc.addressLine1,
-          value: draft.addressLine1,
-        ),
+        _ReviewField(label: loc.addressLine1, value: draft.addressLine1),
         gapH16,
-        _ReviewField(
-          label: loc.addressLine2,
-          value: draft.addressLine2,
-        ),
+        _ReviewField(label: loc.addressLine2, value: draft.addressLine2),
         gapH16,
         _ReviewField(label: loc.postalCode, value: draft.postalCode),
         gapH16,

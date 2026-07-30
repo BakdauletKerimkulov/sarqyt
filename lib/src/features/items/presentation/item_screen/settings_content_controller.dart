@@ -81,5 +81,4 @@ class SettingsContentController extends _$SettingsContentController
     });
     if (mounted) state = result;
   }
-
 }

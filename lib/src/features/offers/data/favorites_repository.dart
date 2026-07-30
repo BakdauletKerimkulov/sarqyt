@@ -15,13 +15,15 @@ class FavoritesRepository {
       _firestore.collection('users/$uid/favorites');
 
   Stream<Set<String>> watchFavoriteStoreIds(UserID uid) {
-    return _favRef(uid).snapshots().map(
-          (snap) => snap.docs.map((doc) => doc.id).toSet(),
-        );
+    return _favRef(
+      uid,
+    ).snapshots().map((snap) => snap.docs.map((doc) => doc.id).toSet());
   }
 
   Future<void> addFavorite(UserID uid, String storeId) {
-    return _favRef(uid).doc(storeId).set({'addedAt': FieldValue.serverTimestamp()});
+    return _favRef(
+      uid,
+    ).doc(storeId).set({'addedAt': FieldValue.serverTimestamp()});
   }
 
   Future<void> removeFavorite(UserID uid, String storeId) {

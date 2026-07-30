@@ -6,8 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sarqyt/src/features/orders/data/orders_repository.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 
-class FakeStoreOrdersRepository extends Fake
-    implements StoreOrdersRepository {
+class FakeStoreOrdersRepository extends Fake implements StoreOrdersRepository {
   StreamController<List<Order>>? itemStreamController;
   StreamController<List<Order>>? storeStreamController;
 
@@ -37,9 +36,7 @@ void main() {
 
   ProviderContainer createContainer() {
     return ProviderContainer(
-      overrides: [
-        ordersRepositoryProvider.overrideWithValue(fakeRepo),
-      ],
+      overrides: [ordersRepositoryProvider.overrideWithValue(fakeRepo)],
     );
   }
 
@@ -49,47 +46,48 @@ void main() {
     });
 
     test(
-        'retains AsyncData when last watcher is removed and re-added within 30s',
-        () {
-      fakeAsync((async) {
-        final container = createContainer();
-        addTearDown(container.dispose);
+      'retains AsyncData when last watcher is removed and re-added within 30s',
+      () {
+        fakeAsync((async) {
+          final container = createContainer();
+          addTearDown(container.dispose);
 
-        // Subscribe
-        final sub = container.listen(
-          ordersListForItemStreamProvider('store1', 'item1'),
-          (_, __) {},
-        );
+          // Subscribe
+          final sub = container.listen(
+            ordersListForItemStreamProvider('store1', 'item1'),
+            (_, __) {},
+          );
 
-        // Emit data
-        controller.add([]);
-        async.flushMicrotasks();
+          // Emit data
+          controller.add([]);
+          async.flushMicrotasks();
 
-        // Verify we have data
-        final stateBeforeUnsub = container.read(
-          ordersListForItemStreamProvider('store1', 'item1'),
-        );
-        expect(stateBeforeUnsub, isA<AsyncData<List<Order>>>());
+          // Verify we have data
+          final stateBeforeUnsub = container.read(
+            ordersListForItemStreamProvider('store1', 'item1'),
+          );
+          expect(stateBeforeUnsub, isA<AsyncData<List<Order>>>());
 
-        // Remove last watcher
-        sub.close();
+          // Remove last watcher
+          sub.close();
 
-        // Advance 15s (within cache window)
-        async.elapse(const Duration(seconds: 15));
+          // Advance 15s (within cache window)
+          async.elapse(const Duration(seconds: 15));
 
-        // Re-subscribe — should still have AsyncData, not AsyncLoading
-        final sub2 = container.listen(
-          ordersListForItemStreamProvider('store1', 'item1'),
-          (_, __) {},
-        );
-        addTearDown(sub2.close);
+          // Re-subscribe — should still have AsyncData, not AsyncLoading
+          final sub2 = container.listen(
+            ordersListForItemStreamProvider('store1', 'item1'),
+            (_, __) {},
+          );
+          addTearDown(sub2.close);
 
-        final stateAfterResub = container.read(
-          ordersListForItemStreamProvider('store1', 'item1'),
-        );
-        expect(stateAfterResub, isA<AsyncData<List<Order>>>());
-      });
-    });
+          final stateAfterResub = container.read(
+            ordersListForItemStreamProvider('store1', 'item1'),
+          );
+          expect(stateAfterResub, isA<AsyncData<List<Order>>>());
+        });
+      },
+    );
 
     test('disposes after 30s with no watchers', () {
       fakeAsync((async) {
@@ -131,46 +129,47 @@ void main() {
     });
 
     test(
-        'retains AsyncData when last watcher is removed and re-added within 30s',
-        () {
-      fakeAsync((async) {
-        final container = createContainer();
-        addTearDown(container.dispose);
+      'retains AsyncData when last watcher is removed and re-added within 30s',
+      () {
+        fakeAsync((async) {
+          final container = createContainer();
+          addTearDown(container.dispose);
 
-        // Subscribe
-        final sub = container.listen(
-          ordersListStreamProvider('store1'),
-          (_, __) {},
-        );
+          // Subscribe
+          final sub = container.listen(
+            ordersListStreamProvider('store1'),
+            (_, __) {},
+          );
 
-        // Emit data
-        controller.add([]);
-        async.flushMicrotasks();
+          // Emit data
+          controller.add([]);
+          async.flushMicrotasks();
 
-        // Verify data
-        final stateBeforeUnsub = container.read(
-          ordersListStreamProvider('store1'),
-        );
-        expect(stateBeforeUnsub, isA<AsyncData<List<Order>>>());
+          // Verify data
+          final stateBeforeUnsub = container.read(
+            ordersListStreamProvider('store1'),
+          );
+          expect(stateBeforeUnsub, isA<AsyncData<List<Order>>>());
 
-        // Remove last watcher
-        sub.close();
+          // Remove last watcher
+          sub.close();
 
-        // Advance 15s
-        async.elapse(const Duration(seconds: 15));
+          // Advance 15s
+          async.elapse(const Duration(seconds: 15));
 
-        // Re-subscribe
-        final sub2 = container.listen(
-          ordersListStreamProvider('store1'),
-          (_, __) {},
-        );
-        addTearDown(sub2.close);
+          // Re-subscribe
+          final sub2 = container.listen(
+            ordersListStreamProvider('store1'),
+            (_, __) {},
+          );
+          addTearDown(sub2.close);
 
-        final stateAfterResub = container.read(
-          ordersListStreamProvider('store1'),
-        );
-        expect(stateAfterResub, isA<AsyncData<List<Order>>>());
-      });
-    });
+          final stateAfterResub = container.read(
+            ordersListStreamProvider('store1'),
+          );
+          expect(stateAfterResub, isA<AsyncData<List<Order>>>());
+        });
+      },
+    );
   });
 }

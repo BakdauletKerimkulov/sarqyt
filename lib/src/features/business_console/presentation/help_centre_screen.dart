@@ -17,18 +17,16 @@ class HelpCentreScreen extends StatelessWidget {
         children: [
           Text(
             loc.helpCentre,
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           gapH8,
           Text(
             'Here you can find answers to most of the questions you might have about how to use Sarqyt. Select a topic below to find the answer to your question.',
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: Colors.grey),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
           ),
           gapH24,
 
@@ -50,7 +48,9 @@ class HelpCentreScreen extends StatelessWidget {
                 runSpacing: Sizes.p16,
                 children: [
                   _TopicCard(
-                    width: (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) / crossCount,
+                    width:
+                        (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) /
+                        crossCount,
                     icon: Icons.store_outlined,
                     title: loc.dailyOperations,
                     description:
@@ -59,7 +59,9 @@ class HelpCentreScreen extends StatelessWidget {
                         showNotImplementedAlertDialog(context: context),
                   ),
                   _TopicCard(
-                    width: (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) / crossCount,
+                    width:
+                        (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) /
+                        crossCount,
                     icon: Icons.account_balance_wallet_outlined,
                     title: loc.financials,
                     description: loc.payoutsAndInvoices,
@@ -67,7 +69,9 @@ class HelpCentreScreen extends StatelessWidget {
                         showNotImplementedAlertDialog(context: context),
                   ),
                   _TopicCard(
-                    width: (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) / crossCount,
+                    width:
+                        (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) /
+                        crossCount,
                     icon: Icons.share_outlined,
                     title: loc.sharing,
                     description: loc.spreadTheWord,
@@ -75,7 +79,9 @@ class HelpCentreScreen extends StatelessWidget {
                         showNotImplementedAlertDialog(context: context),
                   ),
                   _TopicCard(
-                    width: (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) / crossCount,
+                    width:
+                        (constraints.maxWidth - Sizes.p16 * (crossCount - 1)) /
+                        crossCount,
                     icon: Icons.help_outline,
                     title: loc.commonQuestions,
                     description:
@@ -148,7 +154,10 @@ class _BannerCard extends StatelessWidget {
               Icon(icon, color: AppColors.primary, size: 32),
               gapW16,
               Expanded(
-                child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+                child: Text(
+                  text,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
               const Icon(Icons.chevron_right, color: Colors.grey),
             ],
@@ -191,18 +200,16 @@ class _TopicCard extends StatelessWidget {
                 gapH12,
                 Text(
                   title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 gapH8,
                 Text(
                   description,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.grey),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                 ),
               ],
             ),

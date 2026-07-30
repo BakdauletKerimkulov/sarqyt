@@ -23,12 +23,13 @@ class BusinessRepository {
 
   /// Sets verificationStatus to "submitted" and fires the fake CF (fire-and-forget).
   Future<void> submitVerification(BusinessID businessId) async {
-    await _firestore
-        .doc(businessPath(businessId))
-        .update({'verificationStatus': 'submitted'});
+    await _firestore.doc(businessPath(businessId)).update({
+      'verificationStatus': 'submitted',
+    });
 
-    final callable =
-        FirebaseFunctions.instance.httpsCallable('fakeVerifyBusiness');
+    final callable = FirebaseFunctions.instance.httpsCallable(
+      'fakeVerifyBusiness',
+    );
     // Fire-and-forget — do not await
     callable.call<dynamic>({'businessId': businessId});
   }

@@ -26,8 +26,7 @@ void main() async {
   // initialize services before starting the app
   appBootStrap.initializeServices(container);
   // start the app
-  runApp(UncontrolledProviderScope(
-    container: container,
-    child: const MyAppClient(),
-  ));
+  runApp(
+    UncontrolledProviderScope(container: container, child: const MyAppClient()),
+  );
 }

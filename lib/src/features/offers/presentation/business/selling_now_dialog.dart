@@ -34,15 +34,15 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
 
     setState(() => _isSaving = true);
     try {
-      await ref.read(businessOfferRepositoryProvider).updateOfferQuantity(
-            offerId: widget.offer.id,
-            quantity: _quantity,
-          );
+      await ref
+          .read(businessOfferRepositoryProvider)
+          .updateOfferQuantity(offerId: widget.offer.id, quantity: _quantity);
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(humanReadableError(e))));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(humanReadableError(e))));
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -69,8 +69,9 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
                   Expanded(
                     child: Text(
                       loc.surpriseBagsForSale,
-                      style: theme.textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   IconButton(
@@ -82,8 +83,7 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
               gapH16,
               Text(
                 loc.soldCount(_sold),
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: Colors.grey),
+                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
               ),
               gapH24,
 
@@ -101,9 +101,7 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
                     gapW16,
                     Container(
                       width: 60,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Sizes.p8,
-                      ),
+                      padding: const EdgeInsets.symmetric(vertical: Sizes.p8),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300),
                         borderRadius: BorderRadius.circular(Sizes.p4),
@@ -128,8 +126,9 @@ class _SellingNowDialogState extends ConsumerState<SellingNowDialog> {
               Center(
                 child: Text(
                   loc.totalSurpriseBags,
-                  style: theme.textTheme.bodySmall
-                      ?.copyWith(color: Colors.grey),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey,
+                  ),
                 ),
               ),
               gapH24,

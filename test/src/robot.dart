@@ -23,9 +23,9 @@ import 'mocks.dart';
 /// Composite Robot — pumps the client app with fakes.
 class Robot {
   Robot(this.tester)
-      : offers = OffersRobot(tester),
-        mockPaymentRepo = MockPaymentRepository(),
-        mockClientOrdersRepo = MockClientOrdersRepository();
+    : offers = OffersRobot(tester),
+      mockPaymentRepo = MockPaymentRepository(),
+      mockClientOrdersRepo = MockClientOrdersRepository();
   final WidgetTester tester;
   final OffersRobot offers;
   final MockPaymentRepository mockPaymentRepo;
@@ -59,18 +59,21 @@ class Robot {
         offerRepositoryProvider.overrideWithValue(offerRepo),
         paymentRepositoryProvider.overrideWithValue(mockPaymentRepo),
         clientOrdersRepositoryProvider.overrideWithValue(mockClientOrdersRepo),
-        clientOnboardingRepositoryProvider
-            .overrideWith((_) async => onboardingRepo),
+        clientOnboardingRepositoryProvider.overrideWith(
+          (_) async => onboardingRepo,
+        ),
         // Fixed clock matching kTestOffers data.
-        currentDateBuilderProvider
-            .overrideWithValue(() => DateTime(2026, 7, 12, 12)),
+        currentDateBuilderProvider.overrideWithValue(
+          () => DateTime(2026, 7, 12, 12),
+        ),
         // No GPS in tests — null position triggers watchAllOffers fallback.
         positionProvider.overrideWith((_) => Future.value(null)),
         // No Firestore for favorites — empty set.
         favoriteStoreIdsProvider.overrideWith((_) => Stream.value(const {})),
         // No orders for client.
-        customerOrdersStreamProvider
-            .overrideWith((_) => Stream.value(<Order>[])),
+        customerOrdersStreamProvider.overrideWith(
+          (_) => Stream.value(<Order>[]),
+        ),
       ],
       observers: [AsyncErrorLogger()],
     );
@@ -113,16 +116,16 @@ class Robot {
   static void _mockPathProvider() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      const MethodChannel('plugins.flutter.io/path_provider'),
-      (methodCall) async {
-        switch (methodCall.method) {
-          case 'getTemporaryDirectory':
-          case 'getApplicationSupportDirectory':
-            return '/tmp';
-          default:
-            return null;
-        }
-      },
-    );
+          const MethodChannel('plugins.flutter.io/path_provider'),
+          (methodCall) async {
+            switch (methodCall.method) {
+              case 'getTemporaryDirectory':
+              case 'getApplicationSupportDirectory':
+                return '/tmp';
+              default:
+                return null;
+            }
+          },
+        );
   }
 }

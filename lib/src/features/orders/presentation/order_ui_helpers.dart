@@ -16,11 +16,10 @@ extension OrderPickupX on Order {
     final dayLabel = pickupDay == today
         ? loc.today
         : pickupDay == tomorrow
-            ? loc.tomorrow
-            : '${pickupDay.day}.${pickupDay.month.toString().padLeft(2, '0')}';
+        ? loc.tomorrow
+        : '${pickupDay.day}.${pickupDay.month.toString().padLeft(2, '0')}';
 
-    final startStr =
-        '${start.hour}:${start.minute.toString().padLeft(2, '0')}';
+    final startStr = '${start.hour}:${start.minute.toString().padLeft(2, '0')}';
     final endStr = '${end.hour}:${end.minute.toString().padLeft(2, '0')}';
     return '$dayLabel, $startStr – $endStr';
   }

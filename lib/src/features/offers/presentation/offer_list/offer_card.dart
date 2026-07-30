@@ -90,7 +90,8 @@ class OfferCard extends StatelessWidget {
                             : null,
                       ),
                       gapW8,
-                      if (distanceLabel != null && distanceLabel!.isNotEmpty) ...[
+                      if (distanceLabel != null &&
+                          distanceLabel!.isNotEmpty) ...[
                         Text(
                           distanceLabel!,
                           style: const TextStyle(color: Colors.grey),

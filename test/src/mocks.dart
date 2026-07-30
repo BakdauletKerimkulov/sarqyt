@@ -8,5 +8,4 @@ class MockPaymentRepository extends Mock implements PaymentRepository {}
 class MockClientOrdersRepository extends Mock
     implements ClientOrdersRepository {}
 
-class MockStoreOrdersRepository extends Mock
-    implements StoreOrdersRepository {}
+class MockStoreOrdersRepository extends Mock implements StoreOrdersRepository {}

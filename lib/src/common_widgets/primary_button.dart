@@ -35,10 +35,10 @@ class PrimaryButton extends StatelessWidget {
                 text,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: onPressed != null
-                          ? Colors.white
-                          : Colors.grey.shade500,
-                    ),
+                  color: onPressed != null
+                      ? Colors.white
+                      : Colors.grey.shade500,
+                ),
               ),
       ),
     );

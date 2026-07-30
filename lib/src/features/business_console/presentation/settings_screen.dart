@@ -129,49 +129,46 @@ class StoreSettingsContent extends ConsumerWidget {
         child: OutlinedSectionWidgetWithHeader(
           header: 'Store information',
           child: AsyncValueWidget(
-          value: storeAsync,
-          data: (store) {
-            if (store == null) {
-              return const Center(child: Text('Store not found'));
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Here you can see the information we have registered about your store. '
-                  'If any of this information is incorrect and needs to be changed, please get in touch with us.',
-                ),
-                gapH24,
-                Text(
-                  'Store description',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(store.description ?? 'No description yet'),
-                gapH16,
-                Text(
-                  'Store details',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                gapH8,
-                Text(
-                  'Name',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(store.name),
-                gapH8,
-                Text(
-                  'Address',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(width: 100, child: Text(store.addressInfo)),
-                gapH16,
-                Text(
-                  'Contact details',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            );
-          },
+            value: storeAsync,
+            data: (store) {
+              if (store == null) {
+                return const Center(child: Text('Store not found'));
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Here you can see the information we have registered about your store. '
+                    'If any of this information is incorrect and needs to be changed, please get in touch with us.',
+                  ),
+                  gapH24,
+                  Text(
+                    'Store description',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(store.description ?? 'No description yet'),
+                  gapH16,
+                  Text(
+                    'Store details',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  gapH8,
+                  Text('Name', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(store.name),
+                  gapH8,
+                  Text(
+                    'Address',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(width: 100, child: Text(store.addressInfo)),
+                  gapH16,
+                  Text(
+                    'Contact details',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -209,7 +206,9 @@ class TeamSettingsContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final storeShip = ref.watch(currentStoreShipProvider);
-    final shipsAsync = ref.watch(storeShipsByStoreIdProvider(storeShip.storeId));
+    final shipsAsync = ref.watch(
+      storeShipsByStoreIdProvider(storeShip.storeId),
+    );
     final textTheme = Theme.of(context).textTheme;
 
     return AsyncValueWidget(
@@ -239,10 +238,7 @@ class TeamSettingsContent extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Team members',
-                    style: textTheme.titleMedium,
-                  ),
+                  Text('Team members', style: textTheme.titleMedium),
                   TextButton.icon(
                     onPressed: () => showDialog<void>(
                       context: context,

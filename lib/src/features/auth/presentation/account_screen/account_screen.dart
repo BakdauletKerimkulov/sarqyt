@@ -51,17 +51,14 @@ class AccountScreen extends ConsumerWidget {
                           gapH4,
                           Text(
                             user.email!,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
+                            style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(color: Colors.grey),
                           ),
                         ],
                       ],
                     )
                   : ElevatedButton(
-                      onPressed: () =>
-                          context.goNamed(ClientRoute.signIn.name),
+                      onPressed: () => context.goNamed(ClientRoute.signIn.name),
                       child: Text(context.loc.signIn),
                     ),
             ),
@@ -76,21 +73,24 @@ class AccountScreen extends ConsumerWidget {
                       leading: const Icon(Icons.edit),
                       title: Text(context.loc.editProfile),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => context.pushNamed(ClientRoute.editProfile.name),
+                      onTap: () =>
+                          context.pushNamed(ClientRoute.editProfile.name),
                     ),
                     const Divider(height: 1),
                     ListTile(
                       leading: const Icon(Icons.favorite_outline),
                       title: Text(context.loc.favorites),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => context.pushNamed(ClientRoute.favorites.name),
+                      onTap: () =>
+                          context.pushNamed(ClientRoute.favorites.name),
                     ),
                     const Divider(height: 1),
                     ListTile(
                       leading: const Icon(Icons.settings),
                       title: Text(context.loc.settings),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => context.pushNamed(ClientRoute.appSettings.name),
+                      onTap: () =>
+                          context.pushNamed(ClientRoute.appSettings.name),
                     ),
                   ],
                 ),
@@ -110,8 +110,7 @@ class AccountScreen extends ConsumerWidget {
                           );
                           if (logout == true) {
                             ref
-                                .read(
-                                    accountScreenControllerProvider.notifier)
+                                .read(accountScreenControllerProvider.notifier)
                                 .signOut();
                           }
                         },

@@ -14,9 +14,7 @@ enum Currency {
 
 @freezed
 abstract class Price with _$Price {
-  const factory Price({
-    required double amount,
-  }) = _Price;
+  const factory Price({required double amount}) = _Price;
 
   factory Price.fromJson(Map<String, dynamic> json) => _$PriceFromJson(json);
 }

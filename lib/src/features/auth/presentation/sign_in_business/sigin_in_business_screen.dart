@@ -147,8 +147,9 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
                       ),
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (email) =>
-                        !_submitted ? null : emailErrorText(email ?? '', context.loc),
+                    validator: (email) => !_submitted
+                        ? null
+                        : emailErrorText(email ?? '', context.loc),
                     autocorrect: false,
                     textInputAction: TextInputAction.next,
                     onEditingComplete: () => _emailEditingComplete(),

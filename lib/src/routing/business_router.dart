@@ -206,10 +206,7 @@ GoRouter businessRouter(Ref ref) {
     redirect: (context, state) {
       // Fully synchronous — all data comes from the reactive provider.
       final redirectState = ref.read(businessRedirectStateProvider);
-      return businessRedirect(
-        redirectState: redirectState,
-        uri: state.uri,
-      );
+      return businessRedirect(redirectState: redirectState, uri: state.uri);
     },
     refreshListenable: refresh,
     routes: [
@@ -294,8 +291,9 @@ GoRouter businessRouter(Ref ref) {
         redirect: (context, state) {
           if (state.uri.path != '/stores') return null;
           final redirectData = ref.read(businessRedirectStateProvider);
-          final completed =
-              redirectData.storeShips.where((s) => s.welcomeCompleted).toList();
+          final completed = redirectData.storeShips
+              .where((s) => s.welcomeCompleted)
+              .toList();
           if (completed.length == 1) {
             return '/stores/${completed.first.storeId}/dashboard';
           }
@@ -407,8 +405,7 @@ GoRouter businessRouter(Ref ref) {
                       GoRoute(
                         path: 'help',
                         name: BusinessRoute.helpCentre.name,
-                        builder: (context, state) =>
-                            const HelpCentreScreen(),
+                        builder: (context, state) => const HelpCentreScreen(),
                       ),
                     ],
                   ),

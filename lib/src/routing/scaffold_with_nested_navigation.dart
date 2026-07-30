@@ -105,8 +105,7 @@ class ScaffoldWithNestedNavigation extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentBranch = navigationShell.currentIndex;
-    final isAdmin =
-        ref.watch(userRoleProvider).value == UserRole.admin;
+    final isAdmin = ref.watch(userRoleProvider).value == UserRole.admin;
 
     final fab = isAdmin
         ? FloatingActionButton(
@@ -217,14 +216,13 @@ class _SidebarContent extends ConsumerWidget {
         for (final item in section.items)
           _MenuTile(
             item: item,
-            isSelected: item.pathSuffix == null &&
+            isSelected:
+                item.pathSuffix == null &&
                 item.branchIndex >= 0 &&
                 item.branchIndex == currentBranch,
             onTap: () {
               if (item.pathSuffix != null) {
-                context.go(
-                  '/stores/${storeShip.storeId}/${item.pathSuffix}',
-                );
+                context.go('/stores/${storeShip.storeId}/${item.pathSuffix}');
               } else if (item.branchIndex >= 0) {
                 onBranchTap(item.branchIndex);
               }
@@ -302,9 +300,7 @@ class _SidebarContent extends ConsumerWidget {
                         context: context,
                         builder: (ctx) => AlertDialog(
                           title: Text(context.loc.logOut),
-                          content: Text(
-                            context.loc.logOutConfirmTitle,
-                          ),
+                          content: Text(context.loc.logOutConfirmTitle),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(ctx).pop(false),

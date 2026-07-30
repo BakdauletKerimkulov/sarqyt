@@ -24,10 +24,9 @@ class VerifyEmailScreen extends StatelessWidget {
       startBackground: 'assets/food-app-business-background.jpg',
       child: OnboardingPanel(
         title: context.loc.checkYourInbox,
-        onBackPressed: () =>
-            ProviderScope.containerOf(context)
-                .read(authRepositoryProvider)
-                .signOut(),
+        onBackPressed: () => ProviderScope.containerOf(
+          context,
+        ).read(authRepositoryProvider).signOut(),
         child: const _VerifyEmailContent(),
       ),
     );
@@ -98,7 +97,6 @@ class _VerifyEmailContentState extends ConsumerState<_VerifyEmailContent>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(verifyEmailControllerProvider);
-    final controller = ref.watch(verifyEmailControllerProvider.notifier);
 
     ref.listen(verifyEmailControllerProvider, (_, next) {
       // Don't show the generic error dialog for DraftNotFoundException —
@@ -109,7 +107,7 @@ class _VerifyEmailContentState extends ConsumerState<_VerifyEmailContent>
     });
 
     // Draft-not-found: show recovery state instead of polling UI.
-    if (controller.isDraftNotFound) {
+    if (state.error is DraftNotFoundException) {
       _stopReloadTimer();
       return _DraftNotFoundRecovery();
     }

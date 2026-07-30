@@ -7,11 +7,7 @@ import 'package:sarqyt/src/features/orders/presentation/order_ui_helpers.dart';
 /// Compact card for active orders in list mode (>1 active).
 /// Shows store name, item, status badge, pickup time, total.
 class ActiveOrderCard extends StatelessWidget {
-  const ActiveOrderCard({
-    super.key,
-    required this.order,
-    this.onTap,
-  });
+  const ActiveOrderCard({super.key, required this.order, this.onTap});
 
   final Order order;
   final VoidCallback? onTap;
@@ -34,8 +30,9 @@ class ActiveOrderCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       order.storeName,
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -61,16 +58,18 @@ class ActiveOrderCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         order.pickupLabelLocalized(context)!,
-                        style: theme.textTheme.bodySmall
-                            ?.copyWith(color: theme.colorScheme.outline),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.outline,
+                        ),
                       ),
                     ),
                   ] else
                     const Spacer(),
                   Text(
                     order.totalFormatted,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

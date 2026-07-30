@@ -11,8 +11,7 @@ void main() async {
   final container = await appBootStrap.createsFakeProviderContainer();
 
   appBootStrap.initializeServices(container);
-  runApp(UncontrolledProviderScope(
-    container: container,
-    child: const MyAppClient(),
-  ));
+  runApp(
+    UncontrolledProviderScope(container: container, child: const MyAppClient()),
+  );
 }

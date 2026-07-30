@@ -25,7 +25,8 @@ double _haversineKm(LatLng a, LatLng b) {
   const r = 6371.0;
   final dLat = _rad(b.latitude - a.latitude);
   final dLng = _rad(b.longitude - a.longitude);
-  final h = sin(dLat / 2) * sin(dLat / 2) +
+  final h =
+      sin(dLat / 2) * sin(dLat / 2) +
       cos(_rad(a.latitude)) *
           cos(_rad(b.latitude)) *
           sin(dLng / 2) *
@@ -62,8 +63,9 @@ List<OfferWithDistance> _mapWithDistance(
   LatLng? userLatLng,
 ) {
   final result = offers.map((offer) {
-    final distance =
-        userLatLng != null ? _haversineKm(userLatLng, offer.latLng) : null;
+    final distance = userLatLng != null
+        ? _haversineKm(userLatLng, offer.latLng)
+        : null;
     return OfferWithDistance(offer: offer, distanceKm: distance);
   }).toList();
 

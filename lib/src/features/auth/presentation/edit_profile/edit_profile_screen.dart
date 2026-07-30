@@ -60,8 +60,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Email (read-only)
-              Text(context.loc.email,
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                context.loc.email,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               gapH8,
               TextField(
                 enabled: false,
@@ -78,8 +80,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               gapH20,
 
               // Display name
-              Text(context.loc.name,
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                context.loc.name,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               gapH8,
               TextField(
                 controller: _nameController,
@@ -98,8 +102,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               gapH20,
 
               // Phone
-              Text(context.loc.phone,
-                  style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                context.loc.phone,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               gapH8,
               TextField(
                 controller: _phoneController,

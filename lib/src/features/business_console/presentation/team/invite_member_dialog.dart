@@ -31,8 +31,9 @@ class _InviteMemberDialogState extends State<InviteMemberDialog> {
     setState(() => _isLoading = true);
 
     try {
-      final callable =
-          FirebaseFunctions.instance.httpsCallable('inviteTeamMember');
+      final callable = FirebaseFunctions.instance.httpsCallable(
+        'inviteTeamMember',
+      );
       await callable.call<dynamic>({
         'storeId': widget.storeId,
         'email': _emailController.text.trim(),
@@ -41,9 +42,9 @@ class _InviteMemberDialogState extends State<InviteMemberDialog> {
 
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invitation sent'.hardcoded)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Invitation sent'.hardcoded)));
       }
     } on FirebaseFunctionsException catch (e) {
       if (mounted) {

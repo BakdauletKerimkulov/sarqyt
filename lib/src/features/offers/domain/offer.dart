@@ -9,7 +9,6 @@ part 'offer.g.dart';
 
 enum OfferStatus { active, paused, expired, soldOut }
 
-
 typedef OfferID = String;
 
 @freezed
@@ -84,7 +83,6 @@ abstract class Offer with _$Offer {
     if (v == null) return null;
     return _readDate(v);
   }
-
 
   /// Writes DateTime to Firestore Timestamp.
   static Timestamp _writeDate(DateTime v) => Timestamp.fromDate(v);

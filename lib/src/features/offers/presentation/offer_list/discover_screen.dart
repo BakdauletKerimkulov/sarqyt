@@ -94,7 +94,10 @@ class OfferList extends StatelessWidget {
           distanceLabel: item.distanceLabel,
           isFavorite: isFav,
           onFavoriteToggle: () => _toggleFavorite(
-            context, item.offer.storeId, item.offer.storeName, isFav,
+            context,
+            item.offer.storeId,
+            item.offer.storeName,
+            isFav,
           ),
           onPressed: () => context.goNamed(
             ClientRoute.offer.name,
@@ -120,7 +123,9 @@ class OfferList extends StatelessWidget {
         await repo.removeFavorite(user.uid, storeId);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.loc.removedFromFavorites(storeName))),
+            SnackBar(
+              content: Text(context.loc.removedFromFavorites(storeName)),
+            ),
           );
         }
       } else {
