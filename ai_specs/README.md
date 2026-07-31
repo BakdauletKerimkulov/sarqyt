@@ -56,6 +56,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 037 | Fix cancelOrder transaction read-after-write | fix | done | 2026-07-31 | spec |
 
-Next number: **038**.
+| 038 | Wire flash offer entry point | fix | done | 2026-07-31 | spec |
+
+Next number: **039**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.

@@ -8,6 +8,7 @@ import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/business_console/domain/business.dart';
 import 'package:sarqyt/src/features/business_console/presentation/business_verify/verify_dialog.dart';
 import 'package:sarqyt/src/features/items/presentation/items_list/sliver_items_grid.dart';
+import 'package:sarqyt/src/features/offers/presentation/business/flash_offer_button.dart';
 import 'package:sarqyt/src/features/orders/presentation/business/business_orders_screen.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
@@ -61,21 +62,29 @@ class DashboardScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: Sizes.p32),
           sliver: OutlinedSectionSliverWidgetWithHeader(
             header: 'Your surprise bags',
-            trailing: TextButton.icon(
-              icon: const Icon(Icons.add, size: 18),
-              label: Text(context.loc.createNew),
-              style: TextButton.styleFrom(foregroundColor: AppColors.primary),
-              onPressed: () async {
-                final result = await context.pushNamed<bool>(
-                  BusinessRoute.newItem.name,
-                  pathParameters: {'storeId': storeId},
-                );
-                if (result == true && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(context.loc.itemCreated)),
-                  );
-                }
-              },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FlashOfferButton(storeId: storeId),
+                TextButton.icon(
+                  icon: const Icon(Icons.add, size: 18),
+                  label: Text(context.loc.createNew),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                  ),
+                  onPressed: () async {
+                    final result = await context.pushNamed<bool>(
+                      BusinessRoute.newItem.name,
+                      pathParameters: {'storeId': storeId},
+                    );
+                    if (result == true && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(context.loc.itemCreated)),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
             sliver: SliverItemsGrid(storeId: storeId),
           ),
