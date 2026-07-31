@@ -27,16 +27,31 @@ export const completeMerchantOnboarding = onCall(async (req) => {
       throw new AppError("failed-precondition", "User email is missing");
     }
 
-    // Check if user already has an active store (idempotency guard)
+    // Check if user already has a store (idempotency guard).
+    // `storeShips` docs never carry a `status` field — existence for this
+    // uid is itself the completion signal.
     const existingStoreShip = await db
       .collection(FirestoreCollections.STORE_SHIPS)
       .where("userId", "==", uid)
-      .where("status", "==", "active")
       .limit(1)
       .get();
 
     if (!existingStoreShip.empty) {
       const existing = existingStoreShip.docs[0].data();
+
+      // Firestore batch and claim-setting are two separate API calls (see
+      // below) — a prior attempt may have committed the batch but failed to
+      // set claims. Restore them here so a retry is self-healing.
+      if (
+        userRecord.customClaims?.role !== UserRole.PARTNER ||
+        userRecord.customClaims?.canCreateStore !== true
+      ) {
+        await auth.setCustomUserClaims(uid, {
+          role: UserRole.PARTNER,
+          canCreateStore: true,
+        });
+      }
+
       return { success: true, storeId: existing.storeId } as CompleteMerchantOnboardingResponseDto;
     }
 
