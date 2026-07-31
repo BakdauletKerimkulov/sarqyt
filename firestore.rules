@@ -116,6 +116,15 @@ service cloud.firestore {
       allow read: if isAdmin()
         || hasBusinessMembership(businessId)
         || (isSignedIn() && request.auth.uid == resource.data.ownerId);
+
+      // Members may only kick off verification (unverified -> submitted).
+      // Setting "verified" is exclusive to fakeVerifyBusiness (admin SDK,
+      // bypasses rules) — this rule can never grant that transition.
+      allow update: if isAdmin()
+        || (hasBusinessMembership(businessId)
+            && resource.data.verificationStatus == 'unverified'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['verificationStatus'])
+            && request.resource.data.verificationStatus == 'submitted');
     }
 
     // -------------------------------------------------------------------------

@@ -416,3 +416,59 @@ describe("users", () => {
     );
   });
 });
+
+// ==========================================================================
+// Businesses — member-initiated verification submit
+// ==========================================================================
+describe("businesses — verification submit", () => {
+  const businessData = { name: "Test Biz", ownerId: "owner1", verificationStatus: "unverified" };
+
+  async function seedBusinessAndMembership() {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      const fs = ctx.firestore();
+      await setDoc(doc(fs, "businesses", "b1"), businessData);
+      await setDoc(doc(fs, "business_membership", "b1_owner1"), {
+        businessId: "b1",
+        userId: "owner1",
+        role: "owner",
+      });
+    });
+  }
+
+  it("allows a business member to submit verification (unverified -> submitted)", async () => {
+    await seedBusinessAndMembership();
+    const db = authedDb("owner1");
+    await assertSucceeds(
+      updateDoc(doc(db, "businesses", "b1"), { verificationStatus: "submitted" })
+    );
+  });
+
+  it("denies a member setting verificationStatus directly to verified", async () => {
+    await seedBusinessAndMembership();
+    const db = authedDb("owner1");
+    await assertFails(
+      updateDoc(doc(db, "businesses", "b1"), { verificationStatus: "verified" })
+    );
+  });
+
+  it("denies changing other fields alongside verificationStatus", async () => {
+    await seedBusinessAndMembership();
+    const db = authedDb("owner1");
+    await assertFails(
+      updateDoc(doc(db, "businesses", "b1"), {
+        verificationStatus: "submitted",
+        name: "Renamed",
+      })
+    );
+  });
+
+  it("denies a non-member updating the business", async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "businesses", "b1"), businessData);
+    });
+    const db = authedDb("stranger");
+    await assertFails(
+      updateDoc(doc(db, "businesses", "b1"), { verificationStatus: "submitted" })
+    );
+  });
+});
