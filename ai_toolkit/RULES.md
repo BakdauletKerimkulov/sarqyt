@@ -85,6 +85,7 @@ Stack: Flutter 3.41 / Dart 3.11, Riverpod codegen, GoRouter, Material 3. Project
 ## Testing → `testing.md`
 
 - Per layer: `domain/` pure logic (no mocks) · `data/` **pure static mappers** tested without a client · `application/` `ProviderContainer` + mocked repositories (`mocktail`) · `presentation/` critical flows only, Robot pattern.
+- **Seams are fixed, not invented per feature:** repository provider override · fakes container (`createFakesProviderContainer`) · `currentDateBuilderProvider` for the clock · extracted pure mapper · extracted server-function helper. A new seam needs a written reason; never mock the SDK client, never mock a controller.
 - **A bugfix is not done without a regression test reproducing the bug.**
 - `test/` mirrors `lib/`. Robots live in `test/src/`, mirroring `features/`; `integration_test/` imports them. Assertions (`expectX`) live in the robot — tests read as scenarios.
 - Never hit a real backend in tests. Mock repositories, not the backend SDK client.
@@ -96,6 +97,8 @@ Stack: Flutter 3.41 / Dart 3.11, Riverpod codegen, GoRouter, Material 3. Project
 ## Documentation sync → `docs-sync.md`
 
 A change to the data model, a server function contract, or a route is **not complete** until the matching `ai_docs/` section is updated in the same change.
+
+Domain vocabulary comes from `ai_docs/GLOSSARY.md`: one concept = one canonical identifier in code + one word per locale in the UI. A new durable term is written there in the same run it is resolved, not after the feature ships. Two words for one concept in a diff is a review finding.
 
 ---
 

@@ -63,6 +63,15 @@ export const cancelOrder = onCall(async (req) => {
         );
       }
 
+      // Restore offer quantity and conditionally reactivate from soldOut.
+      // All reads must happen before any writes in a Firestore transaction.
+      const offerId = order.offerId as string | undefined;
+      const qty = order.itemQuantity as number | undefined;
+      const offerRef = offerId && qty ?
+        db.collection(FirestoreCollections.OFFERS).doc(offerId) :
+        undefined;
+      const offerSnap = offerRef ? await tx.get(offerRef) : undefined;
+
       // R4: determine who cancelled and write reason
       const cancelledBy = isCustomer ? "customer" : "store";
       const orderUpdate: Record<string, unknown> = {
@@ -75,28 +84,21 @@ export const cancelOrder = onCall(async (req) => {
       }
       tx.update(orderRef, orderUpdate);
 
-      // Restore offer quantity and conditionally reactivate from soldOut
-      const offerId = order.offerId as string | undefined;
-      const qty = order.itemQuantity as number | undefined;
-      if (offerId && qty) {
-        const offerRef = db.collection(FirestoreCollections.OFFERS).doc(offerId);
-        const offerSnap = await tx.get(offerRef);
-        if (offerSnap.exists) {
-          const offerData = offerSnap.data()!;
-          const currentQty = (offerData.quantity as number) ?? 0;
-          const offerUpdate: Record<string, unknown> = {
-            quantity: currentQty + qty,
-            updatedAt: serverTimestamp(),
-          };
-          // R7: reactivate soldOut offer only if pickup window is still open
-          if (offerData.status === "soldOut") {
-            const pickupEnd = offerData.pickupEndTime as Timestamp | undefined;
-            if (pickupEnd && pickupEnd.toMillis() > Timestamp.now().toMillis()) {
-              offerUpdate.status = "active";
-            }
+      if (offerRef && offerSnap!.exists) {
+        const offerData = offerSnap!.data()!;
+        const currentQty = (offerData.quantity as number) ?? 0;
+        const offerUpdate: Record<string, unknown> = {
+          quantity: currentQty + qty!,
+          updatedAt: serverTimestamp(),
+        };
+        // R7: reactivate soldOut offer only if pickup window is still open
+        if (offerData.status === "soldOut") {
+          const pickupEnd = offerData.pickupEndTime as Timestamp | undefined;
+          if (pickupEnd && pickupEnd.toMillis() > Timestamp.now().toMillis()) {
+            offerUpdate.status = "active";
           }
-          tx.update(offerRef, offerUpdate);
         }
+        tx.update(offerRef, offerUpdate);
       }
     });
 

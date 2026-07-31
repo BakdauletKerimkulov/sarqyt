@@ -50,6 +50,12 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 033 | Fix keepAlive lint on geolocatorService | chore | done | 2026-07-26 | spec |
 
-Next number: **035**.
+| 035 | Fix offers list flashing then disappearing after GPS resolves | fix | done | 2026-07-30 | spec |
+
+| 036 | Fix expireOrders transaction read-after-write | fix | done | 2026-07-30 | spec |
+
+| 037 | Fix cancelOrder transaction read-after-write | fix | done | 2026-07-31 | spec |
+
+Next number: **038**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
