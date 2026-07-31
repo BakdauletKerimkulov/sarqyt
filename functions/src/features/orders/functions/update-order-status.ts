@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import { onCall } from "firebase-functions/v2/https";
 import { AppError, toHttpsError } from "../../../app/error";
 import { db, serverTimestamp } from "../../../app/firebase";
@@ -18,6 +19,11 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
   readyForPickup: ["completed"],
   // completed, cancelled, expired are terminal — no transitions out
 };
+
+// Statuses that hand the order to the customer, and so must happen inside
+// the pickup window — never early, and never after expireOrders would have
+// already closed it out.
+const PICKUP_WINDOW_GATED_STATUSES = new Set(["readyForPickup", "completed"]);
 
 /**
  * Updates order status. Only store owner/staff can call this.
@@ -68,6 +74,24 @@ export const updateOrderStatus = onCall(async (req) => {
           "failed-precondition",
           `Cannot transition from ${currentStatus} to ${status}`
         );
+      }
+
+      if (PICKUP_WINDOW_GATED_STATUSES.has(status)) {
+        const now = Timestamp.now();
+        const pickupStartTime = order.pickupStartTime as Timestamp | undefined;
+        const pickupEndTime = order.pickupEndTime as Timestamp | undefined;
+        if (pickupStartTime && now.toMillis() < pickupStartTime.toMillis()) {
+          throw new AppError(
+            "failed-precondition",
+            "Cannot mark this order before the pickup window opens"
+          );
+        }
+        if (pickupEndTime && now.toMillis() > pickupEndTime.toMillis()) {
+          throw new AppError(
+            "failed-precondition",
+            "Cannot mark this order after the pickup window has closed"
+          );
+        }
       }
 
       const orderUpdate: Record<string, unknown> = {

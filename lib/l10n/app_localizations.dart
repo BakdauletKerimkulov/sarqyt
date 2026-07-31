@@ -1078,6 +1078,18 @@ abstract class AppLocalizations {
   /// **'Mark completed'**
   String get markCompleted;
 
+  /// No description provided for @pickupWindowNotOpenYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Available once the pickup window opens'**
+  String get pickupWindowNotOpenYet;
+
+  /// No description provided for @pickupWindowAlreadyClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup window has closed'**
+  String get pickupWindowAlreadyClosed;
+
   /// No description provided for @noOrdersDescription.
   ///
   /// In en, this message translates to:

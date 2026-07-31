@@ -327,6 +327,8 @@
   "startPreparing": "Начать приготовление",
   "readyForPickup": "Готово к выдаче",
   "markCompleted": "Завершить",
+  "pickupWindowNotOpenYet": "Будет доступно, когда откроется окно самовывоза",
+  "pickupWindowAlreadyClosed": "Окно самовывоза закрыто",
   "noOrdersDescription": "Когда клиенты начнут заказывать, их бронирования появятся здесь.",
   "termsAndConditionsReserve": "Бронируя этот обед, вы соглашаетесь с условиями Sarqyt",
   "favorites": "Избранное",

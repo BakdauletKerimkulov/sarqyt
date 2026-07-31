@@ -64,6 +64,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 041 | Fix Firestore rules blocking review submission (rating vs storeRating/offerRating) | fix | done | 2026-07-31 | spec |
 
-Next number: **042**.
+| 042 | Enforce pickup window on order status transitions | fix | done | 2026-08-01 | spec |
+
+Next number: **043**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.

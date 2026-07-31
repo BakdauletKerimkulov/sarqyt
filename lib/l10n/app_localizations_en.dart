@@ -514,6 +514,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markCompleted => 'Mark completed';
 
   @override
+  String get pickupWindowNotOpenYet => 'Available once the pickup window opens';
+
+  @override
+  String get pickupWindowAlreadyClosed => 'Pickup window has closed';
+
+  @override
   String get noOrdersDescription =>
       'Once customers start ordering, their reservations will appear here.';
 
