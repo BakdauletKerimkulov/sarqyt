@@ -54,7 +54,8 @@ describe("reviews", () => {
   const reviewData = {
     userId: "alice",
     storeId: "store1",
-    rating: 4,
+    storeRating: 4,
+    offerRating: 4,
     text: "Great food!",
   };
 
@@ -79,24 +80,45 @@ describe("reviews", () => {
     );
   });
 
-  it("denies creating a review with rating 0", async () => {
+  it("denies creating a review with storeRating 0", async () => {
     const db = authedDb("alice");
     await assertFails(
-      setDoc(doc(db, "reviews", "r1"), { ...reviewData, rating: 0 })
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, storeRating: 0 })
     );
   });
 
-  it("denies creating a review with rating 6", async () => {
+  it("denies creating a review with storeRating 6", async () => {
     const db = authedDb("alice");
     await assertFails(
-      setDoc(doc(db, "reviews", "r1"), { ...reviewData, rating: 6 })
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, storeRating: 6 })
     );
   });
 
-  it("denies creating a review with string rating", async () => {
+  it("denies creating a review with string storeRating", async () => {
     const db = authedDb("alice");
     await assertFails(
-      setDoc(doc(db, "reviews", "r1"), { ...reviewData, rating: "five" })
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, storeRating: "five" })
+    );
+  });
+
+  it("denies creating a review with offerRating 0", async () => {
+    const db = authedDb("alice");
+    await assertFails(
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, offerRating: 0 })
+    );
+  });
+
+  it("denies creating a review with offerRating 6", async () => {
+    const db = authedDb("alice");
+    await assertFails(
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, offerRating: 6 })
+    );
+  });
+
+  it("denies creating a review with string offerRating", async () => {
+    const db = authedDb("alice");
+    await assertFails(
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, offerRating: "five" })
     );
   });
 
@@ -106,7 +128,7 @@ describe("reviews", () => {
     });
     const db = authedDb("alice");
     await assertSucceeds(
-      updateDoc(doc(db, "reviews", "r1"), { text: "Updated!", rating: 5 })
+      updateDoc(doc(db, "reviews", "r1"), { text: "Updated!", storeRating: 5, offerRating: 5 })
     );
   });
 
@@ -116,7 +138,7 @@ describe("reviews", () => {
     });
     const db = authedDb("alice");
     await assertFails(
-      updateDoc(doc(db, "reviews", "r1"), { userId: "bob", rating: 4 })
+      updateDoc(doc(db, "reviews", "r1"), { userId: "bob", storeRating: 4, offerRating: 4 })
     );
   });
 
@@ -126,7 +148,7 @@ describe("reviews", () => {
     });
     const db = authedDb("alice");
     await assertFails(
-      updateDoc(doc(db, "reviews", "r1"), { storeId: "store2", rating: 4 })
+      updateDoc(doc(db, "reviews", "r1"), { storeId: "store2", storeRating: 4, offerRating: 4 })
     );
   });
 
@@ -136,7 +158,7 @@ describe("reviews", () => {
     });
     const db = authedDb("bob");
     await assertFails(
-      updateDoc(doc(db, "reviews", "r1"), { text: "Hacked!", rating: 3 })
+      updateDoc(doc(db, "reviews", "r1"), { text: "Hacked!", storeRating: 3, offerRating: 3 })
     );
   });
 

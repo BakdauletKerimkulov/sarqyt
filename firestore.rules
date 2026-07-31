@@ -154,16 +154,22 @@ service cloud.firestore {
 
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
-        && request.resource.data.rating is number
-        && request.resource.data.rating >= 1
-        && request.resource.data.rating <= 5;
+        && request.resource.data.storeRating is number
+        && request.resource.data.storeRating >= 1
+        && request.resource.data.storeRating <= 5
+        && request.resource.data.offerRating is number
+        && request.resource.data.offerRating >= 1
+        && request.resource.data.offerRating <= 5;
 
       allow update: if isSignedIn()
         && request.auth.uid == resource.data.userId
         && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'storeId'])
-        && request.resource.data.rating is number
-        && request.resource.data.rating >= 1
-        && request.resource.data.rating <= 5;
+        && request.resource.data.storeRating is number
+        && request.resource.data.storeRating >= 1
+        && request.resource.data.storeRating <= 5
+        && request.resource.data.offerRating is number
+        && request.resource.data.offerRating >= 1
+        && request.resource.data.offerRating <= 5;
 
       allow delete: if isSignedIn()
         && request.auth.uid == resource.data.userId;

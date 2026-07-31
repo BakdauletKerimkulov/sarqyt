@@ -11,6 +11,7 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 012 | Refactor booking flow | refactor | in-progress (4 tasks blocked: no test infra) | 2026-06-14 | spec, plan |
 | 019 | Delete offer | feature | draft | 2026-05-23 | request |
 | 020 | Admin page navigation | feature | draft | 2026-07-05 | request |
+| 029 | Adaptive design for schedule widget | feature | draft | 2026-07-12 | request |
 | 031 | Toolkit compliance refactoring | refactor | in-progress | 2026-07-12 | request, spec, plan |
 | 034 | Order flow notifications | feature | in-progress | 2026-07-27 | request, spec, plan |
 
@@ -43,7 +44,6 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 027 | Fix SliverBusinessOrders empty-state crash | fix | done | 2026-07-10 | spec |
 | 028 | Fix item screen reservations flickering | fix | done | 2026-07-11 | request, spec, plan |
 
-| 029 | Fix offer screen reservations flickering | fix | done | 2026-07-11 | spec |
 | 030 | Redirect to home when offer deleted | fix | done | 2026-07-12 | spec |
 
 | 032 | Fix riverpod_lint warnings | chore | done | 2026-07-26 | spec |
@@ -62,6 +62,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 040 | Fix missing businesses/{businessId} write rule for verification submit | fix | done | 2026-07-31 | spec |
 
-Next number: **041**.
+| 041 | Fix Firestore rules blocking review submission (rating vs storeRating/offerRating) | fix | done | 2026-07-31 | spec |
+
+Next number: **042**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
