@@ -206,6 +206,8 @@
   "startPreparing": "Start preparing",
   "readyForPickup": "Ready for pickup",
   "markCompleted": "Mark completed",
+  "pickupWindowNotOpenYet": "Available once the pickup window opens",
+  "pickupWindowAlreadyClosed": "Pickup window has closed",
   "noOrdersDescription": "Once customers start ordering, their reservations will appear here.",
   "orders": "Orders",
 

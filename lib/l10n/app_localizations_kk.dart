@@ -512,6 +512,13 @@ class AppLocalizationsKk extends AppLocalizations {
   String get markCompleted => 'Аяқтау';
 
   @override
+  String get pickupWindowNotOpenYet =>
+      'Алу терезесі ашылғанда қолжетімді болады';
+
+  @override
+  String get pickupWindowAlreadyClosed => 'Алу терезесі жабылды';
+
+  @override
   String get noOrdersDescription =>
       'Клиенттер тапсырыс бергенде, олардың броны осында пайда болады.';
 

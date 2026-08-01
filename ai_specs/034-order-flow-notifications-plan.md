@@ -32,7 +32,7 @@ Push-уведомления на весь жизненный цикл заказ
   - **G1 (R13, Android-канал):** спека требует `channelId: "order_updates"`, но канал на Android создаётся плагином, а `flutter_local_notifications` спекой запрещён. Принимаемое решение: канал объявляется через `AndroidManifest.xml` meta-data `com.google.firebase.messaging.default_notification_channel_id`; фактическое создание канала — FCM SDK. Если канал не появится на устройстве — эскалировать как отдельную задачу, не расширять эту.
   - **G2 (integration-тесты):** «Validation → Integration (Firebase Emulator)» в спеке не имеет в репозитории harness'а (есть только vitest-юниты и dev-зависимость `@firebase/rules-unit-testing`, нигде не используемая). План покрывает эти сценарии ручным QA; постройка эмулятор-harness — отдельная задача.
   - **G3 (регион):** `expireOrders` деплоится в `us-central1` (регион не задан). Новый `sendOrderReminders` задаёт `asia-south1` явно, как требует спека — две scheduled-функции окажутся в разных регионах. Осознанное расхождение; вынос региона в константу — вне этой спеки.
-  - **G4 (QA-5):** `firestore.rules:142-147` требует поле `rating`, которого `ReviewRepository.submitReview` не пишет — предсуществующий баг, блокирует финальный шаг QA-5. Заводится отдельным `/fix`, в плане не чинится.
+  - **G4 (QA-5):** `firestore.rules:142-147` требовал поле `rating`, которого `ReviewRepository.submitReview` не пишет — предсуществующий баг, блокировал финальный шаг QA-5. Исправлено отдельным `/fix`: `ai_specs/041-review-rating-rules-mismatch-spec.md`.
 
 ## Plan
 
@@ -82,7 +82,7 @@ Push-уведомления на весь жизненный цикл заказ
 - [x] TDD: `functions/src/features/notifications/core/messages.test.ts` — `reviewPromptMessage` подставляет `storeName` и `itemName` → затем реализовать в `messages.ts`
 - [x] `functions/src/features/notifications/functions/send-order-reminders.ts` — второй запрос: `status == "completed"` + `completedAt <= now - 2h` + `completedAt >= now - 24h`, `limit(500)`; проверка `reviews.where('orderId','==',id).limit(1)` перед отправкой; флаг `remindersSent.reviewPrompt` в транзакции
 - [x] `firestore.indexes.json` — новый композитный индекс `orders (status ASC, completedAt ASC)`
-- [ ] Verify: `cd functions && npm run lint && npm test`; `firebase deploy --only firestore:indexes`; ручной QA-5 (с оговоркой G4) _blocked: код провалидирован (`npm run lint`, полный `./scripts/gate.sh` зелёный на всех тирах, 42 теста в `notifications`); `firebase deploy --only firestore:indexes` — деплой в реальный проект, не выполняется автоматически без явного разрешения; ручной QA-5 требует устройства и уже отдельно блокируется предсуществующим багом `firestore.rules` ↔ `submitReview` (G4)._
+- [x] Verify: `cd functions && npm run lint && npm test`; `firebase deploy --only firestore:indexes`; ручной QA-5 (с оговоркой G4) _`firebase deploy --only firestore:indexes` выполнен для `sarqyt-1ab95` — индекс `orders (status ASC, completedAt ASC)` задеплоен успешно; ручной QA-5 остаётся заблокирован предсуществующим багом `firestore.rules` ↔ `submitReview` (G4)._
 
 ### Phase 5 — Клиент: тап по push открывает нужный экран
 

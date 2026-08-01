@@ -327,6 +327,8 @@
   "startPreparing": "Дайындауды бастау",
   "readyForPickup": "Алуға дайын",
   "markCompleted": "Аяқтау",
+  "pickupWindowNotOpenYet": "Алу терезесі ашылғанда қолжетімді болады",
+  "pickupWindowAlreadyClosed": "Алу терезесі жабылды",
   "noOrdersDescription": "Клиенттер тапсырыс бергенде, олардың броны осында пайда болады.",
   "termsAndConditionsReserve": "Бұл тамақты брондай отырып, Sarqyt шарттарын қабылдайсыз",
   "favorites": "Таңдаулылар",

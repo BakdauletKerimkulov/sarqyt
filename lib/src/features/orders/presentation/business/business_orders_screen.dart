@@ -111,6 +111,29 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
     };
   }
 
+  static const _pickupWindowGatedNextStatuses = {'readyForPickup', 'completed'};
+
+  /// Reason the next-status action is blocked by the pickup window, or null
+  /// if it's allowed right now. Mirrors the server-side gate in
+  /// `updateOrderStatus` (functions/.../update-order-status.ts) so staff see
+  /// why before they tap, instead of only after the call fails.
+  String? _pickupWindowBlockReason(BuildContext context) {
+    final next = _nextStatus;
+    if (next == null || !_pickupWindowGatedNextStatuses.contains(next)) {
+      return null;
+    }
+    final order = widget.order;
+    final now = DateTime.now();
+    final start = order.pickupStartTime;
+    if (start != null && now.isBefore(start)) {
+      return context.loc.pickupWindowNotOpenYet;
+    }
+    if (order.isPickupExpired(now)) {
+      return context.loc.pickupWindowAlreadyClosed;
+    }
+    return null;
+  }
+
   Future<void> _updateStatus() async {
     final next = _nextStatus;
     if (next == null) return;
@@ -156,6 +179,7 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
     final order = widget.order;
     final theme = Theme.of(context);
     final isActive = _activeStatuses.contains(order.status);
+    final pickupWindowBlockReason = _pickupWindowBlockReason(context);
 
     return Card(
       child: Padding(
@@ -197,7 +221,9 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _updateStatus,
+                  onPressed: (_isLoading || pickupWindowBlockReason != null)
+                      ? null
+                      : _updateStatus,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -214,6 +240,15 @@ class _BusinessOrderCardState extends ConsumerState<_BusinessOrderCard> {
                       : Text(_nextStatusLabel(context)!),
                 ),
               ),
+              if (pickupWindowBlockReason != null) ...[
+                gapH4,
+                Text(
+                  pickupWindowBlockReason,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.error,
+                  ),
+                ),
+              ],
             ],
             if (isActive) ...[
               gapH8,

@@ -512,6 +512,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get markCompleted => 'Завершить';
 
   @override
+  String get pickupWindowNotOpenYet =>
+      'Будет доступно, когда откроется окно самовывоза';
+
+  @override
+  String get pickupWindowAlreadyClosed => 'Окно самовывоза закрыто';
+
+  @override
   String get noOrdersDescription =>
       'Когда клиенты начнут заказывать, их бронирования появятся здесь.';
 
