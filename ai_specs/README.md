@@ -6,19 +6,14 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | # | Feature | Type | Status | Date | Files |
 |---|---------|------|--------|------|-------|
-| 001 | Specific architecture docs | feature | in-progress | 2026-05-11 | request, spec, plan |
-| 002 | Not ready features | feature | draft | 2026-05-12 | request, spec, plan |
-| 012 | Refactor booking flow | refactor | in-progress (4 tasks blocked: no test infra) | 2026-06-14 | spec, plan |
-| 019 | Delete offer | feature | draft | 2026-05-23 | request |
-| 020 | Admin page navigation | feature | draft | 2026-07-05 | request |
 | 029 | Adaptive design for schedule widget | feature | draft | 2026-07-12 | request |
-| 031 | Toolkit compliance refactoring | refactor | in-progress | 2026-07-12 | request, spec, plan |
-| 034 | Order flow notifications | feature | in-progress | 2026-07-27 | request, spec, plan |
 
 ## Archived (`archive/`)
 
 | # | Feature | Type | Status | Date | Files |
 |---|---------|------|--------|------|-------|
+| 001 | Specific architecture docs | feature | done | 2026-05-11 | request, spec, plan |
+| 002 | Not ready features | feature | done | 2026-05-12 | request, spec, plan |
 | 003 | Rework offers schedule | refactor | done | 2026-05-23 | request, spec, plan |
 | 004 | Fix offer creating | fix | done | 2026-05-23 | request, spec, plan |
 | 005 | Refactor business account | refactor | done | 2026-05-23 | request, spec, plan |
@@ -28,13 +23,16 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 009 | Optimization business sign-in | refactor | done | 2026-06-10 | request, spec, plan |
 | 010 | Reviews feature | feature | done | 2026-06-10 | request (impl), spec, plan |
 | 011 | Refactor email verification | refactor | done | 2026-06-11 | spec, plan |
+| 012 | Refactor booking flow | refactor | done | 2026-06-14 | spec, plan |
 | 012a | Fix booking flow: remove payment | fix | done (superseded by 012) | 2026-06-14 | spec |
 | 013 | Admin dev menu | feature | done | 2026-06-26 | spec, plan |
+| 020 | Admin page navigation | feature | done (duplicate of 013) | 2026-07-05 | request |
 | 014 | Review details location fix | fix | done | 2026-06-27 | spec |
 | 015 | Refactor review details screen | refactor | done | 2026-06-27 | request, spec, plan |
 | 016 | Order payment status fix | fix | done | 2026-06-28 | spec |
 | 017 | Send changes to Firebase | feature | done | 2026-06-28 | request, spec, plan |
 | 018 | Refactor create offer flow | refactor | done | 2026-07-04 | request, spec, plan |
+| 019 | Delete offer | feature | done (already implemented, see 023/025/026) | 2026-05-23 | request |
 | 021 | Wire team list into settings tab | refactor | done | 2026-07-06 | spec |
 | 022 | Fix store settings border stretch | fix | done | 2026-07-06 | spec |
 | 023 | Fix delete item error | fix | done | 2026-07-06 | spec, plan |
@@ -46,9 +44,13 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 030 | Redirect to home when offer deleted | fix | done | 2026-07-12 | spec |
 
+| 031 | Toolkit compliance refactoring | refactor | done | 2026-07-12 | request, spec, plan |
+
 | 032 | Fix riverpod_lint warnings | chore | done | 2026-07-26 | spec |
 
 | 033 | Fix keepAlive lint on geolocatorService | chore | done | 2026-07-26 | spec |
+
+| 034 | Order flow notifications | feature | done | 2026-07-27 | request, spec, plan |
 
 | 035 | Fix offers list flashing then disappearing after GPS resolves | fix | done | 2026-07-30 | spec |
 
@@ -66,6 +68,10 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 042 | Enforce pickup window on order status transitions | fix | done | 2026-08-01 | spec |
 
-Next number: **043**.
+| 043 | Fix section header overflow on compact screens | fix | done | 2026-08-03 | spec |
+
+| 044 | Fix missing Firestore composite indexes for item reviews and current offer | fix | done | 2026-08-03 | spec |
+
+Next number: **045**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
