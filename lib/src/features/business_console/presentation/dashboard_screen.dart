@@ -62,8 +62,8 @@ class DashboardScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: Sizes.p32),
           sliver: OutlinedSectionSliverWidgetWithHeader(
             header: 'Your surprise bags',
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+            trailing: Wrap(
+              spacing: Sizes.p8,
               children: [
                 FlashOfferButton(storeId: storeId),
                 TextButton.icon(

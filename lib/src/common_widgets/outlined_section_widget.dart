@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/constants/breakpoints.dart';
 
 class OutlinedSectionWidget extends StatelessWidget {
   const OutlinedSectionWidget({super.key, required this.child});
@@ -44,24 +45,46 @@ class OutlinedSectionWidgetWithHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(Sizes.p16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    header,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                if (trailing != null) trailing!,
-              ],
-            ),
-          ),
+          _SectionHeader(header: header, trailing: trailing),
           Divider(thickness: 1, color: lineColor, height: 0),
           Padding(padding: const EdgeInsets.all(Sizes.p16), child: child),
         ],
       ),
+    );
+  }
+}
+
+/// Title row of a section, with an optional [trailing] actions widget.
+///
+/// On a compact window the trailing widget moves onto its own line: side by
+/// side there is not enough room for both, which collapses the title to zero
+/// width and overflows the row.
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.header, required this.trailing});
+
+  final String header;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = Text(header, style: Theme.of(context).textTheme.titleLarge);
+    final windowSize = WindowSize.fromWidth(MediaQuery.sizeOf(context).width);
+    final stacked = windowSize == WindowSize.compact && trailing != null;
+
+    return Padding(
+      padding: const EdgeInsets.all(Sizes.p16),
+      child: stacked
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [title, gapH8, trailing!],
+            )
+          : Row(
+              children: [
+                Expanded(child: title),
+                if (trailing != null) trailing!,
+              ],
+            ),
     );
   }
 }
@@ -92,20 +115,7 @@ class OutlinedSectionSliverWidgetWithHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(Sizes.p16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          header,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                      ),
-                      if (trailing != null) trailing!,
-                    ],
-                  ),
-                ),
+                _SectionHeader(header: header, trailing: trailing),
                 Divider(thickness: 1, color: lineColor, height: 0),
               ],
             ),
