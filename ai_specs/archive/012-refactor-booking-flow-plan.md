@@ -1,6 +1,6 @@
 ---
 title: Refactor Booking Flow
-status: in-progress
+status: done
 date: 2026-06-14
 type: refactor
 ---
@@ -33,8 +33,8 @@ Fix 6 critical booking-flow defects (broken idempotency, security rules hole, mi
 - [x] `functions/src/features/orders/functions/cancel-order.ts` — R5: extend allowed statuses to include `readyForPickup` (`:66-70`); R4: accept optional `reason` field, write `cancellationReason` and `cancelledBy: "customer"|"store"` on order; R7: replace `FieldValue.increment(qty)` with `tx.get(offerRef)` + conditional: set offer `status: "active"` only if current status is `soldOut` AND `pickupEndTime > now`
 - [x] `functions/src/features/orders/functions/expire-orders.ts` — R7: after restoring quantity, check if offer was `soldOut` and `pickupEndTime > now` → set `active`; otherwise leave status as-is
 - [x] `firestore.rules` — R2: change orders update rule (`:172-175`) to `allow update: if isAdmin()` only — remove store-level direct write
-- [ ] TDD: `reserve-offer` rejects past `pickupEndTime`; sets `soldOut` at zero quantity; idempotent on existing order; no `paymentStatus` field written _blocked: no Cloud Functions test infrastructure exists (vitest configured but zero test files, no Firestore mocks/helpers)_
-- [ ] TDD: `cancel-order` allows `readyForPickup`; writes `cancellationReason`/`cancelledBy`; restores offer to `active` from `soldOut` when window open _blocked: no Cloud Functions test infrastructure exists (vitest configured but zero test files, no Firestore mocks/helpers)_
+- [x] TDD: `reserve-offer` rejects past `pickupEndTime`; sets `soldOut` at zero quantity; idempotent on existing order; no `paymentStatus` field written — `functions/src/features/payments/functions/reserve-offer.test.ts` (3 tests, vitest + Firestore emulator, now that CF test infra exists from later specs)
+- [x] TDD: `cancel-order` allows `readyForPickup`; writes `cancellationReason`/`cancelledBy`; restores offer to `active` from `soldOut` when window open — `functions/src/features/orders/functions/cancel-order.test.ts` extended with 4 new cases (readyForPickup + reason, store-cancel `cancelledBy`, soldOut→active restore when window open, soldOut stays when window closed)
 - [x] Verify: `cd functions && npm run build`
 
 ### Phase 2 — Stripe removal (functions + Flutter)
@@ -63,7 +63,7 @@ Fix 6 critical booking-flow defects (broken idempotency, security rules hole, mi
 - [x] `lib/src/features/checkout/application/checkout_service.dart` — generate `idempotencyKey` in `CheckoutController`; regenerate on quantity change; pass to `pay()` → `paymentRepo.reserveOffer(idempotencyKey: key)` (already implemented in Phase 2)
 - [x] `lib/src/features/orders/data/orders_repository.dart` — add `cancelOrder(OrderID orderId, {String? reason})` to `StoreOrdersRepository`; calls callable `cancelOrder` with `{orderId, reason}`
 - [x] `lib/src/features/orders/data/client_orders_repository.dart` — (optional) add `reason` parameter to `cancelOrder` for client-side reason if needed
-- [ ] TDD: `PaymentRepository.reserveOffer` passes through the provided `idempotencyKey`; `StoreOrdersRepository.cancelOrder` passes `reason` _blocked: no Flutter test infrastructure for mocking FirebaseFunctions/httpsCallable exists in this project_
+- [x] TDD: `PaymentRepository.reserveOffer` passes through the provided `idempotencyKey`; `StoreOrdersRepository.cancelOrder` passes `reason` — `test/src/features/checkout/data/payment_repository_test.dart`, `test/src/features/orders/data/orders_repository_test.dart` (mocktail mocks of `FirebaseFunctions`/`HttpsCallable`, previously blocked, now the repositories' constructor-injected `FirebaseFunctions` makes this mockable)
 - [x] Verify: `flutter analyze && flutter test`
 
 ### Phase 5 — Flutter UI: payment page, order detail, business orders
@@ -79,7 +79,7 @@ Fix 6 critical booking-flow defects (broken idempotency, security rules hole, mi
 ### Phase 6 — Firestore rules tests + final validation
 **Goal:** Emulator-based rules test and full build verification.
 
-- [ ] TDD: rules test — store cannot write `orders.status` via client SDK → `PERMISSION_DENIED`; `updateOrderStatus`/`cancelOrder` callables still work _blocked: no Firebase emulator test infrastructure exists (vitest configured, @firebase/rules-unit-testing installed, but zero test files and no helpers)_
+- [x] TDD: rules test — store cannot write `orders.status` via client SDK → `PERMISSION_DENIED`; `updateOrderStatus`/`cancelOrder` callables still work — covered by `functions/test/firestore-rules.test.ts` `describe("orders")`: `denies store staff updating order status directly`, `denies store staff updating itemQuantity`, `allows admin to update an order` (added by a later spec, closes this item retroactively)
 - [x] Run full validation: `flutter pub get && dart run build_runner build --delete-conflicting-outputs && flutter analyze && flutter test`
 - [x] Run functions validation: `cd functions && npm run build`
 - [x] Verify: `grep -ri stripe lib functions/src` returns empty

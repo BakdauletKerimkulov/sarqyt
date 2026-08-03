@@ -1,6 +1,6 @@
 ---
 title: Not Ready Features
-status: draft
+status: done
 date: 2026-05-12
 type: feature
 ---

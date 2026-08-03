@@ -1,6 +1,6 @@
 ---
 title: Order flow notifications
-status: in-progress
+status: done
 date: 2026-07-27
 type: feature
 ---

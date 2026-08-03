@@ -1,6 +1,6 @@
 ---
 title: Specific Architecture
-status: in-progress
+status: done
 date: 2026-05-11
 type: feature
 ---

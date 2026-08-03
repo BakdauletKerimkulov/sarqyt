@@ -1,6 +1,6 @@
 ---
 title: Refactor Booking Flow
-status: in-progress
+status: done
 date: 2026-06-14
 type: refactor
 ---
