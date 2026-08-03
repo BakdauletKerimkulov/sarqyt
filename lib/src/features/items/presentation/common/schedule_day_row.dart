@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/constants/breakpoints.dart';
 import 'package:sarqyt/src/features/items/domain/weekly_schedule.dart';
 
 /// Single weekday row used inside the weekly schedule editor.
@@ -94,6 +95,55 @@ class _ScheduleDayRowState extends State<ScheduleDayRow> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final isCompact = MediaQuery.sizeOf(context).width < Breakpoints.compact;
+    final showTimes = widget.schedule.enabled;
+
+    // Four fixed-width fields plus separators need more room than a phone can
+    // spare next to the day name and the switch, so on a compact window they
+    // move to their own line instead.
+    final timeRange = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _TimeField(
+          controller: _startHourCtl,
+          enabled: widget.enabled,
+          semanticLabel: '${widget.dayName} start hour',
+          max: 23,
+          onChanged: (v) =>
+              _onChanged(_startHourCtl, 23, widget.onStartHourChanged),
+        ),
+        Text(' : ', style: textTheme.bodyMedium),
+        _TimeField(
+          controller: _startMinuteCtl,
+          enabled: widget.enabled,
+          semanticLabel: '${widget.dayName} start minute',
+          max: 59,
+          onChanged: (v) =>
+              _onChanged(_startMinuteCtl, 59, widget.onStartMinuteChanged),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Sizes.p4),
+          child: Text('–', style: textTheme.bodyMedium),
+        ),
+        _TimeField(
+          controller: _endHourCtl,
+          enabled: widget.enabled,
+          semanticLabel: '${widget.dayName} end hour',
+          max: 23,
+          onChanged: (v) =>
+              _onChanged(_endHourCtl, 23, widget.onEndHourChanged),
+        ),
+        Text(' : ', style: textTheme.bodyMedium),
+        _TimeField(
+          controller: _endMinuteCtl,
+          enabled: widget.enabled,
+          semanticLabel: '${widget.dayName} end minute',
+          max: 59,
+          onChanged: (v) =>
+              _onChanged(_endMinuteCtl, 59, widget.onEndMinuteChanged),
+        ),
+      ],
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: Sizes.p4),
@@ -112,51 +162,10 @@ class _ScheduleDayRowState extends State<ScheduleDayRow> {
                 activeThumbColor: AppColors.primary,
               ),
               const Spacer(),
-              if (widget.schedule.enabled) ...[
-                _TimeField(
-                  controller: _startHourCtl,
-                  enabled: widget.enabled,
-                  semanticLabel: '${widget.dayName} start hour',
-                  max: 23,
-                  onChanged: (v) =>
-                      _onChanged(_startHourCtl, 23, widget.onStartHourChanged),
-                ),
-                Text(' : ', style: textTheme.bodyMedium),
-                _TimeField(
-                  controller: _startMinuteCtl,
-                  enabled: widget.enabled,
-                  semanticLabel: '${widget.dayName} start minute',
-                  max: 59,
-                  onChanged: (v) => _onChanged(
-                    _startMinuteCtl,
-                    59,
-                    widget.onStartMinuteChanged,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: Sizes.p4),
-                  child: Text('–', style: textTheme.bodyMedium),
-                ),
-                _TimeField(
-                  controller: _endHourCtl,
-                  enabled: widget.enabled,
-                  semanticLabel: '${widget.dayName} end hour',
-                  max: 23,
-                  onChanged: (v) =>
-                      _onChanged(_endHourCtl, 23, widget.onEndHourChanged),
-                ),
-                Text(' : ', style: textTheme.bodyMedium),
-                _TimeField(
-                  controller: _endMinuteCtl,
-                  enabled: widget.enabled,
-                  semanticLabel: '${widget.dayName} end minute',
-                  max: 59,
-                  onChanged: (v) =>
-                      _onChanged(_endMinuteCtl, 59, widget.onEndMinuteChanged),
-                ),
-              ],
+              if (showTimes && !isCompact) timeRange,
             ],
           ),
+          if (showTimes && isCompact) ...[gapH8, timeRange],
           if (widget.errorText != null)
             Padding(
               padding: const EdgeInsets.only(left: Sizes.p4),
