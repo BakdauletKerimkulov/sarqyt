@@ -104,3 +104,20 @@ Partners can create stores if `canCreateStore` custom claim is `true`.
 3. `triggers/onOrderCreated` assigns `orderNumber` and pushes the new order to the store team
 4. Store owner/staff moves order through statuses: preparing -> readyForPickup -> completed, each transition notified via `on-order-status-changed`
 5. `expire-orders` handles timeout for uncollected orders; `sendOrderReminders` sends pickup-window reminders and, 2h after `completedAt`, a review request if none was left
+
+## Non-Obvious Decisions
+
+Project-specific rationale that can't be inferred from reading the code alone — read before touching these areas:
+
+- [`ai_docs/FIRESTORE_GOTCHAS.md`](FIRESTORE_GOTCHAS.md) — schema decisions, ID patterns, denormalization, known security-rule gaps
+- [`ai_docs/CLOUD_FUNCTIONS_GOTCHAS.md`](CLOUD_FUNCTIONS_GOTCHAS.md) — schedules, region split, idempotency, retry logic
+- [`ai_docs/ROUTING_DECISIONS.md`](ROUTING_DECISIONS.md) — two-app structure, redirect layers, scoped providers
+- [`ai_docs/BUSINESS_RULES.md`](BUSINESS_RULES.md) — order state machine, permissions, enforcement gaps
+
+## See Also
+
+- [`ai_docs/GLOSSARY.md`](GLOSSARY.md) — canonical domain vocabulary
+- [`ai_docs/EXTERNAL_SERVICES.md`](EXTERNAL_SERVICES.md) — third-party service choices and config quirks
+- [`ai_docs/FIRESTORE_GOTCHAS.md`](FIRESTORE_GOTCHAS.md), [`ai_docs/CLOUD_FUNCTIONS_GOTCHAS.md`](CLOUD_FUNCTIONS_GOTCHAS.md), [`ai_docs/ROUTING_DECISIONS.md`](ROUTING_DECISIONS.md), [`ai_docs/BUSINESS_RULES.md`](BUSINESS_RULES.md) — see above
+- [`ai_docs/solutions/`](solutions/) — accumulated bug-fix, refactor, and tooling lessons
+- `ai_toolkit/RULES.md` — universal engineering rules (Flutter, Riverpod, GoRouter, Firebase) this project follows
