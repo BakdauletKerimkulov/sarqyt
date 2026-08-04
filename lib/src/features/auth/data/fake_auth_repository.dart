@@ -102,4 +102,15 @@ class FakeAuthRepository implements AuthRepository {
     // TODO: implement idTokenChanges
     throw UnimplementedError();
   }
+
+  bool sendPasswordResetEmailCalled = false;
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    sendPasswordResetEmailCalled = true;
+    await delay(addDelay);
+    if (!_users.any((u) => u.email == email)) {
+      throw UserNotFoundException();
+    }
+  }
 }

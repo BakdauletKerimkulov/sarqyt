@@ -4,6 +4,7 @@ import 'package:sarqyt/src/common_widgets/inline_text_link.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/features/auth/presentation/forgot_password/forgot_password_dialog.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_controller.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_form_type.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_validators.dart';
@@ -223,6 +224,29 @@ class _EmailPasswordSignInContentState
                 ),
               ),
             ),
+            if (_formType == EmailPasswordSignInFormType.signIn) ...[
+              gapH8,
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: state.isLoading
+                      ? null
+                      : () => showForgotPasswordDialog(
+                          context,
+                          initialEmail: email.isEmpty ? null : email,
+                        ),
+                  child: Text(
+                    context.loc.forgotPassword,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: AppColors.primary,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
 
             gapH16,
             SizedBox(

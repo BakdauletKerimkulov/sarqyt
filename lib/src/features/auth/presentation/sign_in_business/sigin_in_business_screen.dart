@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
 import 'package:sarqyt/src/common_widgets/primary_button.dart';
 import 'package:sarqyt/src/common_widgets/responsive_center.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/features/auth/presentation/forgot_password/forgot_password_dialog.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_business/sign_in_business_controller.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_form_type.dart';
 import 'package:sarqyt/src/features/auth/presentation/sign_in_client/email_password_sign_in_validators.dart';
@@ -58,13 +58,6 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
 
   bool _submitted = false;
   bool _passwordObscured = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _emailController.text = 'test@test.com';
-    _passwordController.text = '12345678';
-  }
 
   @override
   void dispose() {
@@ -206,9 +199,12 @@ class _SignInBusinessContentState extends ConsumerState<SignInBusinessContent>
                   ),
                   gapH8,
                   GestureDetector(
-                    onTap: state.isLoading || !_submitted
+                    onTap: state.isLoading
                         ? null
-                        : () => showNotImplementedAlertDialog(context: context),
+                        : () => showForgotPasswordDialog(
+                            context,
+                            initialEmail: email.isEmpty ? null : email,
+                          ),
                     child: Text(
                       context.loc.forgotPassword,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(

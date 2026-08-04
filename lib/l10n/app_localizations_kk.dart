@@ -230,6 +230,29 @@ class AppLocalizationsKk extends AppLocalizations {
   String get signUpYourBusiness => 'Бизнесіңізді тіркеңіз';
 
   @override
+  String get resetPasswordTitle => 'Құпия сөзді қалпына келтіру';
+
+  @override
+  String get resetPasswordDescription =>
+      'Email мекенжайыңызды енгізіңіз, біз құпия сөзді қалпына келтіру сілтемесін жібереміз.';
+
+  @override
+  String get sendResetLink => 'Сілтеме жіберу';
+
+  @override
+  String get resetLinkSent =>
+      'Құпия сөзді қалпына келтіру хаты жіберілді. Поштаңызды тексеріңіз.';
+
+  @override
+  String sendResetLinkConfirm(String email) {
+    return '$email мекенжайына құпия сөзді қалпына келтіру сілтемесін жіберу керек пе?';
+  }
+
+  @override
+  String get signOutConfirm =>
+      'Аккаунтқа қайта кіру үшін қайта авторизациядан өтуіңіз керек болады.';
+
+  @override
   String get profile => 'Профиль';
 
   @override
@@ -347,6 +370,9 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get noOffersFound => 'Ұсыныстар табылмады';
+
+  @override
+  String get searchOffersHint => 'Дүкен немесе тауар бойынша іздеу';
 
   @override
   String get filters => 'Сүзгілер';

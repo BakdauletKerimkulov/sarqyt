@@ -83,6 +83,17 @@
   "forgotPassword": "Forgot password?",
   "logIn": "Log in",
   "signUpYourBusiness": "Sign up your food business",
+  "resetPasswordTitle": "Reset password",
+  "resetPasswordDescription": "Enter your email and we'll send you a link to reset your password.",
+  "sendResetLink": "Send reset link",
+  "resetLinkSent": "Password reset email sent. Check your inbox.",
+  "sendResetLinkConfirm": "Send a password reset link to {email}?",
+  "@sendResetLinkConfirm": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "signOutConfirm": "You will need to log in again to access your account.",
 
   "profile": "Profile",
   "editProfile": "Edit profile",
@@ -138,6 +149,7 @@
   },
   "offerDetailsSnapshot": "Offer details are loaded from store and product snapshot at creation time.",
   "noOffersFound": "No offers found",
+  "searchOffersHint": "Search by store or item",
 
   "filters": "Filters",
   "reset": "Reset",
