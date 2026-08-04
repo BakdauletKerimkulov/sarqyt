@@ -1,6 +1,6 @@
 ---
 title: Toolkit compliance refactoring
-status: in-progress
+status: done
 date: 2026-07-12
 type: refactor
 ---

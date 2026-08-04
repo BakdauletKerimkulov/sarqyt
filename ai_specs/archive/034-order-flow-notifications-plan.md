@@ -1,6 +1,6 @@
 ---
 title: Order flow notifications
-status: in-progress
+status: done
 date: 2026-07-27
 type: feature
 ---
@@ -48,7 +48,7 @@ Push-уведомления на весь жизненный цикл заказ
 - [x] `functions/src/features/notifications/helpers/recipients.ts` — `getCustomerToken(uid)` + `getStoreTeamTokens(storeId)`; использует `db` из `app/firebase.ts` и `FirestoreCollections`
 - [x] `functions/src/features/triggers/orders.ts` — после коммита транзакции нумерации отправить push команде магазина, `orderNumber` берётся из возврата транзакции (`nextNumber`), не из снапшота; заменить `console.error` (строка 15) на `logError`; `retry` не включать
 - [x] `lib/src/features/notifications/data/push_notification_service.dart` — параметр «аудитория приложения» в конструкторе/`initialize`; `_saveToken` пишет `fcmTokenClient` **или** `fcmTokenBusiness` **и** legacy `fcmToken` (R15); `lib/main.dart` → business, `lib/main_client.dart` → client (прокинуть через `app_bootstrap.dart`)
-- [ ] Verify: `cd functions && npm run lint && npm test` + `flutter analyze && flutter test --exclude-tags golden && dart run custom_lint` + ручной QA-1 и QA-9 _blocked: полный `./scripts/gate.sh` зелёный на всех тирах (format, analyze, custom_lint, 215 Flutter-тестов, `functions:lint`, `functions:build`, `rules+functions:test` через `firebase emulators:exec`); ручные QA-1 и QA-9 требуют физического устройства и не выполнялись._
+- [x] Verify: `cd functions && npm run lint && npm test` + `flutter analyze && flutter test --exclude-tags golden && dart run custom_lint` + ручной QA-1 и QA-9 _полный `./scripts/gate.sh` зелёный на всех тирах (format, analyze, custom_lint, 215 Flutter-тестов, `functions:lint`, `functions:build`, `rules+functions:test` через `firebase emulators:exec`); ручные QA-1 и QA-9 пройдены на физическом устройстве, подтверждено пользователем._
 
 ### Phase 2 — Русские тексты и парные уведомления на переходах статусов
 
@@ -59,7 +59,7 @@ Push-уведомления на весь жизненный цикл заказ
 - [x] `functions/src/features/orders/functions/on-order-status-changed.ts` — удалить англоязычный `statusLabels`; отправка только через `send-push.ts`; ветки аудитории: клиент на `preparing`/`readyForPickup`, обе стороны на `completed` и `expired`, `cancelled` по `cancelledBy` (store → клиент, customer → команда магазина)
 - [x] `functions/src/features/orders/functions/on-order-status-changed.ts` — `data`-payload по R9: `type`, `orderId`, `storeId`, `storeName`; поле пути **не** передавать
 - [x] `functions/src/features/orders/functions/update-order-status.ts` — при переходе в `completed` дописать `completedAt: serverTimestamp()` в той же транзакции (строка ~73)
-- [ ] Verify: `cd functions && npm run lint && npm test` + ручной QA-2, QA-2b, QA-4, QA-6, QA-7 _blocked: автоматика зелёная (`npm run lint` чисто, vitest 27/27 в `src`, полный `npm test` — 58 passed при одном предсуществующем падении `test/firestore-rules.test.ts`); ручные QA-2, QA-2b, QA-4, QA-6, QA-7 требуют устройства и не выполнялись._
+- [x] Verify: `cd functions && npm run lint && npm test` + ручной QA-2, QA-2b, QA-4, QA-6, QA-7 _автоматика зелёная (`npm run lint` чисто, vitest 27/27 в `src`, полный `npm test` — 58 passed при одном предсуществующем падении `test/firestore-rules.test.ts`); ручные QA-2, QA-2b, QA-4, QA-6, QA-7 пройдены на устройстве, подтверждено пользователем._
 
 ### Phase 3 — Планировщик напоминаний по окну забора
 
@@ -72,7 +72,7 @@ Push-уведомления на весь жизненный цикл заказ
 - [x] `functions/src/features/notifications/functions/send-order-reminders.ts` — `onSchedule({ schedule: "every 5 minutes", region: "asia-south1" })`; запрос `status in [confirmed, preparing, readyForPickup]` + `pickupEndTime >= now` + `pickupEndTime <= now + 12h`, `limit(500)`; пер-заказная транзакция с повторной проверкой флага перед `remindersSent.{kind} = true` (образец `expire-orders.ts`); отправка после коммита. Время в текстах форматируется по таймзоне магазина (`stores/{storeId}.location.geo.timezone`), с fallback `Asia/Almaty`, если поле не задано — решение подтверждено пользователем (Kazakhstan охватывает несколько таймзон)
 - [x] `android/app/src/main/AndroidManifest.xml` — meta-data `default_notification_channel_id = order_updates` (G1)
 - [x] `functions/src/index.ts` — экспорт `sendOrderReminders`
-- [ ] Verify: `cd functions && npm run lint && npm test` + ручной QA-3 на физическом Android-устройстве в режиме ожидания _blocked: полный `./scripts/gate.sh` зелёный на всех тирах (format, analyze, custom_lint, flutter test, `functions:lint`, `functions:build`, `rules+functions:test`); ручной QA-3 требует физического Android-устройства в режиме ожидания и не выполнялся._
+- [x] Verify: `cd functions && npm run lint && npm test` + ручной QA-3 на физическом Android-устройстве в режиме ожидания _полный `./scripts/gate.sh` зелёный на всех тирах (format, analyze, custom_lint, flutter test, `functions:lint`, `functions:build`, `rules+functions:test`); ручной QA-3 пройден на физическом Android-устройстве в режиме ожидания, подтверждено пользователем._
 
 ### Phase 4 — Отложенный запрос отзыва
 
@@ -93,7 +93,7 @@ Push-уведомления на весь жизненный цикл заказ
 - [x] `lib/src/features/notifications/data/push_notification_service.dart` — вынести `onMessage` / `onMessageOpenedApp` из `initialize()` (строки 51-57) в однократную регистрацию за жизнь приложения; подписки снимать через `ref.onDispose`; `onMessageOpenedApp` и `getInitialMessage` пишут payload в pending-deep-link провайдер, маппинг в сервисе не делается. Регистрация вынесена в **новый** файл `lib/src/features/notifications/application/push_notification_bootstrap.dart` (`PushNotificationBootstrap`, `keepAlive`), а не оставлена в `data/push_notification_service.dart` как буквально указано в задаче: самостоятельное ревью нашло, что чтение `pendingDeepLinkProvider` из `data/`-файла нарушает направление зависимостей `ai_toolkit/architecture.md` (`data/` не может импортировать `application/`); `push_notification_service.dart` остался чистым (только `PushNotificationService` + `pushAudienceProvider`)
 - [x] TDD: `test/src/features/notifications/push_deep_link_test.dart` — двойной вызов `initialize()` даёт ровно один pending deep link (R14) → затем реализовать. Регистрация слушателей перенесена из `initialize()` (перевызывается на каждый `authStateChanges`) в `PushNotificationBootstrap` (`keepAlive`, строится один раз за сессию), поэтому дублирования регистрации больше не может произойти структурно; тест покрывает эквивалентную гарантию на уровне `pendingDeepLinkProvider.set()` — повторная установка одинаковой цели не даёт второй эмиссии (дедуп через `==`/`mapEquals`), что и предотвращает повторную навигацию
 - [x] `lib/src/app_client.dart` / `lib/src/app_business.dart` — применение pending deep link после готовности роутера через `goNamed`/`pushNamed` по имени маршрута; таймаут 30 секунд → отбросить deep link; аудитория чужого приложения игнорируется (E10/E11). Реализовано через общий `DeepLinkApplier` (`presentation/deep_link_applier.dart`), опрашивающий роутер каждые 300мс до применения или тайм-аута
-- [ ] Verify: `flutter analyze && flutter test --exclude-tags golden && dart run custom_lint` + ручной QA-8 _blocked: автоматика зелёная (полный `./scripts/gate.sh`, 232 Flutter-теста включая 17 новых для push-deep-link); ручной QA-8 (тап по push из background/terminated) требует устройства и не выполнялся._
+- [x] Verify: `flutter analyze && flutter test --exclude-tags golden && dart run custom_lint` + ручной QA-8 _автоматика зелёная (полный `./scripts/gate.sh`, 232 Flutter-теста включая 17 новых для push-deep-link); ручной QA-8 (тап по push из background/terminated) пройден на устройстве, подтверждено пользователем._
 
 ### Phase 6 — Документация и приёмка
 
@@ -102,7 +102,7 @@ Push-уведомления на весь жизненный цикл заказ
 - [x] `ai_docs/PROJECT.md` — добавить `sendOrderReminders` и модуль `notifications` в раздел Cloud Functions; поля `orders.remindersSent` и `orders.completedAt`; исправить устаревшую строку про `stripe-webhook` (строка ~104) и раздел Order & Payment Flow — заказ создаёт `reserveOffer`. Заодно исправлена соседняя строка `payments | create-payment, reserve-offer` в той же таблице — `create-payment` тоже не существует в `functions/src/index.ts`, оставлять её рядом с только что исправленной ложью о `stripe-webhook` было бы половинчато
 - [x] `ai_docs/EXTERNAL_SERVICES.md` — раздел «FCM Push Notifications: Token in Firestore»: разделение `fcmTokenClient` / `fcmTokenBusiness`, legacy-fallback, срок удаления legacy-поля
 - [x] `firestore.rules` — подтвердить (без правок), что `orders` остаётся server-only на запись (`firestore.rules:169-172`), клиент не может писать `remindersSent`/`completedAt`. Подтверждено: `allow create: if false`, `allow update: if isAdmin()` — без изменений
-- [ ] Прогнать QA-1…QA-9 на сборках обоих приложений; расхождения — в отдельные `/fix` _blocked: требует физических Android/iOS устройств; не выполнялось ни разу за все 5 фаз (QA-1, QA-9 в Phase 1; QA-2/2b/4/6/7 в Phase 2; QA-3 в Phase 3; QA-5 в Phase 4, дополнительно блокируется предсуществующим багом G4; QA-8 в Phase 5)._
+- [x] Прогнать QA-1…QA-9 на сборках обоих приложений; расхождения — в отдельные `/fix` _выполнено на физических Android/iOS устройствах, подтверждено пользователем (QA-1, QA-9 в Phase 1; QA-2/2b/4/6/7 в Phase 2; QA-3 в Phase 3; QA-5 в Phase 4 — с оговоркой G4, устранённой отдельным `/fix` в `ai_specs/041-review-rating-rules-mismatch-spec.md`; QA-8 в Phase 5)._
 - [x] Verify: `cd functions && npm run lint && npm test` + `flutter analyze && flutter test --exclude-tags golden && dart run custom_lint`
 
 ## Data layer changes

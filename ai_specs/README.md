@@ -6,7 +6,7 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | # | Feature | Type | Status | Date | Files |
 |---|---------|------|--------|------|-------|
-| 029 | Adaptive design for schedule widget | feature | draft | 2026-07-12 | request |
+| _(none)_ | | | | | |
 
 ## Archived (`archive/`)
 
@@ -42,6 +42,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 027 | Fix SliverBusinessOrders empty-state crash | fix | done | 2026-07-10 | spec |
 | 028 | Fix item screen reservations flickering | fix | done | 2026-07-11 | request, spec, plan |
 
+| 029 | Adaptive design for schedule widget | feature | done | 2026-08-04 | request |
+
 | 030 | Redirect to home when offer deleted | fix | done | 2026-07-12 | spec |
 
 | 031 | Toolkit compliance refactoring | refactor | done | 2026-07-12 | request, spec, plan |
@@ -72,6 +74,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 044 | Fix missing Firestore composite indexes for item reviews and current offer | fix | done | 2026-08-03 | spec |
 
-Next number: **045**.
+| 045 | Fix schedule day row overflow in the create-item form | fix | done | 2026-08-04 | spec |
+
+Next number: **046**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.

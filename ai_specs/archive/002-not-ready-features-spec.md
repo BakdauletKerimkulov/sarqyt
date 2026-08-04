@@ -1,6 +1,6 @@
 ---
 title: Not Ready Features
-status: refined
+status: done
 date: 2026-05-12
 type: feature
 ---

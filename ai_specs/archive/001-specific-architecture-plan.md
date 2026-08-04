@@ -1,6 +1,6 @@
 ---
 title: Specific Architecture
-status: in-progress
+status: done
 date: 2026-05-11
 type: feature
 ---
@@ -43,15 +43,15 @@ Create 5 documentation files in `ai_docs/` capturing sarqyt-specific decisions t
 - `ai_docs/FIRESTORE_GOTCHAS.md` — new file
 
 **Steps:**
-- [ ] Document offers as top-level collection (geo-query requirement via geoflutterfire_plus)
-- [ ] Document order write permissions: creation = server-only (`allow create: if false`), status updates = client allowed for store staff
-- [ ] Document StoreShip composite ID `{storeId}_{userId}` and why (direct lookup without query)
-- [ ] Document two idempotency strategies in stripeWebhook: deterministic order doc ID vs `_processedEvents` collection
-- [ ] Document StoreDraft TTL: `expiresAt = now + 3 days`, relies on Firestore native TTL policy. Add `TODO: verify TTL configured in console`
-- [ ] Document `orderCounter` on stores (set via `onOrderCreated` trigger), `orderNumber` on orders
-- [ ] Document denormalized fields: offers have `storeName` + `storeAddress` (patched on sync); orders have `storeName` only
-- [ ] Document geohash precision 4 (~39km x 20km) for KZ city coverage
-- [ ] Document legacy `originalPrice` → `estimatedValue` fallback in Item model
+- [x] Document offers as top-level collection (geo-query requirement via geoflutterfire_plus)
+- [x] Document order write permissions: creation = server-only (`allow create: if false`), status updates = client allowed for store staff
+- [x] Document StoreShip composite ID `{storeId}_{userId}` and why (direct lookup without query)
+- [x] Document two idempotency strategies in stripeWebhook: deterministic order doc ID vs `_processedEvents` collection
+- [x] Document StoreDraft TTL: `expiresAt = now + 3 days`, relies on Firestore native TTL policy. Add `TODO: verify TTL configured in console`
+- [x] Document `orderCounter` on stores (set via `onOrderCreated` trigger), `orderNumber` on orders
+- [x] Document denormalized fields: offers have `storeName` + `storeAddress` (patched on sync); orders have `storeName` only
+- [x] Document geohash precision 4 (~39km x 20km) for KZ city coverage
+- [x] Document legacy `originalPrice` → `estimatedValue` fallback in Item model
 
 **Verification:** Each item references the actual collection/field names. Cross-check against `firestore.rules` and domain models.
 
@@ -65,13 +65,13 @@ Create 5 documentation files in `ai_docs/` capturing sarqyt-specific decisions t
 - `ai_docs/CLOUD_FUNCTIONS_GOTCHAS.md` — new file
 
 **Steps:**
-- [ ] Document two order creation paths: `reserveOffer` (no payment, direct order) vs `createPayment` + `stripeWebhook` (Stripe flow)
-- [ ] Document `fakeVerifyBusiness`: purpose (dev-only gov verification sim), 25s delay, what it sets
-- [ ] Document `dailySyncOffers` at 00:30 UTC (06:30 Almaty time — after midnight, before morning orders)
-- [ ] Document `expireOrders` every 5 minutes (why not Firestore TTL: need status transition + notification side effects)
-- [ ] Document offer sync: 2-day lookahead (`DAYS_AHEAD = 2`), single offer for oneTime. Flag stale JSDoc claiming 7 days
-- [ ] Document refund retry in `cancelOrder`: 3 attempts, exponential backoff (1s, 2s), `refund_failed` on exhaustion
-- [ ] Document secrets: `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` via `defineSecret`, no `process.env`
+- [x] Document two order creation paths: `reserveOffer` (no payment, direct order) vs `createPayment` + `stripeWebhook` (Stripe flow)
+- [x] Document `fakeVerifyBusiness`: purpose (dev-only gov verification sim), 25s delay, what it sets
+- [x] Document `dailySyncOffers` at 00:30 UTC (06:30 Almaty time — after midnight, before morning orders)
+- [x] Document `expireOrders` every 5 minutes (why not Firestore TTL: need status transition + notification side effects)
+- [x] Document offer sync: 2-day lookahead (`DAYS_AHEAD = 2`), single offer for oneTime. Flag stale JSDoc claiming 7 days
+- [x] Document refund retry in `cancelOrder`: 3 attempts, exponential backoff (1s, 2s), `refund_failed` on exhaustion
+- [x] Document secrets: `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` via `defineSecret`, no `process.env`
 
 **Verification:** Each schedule/constant matches the actual code values verified during refine.
 
@@ -85,11 +85,11 @@ Create 5 documentation files in `ai_docs/` capturing sarqyt-specific decisions t
 - `ai_docs/ROUTING_DECISIONS.md` — new file
 
 **Steps:**
-- [ ] Document two-app architecture: `main.dart` (business) vs `main_client.dart` (client), separate routers, why not role-switching in one app
-- [ ] Document business redirect: 8 sync-only layers in `businessRedirect()`, why no async (GoRouter redirect must be synchronous)
-- [ ] Document `StoreStartupWidget` scoped provider override: wraps navigation in `ProviderScope` with `currentStoreShipProvider`, `currentBusinessProvider`, `currentBusinessStreamProvider`
-- [ ] Document tab/branch counts: client = 3 (Discover, Orders, Profile), business = 5 (Dashboard, Performance, Financials, Settings, HelpCentre)
-- [ ] Document Firebase Hosting as deploy convention (flavor-agnostic config)
+- [x] Document two-app architecture: `main.dart` (business) vs `main_client.dart` (client), separate routers, why not role-switching in one app
+- [x] Document business redirect: 8 sync-only layers in `businessRedirect()`, why no async (GoRouter redirect must be synchronous)
+- [x] Document `StoreStartupWidget` scoped provider override: wraps navigation in `ProviderScope` with `currentStoreShipProvider`, `currentBusinessProvider`, `currentBusinessStreamProvider`
+- [x] Document tab/branch counts: client = 3 (Discover, Orders, Profile), business = 5 (Dashboard, Performance, Financials, Settings, HelpCentre)
+- [x] Document Firebase Hosting as deploy convention (flavor-agnostic config)
 
 **Verification:** Tab/branch counts match actual router files. Provider override names match code.
 
@@ -103,13 +103,13 @@ Create 5 documentation files in `ai_docs/` capturing sarqyt-specific decisions t
 - `ai_docs/BUSINESS_RULES.md` — new file
 
 **Steps:**
-- [ ] Document order status state machine with transition table and terminal states
-- [ ] Document review-per-order: design intent, NOT enforced. `hasReviewForOrder()` exists but not called by `submitReview`
-- [ ] Document item schedule constraints: `maxQuantity = 30`, `maxWindowMinutes = 120`, start < end
-- [ ] Document offer visibility: `visibleFrom = startOfDay(pickupDate - 1 day, storeTimeZone)` vs `pickupStartTime`
-- [ ] Document price model: `price` vs `estimatedValue`, `discountPercent` formula, legacy `originalPrice` fallback
-- [ ] Document store verification flow: draft → fakeVerify/realVerify → complete → Store + Business + StoreShip + partner claim. No pending state.
-- [ ] Document partner permissions: owner (full), operator (no financials), employer (defined, not implemented). Server-side: `ownerId` vs `staffIds` only.
+- [x] Document order status state machine with transition table and terminal states
+- [x] Document review-per-order: design intent, NOT enforced. `hasReviewForOrder()` exists but not called by `submitReview`
+- [x] Document item schedule constraints: `maxQuantity = 30`, `maxWindowMinutes = 120`, start < end
+- [x] Document offer visibility: `visibleFrom = startOfDay(pickupDate - 1 day, storeTimeZone)` vs `pickupStartTime`
+- [x] Document price model: `price` vs `estimatedValue`, `discountPercent` formula, legacy `originalPrice` fallback
+- [x] Document store verification flow: draft → fakeVerify/realVerify → complete → Store + Business + StoreShip + partner claim. No pending state.
+- [x] Document partner permissions: owner (full), operator (no financials), employer (defined, not implemented). Server-side: `ownerId` vs `staffIds` only.
 
 **Verification:** State machine transitions match `update-order-status.ts`. Permission gating matches `scaffold_with_nested_navigation.dart`.
 
@@ -123,8 +123,8 @@ Create 5 documentation files in `ai_docs/` capturing sarqyt-specific decisions t
 - `ai_docs/PROJECT.md` — modify existing file
 
 **Steps:**
-- [ ] Add "Non-Obvious Decisions" section after "Order & Payment Flow" pointing to new files with one-line descriptions
-- [ ] Add "See Also" section at the bottom linking each `ai_docs/` file and `ai_toolkit/guidelines/`
+- [x] Add "Non-Obvious Decisions" section after "Order & Payment Flow" pointing to new files with one-line descriptions
+- [x] Add "See Also" section at the bottom linking each `ai_docs/` file and `ai_toolkit/guidelines/`
 
 **Verification:** All 5 new file paths are correct and files exist. No content duplication — only pointers.
 
