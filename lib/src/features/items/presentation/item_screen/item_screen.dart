@@ -7,7 +7,9 @@ import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
 import 'package:sarqyt/src/features/items/data/items_repository.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
+import 'package:sarqyt/src/features/items/presentation/item_screen/calendar_content.dart';
 import 'package:sarqyt/src/features/items/presentation/item_screen/overview_content.dart';
+import 'package:sarqyt/src/features/items/presentation/item_screen/ratings_content.dart';
 import 'package:sarqyt/src/features/items/presentation/item_screen/schedule_content.dart';
 import 'package:sarqyt/src/features/items/presentation/item_screen/settings_content.dart';
 import 'package:sarqyt/src/features/items/presentation/item_tab.dart';
@@ -136,161 +138,13 @@ class _ItemScreenState extends ConsumerState<ItemScreen>
   Widget _buildTabContent(Item item) {
     return switch (_filteredTabs[_tabController.index]) {
       ItemTab.overview => OverviewContent(storeId: widget.storeId, item: item),
-      ItemTab.calendar => CalendarContent(),
+      ItemTab.calendar => CalendarContent(
+        storeId: widget.storeId,
+        itemId: widget.itemId,
+      ),
       ItemTab.schedule => ScheduleContent(item: item, storeId: widget.storeId),
-      ItemTab.customerRatings => CustomerRatingsContent(),
+      ItemTab.customerRatings => RatingsContent(itemId: widget.itemId),
       ItemTab.settings => SettingsContent(item: item, storeId: widget.storeId),
     };
-  }
-}
-
-class CalendarContent extends StatelessWidget {
-  const CalendarContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.calendar_month, size: 48, color: Colors.grey),
-          SizedBox(height: 8),
-          Text('Calendar', style: TextStyle(color: Colors.grey)),
-          Text(
-            'Coming soon',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CustomerRatingsContent extends StatelessWidget {
-  const CustomerRatingsContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final lineColor = theme.colorScheme.surfaceContainerHighest;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Customer ratings', style: theme.textTheme.headlineSmall),
-        gapH8,
-        Text(
-          'We ask customers for their feedback after they collect their Surprise Bag. Here\'s what they think.',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        gapH24,
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(Sizes.p24),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerLow,
-            borderRadius: BorderRadius.circular(Sizes.p16),
-          ),
-          child: Column(
-            children: [
-              Text(
-                'Overall experience',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              gapH8,
-              Text(
-                '0',
-                style: theme.textTheme.displayMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              gapH8,
-              Text(
-                'Not enough reviews to show a rating',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              gapH24,
-              _RatingCategory(
-                label: 'Collection experience',
-                value: null,
-                lineColor: lineColor,
-              ),
-              gapH16,
-              _RatingCategory(
-                label: 'Food quality',
-                value: null,
-                lineColor: lineColor,
-              ),
-              gapH16,
-              _RatingCategory(
-                label: 'Variety of contents',
-                value: null,
-                lineColor: lineColor,
-              ),
-              gapH16,
-              _RatingCategory(
-                label: 'Food quantity',
-                value: null,
-                lineColor: lineColor,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _RatingCategory extends StatelessWidget {
-  const _RatingCategory({
-    required this.label,
-    required this.value,
-    required this.lineColor,
-  });
-
-  final String label;
-  final double? value;
-  final Color lineColor;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: theme.textTheme.bodyLarge),
-        gapH8,
-        Row(
-          children: [
-            Expanded(
-              child: LinearProgressIndicator(
-                value: value ?? 0,
-                backgroundColor: lineColor,
-                color: theme.colorScheme.primary,
-                minHeight: 6,
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
-            gapW12,
-            SizedBox(
-              width: 28,
-              child: Text(
-                value != null ? value!.toStringAsFixed(1) : '––',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                textAlign: TextAlign.end,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
   }
 }
