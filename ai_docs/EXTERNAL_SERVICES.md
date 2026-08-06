@@ -20,24 +20,18 @@ Non-obvious choices around external services, regions, and environment configura
 
 ---
 
-## Stripe: KZT Currency, Firebase Secret Manager
+## Payments: none — offline at pickup
 
-**Decision:** Stripe handles all payments in KZT (Kazakhstani Tenge).
+**Decision:** The app processes no payments. `reserveOffer` reserves the item and creates the order; the customer pays at the store's own terminal on pickup. There is no payment provider integration of any kind, client-side or server-side.
 
-**How it works:**
-- Client: `flutter_stripe` / `flutter_stripe_web`, publishable key via `Env.stripePublishableKey` (envied)
-- Server: Stripe SDK initialized with `STRIPE_SECRET_KEY` via Firebase `defineSecret()` — not hardcoded, not in `process.env`
-- Currency: `offerData.currencyCode.toLowerCase()` passed to `PaymentIntent` — currently always `"kzt"`
-- Webhook verification: `STRIPE_WEBHOOK_SECRET` also via `defineSecret()`
+**Why:** Online payment was removed as unfinished and risky (`ai_specs/archive/012-refactor-booking-flow-spec.md`). Reserve-only is the single supported booking path.
 
-**Secrets (Cloud Functions):**
+**Consequences:**
+- No Cloud Function secrets exist at all — nothing in this project calls `defineSecret`
+- `orders` carries no payment status field; `payments/{id}` remains an empty, write-denied collection reserved for a future integration
+- Reintroducing online payment is a separate spec, not an incremental change
 
-| Secret | `defineSecret` location | Used by |
-|--------|------------------------|---------|
-| `STRIPE_SECRET_KEY` | `shared/helpers/stripe-client.ts` | `createPayment`, `stripeWebhook`, `cancelOrder` |
-| `STRIPE_WEBHOOK_SECRET` | `payments/functions/stripe-webhook.ts` | `stripeWebhook` only |
-
-> **AI warning:** Never hardcode Stripe keys. Never use `process.env` for secrets — use `defineSecret` from `firebase-functions/params` and pass via `{ secrets: [...] }` in function options.
+> **AI warning:** Do not add a payment SDK, a payments dependency, or a `payments`-related Cloud Function without an explicit new spec. Which provider suits Kazakhstan (Kaspi Pay, Halyk, other) is an open question with no decision recorded anywhere yet.
 
 ---
 
@@ -54,7 +48,7 @@ Non-obvious choices around external services, regions, and environment configura
 
 GitHub secret-scanning alerts on these keys are pattern-based false positives: restrict the key, then close the alert as "used in client app".
 
-> **AI warning:** Do NOT suggest moving Firebase API keys to `.env`/envied, rotating them on a leak alert, or scrubbing them from git history. They are public by design. Real secrets (Stripe secret key, etc.) follow the rules in the sections above.
+> **AI warning:** Do NOT suggest moving Firebase API keys to `.env`/envied, rotating them on a leak alert, or scrubbing them from git history. They are public by design. Should a real server-side secret ever appear, it belongs in Firebase Secret Manager via `defineSecret` — never in `process.env`, never in envied.
 
 ---
 
@@ -65,10 +59,14 @@ GitHub secret-scanning alerts on these keys are pattern-based false positives: r
 | Function type | Region | How set |
 |---------------|--------|---------|
 | Firestore triggers (`onOrderCreated`, `onOrderStatusChanged`, `onItemStatusChanged`) | `asia-south1` | Explicitly per-function in trigger options |
-| Callable/HTTPS functions (`createPayment`, `reserveOffer`, `stripeWebhook`, `cancelOrder`, etc.) | `us-central1` | Default (no region specified) |
+| Callable/HTTPS functions (`reserveOffer`, `cancelOrder`, `updateOrderStatus`, etc.) | `us-central1` | Default (no region specified) |
 | Scheduled functions (`dailySyncOffers`, `expireOrders`) | `us-central1` | Default (no region specified) |
 
-**Why `asia-south1` for triggers:** Firestore triggers should be in the same region as the Firestore database for lower latency on document change events. However, note that `firebase.json` lists `"location": "nam5"` for Firestore — `TODO: ask maintainer` whether the production Firestore is actually in `nam5` or `asia-south1`, as this affects trigger latency.
+**Why `asia-south1` for triggers:** Firestore triggers should be in the same region as the Firestore database for lower latency on document change events.
+
+**Firestore location — question resolved (2026-08-04):** `firebase.json` lists `"location": "nam5"`, but that field is a provisioning hint, not state. `gcloud firestore databases describe --database='(default)'` returns **`asia-south1`**. So triggers are correctly co-located with the database; callables and the default Storage bucket (`US-CENTRAL1`) are the ones split away from it.
+
+**This whole layout is being replaced.** Measured `time_total` from Kazakhstan: `europe-west1` 0.433s, `europe-central2` 0.451s, `us-central1` 0.582s, `asia-south1` **1.193s** — the database currently sits in the slowest measured region for its users. Migration of Firestore, Storage and all functions to a single `europe-west1` project is planned in `ai_specs/046-migrate-firebase-region-europe-west1-plan.md`. Update this section when that lands.
 
 **Why no `setGlobalOptions`:** Callable functions are already deployed at `us-central1` and clients call them at the default region (no `instanceFor(region:)` on the Flutter side). Adding `setGlobalOptions` would move callables to a different region and break existing client URLs.
 
@@ -117,9 +115,9 @@ GitHub secret-scanning alerts on these keys are pattern-based false positives: r
 
 | Variable | Field | Purpose |
 |----------|-------|---------|
-| `STRIPE_PUBLISHABLE_KEY` | `Env.stripePublishableKey` | Stripe client SDK init |
 | `STADIA_MAPS_API_KEY` | `Env.stadiaMapsApiKey` | Map tile requests |
-| `SUPABASE_URL` | `Env.supabaseUrl` | `TODO: ask maintainer` — purpose unknown, may be a leftover |
+
+Verified 2026-08-04: this is the **only** field declared in `lib/env.dart`. Earlier revisions of this table listed two more variables that do not exist in the source; CI (`.github/workflows/ci.yml`) writes only `STADIA_MAPS_API_KEY` into `.env` before codegen. A leftover entry in a local `.env` is harmless — envied only reads fields declared on the class.
 
 **How it works:**
 - `@Envied()` annotation on `Env` class
@@ -127,7 +125,7 @@ GitHub secret-scanning alerts on these keys are pattern-based false positives: r
 - Values sourced from `.env` file (not committed to git)
 - Regenerate with `dart run build_runner build --delete-conflicting-outputs` after changing `.env`
 
-> **AI warning:** Do not add secrets to `lib/env.dart` without `obfuscate: true`. Do not commit `.env` to git. Server-side secrets go in Firebase Secret Manager (see Stripe section above), not in envied.
+> **AI warning:** Do not add secrets to `lib/env.dart` without `obfuscate: true`. Do not commit `.env` to git. Server-side secrets go in Firebase Secret Manager via `defineSecret`, not in envied.
 
 ---
 

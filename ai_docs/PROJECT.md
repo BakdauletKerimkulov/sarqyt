@@ -14,7 +14,7 @@ Currency: **KZT (Kazakhstani Tenge, symbol: ₸)**.
 | State management | Riverpod 3 with codegen (`@riverpod`) |
 | Models | Freezed + json_serializable for immutable domain models |
 | Backend | Firebase (Firestore, Auth, Storage, Cloud Functions, Messaging, Crashlytics) |
-| Payments | Stripe (via `flutter_stripe`, Cloud Functions for server-side) |
+| Payments | None — reserve-only, customer pays offline at the store's terminal |
 | Maps | flutter_map + latlong2 + geolocator + geoflutterfire_plus (geo-queries) |
 | Cloud Functions | TypeScript (Node.js), located in `functions/` |
 | Hosting | Firebase Hosting (business web app at `build/web`) |
@@ -40,7 +40,7 @@ Located in `lib/src/features/`:
 | `items` | Item (product/surprise bag) CRUD — scheduled or one-time, with weekly schedule |
 | `offers` | Published offers with quantity, pickup window, geo-location, badges, ratings |
 | `orders` | Order lifecycle: confirmed -> preparing -> readyForPickup -> completed/cancelled/expired |
-| `checkout` | Purchase flow, Stripe payment integration |
+| `checkout` | Reservation flow — quantity selection and `reserveOffer`; no payment step |
 | `map` | Map view with clustered markers for nearby offers |
 | `review` | Customer reviews and ratings |
 | `business_console` | Business dashboard, store verification (3-step), financials, settings |
@@ -100,7 +100,7 @@ Partners can create stores if `canCreateStore` custom claim is `true`.
 ## Order & Payment Flow
 
 1. Customer selects offer and quantity
-2. `reserve-offer` Cloud Function reserves quantity (decrement) and creates the `orders/{orderId}` document directly (status `confirmed`) — there is no separate payment-confirmation step or `stripe-webhook` function
+2. `reserve-offer` Cloud Function reserves quantity (decrement) and creates the `orders/{orderId}` document directly (status `confirmed`) — there is no payment step of any kind; the customer pays at the store on pickup
 3. `triggers/onOrderCreated` assigns `orderNumber` and pushes the new order to the store team
 4. Store owner/staff moves order through statuses: preparing -> readyForPickup -> completed, each transition notified via `on-order-status-changed`
 5. `expire-orders` handles timeout for uncollected orders; `sendOrderReminders` sends pickup-window reminders and, 2h after `completedAt`, a review request if none was left

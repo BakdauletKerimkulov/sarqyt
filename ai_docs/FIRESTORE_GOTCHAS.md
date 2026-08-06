@@ -16,7 +16,7 @@ Non-obvious schema decisions, ID patterns, and denormalization choices that can'
 
 ## reserveOffer idempotency: deterministic order ID
 
-`reserveOffer` (`functions/src/features/payments/functions/reserve-offer.ts`) derives the order document ID as `${uid}_${idempotencyKey}` where `idempotencyKey` is generated client-side once per checkout attempt and resent on retry. If the doc already exists inside the transaction, the function returns success without re-decrementing offer quantity. There is no separate `_processedEvents` collection — that pattern belonged to the removed Stripe webhook and no longer exists.
+`reserveOffer` (`functions/src/features/payments/functions/reserve-offer.ts`) derives the order document ID as `${uid}_${idempotencyKey}` where `idempotencyKey` is generated client-side once per checkout attempt and resent on retry. If the doc already exists inside the transaction, the function returns success without re-decrementing offer quantity. There is no separate `_processedEvents` collection — event-dedup was needed by the payment webhook that used to exist, and went away with it.
 
 ## StoreDraft TTL
 

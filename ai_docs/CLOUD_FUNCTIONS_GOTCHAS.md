@@ -1,6 +1,6 @@
 # Cloud Functions Gotchas
 
-Non-obvious decisions, schedules, and retry logic behind `functions/src/index.ts`. Last verified: 2026-08-02 — Stripe (`createPayment`, `stripeWebhook`) was fully removed by `ai_specs/archive/012-refactor-booking-flow-plan.md`; if you find a doc or comment referencing it elsewhere, it's stale.
+Non-obvious decisions, schedules, and retry logic behind `functions/src/index.ts`. Last verified: 2026-08-04 — this project has no payment integration; if you find a doc, comment, or dependency implying one, it's stale (see `ai_specs/archive/012-refactor-booking-flow-spec.md` for what was removed and why).
 
 ## Order creation: one path only
 
@@ -43,7 +43,7 @@ Any signed-in user who is the order's `customerId` can cancel their own order. O
 
 ## Secrets
 
-None remain — `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` were removed with Stripe. No Cloud Function in this project currently uses `defineSecret`.
+None. No Cloud Function in this project uses `defineSecret` — the only secrets that ever existed belonged to the removed payment integration.
 
 ## See also
 
