@@ -52,7 +52,7 @@
 
 ## Принятые решения
 
-**Регион.** Firestore фактически в `asia-south1` (не в `nam5`, как записано в `firebase.json`), Storage — в `us-central1`, callables — в `us-central1`. Замеры `time_total` из Казахстана: `europe-west1` 0.433 c, `europe-central2` 0.451 c, `us-central1` 0.582 c, `asia-south1` **1.193 c**. База стоит в худшем для своих пользователей регионе. Решение — переезд всего в `europe-west1` новым проектом. План: `ai_specs/046-migrate-firebase-region-europe-west1-plan.md`.
+**Регион.** Firestore фактически в `asia-south1` (не в `nam5`, как записано в `firebase.json`), Storage — в `us-central1`, callables — в `us-central1`. Замеры `time_total` из Казахстана: `europe-west1` 0.433 c, `europe-central2` 0.451 c, `us-central1` 0.582 c, `asia-south1` **1.193 c**. База стоит в худшем для своих пользователей регионе. Решение — переезд всего в `europe-west1` новым проектом. Планы: `ai_specs/046-prepare-region-migration-plan.md` (подготовка, не зависит от названия, выполняется сейчас) и `ai_specs/047-migrate-firebase-region-europe-west1-plan.md` (сам переезд, заблокирован названием).
 
 **Платежи.** Интеграции нет и не будет без отдельной спеки. Stripe удалён полностью (код, зависимость, документация) — он не поддерживает KZT.
 
@@ -124,6 +124,7 @@
 
 ## См. также
 
-- `ai_specs/046-migrate-firebase-region-europe-west1-plan.md` — план переезда в `europe-west1`, Phase 0 выполнена
+- `ai_specs/046-prepare-region-migration-plan.md` — подготовка к переезду: централизация региона callables, эмулятор в CI, лимиты Storage. Не зависит от названия
+- `ai_specs/047-migrate-firebase-region-europe-west1-plan.md` — сам переезд, Phase 0 выполнена; заблокирован до утверждения названия
 - `ai_docs/PROJECT.md` — обзор проекта и схема данных
 - `ai_docs/BUSINESS_RULES.md` — доменные правила и известные пробелы в enforcement

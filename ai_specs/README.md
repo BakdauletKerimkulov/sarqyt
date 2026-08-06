@@ -6,7 +6,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | # | Feature | Type | Status | Date | Files |
 |---|---------|------|--------|------|-------|
-| _(none)_ | | | | | |
+| 046 | Подготовка к переезду Firebase в europe-west1 | infrastructure | approved | 2026-08-06 | plan |
+| 047 | Переезд Firebase в europe-west1 | infrastructure | blocked (название продукта) | 2026-08-04 | plan |
 
 ## Archived (`archive/`)
 
@@ -76,6 +77,6 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 045 | Fix schedule day row overflow in the create-item form | fix | done | 2026-08-04 | spec |
 
-Next number: **046**.
+Next number: **048**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
