@@ -55,7 +55,7 @@ final class BusinessOfferRepositoryProvider
 }
 
 String _$businessOfferRepositoryHash() =>
-    r'3c0305d3028b6c7e5f88a6c3a8a6ce817568946e';
+    r'6f725e83c6f7e50f5562b9241e728965a9b6adf0';
 
 /// Stream of current offer for an item (today's active).
 

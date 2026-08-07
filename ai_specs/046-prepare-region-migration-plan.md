@@ -37,12 +37,12 @@ Source: ревью готовности к релизу — `ai_docs/RELEASE_REA
 
 **Goal:** Один провайдер вместо 20+ разбросанных `FirebaseFunctions.instance`; регион задан явно и остаётся прежним, поведение не меняется.
 
-- [ ] TDD: `test/src/app/firebase_region_test.dart` — провайдер отдаёт инстанс с регионом из `kFunctionsRegion`; регрессия: `grep -rn "FirebaseFunctions.instance" lib/src` не находит вхождений вне провайдера → затем реализовать
-- [ ] `lib/src/app_bootstrap_firebase.dart` — `const kFunctionsRegion = 'us-central1';` с комментарием «меняется на `europe-west1` в Phase 2 плана 047, одновременно с деплоем функций» + `@Riverpod(keepAlive: true) FirebaseFunctions firebaseFunctions(...)` → `FirebaseFunctions.instanceFor(region: kFunctionsRegion)`
-- [ ] Перевести на провайдер: `business_offer_repository.dart:118`, `payment_repository.dart:34`, `orders_repository.dart:88`, `client_orders_repository.dart:66`, `items_repository.dart:113`, `onboarding_repository.dart:38`
-- [ ] Убрать прямые обращения к SDK из виджетов: `business_repository.dart:30`, `invite_member_dialog.dart:34`, `add_store_screen.dart:54` — прокинуть репозиторий/`ref` (`ai_toolkit/architecture.md`)
-- [ ] `setupEmulators()` — `useFunctionsEmulator` на инстансе из провайдера, не на `.instance`
-- [ ] Verify: `dart run build_runner build --delete-conflicting-outputs` + `./scripts/gate.sh` зелёный + **ручной прогон**: бронирование и смена статуса заказа работают на текущем проекте без изменений (G2)
+- [x] TDD: `test/src/app/firebase_region_test.dart` — регрессия: `FirebaseFunctions.instance` не встречается в `lib/` вне централизованного провайдера; плюс проверка значения `kFunctionsRegion`. _Проверку «провайдер отдаёт инстанс с нужным регионом» реализовать не удалось: `instanceFor()` требует инициализированного Firebase, а `testing.md` запрещает мокать SDK-клиент. Инвариант, ради которого фаза делается, покрыт регрессией._
+- [x] `lib/src/app_bootstrap_firebase.dart` — `const kFunctionsRegion = 'us-central1';` + `@Riverpod(keepAlive: true) FirebaseFunctions firebaseFunctions(Ref ref)` → `FirebaseFunctions.instanceFor(region: kFunctionsRegion)`
+- [x] Перевести на провайдер: `business_offer_repository.dart`, `payment_repository.dart`, `orders_repository.dart`, `client_orders_repository.dart`, `items_repository.dart`, `onboarding_repository.dart`
+- [x] Убрать прямые обращения к SDK из виджетов: `business_repository.dart` (инъекция `FirebaseFunctions`), `invite_member_dialog.dart` → `StoreShipRepository.inviteTeamMember`, `add_store_screen.dart` → `StoreRepository.createAdditionalStore`. Оба виджета больше не импортируют `cloud_functions`; ошибки рендерятся через существующий `humanReadableError`
+- [x] `setupEmulators()` — `useFunctionsEmulator` на `instanceFor(region: kFunctionsRegion)`, не на `.instance`
+- [ ] Verify: `dart run build_runner build --delete-conflicting-outputs` + `./scripts/gate.sh` зелёный + **ручной прогон**: бронирование и смена статуса заказа работают на текущем проекте без изменений (G2) _blocked: автоматическая часть зелёная (build_runner + полный гейт, включая rules-тесты под эмулятором); ручной прогон на устройстве агентом не выполним — остаётся за человеком_
 
 ### Phase 2 — Эмулятор в CI и включение спящих тестов
 

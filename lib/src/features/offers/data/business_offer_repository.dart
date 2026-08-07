@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/firebase_functions_provider.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart' hide OfferID;
 
@@ -115,7 +116,7 @@ class BusinessOfferRepository {
 @riverpod
 BusinessOfferRepository businessOfferRepository(Ref ref) {
   return BusinessOfferRepository(
-    FirebaseFunctions.instance,
+    ref.watch(firebaseFunctionsProvider),
     FirebaseFirestore.instance,
   );
 }
