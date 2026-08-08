@@ -42,7 +42,7 @@ Source: ревью готовности к релизу — `ai_docs/RELEASE_REA
 - [x] Перевести на провайдер: `business_offer_repository.dart`, `payment_repository.dart`, `orders_repository.dart`, `client_orders_repository.dart`, `items_repository.dart`, `onboarding_repository.dart`
 - [x] Убрать прямые обращения к SDK из виджетов: `business_repository.dart` (инъекция `FirebaseFunctions`), `invite_member_dialog.dart` → `StoreShipRepository.inviteTeamMember`, `add_store_screen.dart` → `StoreRepository.createAdditionalStore`. Оба виджета больше не импортируют `cloud_functions`; ошибки рендерятся через существующий `humanReadableError`
 - [x] `setupEmulators()` — `useFunctionsEmulator` на `instanceFor(region: kFunctionsRegion)`, не на `.instance`
-- [ ] Verify: `dart run build_runner build --delete-conflicting-outputs` + `./scripts/gate.sh` зелёный + **ручной прогон**: бронирование и смена статуса заказа работают на текущем проекте без изменений (G2) _blocked: автоматическая часть зелёная (build_runner + полный гейт, включая rules-тесты под эмулятором); ручной прогон на устройстве агентом не выполним — остаётся за человеком_
+- [x] Verify: `dart run build_runner build --delete-conflicting-outputs` + `./scripts/gate.sh` зелёный + **ручной прогон** (G2). Гейт зелёный на всех тирах; ручной прогон выполнен пользователем 2026-08-08 — поведение на текущем проекте не изменилось.
 
 ### Phase 2 — Эмулятор в CI и включение спящих тестов
 
