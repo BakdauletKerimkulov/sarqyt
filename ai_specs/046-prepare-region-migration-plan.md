@@ -48,9 +48,9 @@ Source: ревью готовности к релизу — `ai_docs/RELEASE_REA
 
 **Goal:** Закрыть дыру процесса: `deploy.yml` автоматически деплоит `firestore` правила в прод при мёрдже в `main`, а `ci.yml` их не проверяет вообще.
 
-- [ ] `.github/workflows/ci.yml` — в джобу `functions-lint` добавить `actions/setup-java` (эмулятор Firestore — Java-процесс), установку `firebase-tools@^15` и шаг `firebase emulators:exec --only firestore,auth "cd functions && npm test"` с `working-directory: .` (у джобы дефолт `functions`, а `emulators:exec` читает корневой `firebase.json`) _blocked: каталог `.github/` закрыт правами на запись для агента — YAML выдан пользователю для вставки вручную_
+- [x] `.github/workflows/ci.yml` — в джобу `functions-lint` добавлены `actions/setup-java` (эмулятор Firestore — Java-процесс), установка `firebase-tools@^15` и шаг `firebase emulators:exec --only firestore,auth "cd functions && npm test"` с `working-directory: .` (у джобы дефолт `functions`, а `emulators:exec` читает корневой `firebase.json`). Вставлено пользователем 2026-08-08 — каталог `.github/` закрыт агенту на запись; YAML проверен парсером, 8 шагов в нужном порядке
 - [x] Проверить, что джоба краснеет при намеренно сломанном правиле — выполнено локально 2026-08-08: временная замена `orders → allow update: if true` дала **2 failed | 100 passed** и код возврата 1 из `emulators:exec`; `firestore.rules` восстановлен из копии, sha256 совпал
-- [ ] Verify: CI зелёный на чистой ветке, красный на сломанном правиле _blocked: зависит от первой задачи — проверяется первым PR после вставки YAML_
+- [ ] Verify: CI зелёный на чистой ветке _blocked: workflow триггерится только на `pull_request → main` и `push → main`; на feature-ветке джоба не стартует. Закрывается первым же PR в `main`. Красная половина проверки уже доказана локально (см. задачу выше)_
 
 ### Phase 3 — Лимиты в storage.rules
 
