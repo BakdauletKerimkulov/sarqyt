@@ -33,7 +33,7 @@ final class ReviewControllerProvider
   ReviewController create() => ReviewController();
 }
 
-String _$reviewControllerHash() => r'6b2991794db6976e8ca1c5eaec5b5a2dcfe0eeac';
+String _$reviewControllerHash() => r'e8da1a57cbd1c903cf2d63f2d209e5f6336b9eef';
 
 abstract class _$ReviewController extends $AsyncNotifier<void> {
   FutureOr<void> build();

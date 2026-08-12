@@ -54,10 +54,20 @@ describe("reviews", () => {
   const reviewData = {
     userId: "alice",
     storeId: "store1",
+    orderId: "r1",
     storeRating: 4,
     offerRating: 4,
     text: "Great food!",
   };
+
+  beforeEach(async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "orders", "r1"), {
+        customerId: "alice",
+        storeId: "store1",
+      });
+    });
+  });
 
   it("allows creating a review with own userId", async () => {
     const db = authedDb("alice");
@@ -119,6 +129,37 @@ describe("reviews", () => {
     const db = authedDb("alice");
     await assertFails(
       setDoc(doc(db, "reviews", "r1"), { ...reviewData, offerRating: "five" })
+    );
+  });
+
+  it("denies creating a review for someone else's order", async () => {
+    const db = authedDb("bob", {});
+    await assertFails(
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, userId: "bob" })
+    );
+  });
+
+  it("denies creating a review whose orderId doesn't match the doc id", async () => {
+    const db = authedDb("alice");
+    await assertFails(
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, orderId: "other-order" })
+    );
+  });
+
+  it("routes a second write for the same order to update, not a new review", async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "reviews", "r1"), reviewData);
+    });
+    // Deterministic doc id means a second attempt at reviews/r1 always
+    // targets the existing document — evaluated against `allow update`
+    // (own-review only), never creates a second review for order r1.
+    const db = authedDb("alice");
+    await assertSucceeds(
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, storeRating: 5 })
+    );
+    const bobDb = authedDb("bob");
+    await assertFails(
+      setDoc(doc(bobDb, "reviews", "r1"), { ...reviewData, userId: "bob", storeRating: 1 })
     );
   });
 
