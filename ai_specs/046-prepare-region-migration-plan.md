@@ -50,7 +50,9 @@ Source: ревью готовности к релизу — `ai_docs/RELEASE_REA
 
 - [x] `.github/workflows/ci.yml` — в джобу `functions-lint` добавлены `actions/setup-java` (эмулятор Firestore — Java-процесс), установка `firebase-tools@^15` и шаг `firebase emulators:exec --only firestore,auth "cd functions && npm test"` с `working-directory: .` (у джобы дефолт `functions`, а `emulators:exec` читает корневой `firebase.json`). Вставлено пользователем 2026-08-08 — каталог `.github/` закрыт агенту на запись; YAML проверен парсером, 8 шагов в нужном порядке
 - [x] Проверить, что джоба краснеет при намеренно сломанном правиле — выполнено локально 2026-08-08: временная замена `orders → allow update: if true` дала **2 failed | 100 passed** и код возврата 1 из `emulators:exec`; `firestore.rules` восстановлен из копии, sha256 совпал
-- [ ] Verify: CI зелёный на чистой ветке _blocked: workflow триггерится только на `pull_request → main` и `push → main`; на feature-ветке джоба не стартует. Закрывается первым же PR в `main`. Красная половина проверки уже доказана локально (см. задачу выше)_
+- [ ] Verify: CI зелёный на чистой ветке. PR #21 открыт 2026-08-13, джоба наконец запустилась и вскрыла две поломки, невидимые локальному гейту (он работает на готовом `node_modules` и на локальных node/java):
+  - [x] `npm ci` падал: `package-lock.json` не содержал top-level `@emnapi/core` / `@emnapi/runtime`. Локальный npm 11 (node 24) резолвит optional-зависимости `@napi-rs/wasm-runtime` иначе, чем npm 10.8 из node 20 в CI. Lock перегенерирован под npm 10.8; `npm ci` чист под обеими версиями, версии прямых зависимостей не изменились
+  - [ ] `firebase emulators:exec` падает: `firebase-tools no longer supports Java version before 21`, а `setup-java` в джобе ставит `17`. **Требуется правка человеком** — `.github/` закрыт агенту на запись: в `.github/workflows/ci.yml:49` заменить `java-version: "17"` на `"21"`. Заодно стоит поднять `node-version: 20` → `22` (строка 41): `functions/package.json` объявляет `engines.node: 22`, из-за чего каждый прогон сыплет `EBADENGINE`, и именно расхождение версий npm породило поломку lock выше
 
 ### Phase 3 — Лимиты в storage.rules
 
