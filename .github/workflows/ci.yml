@@ -63,4 +63,4 @@ jobs:
             # а emulators:exec читает корневой firebase.json.
             - name: Rules and function tests (emulator)
               working-directory: .
-              run: firebase emulators:exec --only firestore,auth "cd functions && npm test"
+              run: firebase emulators:exec --only firestore,auth,storage "cd functions && npm test"

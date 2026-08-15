@@ -62,10 +62,18 @@ Source: ревью готовности к релизу — `ai_docs/RELEASE_REA
 
 **Goal:** Закрыть находку ревью: любой участник магазина может залить файл любого размера и типа.
 
-- [ ] `storage.rules` — к `match /stores/{storeId}/items/{fileName}` добавить `request.resource.size < 5 * 1024 * 1024` и `request.resource.contentType.matches('image/.*')`
-- [ ] Негативные тесты рядом с существующими rules-тестами: превышение размера и неверный content-type отклоняются
+- [x] `storage.rules` — лимиты добавлены, но **не так, как записано в этом плане**. Формулировка `allow write: if ... && request.resource.size < ...` ломает удаление: в Storage `write` покрывает и `delete`, а при удалении `request.resource == null`, и проверка не вычисляется. `ImageUploadRepository.deleteItemImage` вызывается из `create_item_form_controller.dart:69` как компенсация при неудачном создании товара — правило разделено на `allow create, update` (с лимитами) и `allow delete` (только доступ). Мутационный прогон подтвердил: слитая формулировка из плана валит тест на удаление
+- [x] Попутно исправлен баг в `isAdmin()`: `request.auth.token.role` на пользователе без custom claim бросает `Property role is undefined`, и исключение рушит всё выражение вместе с ветками после `||`. Участник магазина без claim не мог загрузить ничего. `firestore.rules:14` давно использует безопасную `token.get('role', '')` — storage выровнен по ней. Без этого фикса тесты фазы не проходят в принципе
+- [x] `functions/test/storage-rules.test.ts` — 9 тестов: лимит размера с двух сторон границы (5 MB − 1 проходит, 5 MB отклоняется), не-image content-type, `application/octet-stream`, посторонний, админ, и регрессия на удаление. Обе мутации правил (снятый лимит; слитый `write`) дают красный
+- [ ] **Требуется правка человеком** — `scripts/` и `.github/` закрыты агенту на запись. Тестам нужен эмулятор Storage, иначе файл падает с `ECONNREFUSED :9199` и гейт краснеет:
+  - `scripts/gate.sh:106` — `--only firestore,auth` → `--only firestore,auth,storage`
+  - `.github/workflows/ci.yml:66` — то же самое
 - [ ] Задеплоить в текущий проект: `firebase deploy --only storage` (G3)
 - [ ] Verify: загрузка картинки товара из бизнес-приложения работает; загрузка не-изображения отклоняется
+
+**Замечание на будущее:** `storage-rules.test.ts` работает под дефолтным projectId из `.firebaserc`, а не под собственным, как остальные тестовые файлы. Правила Storage читают Firestore через `firestore.exists()`, и под `singleProjectMode` этот cross-service вызов уходит в дефолтный проект: с чужим projectId `storeShips` не находится и любая запись отклоняется. Тесты краснеют при верных правилах — на диагностику этого ушло больше всего времени в фазе.
+
+**Ещё одна находка, вне объёма фазы:** `firestore.rules:18` — `isPartner()` использует ту же небезопасную форму `request.auth.token.role == 'partner'`, что была в storage. Правила там устроены иначе (`isPartner` не стоит первым в цепочке `||` под write-путями), поэтому симптом не воспроизводится, но форму стоит выровнять отдельной задачей.
 
 ### Phase 4 — Явный timeZone у scheduled-функций
 
