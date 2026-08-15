@@ -14,12 +14,16 @@ Non-obvious decisions, schedules, and retry logic behind `functions/src/index.ts
 
 ## Schedules
 
+Wall-clock schedules declare `timeZone: "Asia/Almaty"` explicitly. Without it `onSchedule` silently means UTC, and a reader cannot tell a deliberate UTC from a forgotten zone. `functions/test/schedules.test.ts` fails the build if a new `every day` schedule omits it. Interval schedules (`every 5 minutes`) do not depend on a zone and set none.
+
 | Function | Schedule | Why |
 |---|---|---|
-| `dailySyncOffers` | `every day 00:30` (UTC = 06:30 Almaty) | After midnight, before the morning rush of orders — regenerates upcoming offers from active items |
+| `dailySyncOffers` | `every day 06:30` `Asia/Almaty` (01:30 UTC) | After midnight, before the morning rush of orders — regenerates upcoming offers from active items |
 | `expireOrders` | `every 5 minutes` | Not a Firestore TTL: expiring an order needs a status transition (`expired`) + offer quantity restore + notification — TTL only deletes documents |
 | `sendOrderReminders` | `every 5 minutes`, `asia-south1` | Pickup-window reminders (`beforeStart`/`midWindow`/`beforeEnd`) + delayed review prompt; see `ai_docs/solutions/` for the reminder-window logic |
-| `cleanupOldData` | `every day 03:00` | Housekeeping for stale offers |
+| `cleanupOldData` | `every day 08:00` `Asia/Almaty` (03:00 UTC) | Housekeeping for stale offers |
+
+**Almaty is UTC+5, not UTC+6.** Kazakhstan merged its two zones into a single UTC+5 in March 2024. The table above previously claimed `00:30 UTC = 06:30 Almaty`, which was the pre-2024 arithmetic — the job had in fact been running at 05:30 local ever since. Making the zone explicit moved `dailySyncOffers` an hour later (00:30 → 01:30 UTC) to match its stated intent; `cleanupOldData` kept its instant.
 
 ## Offer sync window
 
