@@ -17,7 +17,7 @@ Source: замеры latency из Казахстана + ревью готовн
 >
 > Каждый шаг выполняется вручную с подтверждением человека.
 >
-> **Предусловие:** сначала должен быть выполнен `ai_specs/046-prepare-region-migration-plan.md` — без его Phase 1 переезд функций мгновенно ломает все callables на клиенте.
+> **Предусловие:** сначала должен быть выполнен `ai_specs/archive/046-prepare-region-migration-plan.md` — без его Phase 1 переезд функций мгновенно ломает все callables на клиенте.
 
 ## Overview
 
@@ -171,5 +171,5 @@ Phase 1 — полдня. Phases 2–3 — день. Phases 4–5 — день �
 
 ## См. также
 
-- `ai_specs/046-prepare-region-migration-plan.md` — подготовка, выполняется до этого плана и не зависит от названия
+- `ai_specs/archive/046-prepare-region-migration-plan.md` — подготовка, выполняется до этого плана и не зависит от названия
 - `ai_docs/RELEASE_READINESS.md` — блокеры релиза, решения, раздел «Бренд»

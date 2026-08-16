@@ -6,7 +6,6 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | # | Feature | Type | Status | Date | Files |
 |---|---------|------|--------|------|-------|
-| 046 | Подготовка к переезду Firebase в europe-west1 | infrastructure | approved | 2026-08-06 | plan |
 | 047 | Переезд Firebase в europe-west1 | infrastructure | blocked (название продукта) | 2026-08-04 | plan |
 
 ## Archived (`archive/`)
@@ -76,6 +75,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 044 | Fix missing Firestore composite indexes for item reviews and current offer | fix | done | 2026-08-03 | spec |
 
 | 045 | Fix schedule day row overflow in the create-item form | fix | done | 2026-08-04 | spec |
+
+| 046 | Подготовка к переезду Firebase в europe-west1 | infrastructure | done | 2026-08-06 | plan |
 
 Next number: **048**.
 
