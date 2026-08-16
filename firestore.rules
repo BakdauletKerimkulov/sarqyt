@@ -15,13 +15,13 @@ service cloud.firestore {
     }
 
     function isPartner() {
-      return isSignedIn() && request.auth.token.role == 'partner';
+      return isSignedIn() && request.auth.token.get('role', '') == 'partner';
     }
 
     function canCreateStore() {
       return isAdmin() || (
         isPartner() &&
-        request.auth.token.canCreateStore == true
+        request.auth.token.get('canCreateStore', false) == true
       );
     }
 

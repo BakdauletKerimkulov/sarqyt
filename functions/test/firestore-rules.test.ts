@@ -280,6 +280,53 @@ describe("stores — delete", () => {
 });
 
 // ==========================================================================
+// Stores — create (canCreateStore claim truth table)
+//
+// Тесты зелёные и до, и после перевода isPartner/canCreateStore на
+// token.get() с дефолтом: при отсутствующем claim прямое обращение роняет
+// вычисление, а упавшее условие — тот же deny. Здесь они закрепляют таблицу
+// истинности, чтобы переписывание формы не сдвинуло доступ молча.
+// ==========================================================================
+describe("stores — create", () => {
+  const storeData = { name: "New Store", ownerId: "p1" };
+
+  it("allows a partner with canCreateStore", async () => {
+    const db = authedDb("p1", { role: "partner", canCreateStore: true });
+    await assertSucceeds(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies a partner without the canCreateStore claim", async () => {
+    const db = authedDb("p1", { role: "partner" });
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies a partner with canCreateStore explicitly false", async () => {
+    const db = authedDb("p1", { role: "partner", canCreateStore: false });
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies a signed-in user with no claims at all", async () => {
+    const db = authedDb("nobody");
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies a client (role set, but not partner) holding canCreateStore", async () => {
+    const db = authedDb("c1", { role: "client", canCreateStore: true });
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("allows admin without the canCreateStore claim", async () => {
+    const db = authedDb("admin1", { role: "admin" });
+    await assertSucceeds(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies an unauthenticated user", async () => {
+    const db = unauthDb();
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+});
+
+// ==========================================================================
 // Stores — update cannot touch avgRating / reviewCount
 // ==========================================================================
 describe("stores — update", () => {

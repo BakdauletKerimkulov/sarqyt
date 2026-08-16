@@ -78,6 +78,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 046 | Подготовка к переезду Firebase в europe-west1 | infrastructure | done | 2026-08-06 | plan |
 
-Next number: **048**.
+| 048 | Небезопасное чтение custom claims в isPartner() и canCreateStore() | fix | done | 2026-08-16 | spec |
+
+Next number: **049**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.

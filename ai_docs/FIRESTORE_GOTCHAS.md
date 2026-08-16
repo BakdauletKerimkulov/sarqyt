@@ -45,6 +45,14 @@ Offer geo-queries use geohash precision 4 (~39km × 20km cell size) — coarse e
 
 `reviews/{orderId}.itemId: string?` — denormalized from the order at review-creation time (`ReviewController.submitReview` reads `order.itemId` via a one-shot `watchOrder(orderId).first`, not threaded through navigation params — correct regardless of whether the reviewer arrived via the order-detail button or a `review_prompt` push deep link, since the latter's payload doesn't carry `itemId`). Absent on reviews created before this field existed — `RatingsContent`/`itemReviewsStreamProvider` only see reviews written after the field was added. Not security-validated in rules (display/query convenience only, not access control). Composite index `reviews (itemId ASC, createdAt DESC)` backs `watchItemReviews`.
 
+## Custom claims in rules: always `token.get(name, default)`
+
+Reading a claim as `request.auth.token.role` does **not** yield `null` or `false` when the claim is absent — it raises `Property role is undefined` and kills the whole expression, including the branches after `||`. Use `request.auth.token.get('role', '')` / `.get('canCreateStore', false)` everywhere.
+
+This already cost one production bug: in `storage.rules` the unsafe form sat in `isAdmin()`, first in an `||` chain, so a store member without a `role` claim could not upload any image at all — the later `hasStoreAccess()` branch never got evaluated (fixed in `ai_specs/archive/046-prepare-region-migration-plan.md`, Phase 3). The same form survived in `firestore.rules` `isPartner()`/`canCreateStore()` and was harmless only by accident of branch order (`ai_specs/archive/048-fix-unsafe-custom-claim-reads-spec.md`).
+
+Both rule files are clean as of 2026-08-16. The regression is not detectable by symptom — grep for `request.auth.token.` without `.get(` instead. Note that a green emulator run does not flag it either: a crashed condition and a legitimate `deny` are the same outcome for `assertFails`.
+
 ## See also
 
 - `ai_docs/PROJECT.md` — module overview, general schema tables
