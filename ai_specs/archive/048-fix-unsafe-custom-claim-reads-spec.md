@@ -56,7 +56,7 @@ function canCreateStore() {
 
 Эмулятор (`firebase emulators:exec --only firestore,auth,storage "cd functions && npm test"`): 13 файлов, 120 тестов зелёных. Мутация правила даёт `2 failed | 118 passed`. `firestore.rules` восстановлен после мутации, sha256 совпал с дозамерным.
 
-**Требуется деплой:** `firebase deploy --only firestore:rules`. До него прод и репозиторий расходятся — функционально одинаково, но форма в проде старая.
+**Задеплоено** в `sarqyt-1ab95` 2026-08-16: `firebase deploy --only firestore:rules`, правила скомпилированы и выпущены. Прод и репозиторий сошлись.
 
 ## Урок
 
