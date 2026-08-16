@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/firebase_functions_provider.dart';
 import 'package:sarqyt/src/exceptions/app_exception.dart';
 
 part 'onboarding_repository.g.dart';
@@ -35,7 +36,7 @@ class OnboardingRepository {
 @riverpod
 OnboardingRepository onboardingRepository(Ref ref) {
   return OnboardingRepository(
-    FirebaseFunctions.instance,
+    ref.watch(firebaseFunctionsProvider),
     FirebaseFirestore.instance,
   );
 }

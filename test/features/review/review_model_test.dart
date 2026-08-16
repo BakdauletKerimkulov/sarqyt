@@ -88,5 +88,34 @@ void main() {
       expect(review.offerRating, 5);
       expect(review.averageRating, 4.0);
     });
+
+    test('parses itemId when present', () {
+      final json = {
+        'id': 'r1',
+        'orderId': 'o1',
+        'storeId': 's1',
+        'userId': 'u1',
+        'itemId': 'item1',
+        'storeRating': 5,
+        'offerRating': 4,
+        'createdAt': Timestamp.fromDate(DateTime(2026, 1, 1)),
+      };
+      final review = Review.fromJson(json);
+      expect(review.itemId, 'item1');
+    });
+
+    test('itemId is null for pre-existing docs without it', () {
+      final json = {
+        'id': 'r1',
+        'orderId': 'o1',
+        'storeId': 's1',
+        'userId': 'u1',
+        'storeRating': 5,
+        'offerRating': 4,
+        'createdAt': Timestamp.fromDate(DateTime(2026, 1, 1)),
+      };
+      final review = Review.fromJson(json);
+      expect(review.itemId, isNull);
+    });
   });
 }

@@ -42,7 +42,7 @@ final class DiscoverFilterControllerProvider
 }
 
 String _$discoverFilterControllerHash() =>
-    r'60049f1526f08505b7b1840da35e45a6f6fc4d69';
+    r'750b618bf38880e8693af11dc5afc3f01b818565';
 
 abstract class _$DiscoverFilterController extends $Notifier<DiscoverFilter> {
   DiscoverFilter build();

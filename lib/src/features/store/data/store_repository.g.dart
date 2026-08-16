@@ -49,7 +49,7 @@ final class StoreRepositoryProvider
   }
 }
 
-String _$storeRepositoryHash() => r'dbabe05a1e28a2f2c593c41ec8884968b06af21f';
+String _$storeRepositoryHash() => r'e4a3aaea1601dbf849b3dfe8c19f2eaeb2166590';
 
 @ProviderFor(storeListStream)
 const storeListStreamProvider = StoreListStreamProvider._();

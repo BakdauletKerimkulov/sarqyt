@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/firebase_functions_provider.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/offers/domain/offer.dart' hide OfferID;
 
@@ -77,6 +78,24 @@ class BusinessOfferRepository {
     });
   }
 
+  /// Upcoming/recent offers for an item, ordered by pickup start time.
+  /// Read-only, used by the item Calendar tab.
+  Stream<List<Offer>> watchOffersForItem(String storeId, String itemId) {
+    return _firestore
+        .collection('offers')
+        .where('storeId', isEqualTo: storeId)
+        .where('productId', isEqualTo: itemId)
+        .orderBy('pickupStartTime')
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs.map((doc) {
+            final data = Map<String, dynamic>.from(doc.data());
+            data['id'] = doc.id;
+            return Offer.fromJson(data);
+          }).toList(),
+        );
+  }
+
   /// Stream of active offers for a given store.
   Stream<List<Offer>> watchStoreActiveOffers(String storeId) {
     return _firestore
@@ -97,7 +116,7 @@ class BusinessOfferRepository {
 @riverpod
 BusinessOfferRepository businessOfferRepository(Ref ref) {
   return BusinessOfferRepository(
-    FirebaseFunctions.instance,
+    ref.watch(firebaseFunctionsProvider),
     FirebaseFirestore.instance,
   );
 }
@@ -107,6 +126,13 @@ BusinessOfferRepository businessOfferRepository(Ref ref) {
 Stream<Offer?> currentOfferForItem(Ref ref, String storeId, String itemId) {
   final repo = ref.watch(businessOfferRepositoryProvider);
   return repo.watchCurrentOfferForItem(storeId, itemId);
+}
+
+/// Upcoming/recent offers for an item, for the Calendar tab.
+@riverpod
+Stream<List<Offer>> offersForItem(Ref ref, String storeId, String itemId) {
+  final repo = ref.watch(businessOfferRepositoryProvider);
+  return repo.watchOffersForItem(storeId, itemId);
 }
 
 /// Stream of active item IDs (productId) for a given store.

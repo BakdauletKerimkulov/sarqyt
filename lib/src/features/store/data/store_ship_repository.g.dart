@@ -55,7 +55,7 @@ final class StoreShipRepositoryProvider
 }
 
 String _$storeShipRepositoryHash() =>
-    r'd3813a6013a39ea9c075158e994927502f7a6b18';
+    r'591d4ab640207c30f326d5895ddad2c84cd44766';
 
 @ProviderFor(storeShipsListFutureForPartner)
 const storeShipsListFutureForPartnerProvider =

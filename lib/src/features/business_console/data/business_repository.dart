@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/firebase_functions_provider.dart';
 import 'package:sarqyt/src/features/business_console/domain/business.dart';
 
 part 'business_repository.g.dart';
 
 class BusinessRepository {
-  const BusinessRepository(this._firestore);
+  const BusinessRepository(this._firestore, this._functions);
   final FirebaseFirestore _firestore;
+  final FirebaseFunctions _functions;
 
   static String businessPath(BusinessID id) => 'businesses/$id';
 
@@ -27,9 +29,7 @@ class BusinessRepository {
       'verificationStatus': 'submitted',
     });
 
-    final callable = FirebaseFunctions.instance.httpsCallable(
-      'fakeVerifyBusiness',
-    );
+    final callable = _functions.httpsCallable('fakeVerifyBusiness');
     // Fire-and-forget — do not await
     callable.call<dynamic>({'businessId': businessId});
   }
@@ -44,7 +44,10 @@ class BusinessRepository {
 
 @riverpod
 BusinessRepository businessRepository(Ref ref) {
-  return BusinessRepository(FirebaseFirestore.instance);
+  return BusinessRepository(
+    FirebaseFirestore.instance,
+    ref.watch(firebaseFunctionsProvider),
+  );
 }
 
 @riverpod

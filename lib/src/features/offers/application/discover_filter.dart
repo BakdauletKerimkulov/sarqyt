@@ -13,12 +13,14 @@ class DiscoverFilter {
   final double? maxPrice;
   final SortBy sortBy;
   final bool favoritesOnly;
+  final String searchQuery;
 
   const DiscoverFilter({
     this.pickupTime = PickupTimeFilter.all,
     this.maxPrice,
     this.sortBy = SortBy.distance,
     this.favoritesOnly = false,
+    this.searchQuery = '',
   });
 
   DiscoverFilter copyWith({
@@ -26,12 +28,14 @@ class DiscoverFilter {
     double? maxPrice,
     SortBy? sortBy,
     bool? favoritesOnly,
+    String? searchQuery,
   }) {
     return DiscoverFilter(
       pickupTime: pickupTime ?? this.pickupTime,
       maxPrice: maxPrice ?? this.maxPrice,
       sortBy: sortBy ?? this.sortBy,
       favoritesOnly: favoritesOnly ?? this.favoritesOnly,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 
@@ -39,6 +43,7 @@ class DiscoverFilter {
     pickupTime: pickupTime,
     sortBy: sortBy,
     favoritesOnly: favoritesOnly,
+    searchQuery: searchQuery,
   );
 }
 
@@ -59,7 +64,12 @@ class DiscoverFilterController extends _$DiscoverFilterController {
   void toggleFavoritesOnly() =>
       state = state.copyWith(favoritesOnly: !state.favoritesOnly);
 
-  void reset() => state = const DiscoverFilter();
+  void setSearchQuery(String value) =>
+      state = state.copyWith(searchQuery: value);
+
+  /// Resets pickup-time/price/sort/favorites filters. Search is a separate
+  /// app-bar UI concern (survives "clear filters" from the bottom sheet).
+  void reset() => state = DiscoverFilter(searchQuery: state.searchQuery);
 }
 
 /// Pure function — testable without Riverpod.
@@ -97,6 +107,15 @@ List<OfferWithDistance> applyFilter(
   // Max price
   if (filter.maxPrice != null) {
     result = result.where((o) => o.offer.price <= filter.maxPrice!).toList();
+  }
+
+  // Search: matches store name or item name, case-insensitive
+  final query = filter.searchQuery.trim().toLowerCase();
+  if (query.isNotEmpty) {
+    result = result.where((o) {
+      return o.offer.storeName.toLowerCase().contains(query) ||
+          o.offer.name.toLowerCase().contains(query);
+    }).toList();
   }
 
   // Sort

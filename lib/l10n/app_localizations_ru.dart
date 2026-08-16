@@ -230,6 +230,29 @@ class AppLocalizationsRu extends AppLocalizations {
   String get signUpYourBusiness => 'Зарегистрируйте свой бизнес';
 
   @override
+  String get resetPasswordTitle => 'Сброс пароля';
+
+  @override
+  String get resetPasswordDescription =>
+      'Введите email, и мы отправим ссылку для сброса пароля.';
+
+  @override
+  String get sendResetLink => 'Отправить ссылку';
+
+  @override
+  String get resetLinkSent =>
+      'Письмо для сброса пароля отправлено. Проверьте почту.';
+
+  @override
+  String sendResetLinkConfirm(String email) {
+    return 'Отправить ссылку для сброса пароля на $email?';
+  }
+
+  @override
+  String get signOutConfirm =>
+      'Для доступа к аккаунту потребуется войти заново.';
+
+  @override
   String get profile => 'Профиль';
 
   @override
@@ -347,6 +370,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get noOffersFound => 'Предложения не найдены';
+
+  @override
+  String get searchOffersHint => 'Поиск по магазину или товару';
 
   @override
   String get filters => 'Фильтры';

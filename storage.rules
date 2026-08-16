@@ -6,8 +6,11 @@ service firebase.storage {
       return request.auth != null;
     }
 
+    /// token.get() — не token.role: у пользователя без custom claim чтение
+    /// отсутствующего свойства бросает исключение и рушит всё выражение,
+    /// включая ветки после ||. firestore.rules использует ту же форму.
     function isAdmin() {
-      return isSignedIn() && request.auth.token.role == 'admin';
+      return isSignedIn() && request.auth.token.get('role', '') == 'admin';
     }
 
     /// storeShips-based access check (1 exists() call).
@@ -23,10 +26,21 @@ service firebase.storage {
         && request.auth.uid == firestore.get(/databases/(default)/documents/stores/$(storeId)).data.ownerId;
     }
 
+    function canWriteStoreFiles(storeId) {
+      return isAdmin() || hasStoreAccess(storeId) || isStoreOwner(storeId);
+    }
+
     match /stores/{storeId}/items/{fileName} {
       allow read: if isSignedIn();
-      allow write: if isAdmin()
-        || hasStoreAccess(storeId) || isStoreOwner(storeId);
+
+      allow create, update: if canWriteStoreFiles(storeId)
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+
+      // Отдельно от create/update: при удалении request.resource == null,
+      // и проверки размера и типа на нём вычислить нельзя. Компенсирующее
+      // удаление картинки в create_item_form_controller зависит от этого.
+      allow delete: if canWriteStoreFiles(storeId);
     }
   }
 }

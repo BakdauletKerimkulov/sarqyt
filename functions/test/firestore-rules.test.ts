@@ -54,10 +54,20 @@ describe("reviews", () => {
   const reviewData = {
     userId: "alice",
     storeId: "store1",
+    orderId: "r1",
     storeRating: 4,
     offerRating: 4,
     text: "Great food!",
   };
+
+  beforeEach(async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "orders", "r1"), {
+        customerId: "alice",
+        storeId: "store1",
+      });
+    });
+  });
 
   it("allows creating a review with own userId", async () => {
     const db = authedDb("alice");
@@ -119,6 +129,37 @@ describe("reviews", () => {
     const db = authedDb("alice");
     await assertFails(
       setDoc(doc(db, "reviews", "r1"), { ...reviewData, offerRating: "five" })
+    );
+  });
+
+  it("denies creating a review for someone else's order", async () => {
+    const db = authedDb("bob", {});
+    await assertFails(
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, userId: "bob" })
+    );
+  });
+
+  it("denies creating a review whose orderId doesn't match the doc id", async () => {
+    const db = authedDb("alice");
+    await assertFails(
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, orderId: "other-order" })
+    );
+  });
+
+  it("routes a second write for the same order to update, not a new review", async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "reviews", "r1"), reviewData);
+    });
+    // Deterministic doc id means a second attempt at reviews/r1 always
+    // targets the existing document — evaluated against `allow update`
+    // (own-review only), never creates a second review for order r1.
+    const db = authedDb("alice");
+    await assertSucceeds(
+      setDoc(doc(db, "reviews", "r1"), { ...reviewData, storeRating: 5 })
+    );
+    const bobDb = authedDb("bob");
+    await assertFails(
+      setDoc(doc(bobDb, "reviews", "r1"), { ...reviewData, userId: "bob", storeRating: 1 })
     );
   });
 
@@ -235,6 +276,53 @@ describe("stores — delete", () => {
     });
     const db = authedDb("admin1", { role: "admin" });
     await assertSucceeds(deleteDoc(doc(db, "stores", "s1")));
+  });
+});
+
+// ==========================================================================
+// Stores — create (canCreateStore claim truth table)
+//
+// Тесты зелёные и до, и после перевода isPartner/canCreateStore на
+// token.get() с дефолтом: при отсутствующем claim прямое обращение роняет
+// вычисление, а упавшее условие — тот же deny. Здесь они закрепляют таблицу
+// истинности, чтобы переписывание формы не сдвинуло доступ молча.
+// ==========================================================================
+describe("stores — create", () => {
+  const storeData = { name: "New Store", ownerId: "p1" };
+
+  it("allows a partner with canCreateStore", async () => {
+    const db = authedDb("p1", { role: "partner", canCreateStore: true });
+    await assertSucceeds(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies a partner without the canCreateStore claim", async () => {
+    const db = authedDb("p1", { role: "partner" });
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies a partner with canCreateStore explicitly false", async () => {
+    const db = authedDb("p1", { role: "partner", canCreateStore: false });
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies a signed-in user with no claims at all", async () => {
+    const db = authedDb("nobody");
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies a client (role set, but not partner) holding canCreateStore", async () => {
+    const db = authedDb("c1", { role: "client", canCreateStore: true });
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("allows admin without the canCreateStore claim", async () => {
+    const db = authedDb("admin1", { role: "admin" });
+    await assertSucceeds(setDoc(doc(db, "stores", "s1"), storeData));
+  });
+
+  it("denies an unauthenticated user", async () => {
+    const db = unauthDb();
+    await assertFails(setDoc(doc(db, "stores", "s1"), storeData));
   });
 });
 

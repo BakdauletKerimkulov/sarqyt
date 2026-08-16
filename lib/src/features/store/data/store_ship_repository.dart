@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/firebase_functions_provider.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
 import 'package:sarqyt/src/features/store/domain/store_ship.dart';
@@ -7,11 +9,29 @@ import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 part 'store_ship_repository.g.dart';
 
 class StoreShipRepository {
-  const StoreShipRepository(this._firestore);
+  const StoreShipRepository(this._firestore, this._functions);
   final FirebaseFirestore _firestore;
+  final FirebaseFunctions _functions;
 
   static String storeStaffPath(String storeShipId) => 'storeShips/$storeShipId';
   static String storeStaffsPath() => 'storeShips';
+
+  /// Invites a user to a store team by email, creating their storeShip.
+  ///
+  /// Throws [FirebaseFunctionsException] on failure — callers render it via
+  /// `humanReadableError`.
+  Future<void> inviteTeamMember({
+    required String storeId,
+    required String email,
+    required StoreRole role,
+  }) async {
+    final callable = _functions.httpsCallable('inviteTeamMember');
+    await callable.call<dynamic>({
+      'storeId': storeId,
+      'email': email,
+      'role': role.name,
+    });
+  }
 
   Future<StoreShip?> fetchStoreShip(String storeShipId) async {
     final ref = _storeStaffRef(storeShipId);
@@ -91,7 +111,10 @@ class StoreShipRepository {
 
 @Riverpod(keepAlive: true)
 StoreShipRepository storeShipRepository(Ref ref) {
-  return StoreShipRepository(FirebaseFirestore.instance);
+  return StoreShipRepository(
+    FirebaseFirestore.instance,
+    ref.watch(firebaseFunctionsProvider),
+  );
 }
 
 @riverpod
