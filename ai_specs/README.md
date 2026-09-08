@@ -4,9 +4,10 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 ## Active
 
-| # | Feature | Type | Status | Date | Files |
-|---|---------|------|--------|------|-------|
-| 047 | Переезд Firebase в europe-west1 | infrastructure | blocked (название продукта) | 2026-08-04 | plan |
+| # | Feature | Type | Size | Status | Date | Files |
+|---|---------|------|------|--------|------|-------|
+| 049 | Экран заказов в бизнес-приложении | feature | L | refined | 2026-09-06 | ledger, spec, plan |
+| 047 | Переезд Firebase в europe-west1 | infrastructure | — | blocked (название продукта) | 2026-08-04 | plan |
 
 ## Archived (`archive/`)
 
@@ -80,6 +81,6 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 048 | Небезопасное чтение custom claims в isPartner() и canCreateStore() | fix | done | 2026-08-16 | spec |
 
-Next number: **049**.
+Next number: **050**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.
