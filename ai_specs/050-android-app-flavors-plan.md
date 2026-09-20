@@ -77,7 +77,7 @@ Source: `ai_specs/050-android-app-flavors-spec.md`
 ### Phase 5 — Словарь, документация, скрипты
 **Goal:** ни один `ai_docs/` не описывает старый порядок сборки; новый термин записан в том же прогоне.
 
-- [ ] `ai_docs/GLOSSARY.md` — запись **Qorzhyn** (бренд; ярлыки `Qorzhyn` / `Qorzhyn Business`; `NOT Sarqyt` — прежнее имя, живущее в `package:sarqyt/`, `name:` в `pubspec.yaml` и ключах `appTitle` / `appTitleBusiness` до отдельной спеки); той же правкой развести **бизнес-приложение** (сборка) и **бизнес-консоль** (её web-развёртывание) _частично: запись `Qorzhyn` внесена досрочно по прямой просьбе пользователя после Phase 1; разведение «бизнес-приложение» / «бизнес-консоль» остаётся_
+- [x] `ai_docs/GLOSSARY.md` — запись **Qorzhyn** (бренд; ярлыки `Qorzhyn` / `Qorzhyn Business`; `NOT Sarqyt` — прежнее имя, живущее в `package:sarqyt/`, `name:` в `pubspec.yaml` и ключах `appTitle` / `appTitleBusiness` до отдельной спеки); той же правкой развести **бизнес-приложение** (сборка) и **бизнес-консоль** (её web-развёртывание) _(выполнено досрочно по прямой просьбе пользователя после Phase 1; R15 закрыт. Попутно найдена третья формулировка «веб-консоль для бизнеса» в `RELEASE_READINESS.md:24` — выравнивается в рамках R14 ниже)_
 - [ ] `ai_docs/RELEASE_READINESS.md` — блокеры 1 и 4 закрыты; название утверждено; схема идентификаторов зафиксирована
 - [ ] `ai_docs/EXTERNAL_SERVICES.md` — web собирается явным target'ом; `main.dart` (строка 88) больше не существует
 - [ ] `ai_docs/PROJECT.md:24-27` — `main.dart` → `main_business.dart`; команды сборки на flavor
