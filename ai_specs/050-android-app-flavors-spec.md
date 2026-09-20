@@ -52,7 +52,9 @@ Source request: «Разделить сборку на два приложени
 - Web собирается только для бизнес-консоли и flavor'ов не имеет: `--flavor` на web не применяется, разделение делает `-t` [L4].
 
 ### Error & recovery flows
-- `flutter run` или `flutter build apk` **без** `--flavor` при заведённых `flavorDimensions` падает на стороне Gradle с сообщением о неуказанном flavor'е. Это намеренное поведение: раньше та же команда молча собирала бизнес-приложение (блокер №4). Восстановление — указать flavor и target.
+- `flutter build apk` **совсем без флагов** падает на резолве target'а: `Target file "lib/main.dart" not found`. До Gradle дело не доходит, про flavor'ы в сообщении ничего нет. Восстановление — указать и `-t`, и `--flavor`.
+- `flutter build apk -t lib/main_business.dart` **без `--flavor`** запускает `assembleDebug`. При заведённых `flavorDimensions` этот таск не производит ни одного варианта, и на чистом `build/` Flutter падает с `Gradle build failed to produce an .apk file`. Сообщение тоже не называет flavor — диагностировать по нему трудно, но молчаливой сборки бизнес-приложения (блокер №4) больше нет. Восстановление — добавить `--flavor`.
+- **Та же команда при непустом `build/` — ловушка**: если в `build/app/outputs/flutter-apk/` лежит `app-debug.apk` от досборочной эпохи, Flutter печатает `✓ Built .../app-debug.apk` и завершается успешно, показывая на протухший артефакт с `applicationId = com.example.sarqyt`. Сборка при этом не произошла. Проверено 2026-09-20 в Phase 1: `build/app/outputs/apk/debug/output-metadata.json` содержал старый `applicationId` и дату предыдущей сборки. Восстановление — `flutter clean` или удаление `build/app/outputs/apk/debug/`; профилактика — всегда указывать `--flavor`, что и делает CI (R9).
 - `flutter run -t lib/main.dart` падает: файла больше нет. Восстановление — `lib/main_business.dart`.
 - Сборка flavor'а, для которого не положен `google-services.json`, **проходит успешно**: плагин не подключён, файл сборкой не читается. Приложение соберётся и запустится — конфигурацию Firebase оно берёт из `firebase_options_*.dart`. Это осознанно принятая слепая зона, а не упущение.
 - `package_name` в `google-services.json` разъехался с `applicationId` flavor'а → ни сборка, ни рантайм этого не заметят. Единственный, кто ловит расхождение, — тест R11, и только у разработчика, у которого файлы лежат локально. На CI (файлов нет) эта проверка пропускается — см. R11.
@@ -160,14 +162,15 @@ Source request: «Разделить сборку на два приложени
 **Manual QA scenarios:**
 1. **QA-1 (установка рядом).** Given чистое устройство, when выполнены `flutter run --flavor client -t lib/main_client.dart` и затем `flutter run --flavor business -t lib/main_business.dart`, then на устройстве два ярлыка — «Qorzhyn» и «Qorzhyn Business» — с разными иконками, каждый открывает своё приложение, ни один не заменил другой.
 2. **QA-2 (пуши по аудиториям).** Given обе сборки установлены и в обеих выполнен вход под одним аккаунтом, when открыт документ `users/{uid}`, then в нём заполнены оба поля — `fcmTokenClient` и `fcmTokenBusiness`, значения различаются; when заведение переводит заказ в `readyForPickup`, then уведомление приходит в клиентское приложение и не приходит в бизнесовое.
-3. **QA-3 (нет дефолтного target'а).** Given рабочее дерево после изменений, when выполнено `flutter build apk` без флагов, then сборка падает с сообщением о неуказанном flavor'е, а не собирает бизнес-приложение молча.
+3. **QA-3 (нет дефолтного target'а).** Given рабочее дерево после изменений и **чистый `build/`** (`flutter clean`), when выполнено `flutter build apk` без флагов, then сборка падает на `Target file "lib/main.dart" not found`; when выполнено `flutter build apk -t lib/main_business.dart` без `--flavor`, then сборка падает на `Gradle build failed to produce an .apk file`. Ни один из двух случаев не собирает бизнес-приложение молча — это и есть закрытый блокер №4. Чистый `build/` в предусловии обязателен: без него второй случай даёт ложный успех на протухшем `app-debug.apk` (см. Error flows).
 4. **QA-4 (web-консоль).** Given PR с этими изменениями, when отработал `firebase-hosting-pull-request.yml`, then превью открывает бизнес-консоль, как и до спеки.
 5. **QA-5 (release-сборки).** Given настроенный SDK, when выполнены `flutter build apk --release` для обоих flavor'ов, then оба APK собираются (подпись остаётся debug-ключом — блокер №2 вне спеки).
 
 **Expected behavior under edge conditions:**
 - Отсутствует `google-services.json` у flavor'а → сборка проходит: плагин не подключён, файл в неё не входит. Условная проверка R11 при этом пропускается.
 - `package_name` разъехался с `applicationId` → красный `flutter test` (R11) у разработчика с файлами на диске. На CI не ловится ничем — принятая слепая зона решения «плагин не подключаем».
-- Собирают без `--flavor` → падение Gradle; это и есть заменённое поведение блокера №4.
+- Собирают без `--flavor` на чистом `build/` → `Gradle build failed to produce an .apk file`. Падение есть, но flavor в сообщении не назван: это заменённое поведение блокера №4, а не удобная диагностика.
+- Собирают без `--flavor` при непустом `build/` → ложный успех на протухшем `app-debug.apk`. Единственная оставшаяся дыра блокера №4; на CI закрыта явным `--flavor` (R9), локально — только дисциплиной и `flutter clean`.
 - Собирают `-t lib/main.dart` → файла нет, внятная ошибка Flutter.
 
 ## Открытые вопросы
