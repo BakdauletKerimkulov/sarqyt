@@ -27,8 +27,8 @@ Source: `ai_specs/050-android-app-flavors-spec.md`
 - **Testing convention:** `ai_toolkit/testing.md` («Test seams»: набор фиксирован, новый требует письменного обоснования); `test/` зеркалит `lib/`, тест ложится в `test/src/app/`.
 - **Lint + test command:** `./scripts/gate.sh` (тир 0: `dart format --output=none --set-exit-if-changed`, `flutter analyze --fatal-infos --fatal-warnings`, `dart run custom_lint`, `flutter test --exclude-tags golden`; тир 1: functions + rules в эмуляторе). Внутри фазы — `./scripts/gate.sh --fast`.
 - **Assumptions / Gaps:**
-  - **L6/L7 в ledger отсутствуют.** Спека («Открытые вопросы») сама фиксирует: решения ревью 2026-09-20 — (а) `com.google.gms.google-services` не подключаем, (б) `google-services.json` не коммитим — в ledger не записаны. R4, R9 и R11 на них опираются. Ledger правит человек; записи нужно добавить до `/work`. План следует спеке и в ledger не пишет.
-  - **Статус спеки — `refined`, не `approved`.** По C5 код для не-approved спеки не пишется: перед `/work` статус поднимается человеком.
+  - ~~**L6/L7 в ledger отсутствуют.**~~ Закрыто 2026-09-20 после Phase 1: записи [L6] и [L7] внесены со `Status: current`, покрытие проставлено в R4, R9, R11 и Out of Scope. Записи реконструированы из текста спеки, а не из стенограммы — пометка о происхождении стоит в ledger над ними.
+  - ~~**Статус спеки — `refined`, не `approved`.**~~ Закрыто: спека и план переведены в `in-progress` перед Phase 1.
   - **`flutterfire configure` интерактивен** и требует доступа к Firebase-проекту `sarqyt-1ab95`. Phase 2 не автоматизируется агентом целиком — регистрацию двух Android-приложений выполняет человек.
   - **Иконка бизнес-приложения** — `assets/app-icon-2.png`, рабочий файл, не утверждённый бренд-ассет. Появится настоящая пара — R7 меняет два пути.
   - **Версия Java для сборки APK в `analyze-and-test` — 17** (R9). Соседняя джоба `functions-lint` пинит 21 для эмулятора; расхождение намеренное и не выравнивается в этой спеке.
