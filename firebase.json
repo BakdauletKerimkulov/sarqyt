@@ -2,10 +2,17 @@
   "flutter": {
     "platforms": {
       "android": {
-        "default": {
-          "projectId": "sarqyt-1ab95",
-          "appId": "1:1072615959986:android:318d2efa603e412988c8ab",
-          "fileOutput": "android/app/google-services.json"
+        "buildConfigurations": {
+          "src/client": {
+            "projectId": "sarqyt-1ab95",
+            "appId": "1:1072615959986:android:1c4694c78524a4ec88c8ab",
+            "fileOutput": "android/app/src/client/google-services.json"
+          },
+          "src/business": {
+            "projectId": "sarqyt-1ab95",
+            "appId": "1:1072615959986:android:43deb267612960d888c8ab",
+            "fileOutput": "android/app/src/business/google-services.json"
+          }
         }
       },
       "ios": {
@@ -17,11 +24,17 @@
         }
       },
       "dart": {
-        "lib/firebase_options.dart": {
+        "lib/firebase_options_client.dart": {
           "projectId": "sarqyt-1ab95",
           "configurations": {
-            "android": "1:1072615959986:android:318d2efa603e412988c8ab",
-            "ios": "1:1072615959986:ios:c061e01ea24d05b588c8ab",
+            "android": "1:1072615959986:android:1c4694c78524a4ec88c8ab",
+            "ios": "1:1072615959986:ios:c061e01ea24d05b588c8ab"
+          }
+        },
+        "lib/firebase_options_business.dart": {
+          "projectId": "sarqyt-1ab95",
+          "configurations": {
+            "android": "1:1072615959986:android:43deb267612960d888c8ab",
             "web": "1:1072615959986:web:845a0a4381e8a2b188c8ab"
           }
         }
