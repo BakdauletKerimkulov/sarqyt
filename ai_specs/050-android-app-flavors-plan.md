@@ -60,11 +60,11 @@ Source: `ai_specs/050-android-app-flavors-spec.md`
 ### Phase 3 — Иконки на flavor
 **Goal:** два разных ярлыка на устройстве; генерация не задевает web/iOS/macOS/windows.
 
-- [ ] `flutter_launcher_icons-client.yaml` — `image_path: assets/app-icon.png`, `android: "flutter_launcher_icons"`, `ios: false`, `web.generate: false`, `macos.generate: false`, `windows.generate: false`
-- [ ] `flutter_launcher_icons-business.yaml` — то же с `assets/app-icon-2.png`; имя ресурса **совпадает** с клиентским, иначе манифест разрешится в оставшийся файл из `main` и оба приложения получат одну иконку
-- [ ] `pubspec.yaml:124-136` — секцию `flutter_icons:` удалить
-- [ ] `android/app/src/main/res/mipmap-*/flutter_launcher_icons.png` — удалить общий ресурс: пока он в `main`, подмена иконки останется незамеченной до установки
-- [ ] Verify: `dart run flutter_launcher_icons` для обоих конфигов создаёт ресурсы в `android/app/src/client/res/` и `android/app/src/business/res/`; `git status` не показывает изменений в `web/`, `ios/`, `macos/`, `windows/`; `./scripts/gate.sh`
+- [x] `flutter_launcher_icons-client.yaml` — `image_path: assets/app-icon.png`, `android: "flutter_launcher_icons"`, `ios: false`, `web.generate: false`, `macos.generate: false`, `windows.generate: false` _(ключ верхнего уровня — `flutter_launcher_icons:`, не `flutter_icons:`: последний в отдельном файле у 0.14.4 deprecated и печатает warning)_
+- [x] `flutter_launcher_icons-business.yaml` — то же с `assets/app-icon-2.png`; имя ресурса **совпадает** с клиентским, иначе манифест разрешится в оставшийся файл из `main` и оба приложения получат одну иконку
+- [x] `pubspec.yaml:124-136` — секцию `flutter_icons:` удалить _(она и так перестала читаться: при наличии `flutter_launcher_icons-*.yaml` пакет уходит в ветку flavor'ов и конфиг из `pubspec.yaml` игнорирует целиком — `flutter_launcher_icons-0.14.4/lib/main.dart:72-125`)_
+- [x] `android/app/src/main/res/mipmap-*/flutter_launcher_icons.png` — удалить общий ресурс: пока он в `main`, подмена иконки останется незамеченной до установки _(удалены все пять плотностей. Рядом в тех же каталогах остались `flutter_icons.png` и `ic_launcher.png` — мусор от прежних прогонов, манифестом не используется; не трогал, чтобы не чинить попутно)_
+- [x] Verify: `dart run flutter_launcher_icons` для обоих конфигов создаёт ресурсы в `android/app/src/client/res/` и `android/app/src/business/res/`; `git status` не показывает изменений в `web/`, `ios/`, `macos/`, `windows/`; `./scripts/gate.sh` _(прогон без `-f` сам нашёл оба конфига по маске `flutter_launcher_icons-(.*).yaml` и отработал по каждому flavor'у; по пять mipmap-плотностей в каждом каталоге, хеши клиентской и бизнесовой иконки различаются; `git status` до и после прогона отличается только двумя новыми каталогами — `web/`, `macos/`, `windows/` не тронуты, изменения в `ios/` — из работы до этой фазы)_
 
 ### Phase 4 — CI и launch-конфигурации
 **Goal:** оба flavor'а собираются на PR; web-workflow'ы и обе launch-конфигурации живут без дефолтного target'а.

@@ -121,22 +121,6 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
-flutter_icons:
-  android: "flutter_launcher_icons"
-  ios: true
-  image_path: "assets/app-icon.png"
-  remover_alpha_ios: true
-  web:
-    generate: true
-    image_path: "assets/app-icon.png"
-    background_color: "#FFFFFF"
-  windows:
-    generate: true
-    icon_size: 48
-  macos:
-    generate: true
-    image_path: "assets/app-icon.png"
-
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is
