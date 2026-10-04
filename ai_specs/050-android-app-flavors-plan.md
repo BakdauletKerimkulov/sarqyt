@@ -71,6 +71,61 @@ Source: `ai_specs/050-android-app-flavors-spec.md`
 
 - [ ] `.github/workflows/ci.yml` — в джобу `analyze-and-test` добавить `actions/setup-java` (`distribution: temurin`, `java-version: "17"`) **перед** `subosito/flutter-action`, затем две сборки `flutter build apk --debug --flavor {client,business} -t lib/main_{client,business}.dart` после `flutter test`; `google-services.json` в джобу не прокидывается _blocked: `.github/workflows/` закрыт для агента permission settings и хуком `guard-edits.sh` («CI — внешний арбитр, изменения только вручную»); готовый диф передан человеку._
 - [ ] `.github/workflows/firebase-hosting-merge.yml` и `firebase-hosting-pull-request.yml` — `flutter build web -t lib/main_business.dart` _blocked: тот же запрет на `.github/workflows/`. Срочность выше, чем у остальной фазы: после Phase 1 обе джобы зовут `flutter build web` без `-t` и падают на отсутствующем дефолтном target'е._
+
+<details>
+<summary><b>Готовый диф для двух заблокированных задач выше</b> (правит человек: <code>.github/workflows/</code> закрыт для агента permission settings и хуком <code>guard-edits.sh</code>)</summary>
+
+```diff
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -12,6 +12,13 @@ jobs:
+         steps:
+             - uses: actions/checkout@v4
+ 
++            # JDK по умолчанию едет вместе с образом раннера и с AGP 8.9.1
++            # совпадает не гарантированно. Форма пина — как в functions-lint
++            # ниже, версия другая: там 21 для эмулятора, здесь 17 для AGP.
++            - uses: actions/setup-java@v4
++              with:
++                  distribution: temurin
++                  java-version: "17"
++
+             - uses: subosito/flutter-action@v2
+               with:
+                   channel: stable
+@@ -27,3 +34,10 @@ jobs:
+             - run: flutter analyze --no-fatal-warnings
+ 
+             - run: flutter test --exclude-tags golden
++
++            # Дефолтного target'а в проекте нет: обе сборки обязаны называть
++            # свой -t и свой --flavor. google-services.json в джобу не
++            # прокидывается — плагин не подключён, сборка от него не зависит [L6].
++            - run: flutter build apk --debug --flavor client -t lib/main_client.dart
++
++            - run: flutter build apk --debug --flavor business -t lib/main_business.dart
+--- a/.github/workflows/firebase-hosting-merge.yml
++++ b/.github/workflows/firebase-hosting-merge.yml
+@@ -19,7 +19,7 @@ jobs:
+       - name: Create .env for envied codegen
+         run: echo 'STADIA_MAPS_API_KEY=${{ secrets.STADIA_MAPS_API_KEY }}' > .env
+       - run: dart run build_runner build --delete-conflicting-outputs
+-      - run: flutter build web
++      - run: flutter build web -t lib/main_business.dart
+       - uses: FirebaseExtended/action-hosting-deploy@v0
+--- a/.github/workflows/firebase-hosting-pull-request.yml
++++ b/.github/workflows/firebase-hosting-pull-request.yml
+@@ -21,7 +21,7 @@ jobs:
+       - name: Create dummy .env for envied codegen
+         run: ...
+       - run: dart run build_runner build --delete-conflicting-outputs
+-      - run: flutter build web
++      - run: flutter build web -t lib/main_business.dart
+```
+
+Порядок применения: **сначала** два hosting-workflow'а — после удаления `lib/main.dart` обе джобы падают на отсутствующем дефолтном target'е, то есть деплой бизнес-консоли сломан в `main` независимо от этой ветки (отмечено в `ai_docs/EXTERNAL_SERVICES.md` и в блокере 4 `ai_docs/RELEASE_READINESS.md`). Пин JDK и сборки APK — вторым шагом, они только добавляют покрытие.
+
+</details>
 - [x] `.claude/launch.json:7` — `lib/main.dart` → `lib/main_business.dart` (файл отслеживается git'ом, после Phase 1 сломан в репозитории) _(`grep -c 'lib/main\.dart' .claude/launch.json` = 0)_
 - [x] `.gitignore` — `!.vscode/launch.json` после строки `.vscode/`, иначе правка R12 невидима ревью _(одного `!` не хватило: при `.vscode/` git отсекает обход каталога целиком и отрицание внутри него не действует — строка исключения заменена на `.vscode/*`. Проверено: `git check-ignore -q .vscode/launch.json` → 1 (виден), для `.vscode/settings.json` → 0 (по-прежнему скрыт))_
 - [ ] `.vscode/launch.json` — четыре конфигурации (Client/Business × Android/Web), каждая с `-t`, Android — ещё и с `--flavor`; существующие `Client (iOS)` и compound `Both: Business (Web) + Client (iOS)` сохранить, добавив `-t` _blocked: правка внесена, но названная в R12 проверка — «запуск каждой конфигурации из VS Code ставит ожидаемое приложение» — выполняется человеком, агент её провести не может. Форма конфигураций: точку входа в Dart-Code задаёт `program` (не `-t`), аргументы flutter-тула — `toolArgs` (не `args`: там аргументы самого приложения), устройство — `deviceId`. У web-конфигураций `deviceId: chrome` — настоящий id устройства; у Android-конфигураций устройство не фиксируется вовсе: `-d android` ничему не соответствует (flutter резолвит `-d` по точному или префиксному совпадению id/имени, серийник `emulator-5554` с «android» не начинается), и штатный путь — устройство, выбранное в VS Code. Первая версия этой правки положила `-d` и `--flavor` в `args`, где они до `flutter run` не доезжают — поймано ревью, исправлено. Попутно выяснилось, что прежние `"args": ["-d", "chrome"]` в этом файле не действовали никогда. `Business (Web)` переведён с `lib/main.dart`, добавлена недостающая `Business (Android)`; `Client (iOS)` и compound сохранены._
