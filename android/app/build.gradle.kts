@@ -1,5 +1,10 @@
 plugins {
     id("com.android.application")
+    // Google Services / Crashlytics Gradle plugins are deliberately NOT applied
+    // (spec 050, [L6]). `flutterfire configure` re-adds them on every run —
+    // strip the "FlutterFire Configuration" block again when it does.
+    // Consequence: google-services.json is never read at build time, so the
+    // package_name <-> applicationId check lives only in the R11 test.
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
