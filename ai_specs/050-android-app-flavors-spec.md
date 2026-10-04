@@ -142,7 +142,7 @@ Source request: «Разделить сборку на два приложени
 
 - **Переименование Dart-пакета** `sarqyt` → `qorzhyn`, `name` в `pubspec.yaml`, ключей `appTitle` / `appTitleBusiness` в трёх `.arb`, `web/index.html`, `web/manifest.json` — 243 файла, отдельный класс риска, отдельная спека до публикации в Play [L1].
 - **Upload keystore и подпись release-сборки** (блокер №2 в `RELEASE_READINESS.md`) — не зависит от flavor'ов, требует работы с секретами.
-- **iOS и macOS**: схемы, `xcconfig`, bundle ID остаются как есть [L5]. Нет аккаунта разработчика Apple; целевая платформа релиза — Android плюс веб-консоль.
+- **iOS и macOS**: схемы, `xcconfig`, bundle ID остаются как есть [L5]. Нет аккаунта разработчика Apple; целевая платформа релиза — Android плюс бизнес-консоль.
 - **Firebase prod-проект `qorzhyn-prod` и переезд региона** — план 047, заблокирован отдельно.
 - **Клиентская web-сборка и hosting targets** [L4]: клиент остаётся mobile-only, как записано в `ai_docs/EXTERNAL_SERVICES.md`.
 - **Суффикс `.dev` для отладочных сборок** [L3] — пересматривается, когда появится prod-проект.
@@ -163,7 +163,7 @@ Source request: «Разделить сборку на два приложени
 1. **QA-1 (установка рядом).** Given чистое устройство, when выполнены `flutter run --flavor client -t lib/main_client.dart` и затем `flutter run --flavor business -t lib/main_business.dart`, then на устройстве два ярлыка — «Qorzhyn» и «Qorzhyn Business» — с разными иконками, каждый открывает своё приложение, ни один не заменил другой.
 2. **QA-2 (пуши по аудиториям).** Given обе сборки установлены и в обеих выполнен вход под одним аккаунтом, when открыт документ `users/{uid}`, then в нём заполнены оба поля — `fcmTokenClient` и `fcmTokenBusiness`, значения различаются; when заведение переводит заказ в `readyForPickup`, then уведомление приходит в клиентское приложение и не приходит в бизнесовое.
 3. **QA-3 (нет дефолтного target'а).** Given рабочее дерево после изменений и **чистый `build/`** (`flutter clean`), when выполнено `flutter build apk` без флагов, then сборка падает на `Target file "lib/main.dart" not found`; when выполнено `flutter build apk -t lib/main_business.dart` без `--flavor`, then сборка падает на `Gradle build failed to produce an .apk file`. Ни один из двух случаев не собирает бизнес-приложение молча — это и есть закрытый блокер №4. Чистый `build/` в предусловии обязателен: без него второй случай даёт ложный успех на протухшем `app-debug.apk` (см. Error flows).
-4. **QA-4 (web-консоль).** Given PR с этими изменениями, when отработал `firebase-hosting-pull-request.yml`, then превью открывает бизнес-консоль, как и до спеки.
+4. **QA-4 (бизнес-консоль).** Given PR с этими изменениями, when отработал `firebase-hosting-pull-request.yml`, then превью открывает бизнес-консоль, как и до спеки.
 5. **QA-5 (release-сборки).** Given настроенный SDK, when выполнены `flutter build apk --release` для обоих flavor'ов, then оба APK собираются (подпись остаётся debug-ключом — блокер №2 вне спеки).
 
 **Expected behavior under edge conditions:**

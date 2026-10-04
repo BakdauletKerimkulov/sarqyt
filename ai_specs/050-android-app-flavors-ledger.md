@@ -44,7 +44,7 @@ Constraints:
 Status: deferred
 Question: Заводить ли flavor'ы, схемы и bundle ID на iOS в этой же работе?
 Answer: —
-Reason: Нет аккаунта разработчика Apple; целевая платформа релиза — Android + веб-консоль (`ai_docs/RELEASE_READINESS.md`). iOS остаётся на `com.example.sarqyt` и после удаления `lib/main.dart` требует явный `-t`.
+Reason: Нет аккаунта разработчика Apple; целевая платформа релиза — Android + бизнес-консоль (`ai_docs/RELEASE_READINESS.md`). iOS остаётся на `com.example.sarqyt` и после удаления `lib/main.dart` требует явный `-t`.
 
 <!-- L6 и L7 записаны 2026-09-20 постфактум, после ревью /refine того же дня.
      Восстановлены из раздела «Открытые вопросы» спеки, который их и требовал;
