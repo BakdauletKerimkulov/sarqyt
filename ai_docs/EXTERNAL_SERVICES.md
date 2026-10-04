@@ -1,4 +1,4 @@
-# External Services — Sarqyt-Specific Decisions
+# External Services — Qorzhyn-Specific Decisions
 
 Non-obvious choices around external services, regions, and environment configuration. Universal Firebase patterns (emulators, auth, rules) are in `ai_toolkit/guidelines/firebase.md`.
 
@@ -37,7 +37,7 @@ Non-obvious choices around external services, regions, and environment configura
 
 ## Firebase API Keys: Public by Design
 
-**Decision:** Firebase API keys in `firebase_options.dart` (`AIza...`) are committed to the repo and shipped in every app binary. This is normal and intended.
+**Decision:** Firebase API keys in `firebase_options_client.dart` and `firebase_options_business.dart` (`AIza...`) are committed to the repo and shipped in every app binary. This is normal and intended. (There is one generated file per flavor; the shared `firebase_options.dart` was removed by spec 050.)
 
 **Why:** A Firebase API key is a project identifier, not an access credential. It grants no data access — data protection comes from Firestore/Storage security rules. The key is trivially extractable from any APK/IPA, so "hiding" it in `.env` or rewriting git history provides zero security and breaks `flutterfire configure` regeneration.
 
@@ -85,7 +85,7 @@ GitHub secret-scanning alerts on these keys are pattern-based false positives: r
 }
 ```
 
-**Why:** There is no multi-site setup, no `"target"` field. The config is flavor-agnostic — it deploys whatever was last built into `build/web`. The convention is to build and deploy only the business app (`main.dart` flavor) for web. The client app is mobile-only for now.
+**Why:** There is no multi-site setup, no `"target"` field. The config does not select an app at all — it deploys whatever was last built into `build/web` (and web has no flavors to choose between; the entry point does the choosing). Only the business console is built for web, and the target must be named explicitly: `flutter build web -t lib/main_business.dart`. There is no default target to fall back on, so a web build that omits `-t` fails rather than deploying the wrong app. **Known broken:** the two hosting workflows (`firebase-hosting-merge.yml`, `firebase-hosting-pull-request.yml`) still run `flutter build web` without `-t` and therefore fail — fixing those two lines is an open task of spec 050, Phase 4. The client app is mobile-only for now.
 
 > **AI warning:** If adding a second hosting site (e.g., client web app), you need Firebase multi-site hosting with named targets — the current single-block config won't work for two apps.
 

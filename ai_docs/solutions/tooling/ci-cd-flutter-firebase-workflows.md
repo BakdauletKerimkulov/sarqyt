@@ -15,7 +15,7 @@ Fixed GitHub Actions workflows to handle `.env`/codegen, Firestore index deploym
 - **Dummy `.env` for CI when using `envied`** — when `@Envied` reads a gitignored `.env` at codegen time, CI has no `.env` and `build_runner` fails silently or produces missing files. Add `echo 'KEY=placeholder' > .env` before `build_runner` in every workflow that runs codegen. _Applied in: `.github/workflows/ci.yml`, `firebase-hosting-merge.yml`, `firebase-hosting-pull-request.yml`._
 - **`--no-fatal-warnings` for `flutter analyze` in CI** — `freezed` generates `duplicate_ignore` pragmas that produce warnings. These can't be suppressed at the source (generated code). Use `flutter analyze --no-fatal-warnings` to prevent CI failure on generated-code warnings while still catching real errors.
 - **`--only firestore` deploys both rules AND indexes** — `firebase deploy --only firestore:rules` skips composite indexes. Use `--only firestore` to deploy everything under the `firestore` target (rules + indexes). Check `firebase.json` to confirm both `firestore.rules` and `firestore.indexes.json` are referenced.
-- **Every `flutter build web` workflow needs `build_runner`** — if any `.g.dart` file is gitignored or stale, web compilation fails. Always run `dart run build_runner build --delete-conflicting-outputs` before `flutter build web` in hosting workflows.
+- **Every `flutter build web` workflow needs `build_runner`** — if any `.g.dart` file is gitignored or stale, web compilation fails. Always run `dart run build_runner build --delete-conflicting-outputs` before `flutter build web -t lib/main_business.dart` in hosting workflows. (The `-t` is mandatory since spec 050 removed the default entry point; a command without it fails.)
 
 ## Pitfalls
 
