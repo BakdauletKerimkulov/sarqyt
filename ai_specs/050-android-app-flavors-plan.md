@@ -70,7 +70,7 @@ Source: `ai_specs/050-android-app-flavors-spec.md`
 **Goal:** оба flavor'а собираются на PR; web-workflow'ы и обе launch-конфигурации живут без дефолтного target'а.
 
 - [ ] `.github/workflows/ci.yml` — в джобу `analyze-and-test` добавить `actions/setup-java` (`distribution: temurin`, `java-version: "17"`) **перед** `subosito/flutter-action`, затем две сборки `flutter build apk --debug --flavor {client,business} -t lib/main_{client,business}.dart` после `flutter test`; `google-services.json` в джобу не прокидывается _blocked: `.github/workflows/` закрыт для агента permission settings и хуком `guard-edits.sh` («CI — внешний арбитр, изменения только вручную»); готовый диф передан человеку._
-- [ ] `.github/workflows/firebase-hosting-merge.yml` и `firebase-hosting-pull-request.yml` — `flutter build web -t lib/main_business.dart` _blocked: тот же запрет на `.github/workflows/`. Срочность выше, чем у остальной фазы: после Phase 1 обе джобы зовут `flutter build web` без `-t` и падают на отсутствующем дефолтном target'е._
+- [x] `.github/workflows/firebase-hosting-merge.yml` и `firebase-hosting-pull-request.yml` — `flutter build web -t lib/main_business.dart` _(применено человеком 2026-10-11; агенту `.github/workflows/` закрыт правами и хуком. Проверено: `grep -rn 'flutter build web' .github/workflows/` даёт две строки, обе с `-t`. Деплой бизнес-консоли, сломанный с момента переименования `lib/main.dart`, этим починен)_
 
 <details>
 <summary><b>Готовый диф для двух заблокированных задач выше</b> (правит человек: <code>.github/workflows/</code> закрыт для агента permission settings и хуком <code>guard-edits.sh</code>)</summary>
