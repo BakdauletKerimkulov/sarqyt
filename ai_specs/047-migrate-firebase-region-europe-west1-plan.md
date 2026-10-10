@@ -1,10 +1,9 @@
 ---
 title: Переезд Firebase в europe-west1
-status: blocked
+status: approved
 date: 2026-08-04
-updated: 2026-08-06
+updated: 2026-09-09
 type: infrastructure
-blocked_by: не утверждено название продукта — см. ai_docs/RELEASE_READINESS.md, раздел «Бренд»
 ---
 
 # Plan: Переезд Firebase в europe-west1
@@ -13,11 +12,13 @@ Source: замеры latency из Казахстана + ревью готовн
 
 > ⛔ **НЕ ЗАПУСКАТЬ `/work` НА ЭТОМ ФАЙЛЕ.**
 >
-> Phase 1 содержит две **необратимые** облачные операции — создание Firestore и создание бакета. Регион и имя проекта после этого не меняются никогда. Плюс план заблокирован: название продукта не утверждено, а Firebase project ID протекает в пользовательские URL.
+> Phase 1 содержит две **необратимые** облачные операции — создание Firestore и создание бакета. Регион и имя проекта после этого не меняются никогда.
 >
 > Каждый шаг выполняется вручную с подтверждением человека.
 >
-> **Предусловие:** сначала должен быть выполнен `ai_specs/archive/046-prepare-region-migration-plan.md` — без его Phase 1 переезд функций мгновенно ломает все callables на клиенте.
+> **Предусловия:**
+> - `ai_specs/archive/046-prepare-region-migration-plan.md` — без его Phase 1 переезд функций мгновенно ломает все callables на клиенте.
+> - `ai_specs/050-android-app-flavors-spec.md` — иначе Android-приложения регистрируются в новом проекте со старым `com.example.sarqyt` и перерегистрируются вторым кругом.
 
 ## Overview
 
@@ -38,19 +39,17 @@ Firestore проекта `sarqyt-1ab95` фактически находится 
 
 Целевое состояние: **один новый проект, всё в `europe-west1`** — Firestore, дефолтный бакет Storage, все функции без исключений. Старый `sarqyt-1ab95` остаётся как dev/staging — попутно закрывается отсутствие разделения окружений.
 
-## Блокировка по названию продукта
+## Название продукта
 
-Название меняется: `Sarqyt` → предварительно **`Qorzhyn`**. Причина и факты — в `ai_docs/RELEASE_READINESS.md`, раздел «Бренд». Коротко: `kz.sarqyt.app` занят живым листингом активного конкурента в Google Play, `sarqyt.com` — его же, package name в Play резервируется навсегда.
+Название изменено: `Sarqyt` → **`Qorzhyn`**, утверждено 2026-09-09. Причина и факты — в `ai_docs/RELEASE_READINESS.md`, раздел «Бренд». Коротко: `kz.sarqyt.app` занят живым листингом активного конкурента в Google Play, `sarqyt.com` — его же, package name в Play резервируется навсегда.
 
-**Имя не финальное** — требует подтверждения. До подтверждения не начинать Phase 1.
+Отсюда прод-проект называется `qorzhyn-prod`, а идентификаторы приложений — `kz.qorzhyn.app` и `kz.qorzhyn.business` (спека 050).
 
-Пустой проект `sarqyt-prod` создан 2026-08-06 и подлежит удалению:
+Пустой проект `sarqyt-prod` создан 2026-08-06 под старым именем и подлежит удалению:
 
 ```bash
 firebase projects:delete sarqyt-prod
 ```
-
-Всюду ниже `<name>` — финальное имя в нижнем регистре (например `qorzhyn`).
 
 ## Context
 
@@ -110,15 +109,15 @@ firebase projects:delete sarqyt-prod
 **Goal:** Доказать сквозной путь «клиент в KZ → callable в europe-west1 → Firestore в europe-west1».
 
 - [ ] `firebase projects:delete sarqyt-prod` — удалить пустой проект, созданный под старым именем
-- [ ] `firebase projects:create <name>-prod --display-name "<Name>"`
-- [ ] `gcloud billing projects link <name>-prod --billing-account=<id>` (Blaze нужен для Functions v2)
+- [ ] `firebase projects:create qorzhyn-prod --display-name "Qorzhyn"`
+- [ ] `gcloud billing projects link qorzhyn-prod --billing-account=<id>` (Blaze нужен для Functions v2)
 - [ ] `gcloud services enable` — firestore, cloudfunctions, run, eventarc, cloudbuild, artifactregistry, storage, identitytoolkit
-- [ ] ⚠️ **НЕОБРАТИМО:** `gcloud firestore databases create --location=europe-west1 --type=firestore-native --project=<name>-prod`
-- [ ] ⚠️ **НЕОБРАТИМО:** создать бакет явно — `gcloud storage buckets create gs://<name>-prod.firebasestorage.app --location=europe-west1`, затем привязать к Firebase. Не давать Firebase создать бакет самому: он возьмёт default resource location проекта
+- [ ] ⚠️ **НЕОБРАТИМО:** `gcloud firestore databases create --location=europe-west1 --type=firestore-native --project=qorzhyn-prod`
+- [ ] ⚠️ **НЕОБРАТИМО:** создать бакет явно — `gcloud storage buckets create gs://qorzhyn-prod.firebasestorage.app --location=europe-west1`, затем привязать к Firebase. Не давать Firebase создать бакет самому: он возьмёт default resource location проекта
 - [ ] Включить Auth (email/password), Messaging, Crashlytics
-- [ ] `.firebaserc` → алиасы `dev: sarqyt-1ab95`, `prod: <name>-prod`; дефолт оставить `dev`, чтобы случайный `firebase deploy` не уехал в прод
+- [ ] `.firebaserc` → алиасы `dev: sarqyt-1ab95`, `prod: qorzhyn-prod`; дефолт оставить `dev`, чтобы случайный `firebase deploy` не уехал в прод
 - [ ] Задеплоить **только** `reserveOffer` с `region: "europe-west1"`, создать один `offers/{id}` вручную
-- [ ] Собрать dev-билд клиента на временном `firebase_options.dart` от нового проекта, забронировать с физического устройства в KZ
+- [ ] Собрать dev-билд клиента на временном `firebase_options_client.dart` от нового проекта (`--flavor client -t lib/main_client.dart`), забронировать с физического устройства в KZ
 - [ ] Замерить `reserveOffer` до и после, зафиксировать выигрыш в этом файле
 - [ ] Verify: заказ создан, время отклика измерено и записано
 
@@ -144,7 +143,7 @@ firebase projects:delete sarqyt-prod
 ### Phase 4 — Пользователи, конфиги, ссылки
 
 - [ ] Пользователи: рабочих аккаунтов 2 (оба разработчики). `auth:import` с параметрами scrypt дороже результата — **создать 2 аккаунта заново** и выставить claims `{"role":"partner","canCreateStore":true}` скриптом на admin SDK; `test@test.com` не переносить
-- [ ] `flutterfire configure --project=<name>-prod` → пересобрать `lib/firebase_options.dart` и `android/app/google-services.json`
+- [ ] `flutterfire configure --project=qorzhyn-prod` **дважды**, по одному разу на flavor: `kz.qorzhyn.app` → `lib/firebase_options_client.dart` + `android/app/src/client/google-services.json`, `kz.qorzhyn.business` → `lib/firebase_options_business.dart` + `android/app/src/business/google-services.json` (спека 050). Одного приложения на оба flavor'а недостаточно — `package_name` обязан совпадать с `applicationId`
 - [ ] `firebase.json` → секция `flutter.platforms`: новые `projectId`/`appId`
 - [ ] Задеплоить `public/privacy-policy.html` и `terms-of-service.html` на хостинг нового проекта
 - [ ] `app_settings_screen.dart` — заменить захардкоженные `https://sarqyt-1ab95.web.app/...` на новый домен; вынести в константу рядом с прочими внешними URL
@@ -152,7 +151,7 @@ firebase projects:delete sarqyt-prod
 
 ### Phase 5 — CI/CD и вывод старого проекта из прода
 
-- [ ] Service account в новом проекте → GitHub Secret `FIREBASE_SERVICE_ACCOUNT_<NAME>_PROD`
+- [ ] Service account в новом проекте → GitHub Secret `FIREBASE_SERVICE_ACCOUNT_QORZHYN_PROD`
 - [ ] `.github/workflows/deploy.yml` — новый секрет, `--project prod` в аргументах
 - [ ] `firebase-hosting-merge.yml` / `firebase-hosting-pull-request.yml` — новый `projectId` и секрет
 - [ ] `ai_docs/PROJECT.md` + `EXTERNAL_SERVICES.md` + `RELEASE_READINESS.md` — новый projectId, регион, схема окружений dev/prod
@@ -167,9 +166,10 @@ firebase projects:delete sarqyt-prod
 
 ## Оценка
 
-Phase 1 — полдня. Phases 2–3 — день. Phases 4–5 — день с прогонами QA. Итого ~2.5 дня после утверждения имени, из них необратимых решений на 10 минут.
+Phase 1 — полдня. Phases 2–3 — день. Phases 4–5 — день с прогонами QA. Итого ~2.5 дня, из них необратимых решений на 10 минут.
 
 ## См. также
 
 - `ai_specs/archive/046-prepare-region-migration-plan.md` — подготовка, выполняется до этого плана и не зависит от названия
+- `ai_specs/050-android-app-flavors-spec.md` — flavors и финальные `applicationId`; выполняется до Phase 4
 - `ai_docs/RELEASE_READINESS.md` — блокеры релиза, решения, раздел «Бренд»
