@@ -4,7 +4,7 @@
     {
       "name": "business-web",
       "runtimeExecutable": "flutter",
-      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "7357", "-t", "lib/main.dart"],
+      "runtimeArgs": ["run", "-d", "web-server", "--web-port", "7357", "-t", "lib/main_business.dart"],
       "port": 7357
     }
   ]

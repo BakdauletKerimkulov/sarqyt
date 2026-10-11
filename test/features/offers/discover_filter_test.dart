@@ -11,6 +11,7 @@ OfferWithDistance _makeOWD({
   double price = 1500,
   double? distanceKm,
   DateTime? pickupStart,
+  String itemName = 'Bag',
 }) {
   final now = _testNow;
   return OfferWithDistance(
@@ -19,7 +20,7 @@ OfferWithDistance _makeOWD({
       storeId: storeId,
       productId: 'item1',
       quantity: 5,
-      name: 'Bag',
+      name: itemName,
       price: price,
       currencyCode: 'KZT',
       currencySymbol: '₸',
@@ -127,6 +128,43 @@ void main() {
       for (final o in result) {
         expect(o.offer.price <= 2000, true);
       }
+    });
+
+    test('empty searchQuery returns all', () {
+      const filter = DiscoverFilter(searchQuery: '');
+      final result = applyFilter(offers, filter, {}, today);
+      expect(result.length, 3);
+    });
+
+    test('searchQuery matches store name, case-insensitive', () {
+      const filter = DiscoverFilter(searchQuery: 'store s2');
+      final result = applyFilter(offers, filter, {}, today);
+      expect(result.length, 1);
+      expect(result.single.offer.storeId, 's2');
+    });
+
+    test('searchQuery matches item name, case-insensitive', () {
+      final withNames = [
+        _makeOWD(storeId: 's1'),
+        _makeOWD(storeId: 's2', itemName: 'Croissant box'),
+      ];
+      const filter = DiscoverFilter(searchQuery: 'croissant');
+      final result = applyFilter(withNames, filter, {}, today);
+      expect(result.length, 1);
+      expect(result.single.offer.storeId, 's2');
+    });
+
+    test('searchQuery with no matches returns empty', () {
+      const filter = DiscoverFilter(searchQuery: 'nonexistent xyz');
+      final result = applyFilter(offers, filter, {}, today);
+      expect(result, isEmpty);
+    });
+
+    test('searchQuery combines with other filters', () {
+      const filter = DiscoverFilter(searchQuery: 'store s1', maxPrice: 2500);
+      final result = applyFilter(offers, filter, {}, today);
+      expect(result.length, 1);
+      expect(result.single.offer.storeId, 's1');
     });
   });
 

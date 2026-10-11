@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
-/// import 'firebase_options.dart';
+/// import 'firebase_options_client.dart';
 /// // ...
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -46,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCiR1zTvxcU7JC3_KJIhU3N3mSjFS93spE',
-    appId: '1:1072615959986:web:845a0a4381e8a2b188c8ab',
-    messagingSenderId: '1072615959986',
-    projectId: 'sarqyt-1ab95',
-    authDomain: 'sarqyt-1ab95.firebaseapp.com',
-    storageBucket: 'sarqyt-1ab95.firebasestorage.app',
-    measurementId: 'G-R0YWR59YG7',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBIYIPEO-hhHYcWlnEkP3dM1TqtMEuo1Ac',
-    appId: '1:1072615959986:android:318d2efa603e412988c8ab',
+    appId: '1:1072615959986:android:1c4694c78524a4ec88c8ab',
     messagingSenderId: '1072615959986',
     projectId: 'sarqyt-1ab95',
     storageBucket: 'sarqyt-1ab95.firebasestorage.app',

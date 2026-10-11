@@ -1,19 +1,22 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/exceptions/error_logger.dart';
+import 'package:sarqyt/src/features/store/data/store_ship_repository.dart';
 import 'package:sarqyt/src/features/store/domain/store_ship.dart';
 import 'package:sarqyt/src/localization/string_hardcoded.dart';
+import 'package:sarqyt/src/utils/async_value_ui.dart';
 
-class InviteMemberDialog extends StatefulWidget {
+class InviteMemberDialog extends ConsumerStatefulWidget {
   const InviteMemberDialog({super.key, required this.storeId});
 
   final String storeId;
 
   @override
-  State<InviteMemberDialog> createState() => _InviteMemberDialogState();
+  ConsumerState<InviteMemberDialog> createState() => _InviteMemberDialogState();
 }
 
-class _InviteMemberDialogState extends State<InviteMemberDialog> {
+class _InviteMemberDialogState extends ConsumerState<InviteMemberDialog> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   StoreRole _selectedRole = StoreRole.employer;
@@ -29,16 +32,17 @@ class _InviteMemberDialogState extends State<InviteMemberDialog> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
+    // Read before the await: `ref` throws once the dialog is disposed.
+    final logger = ref.read(errorLoggerProvider);
 
     try {
-      final callable = FirebaseFunctions.instance.httpsCallable(
-        'inviteTeamMember',
-      );
-      await callable.call<dynamic>({
-        'storeId': widget.storeId,
-        'email': _emailController.text.trim(),
-        'role': _selectedRole.name,
-      });
+      await ref
+          .read(storeShipRepositoryProvider)
+          .inviteTeamMember(
+            storeId: widget.storeId,
+            email: _emailController.text.trim(),
+            role: _selectedRole,
+          );
 
       if (mounted) {
         Navigator.of(context).pop();
@@ -46,12 +50,13 @@ class _InviteMemberDialogState extends State<InviteMemberDialog> {
           context,
         ).showSnackBar(SnackBar(content: Text('Invitation sent'.hardcoded)));
       }
-    } on FirebaseFunctionsException catch (e) {
+    } catch (e, st) {
+      logger.logError(e, st);
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message ?? 'Failed to invite'.hardcoded)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(humanReadableError(e))));
       }
     }
   }

@@ -1,0 +1,21 @@
+# Launcher icons for the business flavor (Qorzhyn Business).
+#
+# See flutter_launcher_icons-client.yaml for why this generates Android only.
+#
+# `android:` is deliberately the SAME resource name as in the client config —
+# the shared AndroidManifest.xml in src/main points at @mipmap/flutter_launcher_icons
+# and picks up whichever flavor's resource is in the build. Renaming it here is
+# how both apps end up with one icon.
+#
+# assets/app-icon-2.png is a working file, not an approved brand asset: when a
+# real pair arrives, this path and the client one change together.
+flutter_launcher_icons:
+  android: "flutter_launcher_icons"
+  ios: false
+  image_path: "assets/app-icon-2.png"
+  web:
+    generate: false
+  macos:
+    generate: false
+  windows:
+    generate: false

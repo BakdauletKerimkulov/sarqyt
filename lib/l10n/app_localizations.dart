@@ -538,6 +538,42 @@ abstract class AppLocalizations {
   /// **'Sign up your food business'**
   String get signUpYourBusiness;
 
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you a link to reset your password.'**
+  String get resetPasswordDescription;
+
+  /// No description provided for @sendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get sendResetLink;
+
+  /// No description provided for @resetLinkSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent. Check your inbox.'**
+  String get resetLinkSent;
+
+  /// No description provided for @sendResetLinkConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a password reset link to {email}?'**
+  String sendResetLinkConfirm(String email);
+
+  /// No description provided for @signOutConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need to log in again to access your account.'**
+  String get signOutConfirm;
+
   /// No description provided for @profile.
   ///
   /// In en, this message translates to:
@@ -759,6 +795,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No offers found'**
   String get noOffersFound;
+
+  /// No description provided for @searchOffersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by store or item'**
+  String get searchOffersHint;
 
   /// No description provided for @filters.
   ///

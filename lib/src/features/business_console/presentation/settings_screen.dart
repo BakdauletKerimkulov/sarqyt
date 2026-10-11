@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sarqyt/src/common_widgets/alert_dialogs.dart';
 import 'package:sarqyt/src/common_widgets/async_value_widget.dart';
 import 'package:sarqyt/src/common_widgets/outlined_section_widget.dart';
 import 'package:sarqyt/src/constants/app_colors.dart';
 import 'package:sarqyt/src/constants/app_sizes.dart';
+import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
+import 'package:sarqyt/src/features/business_console/presentation/settings/account_settings_controller.dart';
 import 'package:sarqyt/src/features/business_console/presentation/team/invite_member_dialog.dart';
 import 'package:sarqyt/src/features/store/data/store_repository.dart';
 import 'package:sarqyt/src/features/store/data/store_ship_repository.dart';
 import 'package:sarqyt/src/features/store/domain/store_ship.dart';
+import 'package:sarqyt/src/localization/string_hardcoded.dart';
 import 'package:sarqyt/src/routing/business_router.dart';
+import 'package:sarqyt/src/utils/async_value_ui.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -176,24 +181,89 @@ class StoreSettingsContent extends ConsumerWidget {
   }
 }
 
-class AccountSettingsContent extends StatelessWidget {
+// ignore: provider_dependencies
+class AccountSettingsContent extends ConsumerWidget {
   const AccountSettingsContent({super.key});
 
+  Future<void> _changePassword(BuildContext context, WidgetRef ref) async {
+    final email = ref.read(authRepositoryProvider).currentUser?.email;
+    if (email == null) return;
+
+    final confirmed = await showAlertDialog(
+      context: context,
+      title: context.loc.resetPasswordTitle,
+      content: context.loc.sendResetLinkConfirm(email),
+      cancelActionText: context.loc.cancel,
+      defaultActionText: context.loc.sendResetLink,
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final controller = ref.read(accountSettingsControllerProvider.notifier);
+    final success = await controller.sendPasswordReset(email);
+    if (success && context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.loc.resetLinkSent)));
+    }
+  }
+
+  Future<void> _signOut(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showAlertDialog(
+      context: context,
+      title: context.loc.areYouSure,
+      content: context.loc.signOutConfirm,
+      cancelActionText: context.loc.cancel,
+      defaultActionText: context.loc.logOut,
+    );
+    if (confirmed != true) return;
+    ref.read(accountSettingsControllerProvider.notifier).signOut();
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.person_outline, size: 48, color: Colors.grey),
-          SizedBox(height: 12),
-          Text(
-            'Account settings',
-            style: TextStyle(fontWeight: FontWeight.w600),
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(accountSettingsControllerProvider, (_, state) {
+      state.showAlertDialogOnError(context);
+    });
+    final state = ref.watch(accountSettingsControllerProvider);
+    final user = ref.watch(authRepositoryProvider).currentUser;
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(Sizes.p32),
+        child: OutlinedSectionWidgetWithHeader(
+          header: context.loc.account,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                context.loc.email,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(user?.email ?? '—'),
+              gapH24,
+              OutlinedButton.icon(
+                onPressed: state.isLoading
+                    ? null
+                    : () => _changePassword(context, ref),
+                icon: const Icon(Icons.lock_outline),
+                label: Text(context.loc.changePassword),
+              ),
+              gapH12,
+              OutlinedButton.icon(
+                onPressed: state.isLoading
+                    ? null
+                    : () => _signOut(context, ref),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  side: const BorderSide(color: Colors.red),
+                ),
+                icon: const Icon(Icons.logout_outlined),
+                label: Text(context.loc.logOut),
+              ),
+            ],
           ),
-          SizedBox(height: 4),
-          Text('Coming soon', style: TextStyle(color: Colors.grey)),
-        ],
+        ),
       ),
     );
   }

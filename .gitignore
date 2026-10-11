@@ -51,14 +51,24 @@ firebase-export-*/
 functions/build/
 
 # Platform secrets
-android/app/google-services.json
+# Per-flavor since spec 050 [L7]: each developer runs `flutterfire configure`
+# locally. Neither the build, CI, nor `flutter test` depends on these files —
+# the Google Services Gradle plugin is deliberately not applied [L6].
+android/app/src/client/google-services.json
+android/app/src/business/google-services.json
 ios/Runner/GoogleService-Info.plist
 
 # Envied generated secrets
 lib/env.g.dart
 
 # VS Code
-.vscode/
+# Игнорируется содержимое, а не сам каталог: при `.vscode/` git отсекает обход
+# каталога целиком, и последующее `!` для файла внутри него не действует.
+.vscode/*
+# Исключение: launch.json ведётся в репозитории — [L1] включает его в состав
+# спеки 050, и без этой строки правка четырёх пофлейворных конфигураций была бы
+# не видна в дифе PR.
+!.vscode/launch.json
 plan.txt
 
 # состояние agentic-цикла (допуск gate, логи ретраев, вердикты ревью)

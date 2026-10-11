@@ -73,6 +73,17 @@
   "forgotPassword": "Құпия сөзді ұмыттыңыз ба?",
   "logIn": "Кіру",
   "signUpYourBusiness": "Бизнесіңізді тіркеңіз",
+  "resetPasswordTitle": "Құпия сөзді қалпына келтіру",
+  "resetPasswordDescription": "Email мекенжайыңызды енгізіңіз, біз құпия сөзді қалпына келтіру сілтемесін жібереміз.",
+  "sendResetLink": "Сілтеме жіберу",
+  "resetLinkSent": "Құпия сөзді қалпына келтіру хаты жіберілді. Поштаңызды тексеріңіз.",
+  "sendResetLinkConfirm": "{email} мекенжайына құпия сөзді қалпына келтіру сілтемесін жіберу керек пе?",
+  "@sendResetLinkConfirm": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "signOutConfirm": "Аккаунтқа қайта кіру үшін қайта авторизациядан өтуіңіз керек болады.",
   "profile": "Профиль",
   "editProfile": "Профильді өзгерту",
   "settings": "Баптаулар",
@@ -115,6 +126,7 @@
   "availableItemsCount": "Қол жетімді: {quantity}",
   "offerDetailsSnapshot": "Ұсыныс мәліметтері құрылу кезіндегі дүкен мен тауар суретінен жүктелген.",
   "noOffersFound": "Ұсыныстар табылмады",
+  "searchOffersHint": "Дүкен немесе тауар бойынша іздеу",
   "filters": "Сүзгілер",
   "reset": "Тастау",
   "favoritesOnly": "Тек таңдаулылар",

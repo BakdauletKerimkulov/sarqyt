@@ -1,8 +1,11 @@
-# Sarqyt — Project Overview
+# Qorzhyn (formerly Sarqyt) — Project Overview
 
-## What is Sarqyt?
+## What is Qorzhyn?
 
-Sarqyt is a **Too Good To Go (TGTG)-style marketplace** for surplus food in Kazakhstan. Stores (restaurants, bakeries, cafes) list surprise bags or specific items at a discount, and customers buy and pick them up during a time window.
+Qorzhyn is a **Too Good To Go (TGTG)-style marketplace** for surplus food in Kazakhstan.
+The name was approved on 2026-09-09 (see `RELEASE_READINESS.md`); `Sarqyt` survives only
+in `package:sarqyt/`, in `name:` in `pubspec.yaml` and in the ARB keys `appTitle` /
+`appTitleBusiness`, until the separate package-rename spec — see `GLOSSARY.md`. Stores (restaurants, bakeries, cafes) list surprise bags or specific items at a discount, and customers buy and pick them up during a time window.
 
 Currency: **KZT (Kazakhstani Tenge, symbol: ₸)**.
 
@@ -14,7 +17,7 @@ Currency: **KZT (Kazakhstani Tenge, symbol: ₸)**.
 | State management | Riverpod 3 with codegen (`@riverpod`) |
 | Models | Freezed + json_serializable for immutable domain models |
 | Backend | Firebase (Firestore, Auth, Storage, Cloud Functions, Messaging, Crashlytics) |
-| Payments | Stripe (via `flutter_stripe`, Cloud Functions for server-side) |
+| Payments | None — reserve-only, customer pays offline at the store's terminal |
 | Maps | flutter_map + latlong2 + geolocator + geoflutterfire_plus (geo-queries) |
 | Cloud Functions | TypeScript (Node.js), located in `functions/` |
 | Hosting | Firebase Hosting (business web app at `build/web`) |
@@ -24,10 +27,42 @@ Currency: **KZT (Kazakhstani Tenge, symbol: ₸)**.
 The project has **two entry points** sharing the same codebase:
 
 - **`main_client.dart`** — Customer-facing app (`MyAppClient`). Browse offers on map, purchase surprise bags, track orders.
-- **`main.dart`** — Business-facing app (`MyAppBusiness`). Manage store, items, offers, view orders/reservations, dashboard.
+- **`main_business.dart`** — Business-facing app (`MyAppBusiness`). Manage store, items, offers, view orders/reservations, dashboard.
 - **`main_fakes_client.dart`** — Client app with fake data for development.
 
 Each app has its own router (`client_router.dart` / `business_router.dart`).
+
+There is **no default entry point**: `lib/main.dart` does not exist, so every build
+and run command names its target explicitly. On Android the target is paired with a
+product flavor (`client` / `business`), which is what gives the two apps their own
+`applicationId` and lets them sit side by side on one device.
+
+```sh
+flutter run   -t lib/main_client.dart   --flavor client
+flutter run   -t lib/main_business.dart --flavor business
+flutter build apk --release -t lib/main_client.dart   --flavor client
+flutter build apk --release -t lib/main_business.dart --flavor business
+flutter build web --release -t lib/main_business.dart   # business console; web has no flavors
+flutter run   -t lib/main_fakes_client.dart --flavor client   # client app on fake data
+```
+
+`scripts/build-client-apk.sh` and `scripts/build-business-apk.sh` wrap the two release
+APK commands. Note that a release APK is still signed with the debug key — see blocker 2
+in `RELEASE_READINESS.md`.
+
+A command without `-t` fails outright: `Target file "lib/main.dart" not found` — Gradle
+is never reached, and nothing in the message mentions flavors.
+
+On Android a command that names `-t` but omits `--flavor` runs `assembleDebug`, which
+with `flavorDimensions` declared produces no variant. **This fails only on a clean
+`build/`** (`Gradle build failed to produce an .apk file`). With a stale
+`build/app/outputs/flutter-apk/app-debug.apk` left from before the flavor split, Flutter
+prints `✓ Built …app-debug.apk` and exits successfully while pointing at that stale
+artifact — no build happened, and its `applicationId` is still `com.example.sarqyt`.
+Recovery is `flutter clean`; prevention is always passing `--flavor`. **Note:** CI does
+*not* yet build either flavor — adding the two APK builds to `.github/workflows/ci.yml`
+is an open task of spec 050, Phase 4, so right now nothing but discipline enforces this.
+See the Error flows section of `ai_specs/050-android-app-flavors-spec.md`.
 
 ## Feature Modules
 
@@ -40,7 +75,7 @@ Located in `lib/src/features/`:
 | `items` | Item (product/surprise bag) CRUD — scheduled or one-time, with weekly schedule |
 | `offers` | Published offers with quantity, pickup window, geo-location, badges, ratings |
 | `orders` | Order lifecycle: confirmed -> preparing -> readyForPickup -> completed/cancelled/expired |
-| `checkout` | Purchase flow, Stripe payment integration |
+| `checkout` | Reservation flow — quantity selection and `reserveOffer`; no payment step |
 | `map` | Map view with clustered markers for nearby offers |
 | `review` | Customer reviews and ratings |
 | `business_console` | Business dashboard, store verification (3-step), financials, settings |
@@ -100,7 +135,7 @@ Partners can create stores if `canCreateStore` custom claim is `true`.
 ## Order & Payment Flow
 
 1. Customer selects offer and quantity
-2. `reserve-offer` Cloud Function reserves quantity (decrement) and creates the `orders/{orderId}` document directly (status `confirmed`) — there is no separate payment-confirmation step or `stripe-webhook` function
+2. `reserve-offer` Cloud Function reserves quantity (decrement) and creates the `orders/{orderId}` document directly (status `confirmed`) — there is no payment step of any kind; the customer pays at the store on pickup
 3. `triggers/onOrderCreated` assigns `orderNumber` and pushes the new order to the store team
 4. Store owner/staff moves order through statuses: preparing -> readyForPickup -> completed, each transition notified via `on-order-status-changed`
 5. `expire-orders` handles timeout for uncollected orders; `sendOrderReminders` sends pickup-window reminders and, 2h after `completedAt`, a review request if none was left

@@ -1,0 +1,45 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Client (Android)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_client.dart",
+      "toolArgs": ["--flavor", "client"]
+    },
+    {
+      "name": "Business (Android)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_business.dart",
+      "toolArgs": ["--flavor", "business"]
+    },
+    {
+      "name": "Client (Web)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_client.dart",
+      "deviceId": "chrome"
+    },
+    {
+      "name": "Business (Web)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_business.dart",
+      "deviceId": "chrome"
+    },
+    {
+      "name": "Client (iOS)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_client.dart"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Both: Business (Web) + Client (iOS)",
+      "configurations": ["Business (Web)", "Client (iOS)"]
+    }
+  ]
+}

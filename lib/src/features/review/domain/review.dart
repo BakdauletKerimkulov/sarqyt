@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
+import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
 import 'package:sarqyt/src/utils/converters.dart';
@@ -22,6 +23,10 @@ abstract class Review with _$Review {
     required OrderID orderId,
     required StoreID storeId,
     required UserID userId,
+
+    /// Denormalized from the order at review-creation time. Absent on
+    /// reviews created before this field existed.
+    ItemID? itemId,
     required int storeRating,
     // ignore: invalid_annotation_target
     @JsonKey(readValue: _readOfferRating) required int offerRating,
