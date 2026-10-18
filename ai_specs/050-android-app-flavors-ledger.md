@@ -39,6 +39,7 @@ Answer: Явный target, на хостинге остаётся бизнес-�
 Decision: `firebase-hosting-merge.yml` и `firebase-hosting-pull-request.yml` собирают `flutter build web -t lib/main_business.dart`. Клиентская web-сборка и hosting targets не заводятся.
 Constraints:
 - `EXTERNAL_SERVICES.md` уже фиксирует «клиент — mobile-only»; спека это не меняет.
+- Подтверждено человеком 2026-10-18, в том числе для локальной разработки: клиентскому приложению web пока не нужен, поэтому `firebase_options_client.dart` без web-настроек и конфигурации `Client (Web)` в `.vscode/launch.json` нет. Вернуть web — отдельным решением: `flutterfire configure` для клиента с `web` и запись здесь.
 
 ## L5
 Status: deferred

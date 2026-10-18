@@ -16,13 +16,6 @@
       "toolArgs": ["--flavor", "business"]
     },
     {
-      "name": "Client (Web)",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main_client.dart",
-      "deviceId": "chrome"
-    },
-    {
       "name": "Business (Web)",
       "request": "launch",
       "type": "dart",
