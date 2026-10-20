@@ -62,7 +62,7 @@ artifact — no build happened, and its `applicationId` is still `com.example.sa
 Recovery is `flutter clean`; prevention is always passing `--flavor`. **Note:** CI does
 *not* yet build either flavor — adding the two APK builds to `.github/workflows/ci.yml`
 is an open task of spec 050, Phase 4, so right now nothing but discipline enforces this.
-See the Error flows section of `ai_specs/050-android-app-flavors-spec.md`.
+See the Error flows section of `ai_specs/archive/050-android-app-flavors-spec.md`.
 
 ## Feature Modules
 

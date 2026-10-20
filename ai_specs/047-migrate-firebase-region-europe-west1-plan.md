@@ -18,7 +18,7 @@ Source: замеры latency из Казахстана + ревью готовн
 >
 > **Предусловия:**
 > - `ai_specs/archive/046-prepare-region-migration-plan.md` — без его Phase 1 переезд функций мгновенно ломает все callables на клиенте.
-> - `ai_specs/050-android-app-flavors-spec.md` — иначе Android-приложения регистрируются в новом проекте со старым `com.example.sarqyt` и перерегистрируются вторым кругом.
+> - `ai_specs/archive/050-android-app-flavors-spec.md` — иначе Android-приложения регистрируются в новом проекте со старым `com.example.sarqyt` и перерегистрируются вторым кругом.
 
 ## Overview
 
@@ -171,5 +171,5 @@ Phase 1 — полдня. Phases 2–3 — день. Phases 4–5 — день �
 ## См. также
 
 - `ai_specs/archive/046-prepare-region-migration-plan.md` — подготовка, выполняется до этого плана и не зависит от названия
-- `ai_specs/050-android-app-flavors-spec.md` — flavors и финальные `applicationId`; выполняется до Phase 4
+- `ai_specs/archive/050-android-app-flavors-spec.md` — flavors и финальные `applicationId`; выполняется до Phase 4
 - `ai_docs/RELEASE_READINESS.md` — блокеры релиза, решения, раздел «Бренд»

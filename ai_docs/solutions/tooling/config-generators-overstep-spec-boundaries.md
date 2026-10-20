@@ -4,7 +4,7 @@ date: 2026-10-04
 work_type: tooling
 tags: [flutterfire, flavors, codegen, gitignore, vscode, docs-sync]
 confidence: medium
-references: [ai_specs/050-android-app-flavors-plan.md, b581821, 0f7b484, 2289dc5]
+references: [ai_specs/archive/050-android-app-flavors-plan.md, b581821, 0f7b484, 2289dc5]
 ---
 
 ## Summary

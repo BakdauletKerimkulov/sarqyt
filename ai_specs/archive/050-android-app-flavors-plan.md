@@ -1,6 +1,6 @@
 ---
 title: Разделение сборки на flavor'ы client и business
-status: in-progress
+status: done
 size: L
 date: 2026-09-20
 type: refactor
@@ -149,7 +149,7 @@ Source: `ai_specs/050-android-app-flavors-spec.md`
 - [x] QA-2 — вход под одним аккаунтом в обеих сборках даёт на `users/{uid}` оба поля `fcmTokenClient` / `fcmTokenBusiness` с разными значениями; перевод заказа в `readyForPickup` шлёт пуш в клиентское и не шлёт в бизнесовое _(подтверждено человеком 2026-10-20: в `users/{uid}` оба токена записаны и различаются; пуш о `readyForPickup` пришёл только в клиентское приложение)_
 - [x] QA-5 — `flutter build apk --release` для обоих flavor'ов собирается (подпись остаётся debug-ключом — блокер №2 вне спеки) _(выполнено агентом 2026-10-10 через `scripts/build-{client,business}-apk.sh` — обёртки заодно проверены впервые. Обе сборки зелёные (~156 с каждая); `output-metadata.json`: `clientRelease` → `kz.qorzhyn.app` (65.8 MB), `businessRelease` → `kz.qorzhyn.business` (70.4 MB))_
 - [x] Старые debug-установки `com.example.sarqyt` удалить с устройств разработчиков вручную _(2026-10-20: по словам человека, старых установок на устройствах нет; на `emulator-5554` через `adb shell pm list packages` — только `kz.qorzhyn.app` и `kz.qorzhyn.business`)_
-- [ ] Verify: `./scripts/gate.sh` зелёный; Definition of Done спеки пройден по пунктам; спека и ledger указаны в описании PR
+- [x] Verify: `./scripts/gate.sh` зелёный; Definition of Done спеки пройден по пунктам; спека и ledger указаны в описании PR _(2026-10-20: гейт зелёный; DoD пройден по пунктам, отмечен в спеке; описание PR #21 переписано — спека, ledger и план указаны)_
 
 ## Data layer changes
 

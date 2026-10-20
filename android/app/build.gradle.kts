@@ -27,7 +27,7 @@ android {
     defaultConfig {
         // No applicationId here on purpose: each product flavor sets its own,
         // so an unflagged build fails instead of silently producing one of the
-        // two apps. See ai_specs/050-android-app-flavors-spec.md (R1, R13).
+        // two apps. See ai_specs/archive/050-android-app-flavors-spec.md (R1, R13).
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

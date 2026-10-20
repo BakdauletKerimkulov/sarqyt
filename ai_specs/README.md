@@ -6,7 +6,6 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | # | Feature | Type | Size | Status | Date | Files |
 |---|---------|------|------|--------|------|-------|
-| 050 | Разделение сборки на flavor'ы client и business | refactor | L | in-progress | 2026-09-09 | ledger, spec, plan |
 | 049 | Экран заказов в бизнес-приложении | feature | L | refined | 2026-09-06 | ledger, spec, plan |
 | 047 | Переезд Firebase в europe-west1 | infrastructure | L | approved | 2026-09-09 | plan |
 
@@ -81,6 +80,8 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 | 046 | Подготовка к переезду Firebase в europe-west1 | infrastructure | done | 2026-08-06 | plan |
 
 | 048 | Небезопасное чтение custom claims в isPartner() и canCreateStore() | fix | done | 2026-08-16 | spec |
+
+| 050 | Разделение сборки на flavor'ы client и business | refactor | done | 2026-09-09 | ledger, spec, plan |
 
 Next number: **051**.
 
