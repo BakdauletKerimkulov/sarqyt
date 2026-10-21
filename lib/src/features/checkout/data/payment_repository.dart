@@ -1,5 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/firebase_functions_provider.dart';
 
 part 'payment_repository.g.dart';
 
@@ -31,5 +32,5 @@ class PaymentRepository {
 
 @riverpod
 PaymentRepository paymentRepository(Ref ref) {
-  return PaymentRepository(FirebaseFunctions.instance);
+  return PaymentRepository(ref.watch(firebaseFunctionsProvider));
 }

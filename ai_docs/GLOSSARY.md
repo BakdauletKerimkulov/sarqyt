@@ -37,11 +37,23 @@ NOT «бронь»: бронирование — это действие, соз
 
 <!-- TODO: canonical? В ARB есть третье слово для предмета заказа: termsAndConditionsReserve говорит «Бронируя этот обед». «Обед» не соответствует ни Item, ни Offer. -->
 
+**Active order** (`Order.isActive`, ru «активный заказ», kk «белсенді тапсырыс», en "active order") — `Order` в одном из статусов `confirmed`, `preparing`, `readyForPickup`: заказ, который ещё требует действия от заведения. Терминальные `completed`, `cancelled`, `expired` активными не считаются.
+NOT «текущий заказ» — то же самое другими словами, не вводить. NOT «прошлый заказ»: «прошлые» (`pastOrders`) — это всё неактивное вместе, а не отдельная группа статусов.
+
 **Pickup window** (`pickupWindow`, ru «время самовывоза», kk TODO, en "pickup window") — интервал, в который покупатель обязан забрать заказ. Живёт на `Offer`, порождает напоминания (`sendOrderReminders`) и `expired`-переход.
 NOT «доставка»: доставки в продукте нет, только самовывоз (`payOnPickup`).
 
 **Review** (`Review`, ru «отзыв», en "review") — оценка `Store` после завершённого `Order`. Запрашивается отложенным пушем.
 NOT `Rating` — `Rating` это агрегат на `Offer`/`Store`, а `Review` это одна запись от покупателя.
+
+**Client app / Business app** (flavor'ы Android `client` / `business`, аудитории пушей `PushAudience.client` / `PushAudience.business`, ru «клиентское приложение» / «бизнес-приложение») — две сборки из одного Dart-пакета: покупательская и для заведений. Имена flavor'ов совпадают с членами `PushAudience` — при добавлении третьей сборки эти два списка меняются вместе.
+NOT `Business` — это юрлицо в домене; «бизнес-приложение» это сборка, а не сущность. NOT «merchant app», NOT «партнёрское приложение», NOT «админка» — ни одно из этих слов в проекте не канонично.
+
+**Business console** (`lib/src/features/business_console/`, ru «бизнес-консоль», en "business console") — web-развёртывание бизнес-приложения: тот же Dart-код и тот же entry point `lib/main_business.dart`, собранный под web (`flutter build web -t lib/main_business.dart`) и раздаваемый Firebase Hosting. Клиент остаётся mobile-only, поэтому web-развёртывание в проекте ровно одно.
+NOT «бизнес-приложение» — это сборка (Android flavor `business`, `applicationId kz.qorzhyn.business`); «бизнес-консоль» — её веб-ипостась. Разница существенна там, где речь про flavor'ы: у консоли их нет, её отделяет только `-t`. NOT «веб-консоль для бизнеса» — то же самое другими словами; эта формулировка жила в `ai_docs/RELEASE_READINESS.md:24` и выровнена по термину 2026-10-04 (R14).
+
+**Qorzhyn** (бренд; `applicationId` `kz.qorzhyn.app` / `kz.qorzhyn.business`, Android-namespace `kz.qorzhyn`, ярлыки на устройстве «Qorzhyn» и «Qorzhyn Business») — утверждённое название продукта (`ai_docs/RELEASE_READINESS.md`, раздел «Бренд»). Ярлык клиентского приложения — «Qorzhyn» без суффикса; «Business» добавляется только бизнес-сборке.
+NOT «Sarqyt» — прежнее имя. Оно осознанно остаётся [L1 спеки 050] в `package:sarqyt/`, в `name: sarqyt` в `pubspec.yaml` и в ключах ARB `appTitle` / `appTitleBusiness`, поэтому внутри UI пользователь пока видит «Sarqyt», а на ярлыке — «Qorzhyn». Расхождение временное и живёт до отдельной спеки по переименованию пакета; чинить его попутно нельзя — это 243 файла и другой класс риска. NOT «Qorjyn», NOT «Коржын», NOT «kz.sarqyt.app» — этот идентификатор занят третьей стороной.
 
 **AppUser** (`AppUser`, ru «пользователь», en "user") — авторизованный пользователь. Роль в системе — `UserRole`; роль внутри заведения — `StoreRole`; роль внутри бизнеса — `BusinessMembershipRole`. Три разные шкалы, не смешивать.
 

@@ -1,10 +1,10 @@
 # Routing Decisions
 
-App structure, routing patterns, and scoped-provider decisions. Last verified: 2026-08-02.
+App structure, routing patterns, and scoped-provider decisions. Last verified: 2026-10-04.
 
 ## Two separate apps, not one app with role switching
 
-`lib/main.dart` (business) and `lib/main_client.dart` (client) are two independent entry points with two independent `GoRouter` instances (`business_router.dart`, `client_router.dart`). There is no runtime role switch inside a single app. Reason: the two audiences (store staff vs. customers) have almost no shared screens, and keeping them separate avoids a large conditional-routing surface and lets each app ship/deploy independently (`firebase.json` hosting targets differ).
+`lib/main_business.dart` (business) and `lib/main_client.dart` (client) are two independent entry points with two independent `GoRouter` instances (`business_router.dart`, `client_router.dart`). There is no runtime role switch inside a single app. Reason: the two audiences (store staff vs. customers) have almost no shared screens, and keeping them separate avoids a large conditional-routing surface and lets each app ship independently — on Android as two product flavors with their own `applicationId` (spec 050). Hosting is a single site with no named targets (see `EXTERNAL_SERVICES.md`): only the business console is deployed to web, selected by `-t`, not by a hosting target.
 
 ## `businessRedirect()` — synchronous-only, layered
 
@@ -38,9 +38,13 @@ If a tab is added or removed, update both the router's branch list and `Scaffold
 
 `BusinessRoute.dev` — a full-screen list of every registered business route, tap-to-navigate, gated to `userRoleProvider == UserRole.admin` (FAB only visible to admins in `scaffold_with_nested_navigation.dart`). Built specifically so bugs on hard-to-reach onboarding screens can be reproduced without manufacturing the exact auth/draft state normally required. See `ai_docs/solutions/` and `ai_specs/archive/013-admin-dev-menu-spec.md`.
 
-## Firebase Hosting is a deploy convention, not a router constraint
+## Which app ships to web is a build-command decision, not a router constraint
 
-Both apps build to `build/web` under different Flutter web build targets; which app is served on which hosting site is decided in `firebase.json` / hosting target config, not in the Dart routing code. The router files themselves are flavor-agnostic.
+Only the business console is built for web, and the entry point chosen on the command
+line is what decides it: `flutter build web -t lib/main_business.dart`. There is one
+hosting site and no named targets in `firebase.json` — nothing in the hosting config
+selects an app, and the client stays mobile-only (spec 050, [L4]). The router files
+themselves are flavor-agnostic.
 
 ## See also
 

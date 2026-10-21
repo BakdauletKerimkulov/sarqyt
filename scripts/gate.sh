@@ -103,7 +103,7 @@ if [[ -d functions ]]; then
   # firebase emulators:exec поднимает и гасит его сам.
   if command -v firebase >/dev/null 2>&1; then
     step "rules+functions:test" \
-      firebase emulators:exec --only firestore,auth 'cd functions && npm test'
+      firebase emulators:exec --only firestore,auth,storage 'cd functions && npm test'
   else
     printf '\n\033[33m! firebase CLI не найден — rules-тесты пропущены\033[0m\n'
     FAILED+=("rules:test (firebase CLI отсутствует)")

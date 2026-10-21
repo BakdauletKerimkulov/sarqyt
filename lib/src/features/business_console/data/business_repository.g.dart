@@ -55,7 +55,7 @@ final class BusinessRepositoryProvider
 }
 
 String _$businessRepositoryHash() =>
-    r'4d8b32c9677509dd643ccad42428ce07eabc78da';
+    r'0ca92ec640d9d626f103c11799677032217e5d78';
 
 @ProviderFor(businessFuture)
 const businessFutureProvider = BusinessFutureFamily._();

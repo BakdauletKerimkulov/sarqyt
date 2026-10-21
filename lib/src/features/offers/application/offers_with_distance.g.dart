@@ -59,4 +59,4 @@ final class OffersWithDistanceStreamProvider
 }
 
 String _$offersWithDistanceStreamHash() =>
-    r'996ef15e97408d241ccfeda4a1ae1397e24de72a';
+    r'da7b982ccefbf9f1c02f1ac106a8af72efe32f74';

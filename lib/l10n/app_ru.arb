@@ -73,6 +73,17 @@
   "forgotPassword": "Забыли пароль?",
   "logIn": "Войти",
   "signUpYourBusiness": "Зарегистрируйте свой бизнес",
+  "resetPasswordTitle": "Сброс пароля",
+  "resetPasswordDescription": "Введите email, и мы отправим ссылку для сброса пароля.",
+  "sendResetLink": "Отправить ссылку",
+  "resetLinkSent": "Письмо для сброса пароля отправлено. Проверьте почту.",
+  "sendResetLinkConfirm": "Отправить ссылку для сброса пароля на {email}?",
+  "@sendResetLinkConfirm": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "signOutConfirm": "Для доступа к аккаунту потребуется войти заново.",
   "profile": "Профиль",
   "editProfile": "Редактировать профиль",
   "settings": "Настройки",
@@ -115,6 +126,7 @@
   "availableItemsCount": "Доступно: {quantity}",
   "offerDetailsSnapshot": "Данные предложения загружены из снимка магазина и товара на момент создания.",
   "noOffersFound": "Предложения не найдены",
+  "searchOffersHint": "Поиск по магазину или товару",
   "filters": "Фильтры",
   "reset": "Сбросить",
   "favoritesOnly": "Только избранные",

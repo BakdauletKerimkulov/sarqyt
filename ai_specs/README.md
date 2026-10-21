@@ -4,9 +4,10 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 ## Active
 
-| # | Feature | Type | Status | Date | Files |
-|---|---------|------|--------|------|-------|
-| _(none)_ | | | | | |
+| # | Feature | Type | Size | Status | Date | Files |
+|---|---------|------|------|--------|------|-------|
+| 049 | Экран заказов в бизнес-приложении | feature | L | refined | 2026-09-06 | ledger, spec, plan |
+| 047 | Переезд Firebase в europe-west1 | infrastructure | L | approved | 2026-09-09 | plan |
 
 ## Archived (`archive/`)
 
@@ -76,6 +77,12 @@ Maintained by agents: update this table whenever a spec is created, changes stat
 
 | 045 | Fix schedule day row overflow in the create-item form | fix | done | 2026-08-04 | spec |
 
-Next number: **046**.
+| 046 | Подготовка к переезду Firebase в europe-west1 | infrastructure | done | 2026-08-06 | plan |
+
+| 048 | Небезопасное чтение custom claims в isPartner() и canCreateStore() | fix | done | 2026-08-16 | spec |
+
+| 050 | Разделение сборки на flavor'ы client и business | refactor | done | 2026-09-09 | ledger, spec, plan |
+
+Next number: **051**.
 
 Renumbered during 2026-07-05 migration (one number = one feature): `004-rework-offer-feature` → `019-delete-offer`, `013-detail-managing-business-ui` → `020-admin-page-navigation`; unnumbered `specific-architecture-*` → `001-*`.

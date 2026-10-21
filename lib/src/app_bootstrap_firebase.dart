@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sarqyt/src/app_bootstrap.dart';
 import 'package:sarqyt/src/exceptions/async_error_logger.dart';
+import 'package:sarqyt/src/firebase_functions_provider.dart';
 import 'package:sarqyt/src/features/offers/data/client_offer_repository.dart';
 import 'package:sarqyt/src/features/notifications/data/push_notification_service.dart';
 import 'package:sarqyt/src/features/notifications/domain/push_audience.dart';
@@ -56,6 +57,11 @@ extension AppBootstrapFirebase on AppBootstrap {
     FirebaseFirestore.instance.settings = const Settings(
       persistenceEnabled: false,
     );
-    FirebaseFunctions.instance.useFunctionsEmulator('127.0.0.1', 5001);
+    // Must target the same instance the app resolves through
+    // [firebaseFunctionsProvider] — `.instance` would configure the default
+    // region and leave the app talking to the real backend after the move.
+    FirebaseFunctions.instanceFor(
+      region: kFunctionsRegion,
+    ).useFunctionsEmulator('127.0.0.1', 5001);
   }
 }

@@ -45,6 +45,8 @@
 	<string>We need your location to show nearby offers</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need your location to show nearby offers</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photos so you can add images to your offers</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

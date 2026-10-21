@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/firebase_functions_provider.dart';
 import 'package:sarqyt/src/features/items/domain/item.dart';
 import 'package:sarqyt/src/features/orders/domain/order.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
@@ -85,7 +86,7 @@ class StoreOrdersRepository {
 StoreOrdersRepository ordersRepository(Ref ref) {
   return StoreOrdersRepository(
     FirebaseFirestore.instance,
-    FirebaseFunctions.instance,
+    ref.watch(firebaseFunctionsProvider),
   );
 }
 

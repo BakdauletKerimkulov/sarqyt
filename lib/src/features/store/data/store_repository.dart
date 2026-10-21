@@ -1,17 +1,77 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sarqyt/src/firebase_functions_provider.dart';
 import 'package:sarqyt/src/features/auth/data/auth_repository.dart';
 import 'package:sarqyt/src/features/auth/domain/app_user.dart';
 import 'package:sarqyt/src/features/store/domain/store.dart';
+import 'package:sarqyt/src/features/store/domain/store_draft.dart';
 
 part 'store_repository.g.dart';
 
 class StoreRepository {
-  const StoreRepository(this._firestore);
+  const StoreRepository(this._firestore, this._functions);
   final FirebaseFirestore _firestore;
+  final FirebaseFunctions _functions;
 
   static String storesPath() => 'stores';
   static String storePath(String id) => 'stores/$id';
+
+  /// Wire payload for the `createAdditionalStore` callable.
+  ///
+  /// Pure and static so the shape can be asserted without a Functions client.
+  /// The contract it must match lives in
+  /// `functions/src/features/stores/functions/create-additional-store.ts` —
+  /// note it differs from [StoreDraft.toCallableMap], which serialises the
+  /// *onboarding* draft for a different function.
+  static Map<String, dynamic> additionalStorePayload({
+    required StoreDraft draft,
+    required String businessId,
+  }) {
+    final location = draft.location;
+    return {
+      'name': draft.name,
+      'storeType': draft.storeType?.name ?? '',
+      'address': {
+        'country': {
+          'name': draft.country?.name ?? '',
+          'isoCode': draft.country?.isoCode ?? '',
+        },
+        'address': draft.address ?? '',
+        'locality': draft.locality ?? '',
+        'postalCode': draft.postalCode ?? '',
+      },
+      'geo': {
+        'geohash': location != null
+            ? GeoFirePoint(
+                GeoPoint(location.latitude, location.longitude),
+              ).geohash
+            : '',
+        'geopoint': {
+          'latitude': location?.latitude ?? 0,
+          'longitude': location?.longitude ?? 0,
+        },
+      },
+      'phoneNumber': draft.phoneNumber ?? '',
+      'businessId': businessId,
+    };
+  }
+
+  /// Creates an additional store for an already-verified business.
+  ///
+  /// Returns the new store id. Throws [FirebaseFunctionsException] on
+  /// failure — callers render it via `humanReadableError`.
+  Future<String> createAdditionalStore({
+    required StoreDraft draft,
+    required String businessId,
+  }) async {
+    final callable = _functions.httpsCallable('createAdditionalStore');
+    final result = await callable.call<dynamic>(
+      additionalStorePayload(draft: draft, businessId: businessId),
+    );
+    return result.data['storeId'] as String;
+  }
 
   Future<void> deleteStore(StoreID id) {
     return _firestore.doc(storePath(id)).delete();
@@ -52,7 +112,10 @@ class StoreRepository {
 
 @Riverpod(keepAlive: true)
 StoreRepository storeRepository(Ref ref) {
-  return StoreRepository(FirebaseFirestore.instance);
+  return StoreRepository(
+    FirebaseFirestore.instance,
+    ref.watch(firebaseFunctionsProvider),
+  );
 }
 
 @riverpod

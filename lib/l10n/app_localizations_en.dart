@@ -232,6 +232,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signUpYourBusiness => 'Sign up your food business';
 
   @override
+  String get resetPasswordTitle => 'Reset password';
+
+  @override
+  String get resetPasswordDescription =>
+      'Enter your email and we\'ll send you a link to reset your password.';
+
+  @override
+  String get sendResetLink => 'Send reset link';
+
+  @override
+  String get resetLinkSent => 'Password reset email sent. Check your inbox.';
+
+  @override
+  String sendResetLinkConfirm(String email) {
+    return 'Send a password reset link to $email?';
+  }
+
+  @override
+  String get signOutConfirm =>
+      'You will need to log in again to access your account.';
+
+  @override
   String get profile => 'Profile';
 
   @override
@@ -349,6 +371,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noOffersFound => 'No offers found';
+
+  @override
+  String get searchOffersHint => 'Search by store or item';
 
   @override
   String get filters => 'Filters';

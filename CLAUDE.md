@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Sarqyt — TGTG-style marketplace для surplus food в Казахстане. Flutter + Firebase, два entry point (client / business) в одном репозитории.
+Qorzhyn (ранее Sarqyt) — TGTG-style marketplace для surplus food в Казахстане. Flutter + Firebase, два entry point в одном репозитории: `lib/main_client.dart` и `lib/main_business.dart`. Дефолтного entry point нет — каждая команда сборки называет `-t`, на Android ещё и `--flavor` (`client` / `business`). Прежнее имя `Sarqyt` остаётся в `package:sarqyt/`, в `name:` в `pubspec.yaml` и в ключах ARB `appTitle` / `appTitleBusiness` до отдельной спеки по переименованию пакета — см. `ai_docs/GLOSSARY.md`.
 
 ## Источники истины — читать перед любой задачей
 - `spec-driven-rules.md` — структура папок, именование, статусы спеков. Обязательно.

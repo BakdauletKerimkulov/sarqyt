@@ -1,4 +1,4 @@
-package com.example.sarqyt
+package kz.qorzhyn
 
 import io.flutter.embedding.android.FlutterActivity
 

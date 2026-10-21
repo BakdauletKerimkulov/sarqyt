@@ -54,7 +54,7 @@ final class OrdersRepositoryProvider
   }
 }
 
-String _$ordersRepositoryHash() => r'1a697d203c67332bce6850c828a53f90adf13afd';
+String _$ordersRepositoryHash() => r'ab198e9a8756384e74e555ad105ccbe28854888b';
 
 @ProviderFor(ordersListStream)
 const ordersListStreamProvider = OrdersListStreamFamily._();

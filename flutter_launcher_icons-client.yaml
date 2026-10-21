@@ -1,0 +1,23 @@
+# Launcher icons for the client flavor (Qorzhyn).
+#
+# Android only, on purpose: flutter_launcher_icons writes web/, macos/ and
+# windows/ icons to one shared location, so a second flavor's run would
+# overwrite the first one's output. iOS is off because generating it would
+# create clientAppIcon.appiconset and rewrite ASSETCATALOG_COMPILER_APPICON_NAME
+# in ios/Runner.xcodeproj — Out of scope of spec 050 [L5].
+#
+# The resource name must stay `flutter_launcher_icons`, identical to the
+# business config and to android:icon in AndroidManifest.xml: the manifest lives
+# in src/main and resolves per flavor by name. A different name here would make
+# the manifest fall back to the leftover resource in src/main, and both apps
+# would ship the same icon.
+flutter_launcher_icons:
+  android: "flutter_launcher_icons"
+  ios: false
+  image_path: "assets/app-icon.png"
+  web:
+    generate: false
+  macos:
+    generate: false
+  windows:
+    generate: false

@@ -55,7 +55,7 @@ final class BusinessOfferRepositoryProvider
 }
 
 String _$businessOfferRepositoryHash() =>
-    r'3c0305d3028b6c7e5f88a6c3a8a6ce817568946e';
+    r'6f725e83c6f7e50f5562b9241e728965a9b6adf0';
 
 /// Stream of current offer for an item (today's active).
 
@@ -134,6 +134,90 @@ final class CurrentOfferForItemFamily extends $Family
 
   @override
   String toString() => r'currentOfferForItemProvider';
+}
+
+/// Upcoming/recent offers for an item, for the Calendar tab.
+
+@ProviderFor(offersForItem)
+const offersForItemProvider = OffersForItemFamily._();
+
+/// Upcoming/recent offers for an item, for the Calendar tab.
+
+final class OffersForItemProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Offer>>,
+          List<Offer>,
+          Stream<List<Offer>>
+        >
+    with $FutureModifier<List<Offer>>, $StreamProvider<List<Offer>> {
+  /// Upcoming/recent offers for an item, for the Calendar tab.
+  const OffersForItemProvider._({
+    required OffersForItemFamily super.from,
+    required (String, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'offersForItemProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$offersForItemHash();
+
+  @override
+  String toString() {
+    return r'offersForItemProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<List<Offer>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<Offer>> create(Ref ref) {
+    final argument = this.argument as (String, String);
+    return offersForItem(ref, argument.$1, argument.$2);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is OffersForItemProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$offersForItemHash() => r'b7eadc30d0d12d58eddde1826fdaa6492af1203a';
+
+/// Upcoming/recent offers for an item, for the Calendar tab.
+
+final class OffersForItemFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<Offer>>, (String, String)> {
+  const OffersForItemFamily._()
+    : super(
+        retry: null,
+        name: r'offersForItemProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Upcoming/recent offers for an item, for the Calendar tab.
+
+  OffersForItemProvider call(String storeId, String itemId) =>
+      OffersForItemProvider._(argument: (storeId, itemId), from: this);
+
+  @override
+  String toString() => r'offersForItemProvider';
 }
 
 /// Stream of active item IDs (productId) for a given store.
